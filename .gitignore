@@ -1,6 +1,6 @@
-mysqlpassword.txt
-osu.ppy.sh/.htaccess
 *.osr
+ci-system/mysqlpassword.txt
+osu.ppy.sh/.htaccess
 osu.ppy.sh/inc/config.php
 osu.ppy.sh/ss/*.jpg
 osu.ppy.sh/web/*.txt
