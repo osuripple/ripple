@@ -9,14 +9,15 @@ git checkout production
 # First of all, we need to fetch the repo and merge its contents.
 git pull --rebase origin production
 
-if ! cmp /ci-system/update.sql /ci-system/update.sql~ >/dev/null 2>&1
+cd ci-system
+if ! cmp update.sql update.sql~ >/dev/null 2>&1
 then
-  mysql -u ripple "-p$(cat ci-system/mysqlpassword.txt)" -D ripple < /ci-system/update.sql
+  mysql -u ripple "-p$(cat mysqlpassword.txt)" -D ripple < update.sql
 fi
 
-if ! cmp /ci-system/pre-update.php /ci-system/pre-update.php~ >/dev/null 2>&1
+if ! cmp pre-update.php pre-update.php~ >/dev/null 2>&1
 then
-  php /ci-system/pre-update.php
+  php pre-update.php
 fi
 
 # Refresh things a bit by running the cron.
@@ -25,14 +26,15 @@ cd osu.ppy.sh
 php cron.php 2>&1 > /dev/null &
 
 # Trigger the post-update script
-if ! cmp /ci-system/post-update.php/ci-system/ post-update.php~ >/dev/null 2>&1
+cd ..
+cd ci-system
+if ! cmp post-update.php post-update.php~ >/dev/null 2>&1
 then
-  php /ci-system/post-update.php
+  php post-update.php
 fi
 
 # Last thing: copy update.sql to update.sql~ for the future.
 # Same for pre/post-update.php
-cd ../ci-system
 cp update.sql update.sql~
 cp pre-update.php pre-update.php~
 cp post-update.php post-update.php~
