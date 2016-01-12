@@ -3,16 +3,14 @@
 # Go to the right directory.
 cd /var/www/ripple.moe
 
-# We're working on the production branch, as this is a production server.
-git checkout production
-
 # First of all, we need to fetch the repo and merge its contents.
-git pull --rebase origin production
+git pull origin production
 
 cd ci-system
 if ! cmp update.sql update.sql~ >/dev/null 2>&1
 then
-  mysql -u ripple "-p$(cat mysqlpassword.txt)" -D ripple < update.sql
+  export MYSQL_PWD=$(cat mysqlpassword.txt)
+  mysql -u ripple -D ripple < update.sql
 fi
 
 if ! cmp pre-update.php pre-update.php~ >/dev/null 2>&1
