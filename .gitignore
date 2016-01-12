@@ -1,5 +1,6 @@
 # ci stuff
 *.php~
+*.sql~
 *.log
 ci-system/mysqlpassword.txt
 
