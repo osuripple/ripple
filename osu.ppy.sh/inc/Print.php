@@ -1638,6 +1638,7 @@ class P {
 		echo('<a href="index.php?p=14">Documentation</a><br>');
 		echo('<strike><a href="#"><b>Phwr\'s server switcher</b></a></strike><br>');
 		echo('<a href="http://y.zxq.co/ngomne.zip">Kwisk\'s server switcher</a><br>');
+		echo('<br><a href="http://mattermost.zxq.co/ripple">Get in touch with the team</a>');
 	}
 
 
