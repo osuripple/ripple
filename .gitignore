@@ -1,4 +1,5 @@
 *.osr
+*.log
 ci-system/mysqlpassword.txt
 osu.ppy.sh/.htaccess
 osu.ppy.sh/inc/config.php
