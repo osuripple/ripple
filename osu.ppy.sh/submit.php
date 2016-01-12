@@ -28,6 +28,7 @@
 			case "passwordFinishRecovery": D::PasswordFinishRecovery(); break;
 			case "forgetEveryCookie": D::ForgetEveryCookie(); break;
 			case "saveUserpage": D::SaveUserpage(); break;
+			case "changeAvatar": D::ChangeAvatar(); break;
 			default: throw new Exception("Invalid action value"); break;
 
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins

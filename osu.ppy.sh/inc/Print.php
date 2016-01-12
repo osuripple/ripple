@@ -1751,6 +1751,46 @@ class P {
 
 
 	/*
+	* ChangeAvatarPage
+	* Prints the change avatar page.
+	*/
+	static function ChangeAvatarPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+
+		// Title
+		echo('<div id="narrow-content"><h1><i class="fa fa-picture-o"></i>	Change avatar</h1>');
+
+		// Print Exception if set
+		$exceptions = array("Nice troll.", "That file is not a valid image.", "Invalid file format. Supported extensions are .png, .jpg and .jpeg", "The file is too large. Maximum file size is 1MB.", "Error while uploading avatar.");
+		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
+
+		// Print Success if set
+		if (isset($_GET["s"]) && $_GET["s"] == "ok") P::SuccessMessage("Avatar changed!");
+
+		// Print default message if we have no exception/success
+		if (!isset($_GET["e"]) && !isset($_GET["s"]))
+		echo('<p>Give a nice touch to your profile with a custom avatar!<br></p>');
+
+		// Print form
+		echo('
+		<b>Current avatar:</b><br><img src="http://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="100" width="100"/>
+		<p style="line-height: 15px"></p>
+		<form action="submit.php" method="POST" enctype="multipart/form-data">
+		<input name="action" value="changeAvatar" hidden>
+		<p align="center"><input type="file" name="file"></p>
+		<i>1MB max. .jpg, .jpeg or <b>.png (reccommended)</b></i>
+		<p style="line-height: 15px"></p>
+		<button type="submit" class="btn btn-primary">Change avatar</button>
+		</form>
+		</div>');
+	}
+
+	/*
 	* UserpageEditorPage
 	* Prints the userpage editor page.
 	*/

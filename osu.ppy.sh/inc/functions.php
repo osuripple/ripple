@@ -125,7 +125,8 @@
 				case 2: echo('<title>Ripple - Login</title>'); break;
 				case 3: echo('<title>Ripple - Register</title>'); break;
 				case 4: echo('<title>Ripple - User CP</title>'); break;
-				case 5: case 9: case 10: case 11: echo('<title>Ripple - Coming soon</title>'); break;
+				case 5: echo('<title>Ripple - Change avatar</title>'); break;
+				case 9: case 10: case 11: echo('<title>Ripple - Coming soon</title>'); break;
 				case 6: echo('<title>Ripple - Edit user settings</title>'); break;
 				case 7: echo('<title>Ripple - Change password</title>'); break;
 				case 8: echo('<title>Ripple - Edit userpage</title>'); break;
@@ -198,7 +199,10 @@
 				case 4: sessionCheck(); P::UserCPPage(); break;
 
 				// Coming soon
-				case 5: case 9: case 10: case 11: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
+				case 9: case 10: case 11: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
+
+				// Edit avatar (protected)
+				case 5: sessionCheck(); P::ChangeAvatarPage(); break;
 
 				// Edit userpage (protected)
 				case 8: sessionCheck(); P::UserpageEditorPage(); break;

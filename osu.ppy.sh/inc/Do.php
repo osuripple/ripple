@@ -1038,4 +1038,51 @@ class D {
 		}
 	}
 
+	/*
+	* ChangeAvatar
+	* Chhange avatar functions
+	*/
+	static function ChangeAvatar()
+	{
+		try
+		{
+			// Check if we are logged in
+			sessionCheck();
+
+			// Check if everything is set
+			if (!isset($_FILES["file"])) {
+				throw new Exception(0);
+			}
+
+			// Check if image file is a actual image or fake image
+			if(!getimagesize($_FILES["file"]["tmp_name"])) {
+				throw new Exception(1);
+			}
+
+			// Allow certain file formats
+			$allowedFormats = array("jpg", "jpeg", "png");
+			if(!in_array(pathinfo($_FILES["file"]["name"])["extension"], $allowedFormats)) {
+				throw new Exception(2);
+			}
+
+			// Check file size
+			if ($_FILES["file"]["size"] > 1000000) {
+				throw new Exception(3);
+			}
+
+			// Convert to png
+			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png")) {
+				throw new Exception(4);
+			}
+
+			// Done, redirect to success page
+			redirect("index.php?p=5&s=ok");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=5&e=".$e->getMessage().$r);
+		}
+	}
+
 }

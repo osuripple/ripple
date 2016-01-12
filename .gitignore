@@ -11,6 +11,7 @@ osu.ppy.sh/.htaccess
 osu.ppy.sh/ss/*.jpg
 osu.ppy.sh/web/*.txt
 osu.ppy.sh/replays/*.osr
+a.ppy.sh/avatars/*.*
 
 # other stuff
 osu.ppy.sh/adminer.php
