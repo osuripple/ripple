@@ -14,4 +14,4 @@ def serveAvatar(osuid):
 	return send_file("avatars/%d.png" % avatarid)
 
 # Run the server
-app.run(host="0.0.0.0", port=80)
+app.run(host="0.0.0.0", port=5000)
