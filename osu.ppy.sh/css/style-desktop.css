@@ -1,0 +1,556 @@
+/* Desktop CSS */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700,400italic);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css);
+
+body {
+	padding-top: 70px;
+	text-align: left;
+	font-family: Open Sans;
+}
+
+
+/* Userpage CSS */
+.spoiler {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.panel {
+  box-shadow: none !important;
+}
+
+#userpage-header {
+	text-align: left;
+	width: 100%;
+	height: 120px;
+}
+
+#userpage-header p {
+	float: left;
+}
+
+#username {
+	float: left;
+	padding-top: 20px;
+}
+
+#rank {
+	float: right;
+	text-align: right;
+	padding-top: 25px;
+	padding-left: 70%;
+	position: absolute;
+}
+
+#user-avatar {
+	float: left;
+	margin-right: 20px;
+}
+
+#userpage-content {
+	padding-top: 20px;
+	text-align: center;
+}
+
+#userpage-plays {
+	padding-top: 250px;
+	text-align: center;
+}
+
+#stats-value {
+	text-align: right;
+	white-space: nowrap;
+}
+
+#stats-name {
+	text-align: left;
+	width: 100%;
+}
+
+.column-left {
+	float: left;
+	width: 20%;
+	/*padding-right: 30%;*/
+}
+
+.column-center {
+	float: left;
+	width: 20%;
+	/*padding-right: 30%;*/
+}
+
+
+.column-right {
+	float: right;
+	width: 50%;
+	text-align: center;
+}
+
+.plays-column-left {
+	float: left;
+	text-align: left;
+	width: 80%;
+	font-size: 85%;
+}
+
+.plays-column-right {
+	float: right;
+	text-align: right;
+	width: 20%;
+	position: relative;
+	bottom: 4px;
+}
+
+
+
+/* General CSS */
+.table td {
+   text-align: left;
+}
+
+.table-75-center {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-50-center {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#content{
+	width: 75%;
+	margin: 0 auto;
+}
+
+#narrow-content {
+	width: 50%;
+	margin: 0 auto;
+}
+
+hr {
+    border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+/* Admin Panel Style */
+#wrapper {
+    position: relative;
+    top: -20px;
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 250px;
+    width: 0;
+    height: 100%;
+    margin-left: -250px;
+    overflow-y: auto;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    background-color: #222222;
+    text-align: left;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 15px;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #999999;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #fff;
+    background: rgba(255,255,255,0.2);
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    color: #fff;
+    background: none;
+}
+
+@media(min-width:0px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+}
+
+
+.huge {
+    font-size: 40px;
+}
+
+.panel-green {
+    border-color: #5cb85c;
+}
+
+.panel-green .panel-heading {
+    border-color: #5cb85c;
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.panel-green a {
+    color: #5cb85c;
+}
+
+.panel-green a:hover {
+    color: #3d8b3d;
+}
+
+.panel-red {
+    border-color: #d9534f;
+}
+
+.panel-red .panel-heading {
+    border-color: #d9534f;
+    color: #fff;
+    background-color: #d9534f;
+}
+
+.panel-red a {
+    color: #d9534f;
+}
+
+.panel-red a:hover {
+    color: #b52b27;
+}
+
+.panel-yellow {
+    border-color: #f0ad4e;
+}
+
+.panel-yellow .panel-heading {
+    border-color: #f0ad4e;
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
+.panel-yellow a {
+    color: #f0ad4e;
+}
+
+.panel-yellow a:hover {
+    color: #df8a13;
+}
+
+/*
+    Beta Keygen
+*/
+
+@keyframes wave {
+  from {
+    transform: translateY(0);
+    color: white;
+  }
+  to {
+    transform: translateY(-90px);
+  }
+}
+.wavetext {
+  margin-top: 5em;
+  text-align: center;
+}
+
+.wavetext span {
+  display: inline-block;
+  font-size: 70px;
+  animation-duration: 0.3s;
+  animation-name: wave;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.wavetext :nth-child(40n + 0) {
+  animation-delay: -0.6s;
+  color: #640a64;
+}
+
+.wavetext :nth-child(40n + 1) {
+  animation-delay: -0.585s;
+  color: #780a8c;
+}
+
+.wavetext :nth-child(40n + 2) {
+  animation-delay: -0.57s;
+  color: #8c0a7d;
+}
+
+.wavetext :nth-child(40n + 3) {
+  animation-delay: -0.555s;
+  color: #a00a6e;
+}
+
+.wavetext :nth-child(40n + 4) {
+  animation-delay: -0.54s;
+  color: #b40a96;
+}
+
+.wavetext :nth-child(40n + 5) {
+  animation-delay: -0.525s;
+  color: #c80a87;
+}
+
+.wavetext :nth-child(40n + 6) {
+  animation-delay: -0.51s;
+  color: #dc0a78;
+}
+
+.wavetext :nth-child(40n + 7) {
+  animation-delay: -0.495s;
+  color: #f00a69;
+}
+
+.wavetext :nth-child(40n + 8) {
+  animation-delay: -0.48s;
+  color: #690a91;
+}
+
+.wavetext :nth-child(40n + 9) {
+  animation-delay: -0.465s;
+  color: #7d0a82;
+}
+
+.wavetext :nth-child(40n + 10) {
+  animation-delay: -0.45s;
+  color: #910a73;
+}
+
+.wavetext :nth-child(40n + 11) {
+  animation-delay: -0.435s;
+  color: #a50a64;
+}
+
+.wavetext :nth-child(40n + 12) {
+  animation-delay: -0.42s;
+  color: #b90a8c;
+}
+
+.wavetext :nth-child(40n + 13) {
+  animation-delay: -0.405s;
+  color: #cd0a7d;
+}
+
+.wavetext :nth-child(40n + 14) {
+  animation-delay: -0.39s;
+  color: #e10a6e;
+}
+
+.wavetext :nth-child(40n + 15) {
+  animation-delay: -0.375s;
+  color: #f50a96;
+}
+
+.wavetext :nth-child(40n + 16) {
+  animation-delay: -0.36s;
+  color: #6e0a87;
+}
+
+.wavetext :nth-child(40n + 17) {
+  animation-delay: -0.345s;
+  color: #820a78;
+}
+
+.wavetext :nth-child(40n + 18) {
+  animation-delay: -0.33s;
+  color: #960a69;
+}
+
+.wavetext :nth-child(40n + 19) {
+  animation-delay: -0.315s;
+  color: #aa0a91;
+}
+
+.wavetext :nth-child(40n + 20) {
+  animation-delay: -0.3s;
+  color: #be0a82;
+}
+
+.wavetext :nth-child(40n + 21) {
+  animation-delay: -0.285s;
+  color: #d20a73;
+}
+
+.wavetext :nth-child(40n + 22) {
+  animation-delay: -0.27s;
+  color: #e60a64;
+}
+
+.wavetext :nth-child(40n + 23) {
+  animation-delay: -0.255s;
+  color: #fa0a8c;
+}
+
+.wavetext :nth-child(40n + 24) {
+  animation-delay: -0.24s;
+  color: #730a7d;
+}
+
+.wavetext :nth-child(40n + 25) {
+  animation-delay: -0.225s;
+  color: #870a6e;
+}
+
+.wavetext :nth-child(40n + 26) {
+  animation-delay: -0.21s;
+  color: #9b0a96;
+}
+
+.wavetext :nth-child(40n + 27) {
+  animation-delay: -0.195s;
+  color: #af0a87;
+}
+
+.wavetext :nth-child(40n + 28) {
+  animation-delay: -0.18s;
+  color: #c30a78;
+}
+
+.wavetext :nth-child(40n + 29) {
+  animation-delay: -0.165s;
+  color: #d70a69;
+}
+
+.wavetext :nth-child(40n + 30) {
+  animation-delay: -0.15s;
+  color: #eb0a91;
+}
+
+.wavetext :nth-child(40n + 31) {
+  animation-delay: -0.135s;
+  color: #640a82;
+}
+
+.wavetext :nth-child(40n + 32) {
+  animation-delay: -0.12s;
+  color: #780a73;
+}
+
+.wavetext :nth-child(40n + 33) {
+  animation-delay: -0.105s;
+  color: #8c0a64;
+}
+
+.wavetext :nth-child(40n + 34) {
+  animation-delay: -0.09s;
+  color: #a00a8c;
+}
+
+.wavetext :nth-child(40n + 35) {
+  animation-delay: -0.075s;
+  color: #b40a7d;
+}
+
+.wavetext :nth-child(40n + 36) {
+  animation-delay: -0.06s;
+  color: #c80a6e;
+}
+
+.wavetext :nth-child(40n + 37) {
+  animation-delay: -0.045s;
+  color: #dc0a96;
+}
+
+.wavetext :nth-child(40n + 38) {
+  animation-delay: -0.03s;
+  color: #f00a87;
+}
+
+.wavetext :nth-child(40n + 39) {
+  animation-delay: -0.015s;
+  color: #690a78;
+}
+
+.changelog-line {
+	text-align: left;
+	width: 100%;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	border-bottom: 1px solid #e4e4e4;
+}
+.changelog-line:hover {
+	background: #fbfbfb;
+}

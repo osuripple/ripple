@@ -1,0 +1,34 @@
+/* Mobile/Tablet Landscape or Portrait CSS */
+body {
+	padding-top: 70px;
+	text-align: left;
+}
+
+.spoiler { 
+  color: black; 
+  background-color:black;
+}
+
+#content{
+	width: 100%;
+	margin: 0 auto;
+}
+
+#login-content {
+	width: 100%;
+	margin: 0 auto;
+}
+
+#register-content {
+	width: 100%;
+	margin: 0 auto;
+}
+
+.input-group-addon {
+	min-width: 100px;
+	text-align: left;
+}
+
+#test-select {
+	max-width: 50%;
+}
