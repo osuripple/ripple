@@ -3,6 +3,7 @@
 *.sql~
 *.log
 ci-system/mysqlpassword.txt
+ci/config.php
 
 # server data
 osu.ppy.sh/inc/config.php
