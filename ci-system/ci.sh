@@ -11,7 +11,7 @@ git pull --rebase origin production
 
 if ! cmp update.sql update.sql~ >/dev/null 2>&1
 then
-  mysql -u ripple "-p$(cat mysqlpassword.txt)" -D ripple < update.sql
+  mysql -u ripple "-p$(cat ci-system/mysqlpassword.txt)" -D ripple < update.sql
 fi
 
 if ! cmp pre-update.php pre-update.php~ >/dev/null 2>&1
