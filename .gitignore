@@ -1,8 +1,14 @@
-*.osr
+# ci stuff
+*.php~
 *.log
 ci-system/mysqlpassword.txt
-osu.ppy.sh/.htaccess
+
+# server data
 osu.ppy.sh/inc/config.php
+osu.ppy.sh/.htaccess
 osu.ppy.sh/ss/*.jpg
 osu.ppy.sh/web/*.txt
+osu.ppy.sh/replays/*.osr
+
+# other stuff
 osu.ppy.sh/adminer.php
