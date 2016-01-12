@@ -326,7 +326,7 @@
 		if (!checkLoggedIn()) echo('<li><a href="index.php?p=3"><i class="fa fa-plus-circle"></i>	Sign up</a></li>');
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=4"><i class="fa fa-user"></i>	User Panel</a></li>');
-		echo('<li><a href="http://www.altosu.org/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
+		echo('<li><a href="http://bloodcat.com/osu/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
 		//if (checkLoggedIn()) echo('<li><a href="index.php?p=17"><i class="fa fa-bug"></i>	Changelog</a></li>');
 		echo('<li><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>');
 		echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
