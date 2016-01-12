@@ -459,7 +459,7 @@ class P {
 	{
 		// Get data
 		$betaKeysLeft = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM beta_keys WHERE allowed = 1"));
-		$betaKeys = $GLOBALS["db"]->fetchAll("SELECT * FROM beta_keys");
+		$betaKeys = $GLOBALS["db"]->fetchAll("SELECT * FROM beta_keys ORDER BY allowed DESC");
 
 		// Print beta keys stuff
 		echo('<div id="wrapper">');
