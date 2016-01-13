@@ -151,6 +151,7 @@
 				case 108: echo('<title>RAP - Badges</title>');
 				case 109: echo('<title>RAP - Edit Badge</title>');
 				case 110: echo('<title>RAP - Edit user badges</title>');
+				case 111: echo('<title>RAP - Bancho settings</title>');
 				
 				case "u": echo('<title>Ripple - Userpage</title>'); break;
 				default: echo('<title>Ripple - 404</title>'); break;
@@ -273,6 +274,9 @@
 				// Admin panel - Edit uesr badges
 				case 110: sessionCheckAdmin(); P::AdminEditUserBadges(); break;
 
+				// Admin panel - System settings
+				case 111: sessionCheckAdmin(); P::AdminBanchoSettings(); break;
+
 				// 404 page
 				default: echo('<br><h1>404</h1><p>Page not found. Meh.</p>'); break;
 			}
@@ -360,6 +364,9 @@
 						</li>
 						<li>
 							<a href="index.php?p=101"><i class="fa fa-cog"></i>	System settings</a>
+						</li>
+						<li>
+							<a href="index.php?p=111"><i class="fa fa-server"></i>	Bancho settings</a>
 						</li>
 						<li>
 							<a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a>
@@ -701,6 +708,11 @@
 	function checkGameMaintenance()
 	{
 		if (current($GLOBALS["db"]->fetch("SELECT value_int FROM system_settings WHERE name = 'game_maintenance'")) == 0) return false; else return true;
+	}
+
+	function checkBanchoMaintenance()
+	{
+		if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'bancho_maintenance'")) == 0) return false; else return true;
 	}
 
 	function checkRegistrationsEnabled()

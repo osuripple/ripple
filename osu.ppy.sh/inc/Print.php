@@ -589,11 +589,7 @@ class P {
 	*/
 	static function AdminSystemSettings()
 	{
-		// Get data
-		$betaKeysLeft = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM beta_keys WHERE allowed = 1"));
-		$betaKeys = $GLOBALS["db"]->fetchAll("SELECT * FROM beta_keys ");
-
-		// Print beta keys stuff
+		// Print stuff
 		echo('<div id="wrapper">');
 		printAdminSidebar();
 
@@ -663,6 +659,7 @@ class P {
 		<td>Home alert<br>(visible only in homepage)</td>
 		<td><textarea type="text" name="ha" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ha.'</textarea></td>
 		</tr>');
+		echo('<tr class="success"><td></td><td>For bancho settings, click <a href="index.php?p=111">here</a<</td></tr>');
 		echo('</tbody></form>');
 		echo('</table>');
 		echo('<div class="text-center"><div class="btn-group" role="group">
@@ -1036,6 +1033,89 @@ class P {
 			// Redirect to exception page
 			redirect("index.php?p=108&e=".$e->getMessage());
 		}
+	}
+
+	/*
+	* AdminBanchoSettings
+	* Prints the admin panel bancho settings page
+	*/
+	static function AdminBanchoSettings()
+	{
+		// Print stuff
+		echo('<div id="wrapper">');
+		printAdminSidebar();
+
+		echo('<div id="page-content-wrapper">');
+
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Print Success if set
+		if (isset($_GET["s"]) && !empty($_GET["s"])) P::SuccessMessage($_GET["s"]);
+
+		// Print Exception if set
+		if (isset($_GET["e"]) && !empty($_GET["e"])) P::ExceptionMessage($_GET["e"]);
+
+		// Get values
+		$bm = current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'bancho_maintenance'"));
+		$od = current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'free_direct'"));
+		$rm = current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'"));
+		$mi = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+		$lm = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
+
+		// Default select stuff
+		$selected[0] = array(1 => "", 2 => "");
+		$selected[1] = array(1 => "", 2 => "");
+		$selected[2] = array(1 => "", 2 => "");
+
+		// Checked stuff
+		if ($bm == 1) $selected[0][1] = "selected"; else $selected[0][2] = "selected";
+		if ($rm == 1) $selected[1][1] = "selected"; else $selected[1][2] = "selected";
+		if ($od == 1) $selected[2][1] = "selected"; else $selected[2][2] = "selected";
+
+		echo('<p align="center"><font size=5><i class="fa fa-server"></i>	Bancho settings</font></p>');
+		echo('<table class="table table-striped table-hover table-50-center">');
+		echo('<tbody><form id="system-settings-form" action="submit.php" method="POST"><input name="action" value="saveBanchoSettings" hidden>');
+		echo('<tr>
+		<td>Maintenance mode<br>(bancho)</td>
+		<td>
+		<select name="bm" class="selectpicker" data-width="100%">
+		<option value="1" '.$selected[0][1].'>On</option>
+		<option value="0" '.$selected[0][2].'>Off</option>
+		</select>
+		</td>
+		</tr>');
+		echo('<tr>
+		<td>Restricted mode joke</td>
+		<td>
+		<select name="rm" class="selectpicker" data-width="100%">
+		<option value="1" '.$selected[1][1].'>On</option>
+		<option value="0" '.$selected[1][2].'>Off</option>
+		</select>
+		</td>
+		</tr>');
+		echo('<tr>
+		<td>Free osu!direct</td>
+		<td>
+		<select name="od" class="selectpicker" data-width="100%">
+		<option value="1" '.$selected[2][1].'>On</option>
+		<option value="0" '.$selected[2][2].'>Off</option>
+		</select>
+		</td>
+		</tr>');
+		echo('<tr>
+		<td>Menu bottom icon<br>(imageurl|clickurl)</td>
+		<td><p class="text-center"><input type="text" value="'.$mi.'" name="mi" class="form-control"></td>
+		</tr>');
+		echo('<tr>
+		<td>Login #osu messages<br>One per line<br>(user|message)</td>
+		<td><textarea type="text" name="lm" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$lm.'</textarea></td>
+		</tr>');
+		echo('</tbody><table>
+		<div class="text-center"><button type="submit" class="btn btn-primary">Save settings</button></div></form>');
+
+
+		echo("</div>");
 	}
 
 	/*
@@ -2012,12 +2092,46 @@ class P {
 		}
 	}
 
+
+
+	/*
+	* BanchoMaintenance
+	* Prints the game maintenance alert
+	*/
+	static function BanchoMaintenanceAlert()
+	{
+		try
+		{
+			// Check if we are logged in
+			if (!checkLoggedIn()) {
+				throw new Exception;
+			}
+
+			// Check our rank
+			if (getUserRank($_SESSION["username"]) < 3) {
+				throw new Exception;
+			}
+
+			// Mod/admin, show alert and continue
+			echo('<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Ripple\'s Bancho server is in maintenance mode. You can\'t play Ripple right now. Try again later.<br><b>Make sure to disable game maintenance mode from admin cp as soon as possible!</b></p></div>');
+		}
+		catch (Exception $e)
+		{
+			// Normal user, show alert and die
+			echo('<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Ripple\'s Bancho server is in maintenance mode. You can\'t play Ripple right now.< Try again later./b></p></div>');
+		}
+	}
+
 	/*
 	* MaintenanceStuff
 	* Prints website/game maintenance alerts
 	*/
 	static function MaintenanceStuff()
 	{
+		// Check Bancho maintenance
+		if (checkBanchoMaintenance())
+		P::BanchoMaintenanceAlert();
+
 		// Game maintenance check
 		if (checkGameMaintenance())
 		P::GameMaintenanceAlert();

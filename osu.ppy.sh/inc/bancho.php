@@ -67,6 +67,24 @@
 		$r .= pack("L", $type);
 		return $r;
 	}
+
+	/*
+	 * sendNotification
+	 * Send a notification to client
+	 * Is bugged as fuck with loooooong messages
+	 * Use \\n for new line
+	 *
+	 * @param (string) ($msg) Notification message
+	 * @return (string)
+	 */
+	function sendNotification($msg)
+	{
+		$r = "";
+		$r .= "\x18\x00\x00";
+		$r .= pack("L", strlen($msg)+2);
+		$r .= binStr($msg);
+		return $r;
+	}
 	
 	/*
 	 * banchoWeb
@@ -122,12 +140,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 		header("Vary: Accept-Encoding");
 		header("Content-Encoding: gzip");
 		
-		// Get headers
-		//$headers = parseRequestHeaders();
-		//$headers = apache_request_headers();
+		// Check maintenance
+		if (checkBanchoMaintenance())
+		{
+			$output = "";
+			$output .= sendNotification("Ripple's Bancho server is in manitenance mode.\\nCheck http://ripple.moe/ for more information.");
+			$output .= "\x05\x00\x00\x04\x00\x00\x00\xFF\xFF\xFF\xFF";
+			outGz($output);
+			die();
+		}
 
 		// Check if this is the first packet
-		//if (!isset($headers["osu-token"]))
 		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
 		{
 			// Check login
@@ -181,7 +204,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// x02: GMT
 			// x04: Supporter
 			// x06: GMT + Supporter
-			$userSupporter = getUserRank($username) >= 3 ? "\x06" : "\x04";
+			if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'free_direct'")) == 1)
+				$defaultDirect = "\x04";
+			else
+				$defaultDirect = "\x01";
+			$userSupporter = getUserRank($username) >= 3 ? "\x06" : $defaultDirect;
 			$userID = $userData["osu_id"];
 			$userCountry = 108;	// fixme plz
 
@@ -313,9 +340,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x00";
 
 			// Default login messages
-			$output .= sendMessage("FokaBot", "#osu", "Welcome to Ripple! Bancho is still work in progress and chat doesn't work yet. Have fun!", false);
-			$output .= sendMessage("FokaBot", "#osu", "Visit http://ripple.moe/ for more information.", false);
-			$output .= sendMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO", false);
+			$messages = explode("\r\n", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'")));
+			foreach ($messages as $message) {
+				$messageData = explode('|', $message);
+				$output .= sendMessage($messageData[0], "#osu", $messageData[1], false);
+			}
+
+			// Restricted meme message
+			if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'")) == 1)
+				$output .= sendMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO", false);
 
 			/* Add some memes
 			$output .= sendMessage("BanchoBot", $username, "Wtf? Who is FokaBot? Someone is trying to take my place? I'll restrict his account, give me a minute...", true);
@@ -340,9 +373,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Other packets
 			$output = "";
 			
-			// Ripple logo
-			$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
-			$output .= binStr("http://y.zxq.co/mpyxts.png|http://ripple.moe");
+			// Main menu icon
+			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+			if ($msg != "")
+			{
+				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
+				$output .= binStr($msg);
+			}
 			
 			outGz($output);
 			

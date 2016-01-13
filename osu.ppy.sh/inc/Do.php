@@ -538,6 +538,37 @@ class D {
 		}
 	}
 
+	/*
+	* SaveBanchoSettings
+	* Save bancho settings function (ADMIN CP)
+	*/
+	static function SaveBanchoSettings()
+	{
+		try
+		{
+			// Get values
+			if (isset($_POST["bm"])) $bm = $_POST["bm"]; else $bm = 0;
+			if (isset($_POST["od"])) $od = $_POST["od"]; else $od = 0;
+			if (isset($_POST["rm"])) $rm = $_POST["rm"]; else $rm = 0;
+			if (!empty($_POST["mi"])) $mi = $_POST["mi"]; else $mi = "";
+			if (!empty($_POST["lm"])) $lm = $_POST["lm"]; else $lm = "";
+
+			// Save new values
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_int = ? WHERE name = 'bancho_maintenance'", array($bm));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_int = ? WHERE name = 'free_direct'", array($od));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_int = ? WHERE name = 'restricted_joke'", array($rm));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'menu_icon'", array($mi));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'login_messages'", array($lm));
+
+			// Done, redirect to success page
+			redirect("index.php?p=111&s=Settings saved!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=111&e=".$e->getMessage());
+		}
+	}
 
 	/*
 	* RunCron

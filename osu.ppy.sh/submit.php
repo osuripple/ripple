@@ -37,6 +37,7 @@
 			case "publicPrivateBetaKey": sessionCheckAdmin(); D::PublicPrivateBetaKey(); break;
 			case "removeBetaKey": sessionCheckAdmin(); D::RemoveBetaKey(); break;
 			case "saveSystemSettings": sessionCheckAdmin(); D::SaveSystemSettings(); break;
+			case "saveBanchoSettings": sessionCheckAdmin(); D::SaveBanchoSettings(); break;
 			case "runCron": sessionCheckAdmin(); D::RunCron(); break;
 			case "saveEditUser": sessionCheckAdmin(); D::SaveEditUser(); break;
 			case "banUnbanUser": sessionCheckAdmin(); D::BanUnbanUser(); break;
