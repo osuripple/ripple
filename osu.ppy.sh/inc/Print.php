@@ -1300,7 +1300,7 @@ class P {
 		}
 		else
 		{
-			echo('<br><b>It seems that this user is not registered on Ripple<br>or his account doesn\'t have a valid osu! id.</b><br><a href="http://jizz.ppy.sh/u/'.$u.'">Click here</a> to go on his regular osu! profile.');
+			echo('<br><b>User not found.</b>');
 		}
 	}
 
