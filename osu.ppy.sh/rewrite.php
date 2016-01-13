@@ -12,7 +12,7 @@
 		// Redirect to userpage
 		case 'u': redirect("../index.php?u=".$uri[2]); break;
 		// Redirect to bloodcat map download
-		case 'd': redirect("http://bloodcat.com/osu/s/".explode('?', $uri[2])[0]); break;
+		case 'd': redirect(file_get_contents("http://bcache.zxq.co/download.php?s=" . explode('?', $uri[2])[0])); break;
 		// No matches, redirect to index
 		default: redirect("../index.php"); break;
 	}
