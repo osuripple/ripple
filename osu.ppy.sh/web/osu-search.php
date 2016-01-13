@@ -84,18 +84,11 @@
 	// Output variable
 	$output = "";
 
-	// The first line is how many beatmaps
-	// have been found. If it's >= 101, osu! will send a new query when
-	// we reach the end of the list to load more beatmaps.
-	// Bloodcat returns 40 beatmaps per page, so to load more maps when
-	// we reach the end of the list on osu!, we need to set the number
-	// of found variables to 101 instead of 40.
-	// If this is not the first page or we have searched for something,
-	// show the actual number of songs.
-	if ($bcQ == "" && $bcP == 1)
+	// Always show 101 to avoid memes
+	//if ($bcQ == "" && $bcP == 1)
 		$output = 101;
-	else
-		$output = count($bcData);
+	//else
+		//$output = count($bcData);
 
 	// Separator
 	$output .= "\r\n";
