@@ -1062,6 +1062,7 @@ class P {
 		$rm = current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'"));
 		$mi = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 		$lm = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
+		$ln = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
 
 		// Default select stuff
 		$selected[0] = array(1 => "", 2 => "");
@@ -1110,6 +1111,10 @@ class P {
 		echo('<tr>
 		<td>Login #osu messages<br>One per line<br>(user|message)</td>
 		<td><textarea type="text" name="lm" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$lm.'</textarea></td>
+		</tr>');
+		echo('<tr>
+		<td>Login notification</td>
+		<td><textarea type="text" name="ln" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ln.'</textarea></td>
 		</tr>');
 		echo('</tbody><table>
 		<div class="text-center"><button type="submit" class="btn btn-primary">Save settings</button></div></form>');

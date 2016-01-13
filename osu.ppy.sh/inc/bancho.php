@@ -350,6 +350,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 			if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'")) == 1)
 				$output .= sendMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO", false);
 
+			// Login notification
+			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
+			if ($msg != "")
+				$output .= sendNotification($msg);
+
 			/* Add some memes
 			$output .= sendMessage("BanchoBot", $username, "Wtf? Who is FokaBot? Someone is trying to take my place? I'll restrict his account, give me a minute...", true);
 			$output .= sendMessage("peppy", $username, "Fuck a donkey.", true);
