@@ -72,6 +72,9 @@
 	if (isset($_GET["p"]))
 		$bcP = $_GET["p"]+1;
 
+	// Replace spaces with + in query
+	str_replace(' ', '+', $bcQ);
+
 	// Build the URL with popular.php or normal bloodcat API
 	$bcURL = $bcPopular ? "http://bloodcat.com/osu/popular.php?mod=json&m=".$bcM."&p=".$bcP : "http://bloodcat.com/osu/?mod=json&m=".$bcM."&s=".$bcS."&q=".$bcQ."&p=".$bcP;
 
