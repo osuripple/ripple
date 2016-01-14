@@ -1259,12 +1259,18 @@ class P {
 			echo('<div id="userpage-header">
 			<!-- Avatar, username and rank -->
 			<p><img id="user-avatar" src="http://a.ripple.moe/'.$u.'" height="100" width="100" /></p>
-			<p id="username"><font size=5><b>'); if ($country != "XX" && $showCountry == 1) echo('<img src="./images/flags/'.strtolower($country).'.png">	');	echo('<font color="'.$userData[0]["user_color"].'" style="'.$userStyle.'">' . $username . '</font></b></font>	'); if ($usernameAka != "") echo('<small><i>aka '.$usernameAka.'</i></small>'); echo('<br><a href="index.php?u='.$u.'&m=0">'.$modesText[0].'</a> | <a href="index.php?u='.$u.'&m=1">'.$modesText[1].'</a> | <a href="index.php?u='.$u.'&m=2">'.$modesText[2].'</a> | <a href="index.php?u='.$u.'&m=3">'.$modesText[3].'</a>');
+			<p id="username"><font size=5><b>');
+			if ($country != "XX" && $showCountry == 1)
+				echo('<img src="./images/flags/'.strtolower($country).'.png">	');
+			echo('<font color="'.$userData[0]["user_color"].'" style="'.$userStyle.'">' . $username . '</font></b></font>	');
+			if ($usernameAka != "")
+				echo('<small><i>aka '.$usernameAka.'</i></small>');
+			echo('<br><a href="index.php?u='.$u.'&m=0">'.$modesText[0].'</a> | <a href="index.php?u='.$u.'&m=1">'.$modesText[1].'</a> | <a href="index.php?u='.$u.'&m=2">'.$modesText[2].'</a> | <a href="index.php?u='.$u.'&m=3">'.$modesText[3].'</a>');
 			if (getUserRank($_SESSION["username"]) >= 4) echo('<br><a href="index.php?p=103&id='.$u.'">Edit user</a> | <a onclick="sure(\'submit.php?action=banUnbanUser&id='.$u.'\')";>Ban user</a> | <a href="index.php?p=110&id='.$u.'">Edit badges</a></p>');
 			echo('<p id="rank"><font size=5><b> '.$rankSymbol.$rank.'</b></font></p>
 			</div>');
 			echo('<div id="userpage-content">
-			<div class="column-left">');
+			<div class="col-md-3">');
 
 			// Badges Left colum
 			if ($badgeID[0] > 0) echo('<i class="fa '.$badgeIcon[0].' fa-2x"></i><br><b>'.$badgeName[0].'</b><br><br>');
@@ -1272,7 +1278,7 @@ class P {
 			if ($badgeID[4] > 0) echo('<i class="fa '.$badgeIcon[4].' fa-2x"></i><br><b>'.$badgeName[4].'</b><br><br>');
 
 			echo('</div>
-			<div class="column-center">');
+			<div class="col-md-3">');
 
 			// Badges Right column
 			if ($badgeID[1] > 0) echo('<i class="fa '.$badgeIcon[1].' fa-2x"></i><br><b>'.$badgeName[1].'</b><br><br>');
@@ -1286,7 +1292,7 @@ class P {
 			$percText = floor((100*$totalScore)/$reqScore);					// Text percentage, real one
 			if ($percText < 10) $percBar = 10; else $percBar = $percText;	// Progressbar percentage, minimum 10 or it's glitched
 
-			echo('</div><div class="column-right">
+			echo('</div><div class="col-md-6">
 			<!-- Stats -->
 			<b>Level '.$level.'</b>
 			<div class="progress">
