@@ -15,8 +15,6 @@
  * although they may not work.
  */
 
-file_put_contents("test2.txt", $_GET);
 $resget = file_get_contents("https://osu.ppy.sh/web/check-updates.php?action=" . urlencode($_GET["action"]) . "&stream=" . urlencode($_GET["stream"])
            . "&time=" . urlencode($_GET["time"]));
-file_put_contents("test.txt", $resget);
-echo "[]";
+echo $resget;
