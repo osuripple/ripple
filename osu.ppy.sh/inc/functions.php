@@ -336,6 +336,7 @@
 		// Navbar menu, add menu stuff here
 		if (!checkLoggedIn()) echo('<li><a href="index.php?p=2"><i class="fa fa-sign-in"></i>	Login</a></li>');
 		if (!checkLoggedIn()) echo('<li><a href="index.php?p=3"><i class="fa fa-plus-circle"></i>	Sign up</a></li>');
+		if (!checkLoggedIn()) echo('<li><a href="index.php?p=21"><i class="fa fa-info"></i>	About</a></li>');
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=4"><i class="fa fa-user"></i>	User Panel</a></li>');
 		echo('<li><a href="http://bloodcat.com/osu/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
