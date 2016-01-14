@@ -1634,9 +1634,10 @@
 	function getChangelog() {
 		global $GitLabConfig;
 		sessionCheck();
-		echo "Welcome to the changelog page. Here changes are posted real-time as they are published to the master branch. Hover a change to know when it was done.<br><br>";
-		if (!file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json")) {
-			echo 'Unfortunately, the website owner did configure the changelog. Slap him off telling him to do it.';
+		echo('<p align="center"><h1><i class="fa fa-bug"></i>	Changelog</h1>');
+		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are published to the master branch.<br>Hover a change to know when it was done.<br><br>');
+		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.json")) {
+			echo '<b>Unfortunately, the website owner did configure the changelog. Slap him off telling him to do it.</b>';
 		}
 		else {
 			// We use only one page. For now. I'm tired. It's 23:46. Fuck everything.
