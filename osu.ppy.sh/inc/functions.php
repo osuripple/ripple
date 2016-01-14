@@ -601,8 +601,11 @@
 
 		switch ($d)
 		{
+			// Right now
+			default: return "Right now"; break;
+
 			// 1 year or more
-			case ($d >= 31556926): $n = floor($d/31556926); $i = "year"; break;
+			// case ($d >= 31556926): $n = floor($d/31556926); $i = "year"; break;
 
 			// 1 month or more
 			case ($d >= 2629743 && $d < 31556926): $n = floor($d/2629743); $i = "month"; break;
@@ -615,9 +618,6 @@
 
 			// 1 minute or more
 			case ($d >= 60 && $d < 3600): $n = floor($d/60); $i = "minute"; break;
-
-			// Right now
-			default: return "Right now"; break;
 		}
 
 		// Plural
