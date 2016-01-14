@@ -139,6 +139,7 @@
 				case 18: echo('<title>Ripple - Recover your password</title>'); break;
 				case 19: echo('<title>Ripple - Finish password recovery</title>'); break;
 				case 20: echo('<title>Ripple - Beta keys</title>'); break;
+				case 21: echo('<title>Ripple - About</title>'); break;
 
 				case 100: echo('<title>RAP - Dashboard</title>');
 				case 101: echo('<title>RAP - System settings</title>');
@@ -240,6 +241,9 @@
 
 				// Beta keys page
 				case 20: P::BetaKeys(); break;
+
+				// About page
+				case 21: P::AboutPage(); break;
 
 				// Admin panel (> 100 pages are admin ones)
 				case 100: sessionCheckAdmin(); P::AdminDashboard(); break;

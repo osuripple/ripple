@@ -1550,6 +1550,20 @@ class P {
 		}
 	}
 
+	/*
+	* AboutPage
+	* Prints the about page.
+	*/
+	static function AboutPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+		echo(file_get_contents("./html_static/about.html"));
+	}
+
 
 	/*
 	* ExceptionMessage
