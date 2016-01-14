@@ -23,9 +23,14 @@ cd ..
 cd osu.ppy.sh
 php cron.php 2>&1 > /dev/null &
 
-# Trigger the post-update script
+# Update changelog.json
+# https://gist.github.com/textarcana/1306223
 cd ..
 cd ci-system
+git log --pretty=format:'{%n  "commit": "%H",%n  "author": "%an <%ae>",%n  "date": "%ad",%n  "message": "%f"%n},' $@ | perl -pe 'BEGIN{print "["}; END{print "]\n"}' | perl -pe 's/},]/}]/' > changelog.json
+
+
+# Trigger the post-update script
 if ! cmp post-update.php post-update.php~ >/dev/null 2>&1
 then
   php post-update.php

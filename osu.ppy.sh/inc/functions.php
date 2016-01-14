@@ -340,7 +340,7 @@
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
 		if (checkLoggedIn()) echo('<li><a href="index.php?p=4"><i class="fa fa-user"></i>	User Panel</a></li>');
 		echo('<li><a href="http://bloodcat.com/osu/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
-		//if (checkLoggedIn()) echo('<li><a href="index.php?p=17"><i class="fa fa-bug"></i>	Changelog</a></li>');
+		if (checkLoggedIn()) echo('<li><a href="index.php?p=17"><i class="fa fa-bug"></i>	Changelog</a></li>');
 		echo('<li><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>');
 		if (!checkLoggedIn()) echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
 		if (checkLoggedIn() && getUserRank($_SESSION["username"]) >= 4) echo('<li><a href="index.php?p=100"><i class="fa fa-cog"></i>	<b>Admin Panel</b></a></li>');
@@ -1635,34 +1635,36 @@
 		global $GitLabConfig;
 		sessionCheck();
 		echo "Welcome to the changelog page. Here changes are posted real-time as they are published to the master branch. Hover a change to know when it was done.<br><br>";
-		if (!isset($GitLabConfig) || count($GitLabConfig) != 4) {
-			echo 'Unfortunately, the website owner did not put his gitlab information in the config.php file. Slap him off telling him to add $GitLabConfig to config.php.';
+		if (!file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json")) {
+			echo 'Unfortunately, the website owner did configure the changelog. Slap him off telling him to do it.';
 		}
 		else {
-			$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
-			$data = getChangelogPage($_GET["page"]);
+			// We use only one page. For now. I'm tired. It's 23:46. Fuck everything.
+			//$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
+			$data = getChangelogPage();
 			foreach ($data as $commit) {
 				echo sprintf("<div class='changelog-line' title='%s'><b>%s:</b> %s</div>", $commit["time"], $commit["username"], $commit["content"]);
 			}
 			echo "<br><br>";
-			if ($_GET["page"] != 1) {
+			/*if ($_GET["page"] != 1) {
 				echo "<a href='index.php?p=17&page=" . ($_GET["page"] - 1) . "'>&lt; Previous page</a>";
 				echo " | ";
 			}
-			echo "<a href='index.php?p=17&page=" . ($_GET["page"] + 1) . "'>Next page &gt;</a>";
+			echo "<a href='index.php?p=17&page=" . ($_GET["page"] + 1) . "'>Next page &gt;</a>";*/
 		}
 	}
 
 	/*
 	 * getChangelogPage()
-	 * Gets a page from the GitLab API with some commits.
+	 * Gets a page from the changelog.json with some commits.
 	 *
 	 * @param (int) ($p) Page. Optional. Default is 1.
 	 */
 	function getChangelogPage($p = 1) {
 		global $GitLabConfig;
-		// retrieve data from gitlab's API
-		$data = json_decode(get_contents_http("https://gitlab.com/api/v3/projects/" . $GitLabConfig["repo_id"] . "/repository/commits?private_token=" . $GitLabConfig["private_token"] . "&page=" . ($p - 1) . "&ref_name=master"), true);
+		// retrieve data from changelog.json
+		//$data = json_decode(get_contents_http("https://gitlab.com/api/v3/projects/" . $GitLabConfig["repo_id"] . "/repository/commits?private_token=" . $GitLabConfig["private_token"] . "&page=" . ($p - 1) . "&ref_name=master"), true);
+		$data = json_decode(file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json"), true);
 		$ret = array();
 		foreach ($data as $commit) {
 			$b = false;
@@ -1678,12 +1680,12 @@
 			// If we should not output this commit, let's skip it.
 			if ($b)
 				continue;
-			if (isset($GitLabConfig["change_name"][$commit["author_name"]]))
-				$commit["author_name"] = $GitLabConfig["change_name"][$commit["author_name"]];
+			if (isset($GitLabConfig["change_name"][$commit["author"]]))
+				$commit["author"] = $GitLabConfig["change_name"][$commit["author"]];
 			$ret[] = array(
-				"username" => $commit["author_name"],
-				"content" => htmlspecialchars($commit["message"]),
-				"time" => $commit["created_at"]
+				"username" => explode(' ', $commit["author"])[0],
+				"content" => htmlspecialchars(str_replace('-', ' ', $commit["message"])),
+				"time" => $commit["date"]
 			);
 		}
 		return $ret;
