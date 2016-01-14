@@ -1,24 +1,24 @@
 <?php
 	// Get functions
 	require_once("./inc/functions.php");
-	
+
 	// Bancho/frontend loader
 	if ($_SERVER["HTTP_HOST"] == "c.ppy.sh" || $_SERVER["HTTP_HOST"] == "c1.ppy.sh")
 	{
 		// Do bancho stuff
 		require_once("./inc/bancho.php");
-		
+
 		// Run server stuff or output webpage
 		if ($_SERVER["HTTP_USER_AGENT"] == "osu!")
 			banchoServer();
 		else
 			banchoWeb();
-		
+
 		// Don't process anything from the web frontend
 		die();
 	}
-	
-	// Do frontend stuff	
+
+	// Do frontend stuff
 ?>
 
 <?php
@@ -63,6 +63,8 @@
 
     <!-- Favicon -->
     <link rel="icon" href="favicon.png"/>
+
+    <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
 
 <body>
