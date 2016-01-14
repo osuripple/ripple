@@ -341,7 +341,7 @@
 		echo('<li><a href="http://bloodcat.com/osu/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
 		//if (checkLoggedIn()) echo('<li><a href="index.php?p=17"><i class="fa fa-bug"></i>	Changelog</a></li>');
 		echo('<li><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>');
-		echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
+		if (!checkLoggedIn()) echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
 		if (checkLoggedIn() && getUserRank($_SESSION["username"]) >= 4) echo('<li><a href="index.php?p=100"><i class="fa fa-cog"></i>	<b>Admin Panel</b></a></li>');
 		if (checkLoggedIn()) echo('<li><a href="submit.php?action=logout"><i class="fa fa-sign-out"></i>	<b>Logout</b></a></li>');
 
