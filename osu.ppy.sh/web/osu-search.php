@@ -84,11 +84,12 @@
 	// Output variable
 	$output = "";
 
-	// Always show 101 to avoid memes
-	//if ($bcQ == "" && $bcP == 1)
+	// Show 101 if we have >= 40 results (bloodcat maps per page)
+	// or osu! won't load next pages
+	if (count($bcData) >= 40)
 		$output = 101;
-	//else
-		//$output = count($bcData);
+	else
+		$output = count($bcData);
 
 	// Separator
 	$output .= "\r\n";
