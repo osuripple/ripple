@@ -14,12 +14,9 @@
  * Stable channel has the latest working osu! beta, which is downloaded on the server. Beta and cuttingedge have the osu! versions proxied from the server
  * although they may not work.
  */
- 
-// Well, if we ain't working in localhost, this might work...
-/*require_once dirname(__FILE__) . "/../inc/Curl.php";
-$c = new Curl();
-$c->setUserAgent('osu!');
-$c->setOpt(CURLOPT_ENCODING , 'gzip');
-echo $c->get("https://osu.ppy.sh/web/check-updates?action=" . urlencode($_GET["action"]) . "&stream=" . urlencode($_GET["stream"])
-           . "&time=" . urlencode($_GET["time"]));*/
-?>[{"file_version":"2338","filename":"osu!.exe","file_hash":"fbe80082a80bbb1c8c338db2918e5b21","filesize":"3285560","timestamp":"2015-12-28 15:11:56","patch_id":null,"url_full":"http:\/\/m1.ppy.sh\/r\/osu!.exe\/f_fbe80082a80bbb1c8c338db2918e5b21"}]
+
+file_put_contents("test2.txt", $_GET);
+$resget = file_get_contents("https://osu.ppy.sh/web/check-updates.php?action=" . urlencode($_GET["action"]) . "&stream=" . urlencode($_GET["stream"])
+           . "&time=" . urlencode($_GET["time"]));
+file_put_contents("test.txt", $resget);
+echo "[]";

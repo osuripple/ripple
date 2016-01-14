@@ -1,7 +1,5 @@
 <?php
 
-namespace Curl;
-
 class Curl
 {
     const VERSION = '4.6.8';
