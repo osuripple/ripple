@@ -152,7 +152,7 @@
 				case 109: echo('<title>RAP - Edit Badge</title>');
 				case 110: echo('<title>RAP - Edit user badges</title>');
 				case 111: echo('<title>RAP - Bancho settings</title>');
-				
+
 				case "u": echo('<title>Ripple - Userpage</title>'); break;
 				default: echo('<title>Ripple - 404</title>'); break;
 			}
