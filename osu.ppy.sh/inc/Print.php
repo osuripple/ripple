@@ -1682,7 +1682,7 @@ class P {
 		if (!isset($_GET["e"]) && !isset($_GET["s"]))
 		echo('<p>Please fill every field in order to sign up.<br>
 		<div class="alert alert-success" role="alert">Unlike in Ripple 1.0, you don\'t need an active osu! account to play on Ripple 1.5. You can create a new account, with completely different username and password. You can\'t blame us for stealing your passwords now :P</div>
-		<a href="index.php?p=15&f=how-to-connect-to-ripple.md" target="_blank">Need some help?</a></p>');
+		<a href="index.php?p=16&id=1" target="_blank">Need some help?</a></p>');
 
 		// Print register form
 		echo('	<form action="submit.php" method="POST">
