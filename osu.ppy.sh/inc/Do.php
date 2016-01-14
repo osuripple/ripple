@@ -14,7 +14,7 @@ class D {
 			if (empty($_POST["u"]) || empty($_POST["p"])) {
 				throw new Exception(0);
 			}
-			
+
 			// 1.5 -- Make sure user exists (if user doen't exist php spams memes)
 			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($_POST["u"]))) {
 				throw new Exception(1);
@@ -98,7 +98,7 @@ class D {
 			}
 
 			// Check if username is valid
-			if (!preg_match("/^[A-Za-z0-9 _-]{3,20}$/i", $_POST["u"])) {
+			if (!preg_match("/^[A-Za-z0-9 _\\-\\[\\]]{3,20}$/i", $_POST["u"])) {
 				throw new Exception(5);
 			}
 
@@ -133,7 +133,7 @@ class D {
 
 			// Put some data into users_stats
 			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (NULL, 2, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", $_POST["u"]);
-						
+
 			// 1.5 -- Replace osu_id with id (we don't use osu! id anymore)
 			// Get db ai id
 			$id = current($GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $_POST["u"]));
