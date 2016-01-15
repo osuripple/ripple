@@ -81,10 +81,10 @@ class RainTPL{
      *
      */
     static $check_template_update = true;
-                
+
 
     /**
-     * PHP tags <? ?> 
+     * PHP tags <? ?>
      * True: php tags are enabled into the template
      * False: php tags are disabled into the template and rendered as html
      *
@@ -92,7 +92,7 @@ class RainTPL{
      */
     static $php_enabled = false;
 
-    
+
     /**
      * Debug mode flag.
      * True: debug mode is used, syntax errors are displayed directly in template. Execution of script is not terminated.
@@ -272,7 +272,7 @@ class RainTPL{
       $this->tpl['compiled_filename']     = $temp_compiled_filename . '.rtpl.php';  // cache filename
       $this->tpl['cache_filename']        = $temp_compiled_filename . '.s_' . $this->cache_id . '.rtpl.php';  // static cache filename
                         $this->tpl['checked']               = true;
-                        
+
       // if the template doesn't exist and is not an external source throw an error
       if( self::$check_template_update && !file_exists( $this->tpl['tpl_filename'] ) && !preg_match('/http/', $tpl_name) ){
         $e = new RainTpl_NotFoundException( 'Template '. $tpl_basename .' not found!' );
@@ -289,7 +289,7 @@ class RainTPL{
         $this->compileFile( $tpl_basename, $tpl_basedir, $this->tpl['tpl_filename'], self::$root_dir . self::$cache_dir, $this->tpl['compiled_filename'] );
         return true;
       }
-      
+
     }
   }
 
@@ -300,7 +300,7 @@ class RainTPL{
   */
   protected function xml_reSubstitution($capture) {
         return "<?php echo '<?xml ".stripslashes($capture[1])." ?>'; ?>";
-  } 
+  }
 
   /**
    * Compile and write the compiled template file
@@ -319,11 +319,11 @@ class RainTPL{
       $template_code = str_replace( array("<?","?>"), array("&lt;?","?&gt;"), $template_code );
 
     //xml re-substitution
-    $template_code = preg_replace_callback ( "/##XML(.*?)XML##/s", array($this, 'xml_reSubstitution'), $template_code ); 
+    $template_code = preg_replace_callback ( "/##XML(.*?)XML##/s", array($this, 'xml_reSubstitution'), $template_code );
 
     //compile template
     $template_compiled = "<?php if(!class_exists('raintpl')){exit;}?>" . $this->compileTemplate( $template_code, $tpl_basedir );
-    
+
 
     // fix the php-eating-newline-after-closing-tag-problem
     $template_compiled = str_replace( "?>\n", "?>\n\n", $template_compiled );
@@ -388,7 +388,7 @@ class RainTPL{
    * @access protected
    */
   protected function compileCode( $parsed_code ){
-            
+
                 // if parsed code is empty return null string
                 if( !$parsed_code )
                     return "";
@@ -397,7 +397,7 @@ class RainTPL{
     $compiled_code = $open_if = $comment_is_open = $ignore_is_open = null;
                 $loop_level = 0;
 
-                
+
     //read all parsed code
     foreach( $parsed_code as $html ){
 
@@ -489,7 +489,7 @@ class RainTPL{
         $compiled_code .=  "<?php $counter=-1; if( isset($var) && is_array($var) && sizeof($var) ) foreach( $var as $key => $value ){ $counter++; ?>";
 
       }
-      
+
       // loop break
       elseif( strpos( $html, '{break}' ) !== FALSE ) {
 
@@ -587,7 +587,7 @@ class RainTPL{
         else
           // parse the function
           $parsed_function = $function . $this->var_replace( $code[ 2 ], $tag_left_delimiter = null, $tag_right_delimiter = null, $php_left_delimiter = null, $php_right_delimiter = null, $loop_level );
-        
+
         //if code
         $compiled_code .=   "<?php echo $parsed_function; ?>";
       }
@@ -634,7 +634,7 @@ class RainTPL{
             $path = preg_replace( "#(/+)#", "/", $path );
             $path = preg_replace( "#(/\./+)#", "/", $path );
             $path = str_replace( "@not_replace@", "://", $path );
-            
+
             while( preg_match( '#\.\./#', $path ) ){
                 $path = preg_replace('#\w+/\.\./#', '', $path );
             }
@@ -805,7 +805,7 @@ class RainTPL{
 
       //if there's a function
       if( $function_var ){
-                
+
                 // check if there's a function or a static method and separate, function by parameters
         $function_var = str_replace("::", "@double_dot@", $function_var );
 
@@ -879,7 +879,7 @@ class RainTPL{
 
                             // check if there's an operator = in the variable tags, if there's this is an initialization so it will not output any value
                             $is_init_variable = preg_match( "/^[a-z_A-Z\.\[\](\-\>)]*=[^=]*$/", $extra_var );
-                            
+
                             //function associate to variable
                             $function_var = ( $extra_var and $extra_var[0] == '|') ? substr( $extra_var, 1 ) : null;
 
@@ -898,16 +898,16 @@ class RainTPL{
 
                             //transform .$variable in ["$variable"] and .variable in ["variable"]
                             $variable_path = preg_replace('/\.(\${0,1}\w+)/', '["\\1"]', $variable_path );
-                            
+
                             // if is an assignment also assign the variable to $this->var['value']
                             if( $is_init_variable )
                                 $extra_var = "=\$this->var['{$var_name}']{$variable_path}" . $extra_var;
 
-                                
+
 
                             //if there's a function
                             if( $function_var ){
-                                
+
                                     // check if there's a function or a static method and separate, function by parameters
                                     $function_var = str_replace("::", "@double_dot@", $function_var );
 
@@ -948,13 +948,13 @@ class RainTPL{
                                             $php_var = '$' . $var_name . $variable_path;
                             }else
                                     $php_var = '$' . $var_name . $variable_path;
-                            
+
                             // compile the variable for php
                             if( isset( $function ) )
                                     $php_var = $php_left_delimiter . ( !$is_init_variable && $echo ? 'echo ' : null ) . ( $params ? "( $function( $php_var, $params ) )" : "$function( $php_var )" ) . $php_right_delimiter;
                             else
                                     $php_var = $php_left_delimiter . ( !$is_init_variable && $echo ? 'echo ' : null ) . $php_var . $extra_var . $php_right_delimiter;
-                            
+
                             $html = str_replace( $tag, $php_var, $html );
 
 
