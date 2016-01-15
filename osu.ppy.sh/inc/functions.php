@@ -11,6 +11,7 @@
 	require_once(dirname(__FILE__) . "/Do.php");
 	require_once(dirname(__FILE__) . "/Print.php");
 	require_once(dirname(__FILE__) . "/RememberCookieHandler.php");
+	require_once dirname(__FILE__) . "/PlayStyleEnum.php";
 
 	// Set timezone to UTC
 	date_default_timezone_set('Europe/Rome');
@@ -1663,17 +1664,17 @@
 	 */
 	function getChangelogPage($p = 1) {
 		global $ChangelogConfig;
-		
+
 		// Retrieve data from changelog.json
 		$data = json_decode(file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json"), true);
 		$ret = array();
-		
+
 		// Get each commit
 		foreach ($data as $commit) {
 			$a = getUserRank($_SESSION["username"]) >= 4 ? true : false;
 			$b = false;
 			$labels = "";
-			
+
 			// Check forbidden commits
 			if (isset($ChangelogConfig["forbidden_commits"]))
 			{
@@ -1684,10 +1685,10 @@
 					}
 				}
 			}
-						
+
 			// Only get first line of commit
 			$commit["message"] = str_replace('-', ' ', explode("\n", $commit["message"])[0]);
-			
+
 			// Check forbidden words
 			if (isset($ChangelogConfig["forbidden_keywords"]) && !empty($ChangelogConfig["forbidden_keywords"]))
 			{
@@ -1698,7 +1699,7 @@
 					}
 				}
 			}
-			
+
 			// Add labels
 			if (isset($ChangelogConfig["labels"]))
 			{
@@ -1716,20 +1717,20 @@
 					if (strpos(strtolower($commit["message"]), strtolower($keyword)) !== false) {
 						$labels .= "<span class='label label-".$color."'>".$text."</span>	";
 					}
-					
+
 					// Remove label keyword from commit
 					$commit["message"] = str_ireplace($keyword, " ", $commit["message"]);
 				}
 			}
-			
+
 			// If we should not output this commit, let's skip it.
 			if ($b && !$a)
 				continue;
-			
+
 			// Change names if needed
 			if (isset($ChangelogConfig["change_name"][$commit["author"]]))
 				$commit["author"] = $ChangelogConfig["change_name"][$commit["author"]];
-				
+
 			// Build return array
 			$ret[] = array(
 				"username" => $commit["author"],
@@ -1803,6 +1804,24 @@
 			echo('<option value="'.$b["id"].'" '.$sel.'>'.$b["name"].'</option>');
 		}
 		echo('</select>');
+	}
+
+	/**
+	* BwToString()
+	* Bitwise enum number to string.
+	*
+	* @param (int) ($num) Number to convert to string
+	* @param (array) ($bwenum) Bitwise enum in the form of array, $EnumName => $int
+	* @param (string) ($sep) Separator
+	*/
+	function BwToString($num, $bwenum, $sep = "<br>") {
+		$ret = array();
+		foreach ($bwenum as $key => $value) {
+			if ($num & $value) {
+				$ret[] = $key;
+			}
+		}
+		return implode($sep, $ret);
 	}
 
 ?>

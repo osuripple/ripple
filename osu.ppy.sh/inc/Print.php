@@ -1155,6 +1155,9 @@ class P {
 		// Check if the user is in db
 		if ($GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", $u) && $u != 2)
 		{
+			// globals
+			global $PlayStyleEnum;
+
 			// Get all user stats for all modes and username
 			$userData = $GLOBALS["db"]->fetchAll("SELECT * FROM users_stats WHERE osu_id = ?", $u);
 			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE osu_id = ?", $u));
@@ -1324,6 +1327,7 @@ class P {
 			</tr>
 			<tr>');
 			if ($showCountry) echo('<td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td>');
+			// Playstyle
 			echo('
 			</tr>');
 
@@ -1333,6 +1337,8 @@ class P {
 				<td id="stats-name">Latest activity</td>
 				<td id="stats-value"><b>' . timeDifference(time(), $latestActivity) . '</b></td>
 			</tr>');
+			if ($userData[0]["play_style"] > 0)
+			echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData[0]["play_style"], $PlayStyleEnum) . '</b></td></tr>');
 
 			echo('</table>
 
@@ -1575,9 +1581,9 @@ class P {
 
 		// Global alert
 		P::GlobalAlert();
-		
+
 		// Changelog
-		getChangelog();	
+		getChangelog();
 	}
 
 
@@ -1805,6 +1811,8 @@ class P {
 	*/
 	static function userSettingsPage()
 	{
+		global $PlayStyleEnum;
+
 		// Maintenance check
 		P::MaintenanceStuff();
 
@@ -1863,6 +1871,18 @@ class P {
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon1" style="width:40%">Aka</span>
 			<input type="text" name="aka" class="form-control" value="'.$data["username_aka"].'" placeholder="Alternative username (not for login)" aria-describedby="basic-addon1" spellcheck="false">
+		</div>
+		<p style="line-height: 15px"></p>
+		<h3>Playstyle</h3>
+		<div style="text-align: left">
+		');
+		// Display playstyle checkboxes
+		$playstyle = $data["play_style"];
+		foreach ($PlayStyleEnum as $k => $v) {
+			echo("<br>
+			<input type='checkbox' name='ps_$k' value='1' " . ($playstyle & $v ? "checked" : "") . "> $k");
+		}
+		echo('
 		</div>
 		<p style="line-height: 15px"></p>
 		<button type="submit" class="btn btn-primary">Save settings</button>

@@ -1005,6 +1005,7 @@ class D {
 	*/
 	static function saveUserSettings()
 	{
+		global $PlayStyleEnum;
 		try
 		{
 			// Check if we are logged in
@@ -1021,8 +1022,17 @@ class D {
 			else
 				$c = $_POST["c"];
 
+			// Playmode stuff
+			$pm = 0;
+			foreach ($_POST as $key => $value) {
+				$i = str_replace("_", " ", substr($key, 3));
+				if ($value == 1 && substr($key, 0, 3) == "ps_" && isset($PlayStyleEnum[$i])) {
+					$pm += $PlayStyleEnum[$i];
+				}
+			}
+
 			// Save data in db
-			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, show_country = ?, username_aka = ?, safe_title = ? WHERE username = ?", array($c, $_POST["f"], $_POST["aka"], $_POST["st"], $_SESSION["username"]));
+			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, show_country = ?, username_aka = ?, safe_title = ?, play_style = ? WHERE username = ?", array($c, $_POST["f"], $_POST["aka"], $_POST["st"], $pm, $_SESSION["username"]));
 
 			// Update safe title cookie
 			updateSafeTitle();
