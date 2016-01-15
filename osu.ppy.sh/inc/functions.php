@@ -1670,6 +1670,7 @@
 		
 		// Get each commit
 		foreach ($data as $commit) {
+			$a = getUserRank($_SESSION["username"]) >= 4 ? true : false;
 			$b = false;
 			$labels = "";
 			
@@ -1701,6 +1702,11 @@
 			// Add labels
 			if (isset($ChangelogConfig["labels"]))
 			{
+				// Hidden label if user is an admin and commit is hidden
+				if ($a && $b)
+					$labels .= "<span class='label label-default'>Hidden</span>	";
+
+				// Other labels
 				foreach ($ChangelogConfig["labels"] as $label) {
 					// Add label if needed
 					$label = explode(",", $label);
@@ -1717,7 +1723,7 @@
 			}
 			
 			// If we should not output this commit, let's skip it.
-			if ($b)
+			if ($b && !$a)
 				continue;
 			
 			// Change names if needed
@@ -1729,7 +1735,7 @@
 				"username" => $commit["author"],
 				"content" => htmlspecialchars($commit["message"]),
 				"time" => $commit["date"],
-				"labels" => $labels
+				"labels" => $labels,
 			);
 		}
 		return $ret;
