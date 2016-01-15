@@ -1170,7 +1170,6 @@ class P {
 			// Get username style (for random funny stuff lmao)
 			$userStyle = current($GLOBALS["db"]->fetch("SELECT user_style FROM users_stats WHERE osu_id = ?", $u));
 
-
 			// Get stats for selected mode
 			$modeForDB = getPlaymodeText($m);
 			$modeReadable = getPlaymodeText($m, true);
@@ -1183,6 +1182,7 @@ class P {
 			$playCount = $userData[0]["playcount_" . $modeForDB];
 			$totalHits = $userData[0]["total_hits_" . $modeForDB];
 			$accuracy = $userData[0]["avg_accuracy_" . $modeForDB];
+			$replaysWatchedByOthers = $userData[0]["replays_watched_" . $modeForDB];
 			$country = $userData[0]["country"];
 			$showCountry = $userData[0]["show_country"];
 			$usernameAka = $userData[0]["username_aka"];
@@ -1321,11 +1321,9 @@ class P {
 			<tr>
 			<td id="stats-name">Maximum Combo</td>
 			<td id="stats-value"><b>'.number_format($maximumCombo).'</b></td>
-			</tr>
-			<tr>');
-			if ($showCountry) echo('<td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td>');
-			echo('
 			</tr>');
+			echo('<tr><td id="stats-name">Replays watched by others</td><td id="stats-value"><b>'.number_format($replaysWatchedByOthers).'</b></td></tr>');
+			if ($showCountry) echo('<tr><td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td></tr>');
 
 			// Show latest activity only if it's valid
 			if ($latestActivity != 0)

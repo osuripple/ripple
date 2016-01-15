@@ -1,12 +1,6 @@
 /* Update query goes here */
--- Adminer 4.2.3 MySQL dump
-
-DROP TABLE IF EXISTS `test`;
-CREATE TABLE `test` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `when` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
--- 2016-01-15 14:13:01
+ALTER TABLE `users_stats`
+ADD `replays_watched_std` int(11) unsigned NOT NULL DEFAULT '0' AFTER `total_score_std`,
+ADD `replays_watched_taiko` int(11) NOT NULL DEFAULT '0' AFTER `total_score_taiko`,
+ADD `replays_watched_ctb` int(11) NOT NULL DEFAULT '0' AFTER `total_score_ctb`,
+ADD `replays_watched_mania` int unsigned NOT NULL DEFAULT '0' AFTER `total_score_mania`;
