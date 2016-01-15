@@ -1644,10 +1644,11 @@
 			// We use only one page. For now. I'm tired. It's 23:46. Fuck everything.
 			//$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
 			$data = getChangelogPage();
+			echo("<table class='table table-striped table-hover'><thead><th style='width:10%'></th><th style='width:5%'></th><th style='width:75%'></th></thead><tbody>");
 			foreach ($data as $commit) {
-				echo sprintf("<div class='changelog-line' title='%s'>%s	<b>%s:</b> %s</div>", $commit["time"], $commit["labels"], $commit["username"], $commit["content"]);
+				echo sprintf("<tr class='%s'><td>%s</td><td><b>%s:</b></td><td><div title='%s'>%s</div></td></tr>", $commit['row'], $commit["labels"], $commit["username"], $commit["time"], $commit["content"]);
 			}
-			echo "<br><br>";
+			echo "</tbody></table><br><br>";
 			/*if ($_GET["page"] != 1) {
 				echo "<a href='index.php?p=17&page=" . ($_GET["page"] - 1) . "'>&lt; Previous page</a>";
 				echo " | ";
@@ -1705,7 +1706,14 @@
 			{
 				// Hidden label if user is an admin and commit is hidden
 				if ($a && $b)
+				{
+					$row = "warning";
 					$labels .= "<span class='label label-default'>Hidden</span>	";
+				}
+				else
+				{
+					$row = "default";
+				}
 
 				// Other labels
 				foreach ($ChangelogConfig["labels"] as $label) {
@@ -1737,6 +1745,7 @@
 				"content" => htmlspecialchars($commit["message"]),
 				"time" => $commit["date"],
 				"labels" => $labels,
+				"row" => $row
 			);
 		}
 		return $ret;
