@@ -27,7 +27,28 @@
 		// Check replay
 		if ($replayData)
 		{
-			// Replay exists, output content
+			// Replay exists, check if we want to watch someone else's replay
+			// If so, update replays watched by others for that user
+
+			// Remove last space from $whois, because osu has memes and sends
+			// username with a space at the end when submitting scores
+			$whois = rtrim(current($GLOBALS["db"]->fetch("SELECT username FROM scores WHERE id = ?", array($_GET["c"]))), " ");
+
+			if ($whois != $_GET["u"])
+			{
+				//$mode = current($GLOBALS["db"]->fetch("SELECT play_mode FROM scores WHERE id = ?", array($_GET["c"])));
+				$mode = $_GET["m"];
+				switch($mode)
+				{
+					case 0: $modeForDB = "std"; break;
+					case 1: $modeForDB = "taiko"; break;
+					case 2: $modeForDB = "ctb"; break;
+					case 3: $modeForDB = "mania"; break;
+				}
+				$GLOBALS["db"]->execute("UPDATE users_stats SET replays_watched_".$modeForDB."=replays_watched_".$modeForDB."+1 WHERE username = ?", array($whois));
+			}
+
+			// Output replay content
 			echo($replayData);
 		}
 		else
