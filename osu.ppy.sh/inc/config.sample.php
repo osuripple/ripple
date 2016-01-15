@@ -46,6 +46,8 @@
 	$ChangelogConfig = array(
 		// If in the commit message any of these words appear, don't show the commit in the changelog.
 		"forbidden_keywords" => array("[HIDE]", "[SECRET]"),
+		// These commits will be hidden
+		"forbidden_commits" => array(),
 		// Labels (keyword,label text,color)
 		"labels" => array("[FIX],fix,danger", "[WEB],web,info", "[BANCHO],bancho,warning", "[SCORES],scores,primary", "[NEW],new,success"),
 		// If you want to change names from what they appear in the git logs, you can set here a different name for you and your project contributors.
