@@ -1673,30 +1673,47 @@
 			$b = false;
 			$labels = "";
 			
+			// Check forbidden commits
+			if (isset($ChangelogConfig["forbidden_commits"]))
+			{
+				foreach ($ChangelogConfig["forbidden_commits"] as $hash) {
+					if (strpos($commit["commit"], strtolower($hash)) !== false) {
+						$b = true;
+						break;
+					}
+				}
+			}
+						
 			// Only get first line of commit
 			$commit["message"] = str_replace('-', ' ', explode("\n", $commit["message"])[0]);
 			
 			// Check forbidden words
-			foreach ($ChangelogConfig["forbidden_keywords"] as $word) {
-				if (strpos(strtolower($commit["message"]), strtolower($word)) !== false) {
-					$b = true;
-					break;
+			if (isset($ChangelogConfig["forbidden_keywords"]) && !empty($ChangelogConfig["forbidden_keywords"]))
+			{
+				foreach ($ChangelogConfig["forbidden_keywords"] as $word) {
+					if (strpos(strtolower($commit["message"]), strtolower($word)) !== false) {
+						$b = true;
+						break;
+					}
 				}
 			}
 			
 			// Add labels
-			foreach ($ChangelogConfig["labels"] as $label) {
-				// Add label if needed
-				$label = explode(",", $label);
-				$keyword = $label[0];
-				$text = $label[1];
-				$color = $label[2];
-				if (strpos(strtolower($commit["message"]), strtolower($keyword)) !== false) {
-					$labels .= "<span class='label label-".$color."'>".$text."</span>	";
+			if (isset($ChangelogConfig["labels"]))
+			{
+				foreach ($ChangelogConfig["labels"] as $label) {
+					// Add label if needed
+					$label = explode(",", $label);
+					$keyword = $label[0];
+					$text = $label[1];
+					$color = $label[2];
+					if (strpos(strtolower($commit["message"]), strtolower($keyword)) !== false) {
+						$labels .= "<span class='label label-".$color."'>".$text."</span>	";
+					}
+					
+					// Remove label keyword from commit
+					$commit["message"] = str_ireplace($keyword, " ", $commit["message"]);
 				}
-				
-				// Remove label keyword from commit
-				$commit["message"] = str_ireplace($keyword, " ", $commit["message"]);
 			}
 			
 			// If we should not output this commit, let's skip it.
