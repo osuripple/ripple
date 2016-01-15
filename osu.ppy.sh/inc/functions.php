@@ -425,7 +425,7 @@
 
 	/*
 	* getUserCountry
-	* Does a call to ipinfo.io to get the user's IP address.
+	* Does a call to ip.zxq.co to get the user's IP address.
 	*
 	* @returns (string) A 2-character string containing the user's country.
 	*/
@@ -434,10 +434,10 @@
 		if (!$ip) {
 			return "XX"; // Return XX if $ip isn't valid.
 		}
-		// otherwise, retrieve the contents from ipinfo.io's API
-		$data = get_contents_http("http://ipinfo.io/$ip/country");
+		// otherwise, retrieve the contents from ip.zxq.co's API
+		$data = get_contents_http("http://ip.zxq.co/$ip/country");
 		// And return the country. If it's set, that is.
-		return ($data != "undefined" ? $data : "XX");
+		return ($data != "" ? $data : "XX");
 	}
 
 	function countryCodeToReadable($cc) {
