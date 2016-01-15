@@ -188,6 +188,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Username, password and allowed are ok
+			// Update latest activity
+			updateLatestActivity($username);
+
 			// Get user data and stats
 			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users WHERE username = ?", array($username));
 			$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
