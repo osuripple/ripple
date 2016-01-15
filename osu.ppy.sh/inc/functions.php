@@ -624,7 +624,7 @@
 		// Plural
 		if ($n > 1) $s = "s"; else $s = "";
 
-		return $n." ".$i.$s." ago (".$d.")";
+		return $n." ".$i.$s." ago";
 	}
 
 
