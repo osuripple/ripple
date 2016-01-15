@@ -1833,4 +1833,21 @@
 		return implode($sep, $ret);
 	}
 
+	/*
+	 * bloodcatDirectString()
+	 * Return a osu!direct-like string for a specific song
+	 * from a bloodcat song array
+	 *
+	 * @param (array) ($arr) Bloodcat data array
+	 * @return (string) osu!direct-like string
+	 */
+	function bloodcatDirectString($arr)
+	{
+		$s = $arr['id']."|".$arr['artist']."|".$arr['title']."|".$arr['creator']."|".$arr['status']."|10.00000|".$arr['synced']."|".$arr['id']."|".$arr['beatmaps'][0]['id']."|0|0|0||";
+		foreach ($arr['beatmaps'] as $diff)
+			$s .= $diff['name']."@".$diff['mode'].",";
+		$s = substr($s, 0, -1);
+		return $s;
+	}
+
 ?>
