@@ -1564,6 +1564,22 @@ class P {
 		echo(file_get_contents("./html_static/about.html"));
 	}
 
+	/*
+	* ChangelogPage
+	* Prints the Changelog page.
+	*/
+	static function Changelogpage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+		
+		// Changelog
+		getChangelog();	
+	}
+
 
 	/*
 	* ExceptionMessage
