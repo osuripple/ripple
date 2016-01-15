@@ -41,15 +41,15 @@
 	$CRON["adminExec"] = false;												// If true, "Run cron.php" button will run cron.php from command line with exec. If false, the button will run cron.php from browser. Set to false if you are on a windows server
 
 	/*
-	 * Gitlab changelog configuration
+	 * Changelog configuration
 	 */
-	$GitLabConfig = array(
-		"repo_id" => "", // Find it via the GitLab API.
-		"private_token" => "", // You can find it on https://gitlab.com/profile/account
+	$ChangelogConfig = array(
 		// If in the commit message any of these words appear, don't show the commit in the changelog.
-		"forbidden_keywords" => array("[DONTDISPLAY]", "fuck php"),
-    // If you want to change names from what they appear in the git logs, you can set here a different name for you and your project contributors.
-		"change_name" => array("cunt" => "anthill", "fuck" => "firetruck")
+		"forbidden_keywords" => array("[HIDE]", "[SECRET]"),
+		// Labels (keyword,label text,color)
+		"labels" => array("[FIX],fix,danger", "[WEB],web,info", "[BANCHO],bancho,warning", "[SCORES],scores,primary", "[NEW],new,success"),
+		// If you want to change names from what they appear in the git logs, you can set here a different name for you and your project contributors.
+		"change_name" => array("fuck" => "a donkey", "suck" => "a duck")
 	);
 
 	/*
