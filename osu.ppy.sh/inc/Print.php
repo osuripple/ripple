@@ -1325,12 +1325,14 @@ class P {
 			<td id="stats-name">Maximum Combo</td>
 			<td id="stats-value"><b>'.number_format($maximumCombo).'</b></td>
 			</tr>
-			<tr>');
-			if ($showCountry) echo('<td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td>');
-			echo('
+			<tr>
+				<td id="stats-name">Replays watched by others</td>
+				<td id="stats-value"><b>'.number_format($replaysWatchedByOthers).'</b></td>
 			</tr>');
-			echo('<tr><td id="stats-name">Replays watched by others</td><td id="stats-value"><b>'.number_format($replaysWatchedByOthers).'</b></td></tr>');
-			if ($showCountry) echo('<tr><td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td></tr>');
+
+			// Country
+			if ($showCountry)
+				echo('<tr><td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td></tr>');
 
 			// Show latest activity only if it's valid
 			if ($latestActivity != 0)
@@ -1338,16 +1340,14 @@ class P {
 				<td id="stats-name">Latest activity</td>
 				<td id="stats-value"><b>' . timeDifference(time(), $latestActivity) . '</b></td>
 			</tr>');
+
 			// Playstyle
 			if ($userData[0]["play_style"] > 0)
-			echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData[0]["play_style"], $PlayStyleEnum) . '</b></td></tr>');
+				echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData[0]["play_style"], $PlayStyleEnum) . '</b></td></tr>');
 
 			echo('</table>
-
 			</div>
-
 			</div>
-
 			<div id ="userpage-plays">');
 
 			// Print top plays table (only if we have them)
