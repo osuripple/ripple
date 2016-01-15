@@ -30,6 +30,8 @@ git log --pretty=format:'{%n  "commit": "%H",%n  "author": "%an <%ae>",%n  "date
 
 
 # Trigger the post-update script
+cd ..
+cd ci-system
 if ! cmp post-update.php post-update.php~ >/dev/null 2>&1
 then
   php post-update.php
