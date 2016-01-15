@@ -231,7 +231,7 @@
 				case 16: if (isset($_GET["id"]) && intval($_GET["id"])) getDocPageAndParse(intval($_GET["id"])); else getDocPageAndParse(NULL); break;
 
 				// Show changelog
-				case 17: getChangelog(); break;
+				case 17: P::ChangelogPage(); break;
 
 				// Password recovery
 				case 18: P::PasswordRecovery(); break;
