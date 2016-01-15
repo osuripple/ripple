@@ -1632,7 +1632,7 @@
 	 ** CHANGELOG FUNCTIONS  **
 	 **************************/
 	function getChangelog() {
-		global $GitLabConfig;
+		//global $GitLabConfig;
 		sessionCheck();
 		echo('<p align="center"><h1><i class="fa fa-bug"></i>	Changelog</h1>');
 		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are published to the master branch.<br>Hover a change to know when it was done.<br><br>');
@@ -1644,7 +1644,7 @@
 			//$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
 			$data = getChangelogPage();
 			foreach ($data as $commit) {
-				echo sprintf("<div class='changelog-line' title='%s'><b>%s:</b> %s</div>", $commit["time"], $commit["username"], $commit["content"]);
+				echo sprintf("<div class='changelog-line' title='%s'>%s	<b>%s:</b> %s</div>", $commit["time"], $commit["labels"], $commit["username"], $commit["content"]);
 			}
 			echo "<br><br>";
 			/*if ($_GET["page"] != 1) {
@@ -1662,31 +1662,57 @@
 	 * @param (int) ($p) Page. Optional. Default is 1.
 	 */
 	function getChangelogPage($p = 1) {
-		global $GitLabConfig;
-		// retrieve data from changelog.json
-		//$data = json_decode(get_contents_http("https://gitlab.com/api/v3/projects/" . $GitLabConfig["repo_id"] . "/repository/commits?private_token=" . $GitLabConfig["private_token"] . "&page=" . ($p - 1) . "&ref_name=master"), true);
+		global $ChangelogConfig;
+		
+		// Retrieve data from changelog.json
 		$data = json_decode(file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json"), true);
 		$ret = array();
+		
+		// Get each commit
 		foreach ($data as $commit) {
 			$b = false;
+			$labels = "";
+			
 			// Only get first line of commit
-			$commit["message"] = explode("\n", $commit["message"]);
-			$commit["message"] = $commit["message"][0];
-			foreach ($GitLabConfig["forbidden_keywords"] as $word) {
-				if (strpos(strtolower($commit["message"]), $word) !== false) {
+			$commit["message"] = str_replace('-', ' ', explode("\n", $commit["message"])[0]);
+			
+			// Check forbidden words
+			foreach ($ChangelogConfig["forbidden_keywords"] as $word) {
+				if (strpos(strtolower($commit["message"]), strtolower($word)) !== false) {
 					$b = true;
 					break;
 				}
 			}
+			
+			// Add labels
+			foreach ($ChangelogConfig["labels"] as $label) {
+				// Add label if needed
+				$label = explode(",", $label);
+				$keyword = $label[0];
+				$text = $label[1];
+				$color = $label[2];
+				if (strpos(strtolower($commit["message"]), strtolower($keyword)) !== false) {
+					$labels .= "<span class='label label-".$color."'>".$text."</span>	";
+				}
+				
+				// Remove label keyword from commit
+				$commit["message"] = str_ireplace($keyword, " ", $commit["message"]);
+			}
+			
 			// If we should not output this commit, let's skip it.
 			if ($b)
 				continue;
-			if (isset($GitLabConfig["change_name"][$commit["author"]]))
-				$commit["author"] = $GitLabConfig["change_name"][$commit["author"]];
+			
+			// Change names if needed
+			if (isset($ChangelogConfig["change_name"][$commit["author"]]))
+				$commit["author"] = $ChangelogConfig["change_name"][$commit["author"]];
+				
+			// Build return array
 			$ret[] = array(
-				"username" => explode(' ', $commit["author"])[0],
-				"content" => htmlspecialchars(str_replace('-', ' ', $commit["message"])),
-				"time" => $commit["date"]
+				"username" => $commit["author"],
+				"content" => htmlspecialchars($commit["message"]),
+				"time" => $commit["date"],
+				"labels" => $labels
 			);
 		}
 		return $ret;
