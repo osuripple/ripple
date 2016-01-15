@@ -1327,7 +1327,6 @@ class P {
 			</tr>
 			<tr>');
 			if ($showCountry) echo('<td id="stats-name">From</td><td id="stats-value"><b>'. countryCodeToReadable($country) .'</b></td>');
-			// Playstyle
 			echo('
 			</tr>');
 			echo('<tr><td id="stats-name">Replays watched by others</td><td id="stats-value"><b>'.number_format($replaysWatchedByOthers).'</b></td></tr>');
@@ -1339,6 +1338,7 @@ class P {
 				<td id="stats-name">Latest activity</td>
 				<td id="stats-value"><b>' . timeDifference(time(), $latestActivity) . '</b></td>
 			</tr>');
+			// Playstyle
 			if ($userData[0]["play_style"] > 0)
 			echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData[0]["play_style"], $PlayStyleEnum) . '</b></td></tr>');
 
