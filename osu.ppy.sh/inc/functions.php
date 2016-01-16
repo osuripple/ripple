@@ -850,7 +850,7 @@
 			}
 
 			// Check the md5 password is valid
-			if ($uPass["password_md5"] != (crypt(md5($p), "$2y$" . base64_decode($uPass["salt"])))) {
+			if ($uPass["password_md5"] != (crypt($p, "$2y$" . base64_decode($uPass["salt"])))) {
 				throw new Exception;
 			}
 
