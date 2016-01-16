@@ -34,13 +34,13 @@
 	 */
 	function binStr($str) {
 		$r = "";
-		
+
 		// Add 0B and length bytes
 		$r .= "\x0B".pack("c", strlen($str));
-		
+
 		// Add Hex ASCII codes
 		$r .= $str;
-		
+
 		// Return result
 		return $r;
 	}
@@ -85,7 +85,7 @@
 		$r .= binStr($msg);
 		return $r;
 	}
-	
+
 	/*
 	 * banchoWeb
 	 * Prints the bancho web meme
@@ -97,7 +97,7 @@
           (_)              /  /
    ______ __ ____   ____  /  /____
   /  ___/  /  _  \/  _  \/  /  _  \
- /  /  /  /  /_) /  /_) /  /  ____/   
+ /  /  /  /  /_) /  /_) /  /  ____/
 /__/  /__/  .___/  .___/__/ \_____/
         /  /   /  /
        /__/   /__/
@@ -122,7 +122,7 @@ ripple 1.5 <u><strike>(c)</strike> kwisk && phwr</u>
 we are actually reverse engineering bancho successfully. kinda of.
 </pre>');
 	}
-	
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -139,7 +139,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		header("Content-Type: text/html; charset=UTF-8");
 		header("Vary: Accept-Encoding");
 		header("Content-Encoding: gzip");
-		
+
 		// Check maintenance
 		if (checkBanchoMaintenance())
 		{
@@ -165,8 +165,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$username = substr($data[0], 0, -1);
 				$password = substr($data[1], 0, -1);
 
+				file_put_contents("test.txt", "ESCILE");
 				// Check user/password
-				if (!$GLOBALS["db"]->fetch("SELECT * FROM users WHERE username = ? AND password_md5 = ?", array($username, $password))) {
+				if (!checkOsuUser($username, $password)) {
 					throw new Exception("\xFF");
 				}
 
@@ -243,17 +244,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$userGamemode = "\x00";
 			$userAccuracy = $userStats["avg_accuracy_std"];
 			$userPP = 0;	// Tillerino is sad
-		
+
 			// Output variable because multiple outGz are bugged.
 			$output = "";
-			
+
 			// Standard stuff (login OK, lock client, memes etc)
 			$output .= "\x5C\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x04\x00\x00\x00";
 			// User ID
 			$output .= pack("L", $userID);
 			// More standard stuff
 			$output .= "\x4B\x00\x00\x04\x00\x00\x00\x13\x00\x00\x00\x47\x00\x00";
-			
+
 			// Supporter/QAT/Friends stuff
 			$output .= "\x04\x00\x00\x00".$userSupporter."\x00\x00\x00";
 
@@ -262,7 +263,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= pack("L", 100);
 			$output .= pack("L", 100);
 			$output .= "";*/
-			
+
 			// Other stuff
 			$output .= "\x53\x00\x00";
 			// Something strange related to username length. Wtf peppy?
@@ -300,7 +301,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= pack("L", $userRank);
 			// PP
 			$output .= pack("S", $userPP);
-			
+
 			// Online users info
 			// Some flags
 			$output .= "\x53\x00\x00";
@@ -380,7 +381,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		{
 			// Other packets
 			$output = "";
-			
+
 			// Main menu icon
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 			if ($msg != "")
@@ -388,15 +389,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
 				$output .= binStr($msg);
 			}
-			
+
 			outGz($output);
-			
+
 			// Welcome to ripple message
 			/*$msg = "Welcome to Ripple!";
 			$output .= "\x18\x00\x00";
 			$output .= pack("L", strlen($msg)+2);
 			$output .= binStr($msg);*/
-			
+
 			// Test message
 			/*$output = "";
 			$output .= sendMessage("peppy", "#osu", "[DEBUG] Pong", true);*/

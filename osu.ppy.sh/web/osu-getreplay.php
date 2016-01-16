@@ -18,7 +18,7 @@
 
 		// Check ban
 		if (getUserAllowed($_GET["u"]) == 0) {
-			throw new Exception;			
+			throw new Exception;
 		}
 
 		// Get replay content

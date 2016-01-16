@@ -841,8 +841,16 @@
 				throw new Exception;
 			}
 
-			// Check username/password
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ? AND password_md5 = ?", array($u, $p))) {
+			// Get password and salt
+			$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($u));
+
+			// Check it exists
+			if (!$uPass) {
+				throw new Exception;
+			}
+
+			// Check the md5 password is valid
+			if ($uPass["password_md5"] != (crypt(md5($p), "$2y$" . base64_decode($uPass["salt"])))) {
 				throw new Exception;
 			}
 
@@ -1850,4 +1858,41 @@
 		return $s;
 	}
 
-?>
+	/*
+	* isPasswordDumb()
+	* Check whether password is dumb.
+	*
+	* @param (string) ($pass) the password to check for dumbness.
+	* @returns (bool) true = dumb; false = not dumb
+	*/
+	function isPasswordDumb($pass)
+	{
+		$dumb = array(
+			"123456",
+			"password",
+			"12345678",
+			"qwerty",
+			"abc123",
+			"123456789",
+			"111111",
+			"1234567",
+			"iloveyou",
+			"adobe123",
+			"123123",
+			"admin",
+			"1234567890",
+			"letmein",
+			"photoshop",
+			"1234",
+			"monkey",
+			"shadow",
+			"sunshine",
+			"12345",
+			"password1",
+			"princess",
+			"azerty",
+			"trustno1",
+			"000000",
+		);
+		return in_array($pass, $dumb);
+	}

@@ -125,7 +125,7 @@ class D {
 
 			// Hash the password, the unsecure md5 way that however must be done because the osu! client requires it.
 			// #BlamePeppy2015
-			$md5Password = md5($_POST["p1"]);
+			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);;
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
@@ -182,7 +182,7 @@ class D {
 			}
 
 			// god damn i hate people
-			if (in_array($_POST["p1"], array("123456", "password", "12345678", "qwerty", "abc123", "123456789", "111111", "1234567", "iloveyou", "adobe123", "123123", "admin", "1234567890", "letmein", "photoshop", "1234", "monkey", "shadow", "sunshine", "12345", "password1", "princess", "azerty", "trustno1", "000000"))) {
+			if (isPasswordDumb($_POST["p1"])) {
 				throw new Exception(3);
 			}
 
@@ -200,7 +200,7 @@ class D {
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password
-			$newMd5Password = md5($_POST["p1"]);
+			$newMd5Password = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
 
 			// Change both passwords and salt
 			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newMd5Password, $_SESSION["username"]));
@@ -338,7 +338,7 @@ class D {
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password
-			$newMd5Password = md5($_POST["p1"]);
+			$newMd5Password = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
 
 			// Change both passwords and salt
 			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newMd5Password, $_POST["user"]));
