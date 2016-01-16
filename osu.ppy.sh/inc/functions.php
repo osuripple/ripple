@@ -845,7 +845,7 @@
 			$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($u));
 
 			// Check it exists
-			if (!$uPass) {
+			if ($uPass === FALSE) {
 				throw new Exception;
 			}
 

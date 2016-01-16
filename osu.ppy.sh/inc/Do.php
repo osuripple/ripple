@@ -118,14 +118,14 @@ class D {
 			}
 
 			// password_hash options
-			$options = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$options = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 
 			// Hash the password, the secure way
 			$securePassword = crypt($_POST["p1"], "$2y$" . $options["salt"]);
 
 			// Hash the password, the unsecure md5 way that however must be done because the osu! client requires it.
 			// #BlamePeppy2015
-			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);;
+			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
@@ -196,7 +196,7 @@ class D {
 			}
 
 			// Calculate new secure password
-			$newOptions = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password
@@ -334,7 +334,7 @@ class D {
 			}
 
 			// Calculate new secure password
-			$newOptions = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password

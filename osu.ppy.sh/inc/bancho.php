@@ -165,7 +165,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$username = substr($data[0], 0, -1);
 				$password = substr($data[1], 0, -1);
 
-				file_put_contents("test.txt", "ESCILE");
 				// Check user/password
 				if (!checkOsuUser($username, $password)) {
 					throw new Exception("\xFF");
