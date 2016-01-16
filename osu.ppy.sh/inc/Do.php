@@ -125,7 +125,7 @@ class D {
 
 			// Hash the password, the unsecure md5 way that however must be done because the osu! client requires it.
 			// #BlamePeppy2015
-			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);;
+			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
