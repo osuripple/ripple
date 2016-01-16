@@ -118,7 +118,7 @@ class D {
 			}
 
 			// password_hash options
-			$options = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$options = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 
 			// Hash the password, the secure way
 			$securePassword = crypt($_POST["p1"], "$2y$" . $options["salt"]);
@@ -196,7 +196,7 @@ class D {
 			}
 
 			// Calculate new secure password
-			$newOptions = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password
@@ -334,7 +334,7 @@ class D {
 			}
 
 			// Calculate new secure password
-			$newOptions = array('cost' => 9, 'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM));
+			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
 
 			// Calculate new unsecure password
