@@ -210,8 +210,5 @@
 			echo("<br>\n<b><font color='green'>Execution time OK!</font></b>");
 		else
 			echo("<br>\n<b><font color='red'>The script takes much time to run. Please consider incrementing your max_execution_time in php.ini</font></b>");
-
-		// Debug stuff
-		$GLOBALS["db"]->execute("INSERT INTO `test` (`when`) VALUES (?);", array(time()));
 	}
 ?>
