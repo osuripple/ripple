@@ -1,6 +1,6 @@
 <?php
 // Crop all avatars to 100x100 resolution
-include dirname(__FILE__) . "/inc/functions.php";
+include dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php";
 $users = $GLOBALS["db"]->fetchAll("SELECT id FROM users");
 foreach ($users as $user) {
 	$avatar = dirname(__FILE__) . "/../a.ppy.sh/avatars/".$user["id"].".png";
