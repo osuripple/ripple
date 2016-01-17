@@ -1152,11 +1152,27 @@ class P {
 		// Global alert
 		P::GlobalAlert();
 
-		// Check if the user is in db
-		if ($GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", $u) && $u != 2)
+		try
 		{
+			// Check if the user is in db
+			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", $u) || $u == 2)
+				throw new Exception("User not found");
+
 			// globals
 			global $PlayStyleEnum;
+
+			// Check banned status
+			$allowed = current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE osu_id = ?", array($u)));
+
+			// Throw exception if user is banned/not activated
+			// print message if we are admin
+			if ($allowed == 0)
+			{
+				if (getUserRank($_SESSION["username"]) <= 2)
+					throw new Exception("User banned");
+				else
+					echo('<div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i>	<b>User banned.</b></div>');
+			}
 
 			// Get all user stats for all modes and username
 			$userData = $GLOBALS["db"]->fetchAll("SELECT * FROM users_stats WHERE osu_id = ?", $u);
@@ -1397,9 +1413,9 @@ class P {
 
 			echo("</div>");
 		}
-		else
+		catch (Exception $e)
 		{
-			echo('<br><b>User not found.</b>');
+			echo('<br><div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i>	<b>'.$e->getMessage().'</b></div>');
 		}
 	}
 
