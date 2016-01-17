@@ -1949,7 +1949,9 @@ class P {
 		<form action="submit.php" method="POST" enctype="multipart/form-data">
 		<input name="action" value="changeAvatar" hidden>
 		<p align="center"><input type="file" name="file"></p>
-		<i>1MB max. .jpg, .jpeg or <b>.png (reccommended)</b></i>
+		<i>Max size: 1MB<br>
+		.jpg, .jpeg or <b>.png (reccommended)</b><br>
+		Recommended size: 100x100</i>
 		<p style="line-height: 15px"></p>
 		<button type="submit" class="btn btn-primary">Change avatar</button>
 		</form>

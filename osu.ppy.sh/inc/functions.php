@@ -12,6 +12,7 @@
 	require_once(dirname(__FILE__) . "/Print.php");
 	require_once(dirname(__FILE__) . "/RememberCookieHandler.php");
 	require_once dirname(__FILE__) . "/PlayStyleEnum.php";
+	require_once dirname(__FILE__) . "/resize.php";
 
 	// Set timezone to UTC
 	date_default_timezone_set('Europe/Rome');

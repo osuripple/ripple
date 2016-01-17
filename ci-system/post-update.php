@@ -1,8 +1,9 @@
 <?php
-include dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php";
-$users = $GLOBALS["db"]->fetchAll("SELECT id, password_md5, salt FROM users");
+// Crop all avatars to 100x100 resolution
+include dirname(__FILE__) . "/inc/functions.php";
+$users = $GLOBALS["db"]->fetchAll("SELECT id FROM users");
 foreach ($users as $user) {
-	echo "updating $user[id]...\n";
-	$pass = crypt($user["password_md5"], "$2y$" . base64_decode($user["salt"]));
-	$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE id = ?", array($pass, $user["id"]));
+	$avatar = dirname(__FILE__) . "/../a.ppy.sh/avatars/".$user["id"].".png";
+	if (file_exists($avatar))
+		smart_resize_image($avatar, null, 100, 100, false , $avatar, false, false, 100);
 }

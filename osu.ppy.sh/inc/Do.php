@@ -1113,10 +1113,15 @@ class D {
 				throw new Exception(3);
 			}
 
-			// Convert to png
-			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png")) {
+			// Resize
+			if(!smart_resize_image($_FILES["file"]["tmp_name"], null, 100, 100, false , dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png", false, false, 100)) {
 				throw new Exception(4);
 			}
+
+			/* "Convert" to png
+			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png")) {
+				throw new Exception(4);
+			}*/
 
 			// Done, redirect to success page
 			redirect("index.php?p=5&s=ok");
