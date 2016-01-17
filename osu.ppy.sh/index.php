@@ -103,22 +103,22 @@
     ?>
 
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+    <script src="./js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
 
     <!-- Bootstrap Select JavaScript -->
-    <script src="js/bootstrap-select.min.js"></script>
+    <script src="./js/bootstrap-select.min.js"></script>
 
     <!-- Bootstrap Font Awesome Picker JavaScript -->
-    <script src="js/fontawesome-iconpicker.min.js"></script>
+    <script src="./js/fontawesome-iconpicker.min.js"></script>
 
     <!-- Bootstrap Color Picker JavaScript -->
-    <script src="js/bootstrap-colorpicker.min.js"></script>
+    <script src="./js/bootstrap-colorpicker.min.js"></script>
 
     <!-- SCEditor JavaScript -->
-    <script type="text/javascript" src="js/jquery.sceditor.bbcode.js"></script>
+    <script src="./js/jquery.sceditor.bbcode.js"></script>
 
     <!-- Custom JavaScript for every page -->
     <script type="text/javascript">

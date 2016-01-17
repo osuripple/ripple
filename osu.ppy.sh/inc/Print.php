@@ -1129,6 +1129,13 @@ class P {
 	*/
 	static function HomePage()
 	{
+		// Home success message
+		$success = array(
+			"forgetDone" => "Done! Your \"Stay logged in\" tokens have been deleted from the database."
+		);
+		if (!empty($_GET["s"]) && isset($success[$_GET["s"]]))
+			P::SuccessMessage($success[$_GET["s"]]);
+
 		// 1.5 -- Changed ripple in ripple 1.5
 		echo('<p align="center"><br><image class="animated bounce" src="./images/logo-256.png"></image><br></p><h1 class="animated bounceIn">Welcome to ripple 1.5</h1>');
 
@@ -1742,7 +1749,7 @@ class P {
 	* UserCPPage
 	* Prints the user cp page. WIP.
 	*/
-	static function UserCPPage()
+	/*static function UserCPPage()
 	{
 		// Maintenance check
 		P::MaintenanceStuff();
@@ -1784,7 +1791,7 @@ class P {
 		echo('<strike><a href="#"><b>Phwr\'s server switcher</b></a></strike><br>');
 		echo('<a href="http://y.zxq.co/ngomne.zip">Kwisk\'s server switcher</a><br>');
 		echo('<br><a href="http://mattermost.zxq.co/ripple">Get in touch with the team</a>');
-	}
+	}*/
 
 
 	/*
@@ -1841,7 +1848,7 @@ class P {
 		$data = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", $_SESSION["username"]);
 
 		// Title
-		echo('<div id="narrow-content"><h1><i class="fa fa-user"></i>	User settings</h1>');
+		echo('<div id="narrow-content"><h1><i class="fa fa-cog"></i>	User settings</h1>');
 
 		// Print Exception if set
 		$exceptions = array("Nice troll.");

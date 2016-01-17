@@ -127,7 +127,7 @@
 				case 3: echo('<title>Ripple - Register</title>'); break;
 				case 4: echo('<title>Ripple - User CP</title>'); break;
 				case 5: echo('<title>Ripple - Change avatar</title>'); break;
-				case 9: case 10: case 11: echo('<title>Ripple - Coming soon</title>'); break;
+				case 9: case 10: case 11: case 22: echo('<title>Ripple - Coming soon</title>'); break;
 				case 6: echo('<title>Ripple - Edit user settings</title>'); break;
 				case 7: echo('<title>Ripple - Change password</title>'); break;
 				case 8: echo('<title>Ripple - Edit userpage</title>'); break;
@@ -198,11 +198,11 @@
 				// Register page (guest)
 				case 3:	if (!checkLoggedIn()) P::RegisterPage(); else P::LoggedInAlert(); break;
 
-				// User CP page (protected)
-				case 4: sessionCheck(); P::UserCPPage(); break;
+				// User CP page (unused)
+				// case 4: sessionCheck(); P::UserCPPage(); break;
 
 				// Coming soon
-				case 9: case 10: case 11: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
+				case 9: case 10: case 11: case 22: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
 
 				// Edit avatar (protected)
 				case 5: sessionCheck(); P::ChangeAvatarPage(); break;
@@ -319,33 +319,81 @@
 	 */
 	function printNavbar()
 	{
-		// Navbar start
+		// Navbar stuff
 		echo('<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="index.php">Ripple</a>
-				</div>
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">');
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="index.php">Ripple</a>
+					</div>
+					<div class="navbar-collapse collapse">');
 
-		// Navbar menu, add menu stuff here
-		if (!checkLoggedIn()) echo('<li><a href="index.php?p=2"><i class="fa fa-sign-in"></i>	Login</a></li>');
-		if (!checkLoggedIn()) echo('<li><a href="index.php?p=3"><i class="fa fa-plus-circle"></i>	Sign up</a></li>');
-		if (!checkLoggedIn()) echo('<li><a href="index.php?p=21"><i class="fa fa-info"></i>	About</a></li>');
-		if (checkLoggedIn()) echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
-		if (checkLoggedIn()) echo('<li><a href="index.php?p=4"><i class="fa fa-user"></i>	User Panel</a></li>');
-		echo('<li><a href="http://bloodcat.com/osu/"><i class="fa fa-music"></i>	Beatmaps</a></li>');
-		if (checkLoggedIn()) echo('<li><a href="index.php?p=17"><i class="fa fa-bug"></i>	Changelog</a></li>');
-		echo('<li><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>');
-		if (!checkLoggedIn()) echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
-		if (checkLoggedIn() && getUserRank($_SESSION["username"]) >= 4) echo('<li><a href="index.php?p=100"><i class="fa fa-cog"></i>	<b>Admin Panel</b></a></li>');
-		if (checkLoggedIn()) echo('<li><a href="submit.php?action=logout"><i class="fa fa-sign-out"></i>	<b>Logout</b></a></li>');
+		// Left elements
+		echo('<ul class="nav navbar-nav navbar-left">');
+
+		// Not logged left elements
+		if (!checkLoggedIn())
+		{
+			echo('<li><a href="index.php?p=2"><i class="fa fa-sign-in"></i>	Login</a></li>');
+			echo('<li><a href="index.php?p=3"><i class="fa fa-plus-circle"></i>	Sign up</a></li>');
+			echo('<li><a href="index.php?p=20"><i class="fa fa-key"></i>	Beta keys</a></li>');
+			echo('<li class="dropdown">
+					<a data-toggle="dropdown"><i class="fa fa-question-circle"></i>	Help & Info<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
+					</ul>
+				</li>');
+		}
+
+		// Logged in left elements
+		if (checkLoggedIn())
+		{
+			echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
+			echo('<li><a href="http://bloodcat.com/osu"><i class="fa fa-music"></i>	Beatmaps</a></li>');
+			echo('<li class="dropdown">
+					<a data-toggle="dropdown"><i class="fa fa-question-circle"></i>	Help & Info<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22"><i class="fa fa-bug"></i> Report a bug</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22"><i class="fa fa-plus-circle"></i>	Request a feature</a></li>
+						<li class="dropdown-submenu"><a href="http://mattermost.zxq.co/ripple"><i class="fa fa-comment"></i>	Get in touch with the team</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="http://y.zxq.co/ngomne.zip"><i class="fa fa-server"></i>	Server switcher</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
+					</ul>
+				</li>');
+			if (getUserRank($_SESSION["username"]) >= 4)
+				echo('<li><a href="index.php?p=100"><i class="fa fa-cog"></i>	<b>Admin Panel</b></a></li>');
+		}
+
+		// Right elements
+		echo('</ul><ul class="nav navbar-nav navbar-right">');
+
+		// Logged in right elements
+		if (checkLoggedIn())
+		{
+			echo('<li class="dropdown">
+					<a data-toggle="dropdown"><img src="http://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li class="dropdown-submenu"><a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="index.php?p=5"><i class="fa fa-picture-o"></i> Change avatar</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=7"><i class="fa fa-lock"></i>	Change password</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=8"><i class="fa fa-pencil"></i> Edit userpage 	<span class="label label-info">Beta</span></a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=6"><i class="fa fa-cog"></i>	User settings</a></li>
+						<li class="dropdown-submenu"><a href="submit.php?action=forgetEveryCookie"><i class="fa fa-chain-broken"></i>	Delete all login tokens</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="submit.php?action=logout"><i class="fa fa-sign-out"></i>	Logout</a></li>
+					</ul>
+				</li>');
+		}
 
 		// Navbar end
 		echo('</ul></div></div></nav>');
@@ -747,7 +795,7 @@
 		// Global alert
 		P::GlobalAlert();
 
-		echo '<div id="narrow-content"><h1><i class="fa fa-question-circle"></i> Ripple documentation</h1>';
+		echo '<div id="narrow-content"><h1><i class="fa fa-question-circle"></i> Documentation</h1>';
 		$e = "<ul class='text-left'>\n";
 		$data = $GLOBALS["db"]->fetchAll("SELECT id, doc_name FROM docs WHERE public = '1'");
 		if (count($data) != 0) {
@@ -1643,7 +1691,7 @@
 	function getChangelog() {
 		//global $GitLabConfig;
 		sessionCheck();
-		echo('<p align="center"><h1><i class="fa fa-bug"></i>	Changelog</h1>');
+		echo('<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>');
 		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are published to the master branch.<br>Hover a change to know when it was done.<br><br>');
 		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.json")) {
 			echo '<b>Unfortunately, the website owner did configure the changelog. Slap him off telling him to do it.</b>';

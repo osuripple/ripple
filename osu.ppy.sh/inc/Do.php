@@ -53,7 +53,7 @@ class D {
 			updateLatestActivity($_SESSION["username"]);
 
 			// Redirect
-			redirect("index.php?p=4");
+			redirect("index.php?p=1");
 		}
 		catch (Exception $e)
 		{
@@ -995,7 +995,7 @@ class D {
 		startSessionIfNotStarted();
 		$rch = new RememberCookieHandler();
 		$rch->DestroyAll($_SESSION["username"]);
-		redirect("index.php?p=4&s=forgetDone");
+		redirect("index.php?p=1&s=forgetDone");
 	}
 
 
