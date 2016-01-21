@@ -1136,7 +1136,12 @@
 		if ($m & ModsEnum::DoubleTime) $r .= "DT, ";
 		if ($m & ModsEnum::Relax) $r .= "RX, ";
 		if ($m & ModsEnum::HalfTime) $r .= "HT, ";
-		if ($m & ModsEnum::Nightcore) $r .= "NC, "; $r = str_replace("DT, ", "", $r);	// Remove DT and display only NC
+		if ($m & ModsEnum::Nightcore)
+		{
+			$r .= "NC, ";
+			// Remove DT and display only NC
+			$r = str_replace("DT, ", "", $r);
+		}
 		if ($m & ModsEnum::Flashlight) $r .= "FL, ";
 		if ($m & ModsEnum::Autoplay) $r .= "AP, ";
 		if ($m & ModsEnum::SpunOut) $r .= "SO, ";
