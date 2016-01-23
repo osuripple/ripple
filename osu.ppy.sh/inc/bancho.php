@@ -1,90 +1,4 @@
 <?php
-	/*
-	 * parseRequestHeaders
-	 * This should fix nginx header memes
-	 */
-	function parseRequestHeaders() {
-		$headers = array();
-		foreach($_SERVER as $key => $value) {
-			if (substr($key, 0, 5) <> 'HTTP_') {
-				continue;
-			}
-			$header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
-			$headers[$header] = $value;
-		}
-		return $headers;
-	}
-
-	/*
-	 * outGz
-	 * Outputs a gzip encoded string
-	 *
-	 * @param (string) ($str) Text to output
-	 */
-	function outGz($str) {
-		echo(gzencode($str));
-	}
-
-	/*
-	 * binStr
-	 * Converts a string in a binary string
-	 *
-	 * @param (string) ($str) String
-	 * @return (string) (0B+length+ASCII_STRING)
-	 */
-	function binStr($str) {
-		$r = "";
-
-		// Add 0B and length bytes
-		$r .= "\x0B".pack("c", strlen($str));
-
-		// Add Hex ASCII codes
-		$r .= $str;
-
-		// Return result
-		return $r;
-	}
-
-	/*
-	 * sendMessage
-	 * Send a message to chat
-	 *
-	 * @param (string) ($from) From username
-	 * @param (string) ($to) To username or channel
-	 * @param (string) ($msg) Actual message
-	 * @param (bool) ($priv) Set true if private message
-	 * @return (string)
-	 */
-	function sendMessage($from, $to, $msg, $priv)
-	{
-		if ($priv) $type = 3; else $type = 2;
-		$r = "";
-		$r .= "\x07\x00\x00";
-		$r .= pack("L", strlen("PRIVMSG ".$from." ".$msg." ".$to));	// i dont even know if this is right
-		$r .= binStr($from);
-		$r .= binStr($msg);
-		$r .= binStr($to);
-		$r .= pack("L", $type);
-		return $r;
-	}
-
-	/*
-	 * sendNotification
-	 * Send a notification to client
-	 * Is bugged as fuck with loooooong messages
-	 * Use \\n for new line
-	 *
-	 * @param (string) ($msg) Notification message
-	 * @return (string)
-	 */
-	function sendNotification($msg)
-	{
-		$r = "";
-		$r .= "\x18\x00\x00";
-		$r .= pack("L", strlen($msg)+2);
-		$r .= binStr($msg);
-		return $r;
-	}
 
 	/*
 	 * banchoWeb
@@ -124,6 +38,263 @@ we are actually reverse engineering bancho successfully. kinda of.
 	}
 
 	/*
+	 * outGz
+	 * Outputs a gzip encoded string
+	 *
+	 * @param (string) ($str) Text to output
+	 */
+	function outGz($str) {
+		echo(gzencode($str));
+	}
+
+	/*
+	 * binStr
+	 * Converts a string in a binary string
+	 *
+	 * @param (string) ($str) String
+	 * @return (string) (0B+length+ASCII_STRING)
+	 */
+	function binStr($str) {
+		$r = "";
+
+		// Add 0B and length bytes
+		$r .= "\x0B".pack("c", strlen($str));
+
+		// Add Hex ASCII codes
+		$r .= $str;
+
+		// Return result
+		return $r;
+	}
+
+	/*
+	 * outputMessage
+	 * Send a message to chat
+	 *
+	 * @param (string) ($from) From username
+	 * @param (string) ($to) To username or channel
+	 * @param (string) ($msg) Actual message
+	 * @return (string)
+	 */
+	function outputMessage($from, $to, $msg)
+	{
+		$r = "";
+		$r .= "\x07\x00\x00";
+		$r .= pack("L", strlen($msg)+strlen($from)+strlen($to)+4+6);
+		$r .= binStr($from);
+		$r .= binStr($msg);
+		$r .= binStr($to);
+		$r .= "\x55\x01\x00\x00";	// User id
+		return $r;
+	}
+
+	/*
+	 * sendNotification
+	 * Send a notification to client
+	 * Is bugged as fuck with loooooong messages
+	 * Use \\n for new line
+	 *
+	 * @param (string) ($msg) Notification message
+	 * @return (string)
+	 */
+	function sendNotification($msg)
+	{
+		$r = "";
+		$r .= "\x18\x00\x00";
+		$r .= pack("L", strlen($msg)+2);
+		$r .= binStr($msg);
+		return $r;
+	}
+
+	// Generate a random Ripple Tatoe Token
+	function generateToken()
+	{
+		return uniqid("rtt");
+	}
+
+	// Save a token in bancho_tokens
+	function saveToken($t, $uid)
+	{
+		// Get latest message id, so we don't send messages sent before this user logged in
+		$lm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_messages ORDER BY id DESC");
+		if (!$lm)
+			$lm = 0;
+		else
+			$lm = current($lm);
+
+		// Save token, latest action time and latest message id
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, packets_count) VALUES (?, ?, ?, 0)", array($t, $uid, $lm));
+	}
+
+	// Delete all tokens for $uid user, except the current one ($ct)
+	function deleteOldTokens($uid, $ct)
+	{
+		$GLOBALS["db"]->execute("DELETE FROM bancho_tokens WHERE osu_id = ? AND token != ?", array($uid, $ct));
+	}
+
+	// Get user id from token
+	// Return user id if success
+	// Return -1 if token not found
+	function getUserIDFromToken($t)
+	{
+		$query = $GLOBALS["db"]->fetch("SELECT osu_id FROM bancho_tokens WHERE token = ?", array($t));
+		if ($query)
+			return current($query);
+		else
+			return -1;
+	}
+
+	// Returns an user panel packet from user id
+	function userPanel($uid)
+	{
+		// Get user data and stats
+		$username = getUserUsername($uid);
+		$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
+		$userID = getUserOsuID($username);
+		$userCountry = 108;
+
+		// Unexpected copypasterino from Print.php
+		// Get leaderboard with right total scores (to calculate rank)
+		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_std DESC");
+
+		// Get all allowed users on ripple
+		$allowedUsers = getAllowedUsers("osu_id");
+
+		// Calculate rank
+		$userRank = 1;
+		foreach ($leaderboard as $person) {
+			if ($person["osu_id"] == $userID) // We found our user. We know our rank.
+				break;
+			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
+				$userRank += 1;
+		}
+
+		// Total score. Should be longlong,
+		// but requires 64bit PHP. Memes incoming.
+		$userScore = $userStats["ranked_score_std"];
+		$userPlaycount = $userStats["playcount_std"];
+
+		// Default to std. Will fix this maybe later.
+		// x01: Std
+		// x02: Taiko
+		// x03: Ctb
+		// x04: Mania
+		$userGamemode = "\x00";
+		$userAccuracy = $userStats["avg_accuracy_std"];
+		$userPP = 0;	// Tillerino is sad
+
+		// Packet start
+		$output = "";
+		$output .= "\x53\x00\x00";
+
+		// 127 uint length meme thing
+		$output .= pack("L", 21+strlen($username));
+
+		// User panel data
+		// User ID
+		$output .= pack("L", $userID);
+		// Username
+		$output .= binStr($username);
+		// Timezone
+		$output .= "\x18";
+		// Country
+		$output .= pack("L", $userCountry);
+		$output .= "\x00\x00\x00\x00\x00\x00";
+		// Rank
+		$output .= pack("L", $userRank);
+		$output .= "\x0B\x00\x00\x2E\x00\x00\x00";
+		$output .= pack("L", $userID);
+		$output .= "\x00\x00\x00\x00\x00\x00\x00";
+		// Game mode
+		$output .= $userGamemode;
+		$output .= "\x00\x00\x00\x00";
+		// Score
+		$output .= pack("L", $userScore);
+		$output .= "\x00\x00\x00\x00";
+		// Accuracy (0.1337 = 13,37%)
+		$output .= pack("f", $userAccuracy/100);
+		// Playcount
+		$output .= pack("L", $userPlaycount);
+		// Level progress (will add this later)
+		$output .= "\x00\x00\x00\x00";
+		$output .= "\x00\x00\x00\x00";
+		// Rank
+		$output .= pack("L", $userRank);
+		// PP
+		$output .= pack("S", $userPP);
+
+		// Return the packet
+		return $output;
+	}
+
+	// Not used
+	/*function updateLatestActionTime($uid)
+	{
+		// Add token check there
+		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_action_time = ? WHERE osu_id = ?", array(time(), $uid));
+	}
+
+	function getLatestActionTime($uid)
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT latest_action_time FROM bancho_tokens WHERE osu_id = ?", array($uid));
+		if($q)
+			return current($q);
+		else
+			return 0;
+	}*/
+
+	// Set $uid's message id to $mid
+	function updateLatestMessageID($uid, $mid)
+	{
+		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_message_id = ? WHERE osu_id = ?", array($mid, $uid));
+	}
+
+	// Get user latest message id
+	function getLatestMessageID($uid)
+	{
+		return current($GLOBALS["db"]->fetch("SELECT latest_message_id FROM bancho_tokens WHERE osu_id = ?", array($uid)));
+	}
+
+	// Return all the unreceived messages for a user
+	// Get everything sent after the latest message
+	// Ignore his own messages
+	function getUnreceivedMessages($uid)
+	{
+		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND from != ?", array(getLatestMessageID($uid), $uid));
+	}
+
+	// Adds a message to DB
+	function addMessageToDB($fuid, $to, $msg)
+	{
+		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`from`, `to`, `msg`, `time`) VALUES (?, ?, ?, ?)", array($fuid, $to, $msg, time()));
+	}
+
+	// Reads a binary string.
+	// Works with messages, might not work with other packets
+	// $s is the input packet, $start is the position of \x0B
+	function readBinStr($s, $start)
+	{
+		// Make sure this is a string
+		if($s[$start] != "\x0B")
+			return false;
+
+		// is a string, read length (buggy)
+		// $len = intval(unpack("C",$s[$start+1])[1]);
+
+		$str = "";
+		$i = $start+2;
+		while(isset($s[$i]) && $s[$i] != "\x0B")
+		{
+			// Read characters until a new \x0B (new string) or packet end
+			$str .= $s[$i];
+			$i++;
+		}
+
+		// Return the string
+		return $str;
+	}
+	
+	/*
 	 * banchoServer
 	 * Main bancho """server""" function
 	 */
@@ -132,7 +303,24 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Can't output before headers
 		// We don't care about cho-token right now
 		// because we handle only the login packets
-		header("cho-token: puckfeppy");
+
+		// Global variables
+		$token = "";
+
+		// Generate token if first packet
+		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
+		{
+			// We don't have a token, generate it
+			$token = generateToken();
+			header("cho-token: ".$token);
+		}
+		else
+		{
+			// We have a token, use it
+			$token = $_SERVER["HTTP_OSU_TOKEN"];
+			header("cho-token: ".$_SERVER["HTTP_OSU_TOKEN"]);
+		}
+
 		header("cho-protocol: 19");
 		header("Keep-Alive: timeout=5, max=100");
 		header("Connection: Keep-Alive");
@@ -188,6 +376,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Username, password and allowed are ok
+
 			// Update latest activity
 			updateLatestActivity($username);
 
@@ -195,11 +384,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users WHERE username = ?", array($username));
 			$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
 
+			// Get user id
+			$userID = $userData["osu_id"];
+
+			// Delete old token (if exist) and save the new one
+			saveToken($token, $userID);
+			deleteOldTokens($userID, $token);
+
 			// Big meme here. Username is case-insensitive
 			// but if we type it with wrong uppercase thing
 			// there are memes in the userpanel. We don't
 			// want it. Get the right username.
-			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE username = ?", array($username)));
+			$username = getUserUsername($userID);
 
 			// Set variables
 			// Supporter/GMT
@@ -212,37 +408,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 			else
 				$defaultDirect = "\x01";
 			$userSupporter = getUserRank($username) >= 3 ? "\x06" : $defaultDirect;
-			$userID = $userData["osu_id"];
-			$userCountry = 108;	// fixme plz
-
-			// Unexpected copypasterino from Print.php
-			// Get leaderboard with right total scores (to calculate rank)
-			$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_std DESC");
-
-			// Get all allowed users on ripple
-			$allowedUsers = getAllowedUsers("osu_id");
-
-			// Calculate rank
-			$userRank = 1;
-			foreach ($leaderboard as $person) {
-				if ($person["osu_id"] == $userID) // We found our user. We know our rank.
-				break;
-				if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
-				$userRank += 1;
-			}
-
-			// Total score. Should be longlong,
-			// but requires 64bit PHP. Memes incoming.
-			$userScore = $userStats["ranked_score_std"];
-			$userPlaycount = $userStats["playcount_std"];
-			// Default to std. Will fix this maybe later.
-			// x01: Std
-			// x02: Taiko
-			// x03: Ctb
-			// x04: Mania
-			$userGamemode = "\x00";
-			$userAccuracy = $userStats["avg_accuracy_std"];
-			$userPP = 0;	// Tillerino is sad
 
 			// Output variable because multiple outGz are bugged.
 			$output = "";
@@ -263,46 +428,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= pack("L", 100);
 			$output .= "";*/
 
-			// Other stuff
-			$output .= "\x53\x00\x00";
-			// Something strange related to username length. Wtf peppy?
-			$output .= pack("L", 21+strlen($username));
-
-			// User panel data
-			// User ID
-			$output .= pack("L", $userID);
-			// Username
-			$output .= binStr($username);
-			// Timezone (maybe?)
-			$output .= "\x18";
-			// Country
-			$output .= pack("L", $userCountry);
-			$output .= "\x00\x00\x00\x00\x00\x00";
-			// Rank
-			$output .= pack("L", $userRank);
-			$output .= "\x0B\x00\x00\x2E\x00\x00\x00";
-			$output .= pack("L", $userID);
-			$output .= "\x00\x00\x00\x00\x00\x00\x00";
-			// Game mode
-			$output .= $userGamemode;
-			$output .= "\x00\x00\x00\x00";
-			// Score
-			$output .= pack("L", $userScore);
-			$output .= "\x00\x00\x00\x00";
-			// Accuracy (0.1337 = 13,37%)
-			$output .= pack("f", $userAccuracy/100);
-			// Playcount
-			$output .= pack("L", $userPlaycount);
-			// Level progress (will add this later)
-			$output .= "\x00\x00\x00\x00";
-			$output .= "\x00\x00\x00\x00";
-			// Rank
-			$output .= pack("L", $userRank);
-			// PP
-			$output .= pack("S", $userPP);
+			// Output user panel stuff
+			$output .= userPanel($userID);
 
 			// Online users info
-			// Some flags
+			// Packet start
 			$output .= "\x53\x00\x00";
 			// Something related to name length,
 			// if not correct user won't be shown
@@ -313,18 +443,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= binstr("FokaBot");
 			// Other flags
 			$output .= "\x18\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-
-			/*// Same as above, kinda
-			$output .= "\x00\x00\x53\x00\x00\x1B\x00\x00\x00";
-			$output .= pack("L", 333);
-			$output .= binStr("user1");
-			$output .= "\x18\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-
-			 Same as above
-			$output .= "\x00\x00\x53\x00\x00\x1D\x00\x00\x00";
-			$output .= pack("L", 381);
-			$output .= binStr("user2");
-			$output .= "\x18\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x34\x00";*/
 
 			// Channel join, maybe?
 			$output .= "\x00\x00\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
@@ -346,12 +464,12 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$messages = explode("\r\n", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'")));
 			foreach ($messages as $message) {
 				$messageData = explode('|', $message);
-				$output .= sendMessage($messageData[0], "#osu", $messageData[1], false);
+				$output .= outputMessage($messageData[0], "#osu", $messageData[1]);
 			}
 
 			// Restricted meme message
 			if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'")) == 1)
-				$output .= sendMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO", false);
+				$output .= outputMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO");
 
 			// Login notification
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
@@ -359,19 +477,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$output .= sendNotification($msg);
 
 			/* Add some memes
-			$output .= sendMessage("BanchoBot", $username, "Wtf? Who is FokaBot? Someone is trying to take my place? I'll restrict his account, give me a minute...", true);
-			$output .= sendMessage("peppy", $username, "Fuck a donkey.", true);
-			$output .= sendMessage("Loctav", $username, "So you are playing on ripple? I'll restrict your osu! account. Fuck you.", true);
-			$output .= sendMessage("Cookiezi", $username, "ㅋㅋㅋㅋㅋ", true);
-			$output .= sendMessage("Tillerino", $username, "Hello, I'm Tillerino, the PP wizard. Unfortunately this bot and PPs don't exist on Ripple yet :(", true);
+			$output .= outputMessage("BanchoBot", $username, "Wtf? Who is FokaBot? Someone is trying to take my place? I'll restrict his account, give me a minute...", true);
+			$output .= outputMessage("peppy", $username, "Fuck a donkey.", true);
+			$output .= outputMessage("Loctav", $username, "So you are playing on ripple? I'll restrict your osu! account. Fuck you.", true);
+			$output .= outputMessage("Cookiezi", $username, "ㅋㅋㅋㅋㅋ", true);
+			$output .= outputMessage("Tillerino", $username, "Hello, I'm Tillerino, the PP wizard. Unfortunately this bot and PPs don't exist on Ripple yet :(", true);
 
 			// #osu memes
-			$output .= sendMessage("peppy", "#osu", "Who the fuck is FokaaBot?", false);
-			$output .= sendMessage("BanchoBot", "#osu", "Peppy-sama!! He's trying replace me!", false);
-			$output .= sendMessage("FokaBot", "#osu", "Che schifo peppy xd", false);
-			$output .= sendMessage("peppy", "#osu", "!moderated on", false);
-			$output .= sendMessage("BanchoBot", "#osu", "Moderated mode activated!", false);
-			$output .= sendMessage("peppy", "#osu", "Fucktards.", false);*/
+			$output .= outputMessage("peppy", "#osu", "Who the fuck is FokaaBot?", false);
+			$output .= outputMessage("BanchoBot", "#osu", "Peppy-sama!! He's trying replace me!", false);
+			$output .= outputMessage("FokaBot", "#osu", "Che schifo peppy xd", false);
+			$output .= outputMessage("peppy", "#osu", "!moderated on", false);
+			$output .= outputMessage("BanchoBot", "#osu", "Moderated mode activated!", false);
+			$output .= outputMessage("peppy", "#osu", "Fucktards.", false);*/
 
 			// Output everything
 			outGz($output);
@@ -381,15 +499,46 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Other packets
 			$output = "";
 
+			// Get memes
+			$data = file('php://input');
+			$userID = getUserIDFromToken($token);
+
+			// Check if user has sent a message (packet starts with \x01\x00\x00)
+			// if so, add it to DB
+			if ($data[0][0] == "\x01" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+				addMessageToDB($userID,"#osu",readBinStr($data[0], 9));
+
+			// Send updated userpanel if we've submitted a score
+			// (packet starts with \x00\x00\x00\x0E\x00\x00\x00)
+			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
+				$output .= userPanel($userID);
+
+			// Output unreceived messages if needed
+			$messages = getUnreceivedMessages($userID);
+			$last = 0;
+			if ($messages)
+			{
+				foreach ($messages as $message) {
+					$output .= outputMessage(getUserUsername($message["from"]), "#osu", $message["msg"]);
+					$last = $message["id"];
+				}
+			}
+
+			// If we have received some messages, update our latest message ID
+			if ($last != 0)
+				updateLatestMessageID($userID, $last);
+
+			// Output everything
+			outGz($output);
+
+
 			// Main menu icon
-			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+			/*$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 			if ($msg != "")
 			{
 				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
 				$output .= binStr($msg);
-			}
-
-			outGz($output);
+			}*/
 
 			// Welcome to ripple message
 			/*$msg = "Welcome to Ripple!";
@@ -399,7 +548,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Test message
 			/*$output = "";
-			$output .= sendMessage("peppy", "#osu", "[DEBUG] Pong", true);*/
+			$output .= addMessageToDB("peppy", "#osu", "[DEBUG] Pong", true);*/
 		}
 	}
 ?>

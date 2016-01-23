@@ -943,6 +943,21 @@
 		return $cachedOsuID[$u];
 	}
 
+	/*
+	 * getUserUsername
+	 * Get the osu! username for $uid user
+	 *
+	 * @param (int) ($uid) osu!id
+	 * @return (string) username
+	 */
+	function getUserUsername($uid)
+	{
+		$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE osu_id = ?", $uid);
+		if ($username)
+			return current($username);
+		else
+			return "meme";
+	}
 
 	/*
 	 * getPlaymodeText
