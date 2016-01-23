@@ -123,7 +123,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lm = current($lm);
 
 		// Save token, latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, packets_count) VALUES (?, ?, ?, 0)", array($t, $uid, $lm));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id) VALUES (?, ?, ?)", array($t, $uid, $lm));
 	}
 
 	// Delete all tokens for $uid user, except the current one ($ct)
