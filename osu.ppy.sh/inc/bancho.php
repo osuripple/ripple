@@ -758,7 +758,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 					}
 					else
 					{
-						addMessageToDB(999, "#osu", "Error while sending your message. Please try again.");
+						$output .= outputMessage("FokaBot", $username, "Error while sending your message. Please try again.");
 					}
 				}
 			}
