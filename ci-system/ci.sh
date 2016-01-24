@@ -16,7 +16,7 @@ then
   mysql -u ripple -D ripple < update.sql
 fi
 
-# Send message to #osu
+# Send message to #osu if the last commit does not contain hide
 lastcommit="$(git log --pretty=format:'%f' --name-status HEAD^..HEAD)"
 if [[ $lastcommit != *".HIDE."* ]]
 then
