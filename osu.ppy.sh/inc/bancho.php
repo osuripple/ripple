@@ -260,13 +260,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND from != ?", array(getLatestMessageID($uid), $uid));
+		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from != ?", array(getLatestMessageID($uid), $uid));
 	}
 
 	// Adds a message to DB
 	function addMessageToDB($fuid, $to, $msg)
 	{
-		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`from`, `to`, `msg`, `time`) VALUES (?, ?, ?, ?)", array($fuid, $to, $msg, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`msg_from`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?)", array($fuid, $to, $msg, time()));
 	}
 
 	// Reads a binary string.
@@ -519,7 +519,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			if ($messages)
 			{
 				foreach ($messages as $message) {
-					$output .= outputMessage(getUserUsername($message["from"]), "#osu", $message["msg"]);
+					$output .= outputMessage(getUserUsername($message["msg_from"]), "#osu", $message["msg"]);
 					$last = $message["id"];
 				}
 			}
