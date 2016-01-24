@@ -17,8 +17,12 @@ then
 fi
 
 # Send message to #osu
-utime=$(date +%s)
-mysql -u ripple -D ripple -e "INSERT INTO bancho_messages (msg_from, msg_to, msg, time) VALUES (999, '#osu', 'A new Ripple update has been pushed! Click (here)[http://ripple.moe/?p=17] to see the changes.', ${utime})"
+lastcommit="$(git log --pretty=format:'%f' --name-status HEAD^..HEAD)"
+if [[ $lastcommit != *".HIDE."* ]]
+then
+  utime=$(date +%s)
+  mysql -u ripple -D ripple -e "INSERT INTO bancho_messages (msg_from, msg_to, msg, time) VALUES (999, '#osu', 'A new Ripple update has been pushed! Click (here)[http://ripple.moe/?p=17] to see the changes.', ${utime})"
+fi
 
 # Trigger the pre-update script
 if ! cmp pre-update.php pre-update.php~ >/dev/null 2>&1
