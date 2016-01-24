@@ -1194,9 +1194,6 @@ class P {
 				3 => "osu!mania"
 			);
 
-			// Get username style (for random funny stuff lmao)
-			$userStyle = current($GLOBALS["db"]->fetch("SELECT user_style FROM users_stats WHERE osu_id = ?", $u));
-
 			// Get stats for selected mode
 			$modeForDB = getPlaymodeText($m);
 			$modeReadable = getPlaymodeText($m, true);
@@ -1215,8 +1212,16 @@ class P {
 			$usernameAka = $userData[0]["username_aka"];
 			$level = $userData[0]["level_" . $modeForDB];
 			$latestActivity = current($GLOBALS["db"]->fetch("SELECT latest_activity FROM users WHERE username = ?", $username));
+			$silenceEndTime = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", $username));
+			$silenceReason = current($GLOBALS["db"]->fetch("SELECT silence_reason FROM users WHERE username = ?", $username));
 			$maximumCombo = $GLOBALS["db"]->fetch("SELECT max_combo FROM scores WHERE username = ? AND play_mode = ? ORDER BY max_combo DESC LIMIT 1", array($username, $m));
 			if ($maximumCombo) $maximumCombo = current($maximumCombo); else $maximumCombo = 0;	// Make sure that we have at least one score to calculate maximum combo, otherwise maximum combo is 0
+
+			// Get username style (for random funny stuff lmao)
+			if($silenceEndTime-time() > 0)
+				$userStyle = "text-decoration: line-through;";
+			else
+				$userStyle = current($GLOBALS["db"]->fetch("SELECT user_style FROM users_stats WHERE osu_id = ?", $u));
 
 			// Get top/recent plays for this mode
 			$topPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 10", array($username, $m));
@@ -1419,6 +1424,10 @@ class P {
 				echo('</table>');
 			}
 
+			// Silence thing
+			if($silenceEndTime-time() > 0)
+				echo("<div class='alert alert-danger'><i class='fa fa-exclamation-triangle'></i>	<b>".$username."'s account is not in good standing!</b><br><br><b>This user has been silenced for the following reason:</b><br><i>".$silenceReason."</i><br><br><b>Silence ends in:</b><br><i>".timeDifference($silenceEndTime, time(), false)."</i></div>");
+
 			echo("</div>");
 		}
 		catch (Exception $e)
@@ -1594,6 +1603,20 @@ class P {
 		// Global alert
 		P::GlobalAlert();
 		echo(file_get_contents("./html_static/about.html"));
+	}
+
+	/*
+	* RulesPage
+	* Prints the rules page.
+	*/
+	static function RulesPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+		echo(file_get_contents("./html_static/rules.html"));
 	}
 
 	/*

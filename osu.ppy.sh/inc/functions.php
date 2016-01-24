@@ -142,6 +142,7 @@
 				case 19: echo('<title>Ripple - Finish password recovery</title>'); break;
 				case 20: echo('<title>Ripple - Beta keys</title>'); break;
 				case 21: echo('<title>Ripple - About</title>'); break;
+				case 23: echo('<title>Ripple - Rules</title>'); break;
 
 				case 100: echo('<title>RAP - Dashboard</title>');
 				case 101: echo('<title>RAP - System settings</title>');
@@ -247,6 +248,9 @@
 				// About page
 				case 21: P::AboutPage(); break;
 
+				// Rules page page
+				case 23: P::RulesPage(); break;
+
 				// Admin panel (> 100 pages are admin ones)
 				case 100: sessionCheckAdmin(); P::AdminDashboard(); break;
 
@@ -345,6 +349,7 @@
 			echo('<li class="dropdown">
 					<a data-toggle="dropdown"><i class="fa fa-question-circle"></i>	Help & Info<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i>	Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
 					</ul>
@@ -359,6 +364,7 @@
 			echo('<li class="dropdown">
 					<a data-toggle="dropdown"><i class="fa fa-question-circle"></i>	Help & Info<span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i> Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
 						<li class="divider"></li>
@@ -601,13 +607,25 @@
 	function sessionCheckAdmin($e = 0)
 	{
 		sessionCheck();
-		if (getUserRank($_SESSION["username"]) < 4) {
+		if (!checkAdmin($_SESSION["username"])) {
 			redirect("index.php?p=99&e=" . $e);
 			return false;
 		}
 		else {
 			return true;
 		}
+	}
+
+	/*
+	 * checkAdmin
+	 * Checks if $u user is an admin
+	 */
+	function checkAdmin($u)
+	{
+		if (getUserRank($u) < 4) 
+			return false;
+		else
+			return true;
 	}
 
 
@@ -642,9 +660,10 @@
 	 *
 	 * @param (int) ($t1) Current time. Usually time()
 	 * @param (int) ($t2) Event time.
-	 * @return (string) A string in "x minutes/hours/days ago" format
+	 * @param (bool) ($ago) Output "ago" after time difference
+	 * @return (string) A string in "x minutes/hours/days (ago)" format
 	 */
-	function timeDifference($t1, $t2)
+	function timeDifference($t1, $t2, $ago = true)
 	{
 		// Calculate difference in seconds
 		// abs and +1 should fix memes
@@ -674,7 +693,9 @@
 		// Plural
 		if ($n > 1) $s = "s"; else $s = "";
 
-		return $n." ".$i.$s." ago";
+		if ($ago) $a = "ago"; else $a = "";
+
+		return $n." ".$i.$s." ".$a;
 	}
 
 
@@ -1964,4 +1985,17 @@
 			"000000",
 		);
 		return in_array($pass, $dumb);
+	}
+
+	/*
+	 * checkSubStr
+	 * Returns true if the $str string contains the $substr string
+	 *
+	 * @param (string) ($str) Main string
+	 * @param (string) ($substr) Substring
+	 * @return (bool) True if found, false if not found
+	 */
+	function checkSubStr($str, $substr)
+	{
+		if (strpos($str, $substr) === false) return false; else return true;
 	}

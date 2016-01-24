@@ -123,7 +123,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lm = current($lm);
 
 		// Save token, latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id) VALUES (?, ?, ?)", array($t, $uid, $lm));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, kicked) VALUES (?, ?, ?, 0)", array($t, $uid, $lm));
 	}
 
 	// Delete all tokens for $uid user, except the current one ($ct)
@@ -293,7 +293,218 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Return the string
 		return $str;
 	}
+
+	function fokaBotCommands($f, $m)
+	{
+		switch($m)
+		{
+			// Faq commands
+			case checkSubStr($m, "!faq rules"): addMessageToDB(999, "#osu", "Please make sure to check (Ripple's rules)[http://ripple.moe/?p=23]."); break;
+			case checkSubStr($m, "!faq swearing"): addMessageToDB(999, "#osu", "Please don't abuse swearing."); break;
+			case checkSubStr($m, "!faq spam"): addMessageToDB(999, "#osu", "Please don't spam."); break;
+			case checkSubStr($m, "!faq offend"): addMessageToDB(999, "#osu", "Please don't offend other players."); break;
+			case checkSubStr($m, "!report"): addMessageToDB(999, "#osu", "Report command is not here yet."); break;
+
+			case checkSubStr($m, "!silence"):
+			{
+				try
+				{
+					// Make sure we are an admin
+					if (!checkAdmin($f))
+						throw new Exception("Plz no akerino.");
+
+					// Explode message
+					$m = explode(" ", $m);
+
+					// Check command parameters count
+					if (count($m) < 4)
+						throw new Exception("Invalid syntax. Syntax: !silence <username> <count> <unit (s/m/h/d)> <reason>");
+
+					// Get command parameters
+					$who = $m[1];
+					$num = $m[2];
+					$unit = $m[3];
+					$reason = implode(" ", array_slice($m, 4));
+
+					// Make sure the user exists
+					if (!checkUserExists($who))
+						throw New Exception("Invalid user");
+
+					// Get unit (s/m/h/d)
+					switch($unit)
+					{
+						case 's': $base = 1; break;
+						case 'm': $base = 60; break;
+						case 'h': $base = 3600; break;
+						case 'd': $base = 86400; break;
+						default: $base = 1; break;
+					}
+					
+					// Calculate silence end time
+					$end = $num*$base;
+
+					// Make sure the user has lower rank than us
+					if (getUserRank($who) >= getUserRank($f))
+						throw new Exception("You can't silence that user.");
+
+					// Silence and kick user
+					silenceUser(getUserOsuID($who), time()+$end, $reason);
+					kickUser(getUserOsuID($who));
+
+					// Send FokaBot message
+					throw New Exception($who." has been silenced for the following reason: ".$reason);
+				}
+				catch (Exception $e)
+				{
+					addMessageToDB(999, "#osu", $e->getMessage());
+				}
+			}
+			break;
+
+			case checkSubStr($m, "!kick"):
+			{
+				try
+				{
+					// Make sure we are an admin
+					if (!checkAdmin($f))
+						throw new Exception("Pls no akerino");
+
+					// Explode message
+					$m = explode(" ", $m);
+
+					// Check parameter count
+					if (count($m) < 2)
+						throw new Exception("Invalid syntax. Syntax: !kick <username>");
+
+					// Get command parameters
+					$who = $m[1];
+
+					// Make sure the user exists
+					if (!checkUserExists($who))
+						throw new Exception("Invalid user.");
+
+					// Make sure the user has lower rank than us
+					if (getUserRank($who) >= getUserRank($f))
+						throw new Exception("You can't kick that user.");
+
+					// Kick client
+					kickUser(getUserOsuID($who));
+
+					// User kicked!
+					throw new Exception($who." has been kicked from the server.");
+				}
+				catch (Exception $e)
+				{
+					addMessageToDB(999, "#osu", $e->getMessage());
+				}
+			}
+			break;
+
+			case checkSubStr($m, "!moderated on"):
+			{
+				// Admin only command
+				if (checkAdmin($f))
+				{
+					// Enable moderated mode
+					setChannelStatus("#osu", 2);
+					addMessageToDB(999, "#osu", "This channel is now in moderated mode!");
+				}
+			}
+			break;
+
+			case checkSubStr($m, "!moderated off"):
+			{
+				// Admin only command
+				if (checkAdmin($f))
+				{
+					// Disable moderated mode
+					setChannelStatus("#osu", 1);
+					addMessageToDB(999, "#osu", "This channel is no longer in moderated mode!");
+				}
+			}
+			break;
+		}
+	}
+
+	// Channel mode:
+	// 0: doesn't exists
+	// 1: normal
+	// 2: moderated
+	function getChannelStatus($c)
+	{
+		// Make sure the channel exists
+		$q = $GLOBALS["db"]->fetch("SELECT status FROM bancho_channels WHERE name = ?", array($c));
+
+		// Return channel status
+		if ($q)
+			return current($q);
+		else
+			return 0;
+	}
+
+	function setChannelStatus($c, $s)
+	{	
+		$GLOBALS["db"]->execute("UPDATE bancho_channels SET status = ? WHERE name = ?", array($s, $c));
+	}
+
+	function checkKicked($t)
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT kicked FROM bancho_tokens WHERE token = ?", array($t));
+		if (!$q)
+			return false;
+		else
+			return (bool)current($q);
+	}
+
+	function getSilenceEnd($uid)
+	{
+		return current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE osu_id = ?", array($uid)));
+	}
+
+	function silenceUser($uid, $se, $sr)
+	{
+		$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE osu_id = ?", array($se, $sr, $uid));
+	}
+
+	function isSlienced($uid)
+	{
+		if (getSilenceEnd($uid) <= time())
+			return false;
+		else
+			return true;
+	}
 	
+	function kickUser($uid)
+	{
+		// Make sure the token exists
+		$q = $GLOBALS["db"]->fetch("SELECT id FROM bancho_tokens WHERE osu_id = ?", array($uid));
+
+		// Kick if token found
+		if ($q)
+			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET kicked = 1 WHERE osu_id = ?", array($uid));
+	}
+
+	function checkUserExists($u)
+	{
+		return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $u);
+	}
+
+	function checkSpam($uid)
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM bancho_messages WHERE msg_from = ? AND time >= ? AND time <= ?", array($uid, time()-10, time()) );
+		if ($q)
+		{
+			if (current($q) >= 7)
+				return true;
+			else
+				return false;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -338,15 +549,24 @@ we are actually reverse engineering bancho successfully. kinda of.
 			die();
 		}
 
+		// Check kick
+		if(isset($_SERVER["HTTP_OSU_TOKEN"]) && checkKicked($_SERVER["HTTP_OSU_TOKEN"]))
+		{
+			$output = "";
+			$output .= sendNotification("You have been kicked from the server. Please login again.");
+			$output .= "\x05\x00\x00\x04\x00\x00\x00\xFF\xFF\xFF\xFF";
+			outGz($output);
+			die();
+		}
+
+		// Get data
+		$data = file('php://input');
+
 		// Check if this is the first packet
 		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
 		{
-			// Check login
 			try
 			{
-				// Get login data
-				$data = file('php://input');
-
 				// Get provided username and password.
 				// We need to remove last character because it's new line
 				// Fuck php
@@ -376,7 +596,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Username, password and allowed are ok
-
 			// Update latest activity
 			updateLatestActivity($username);
 
@@ -397,6 +616,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// want it. Get the right username.
 			$username = getUserUsername($userID);
 
+			// Get silence time
+			$silenceTime = getSilenceEnd($userID)-time();
+
+			// Reset silence time if silence ended
+			if ($silenceTime < 0)
+				$silenceTime = 0;
+
 			// Set variables
 			// Supporter/GMT
 			// x01: Normal (no supporter)
@@ -413,7 +639,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output = "";
 
 			// Standard stuff (login OK, lock client, memes etc)
-			$output .= "\x5C\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x05\x00\x00\x04\x00\x00\x00";
+			$output .= "\x5C\x00\x00\x04";
+			$output .= "\x00\x00\x00";
+			$output .= pack("L", $silenceTime);
+			$output .= "\x05\x00\x00\x04\x00\x00\x00";
 			// User ID
 			$output .= pack("L", $userID);
 			// More standard stuff
@@ -500,13 +729,39 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output = "";
 
 			// Get memes
-			$data = file('php://input');
 			$userID = getUserIDFromToken($token);
+			$username = getUserUsername($userID);
 
 			// Check if user has sent a message (packet starts with \x01\x00\x00)
 			// if so, add it to DB
 			if ($data[0][0] == "\x01" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
-				addMessageToDB($userID,"#osu",readBinStr($data[0], 9));
+			{
+				// Check channel status and silence
+				if ((getChannelStatus("#osu") == 1 && !isSlienced($userID)) || checkAdmin($username))
+				{
+					// Channel is not in moderated mode and we are not silenced, or we are admin
+					$msg = readBinStr($data[0], 9);
+					if (strlen($msg) > 0)
+					{
+						addMessageToDB($userID,"#osu",$msg);
+
+						// Check if this message has triggered a fokabot command
+						fokaBotCommands($username, $msg);
+
+						// Anti spam
+						if (checkSpam($userID))
+						{
+							addMessageToDB(999, "#osu", $username." has been silenced (FokaBot spam protection)");
+							silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
+							kickUser($userID);
+						}
+					}
+					else
+					{
+						addMessageToDB(999, "#osu", "Error while sending your message. Please try again.");
+					}
+				}
+			}
 
 			// Send updated userpanel if we've submitted a score
 			// (packet starts with \x00\x00\x00\x0E\x00\x00\x00)
