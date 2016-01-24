@@ -2207,7 +2207,7 @@ class P {
 		catch (Exception $e)
 		{
 			// Normal user, show alert and die
-			echo('<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Ripple\'s Bancho server is in maintenance mode. You can\'t play Ripple right now.< Try again later./b></p></div>');
+			echo('<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Ripple\'s Bancho server is in maintenance mode. You can\'t play Ripple right now. Try again later.</p></div>');
 		}
 	}
 
