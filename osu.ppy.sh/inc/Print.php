@@ -352,8 +352,9 @@ class P {
 			echo('</table>');
 			echo('<div class="text-center">
 					<button type="submit" form="system-settings-form" class="btn btn-primary">Save changes</button><br><br>
-					<a href="index.php?p=104&id='.$_GET["id"].'" class="btn btn-danger">Change user identity</a>
-					<a href="index.php?p=110&id='.$_GET["id"].'" class="btn btn-success">Edit user badges</a>
+					<a href="index.php?p=104&id='.$_GET["id"].'" class="btn btn-danger">Change identity</a>
+					<a href="index.php?p=110&id='.$_GET["id"].'" class="btn btn-success">Edit badges</a>
+					<a href="index.php?u='.$_GET["id"].'" class="btn btn-warning">View profile</a>
 				</div>');
 			echo("</div>");
 		}
