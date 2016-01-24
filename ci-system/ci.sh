@@ -6,13 +6,21 @@ cd /var/www/ripple.moe
 # First of all, we need to fetch the repo and merge its contents.
 git pull origin production
 
+# Get mysql password
 cd ci-system
+export MYSQL_PWD=$(cat mysqlpassword.txt)
+
+# Execute update.sql if needed
 if ! cmp update.sql update.sql~ >/dev/null 2>&1
 then
-  export MYSQL_PWD=$(cat mysqlpassword.txt)
   mysql -u ripple -D ripple < update.sql
 fi
 
+# Send message to #osu
+utime=$(date +%s)
+mysql -u ripple -D ripple -e "INSERT INTO bancho_messages (msg_from, msg_to, msg, time) VALUES (999, '#osu', 'A new Ripple update has been pushed! Click (here)[http://ripple.moe/?p=17] to see the changes.', ${utime})"
+
+# Trigger the pre-update script
 if ! cmp pre-update.php pre-update.php~ >/dev/null 2>&1
 then
   php pre-update.php
