@@ -145,8 +145,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 	}
 
 	// Returns an user panel packet from user id
-	function userPanel($uid)
+	function userPanel($uid, $gm)
 	{
+		// Get mode for DB
+		switch($gm)
+		{
+			case 0: $modeForDB = "std"; break;
+			case 1: $modeForDB = "taiko"; break;
+			case 2: $modeForDB = "ctb"; break;
+			case 3: $modeForDB = "mania"; break;
+		}
+
 		// Get user data and stats
 		$username = getUserUsername($uid);
 		$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
@@ -155,7 +164,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		// Unexpected copypasterino from Print.php
 		// Get leaderboard with right total scores (to calculate rank)
-		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_std DESC");
+		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_".$modeForDB." DESC");
 
 		// Get all allowed users on ripple
 		$allowedUsers = getAllowedUsers("osu_id");
@@ -171,16 +180,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		// Total score. Should be longlong,
 		// but requires 64bit PHP. Memes incoming.
-		$userScore = $userStats["ranked_score_std"];
-		$userPlaycount = $userStats["playcount_std"];
+		$userScore = $userStats["ranked_score_".$modeForDB];
 
-		// Default to std. Will fix this maybe later.
-		// x01: Std
-		// x02: Taiko
-		// x03: Ctb
-		// x04: Mania
-		$userGamemode = "\x00";
-		$userAccuracy = $userStats["avg_accuracy_std"];
+		// Other stats
+		$userPlaycount = $userStats["playcount_".$modeForDB];
+		$userAccuracy = $userStats["avg_accuracy_".$modeForDB];
 		$userPP = 0;	// Tillerino is sad
 
 		// Packet start
@@ -206,7 +210,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= pack("L", $userID);
 		$output .= "\x00\x00\x00\x00\x00\x00\x00";
 		// Game mode
-		$output .= $userGamemode;
+		// x00: Std
+		// x01: Taiko
+		// x02: Ctb
+		// x03: Mania
+		$output .= pack("c", $gm);
 		$output .= "\x00\x00\x00\x00";
 		// Score
 		$output .= pack("L", $userScore);
@@ -658,7 +666,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "";*/
 
 			// Output user panel stuff
-			$output .= userPanel($userID);
+			$output .= userPanel($userID, 0);
 
 			// Online users info
 			// Packet start
@@ -764,9 +772,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Send updated userpanel if we've submitted a score
+			// or we have changed our gamemode
 			// (packet starts with \x00\x00\x00\x0E\x00\x00\x00)
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
-				$output .= userPanel($userID);
+			{
+				$gameMode = intval(unpack("C",$data[0][16])[1]);
+				$output .= userPanel($userID, $gameMode);
+			}
 
 			// Output unreceived messages if needed
 			$messages = getUnreceivedMessages($userID);
