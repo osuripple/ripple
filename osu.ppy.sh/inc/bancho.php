@@ -283,18 +283,26 @@ we are actually reverse engineering bancho successfully. kinda of.
 	function readBinStr($s, $start)
 	{
 		// Make sure this is a string
-		if($s[$start] != "\x0B")
+		if($s[0][$start] != "\x0B")
 			return false;
 
-		// is a string, read length (buggy)
-		// $len = intval(unpack("C",$s[$start+1])[1]);
+		// Check if length is 10 (\x0A, new line char)
+		if($s[0][$start+1] == "\x0A")
+		{
+			$start = -2;	// fuck php
+			$source = $s[1];
+		}
+		else
+		{
+			$source = $s[0];
+		}
 
 		$str = "";
 		$i = $start+2;
-		while(isset($s[$i]) && $s[$i] != "\x0B")
+		while(isset($source[$i]) && $source[$i] != "\x0B")
 		{
 			// Read characters until a new \x0B (new string) or packet end
-			$str .= $s[$i];
+			$str .= $source[$i];
 			$i++;
 		}
 
@@ -770,7 +778,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 				if ((getChannelStatus("#osu") == 1 && !isSlienced($userID)) || checkAdmin($username))
 				{
 					// Channel is not in moderated mode and we are not silenced, or we are admin
-					$msg = readBinStr($data[0], 9);
+					$msg = readBinStr($data, 9);
+					
 					if (strlen($msg) > 0)
 					{
 						addMessageToDB($userID,"#osu",$msg);
@@ -785,10 +794,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 							silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
 							kickUser($userID);
 						}
-					}
-					else
-					{
-						$output .= outputMessage("FokaBot", $username, "Error while sending your message. Please try again.");
 					}
 				}
 			}
