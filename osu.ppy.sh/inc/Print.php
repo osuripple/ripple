@@ -1247,7 +1247,7 @@ class P {
 		if (isset($_GET["e"]) && !empty($_GET["e"])) P::ExceptionMessage($_GET["e"]);
 
 		echo('<p align="center"><font size=5><i class="fa fa-comment"></i>	Chatlog</font></p>');
-		echo('<table class="table table-striped table-hover table-50-center">');
+		echo('<table class="table table-striped table-hover">');
 		echo('<thead>
 		<tr><th class="text-center"><i class="fa fa-comment"></i>	ID</th><th class="text-center">From</th><th class="text-center">To</th><th class="text-center">Message</th><th class="text-center">Time</th></tr>
 		</thead>');

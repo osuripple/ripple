@@ -985,7 +985,7 @@
 		if ($username)
 			return current($username);
 		else
-			return "meme";
+			return "unknown";
 	}
 
 	/*
