@@ -312,6 +312,28 @@ we are actually reverse engineering bancho successfully. kinda of.
 			case checkSubStr($m, "!faq spam"): addMessageToDB(999, "#osu", "Please don't spam."); break;
 			case checkSubStr($m, "!faq offend"): addMessageToDB(999, "#osu", "Please don't offend other players."); break;
 			case checkSubStr($m, "!report"): addMessageToDB(999, "#osu", "Report command is not here yet."); break;
+			case checkSubStr($m, "!roll"):
+			{
+				// !roll command
+				// Explode message
+				$m = explode(" ", $m);
+
+				// Get command parameters
+				if (isset($m[1]))
+					$max = $m[1];
+				else
+					$max = 100;
+
+				// Generate number
+				if ($max > PHP_INT_MAX)
+					$num = "youareanidiot";
+				else
+					$num = rand(0, $max);
+
+				// Output
+				addMessageToDB(999, "#osu", $f." rolls ".$num." points!");
+			}
+			break;
 
 			case checkSubStr($m, "!silence"):
 			{
