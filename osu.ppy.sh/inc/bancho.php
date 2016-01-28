@@ -268,13 +268,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from != ?", array(getLatestMessageID($uid), $uid));
+		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
 	}
 
 	// Adds a message to DB
 	function addMessageToDB($fuid, $to, $msg)
 	{
-		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`msg_from`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?)", array($fuid, $to, $msg, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`msg_from_userid`, `msg_from_username`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?, ?)", array($fuid, getUserUsername($fuid), $to, $msg, time()));
 	}
 
 	// Reads a binary string.
@@ -499,7 +499,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 	function checkSpam($uid)
 	{
-		$q = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM bancho_messages WHERE msg_from = ? AND time >= ? AND time <= ?", array($uid, time()-10, time()) );
+		$q = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM bancho_messages WHERE msg_from_userid = ? AND time >= ? AND time <= ?", array($uid, time()-10, time()) );
 		if ($q)
 		{
 			if (current($q) >= 7)
@@ -786,7 +786,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			if ($messages)
 			{
 				foreach ($messages as $message) {
-					$output .= outputMessage(getUserUsername($message["msg_from"]), "#osu", $message["msg"]);
+					$output .= outputMessage($message["msg_from_username"], "#osu", $message["msg"]);
 					$last = $message["id"];
 				}
 			}
