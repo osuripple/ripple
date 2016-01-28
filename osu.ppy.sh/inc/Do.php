@@ -600,13 +600,14 @@ class D {
 		try
 		{
 			// Check if everything is set (username color, username style, rank and allowed can be empty)
-			if (!isset($_POST["id"]) || !isset($_POST["oid"]) || !isset($_POST["u"]) || !isset($_POST["e"]) || !isset($_POST["up"]) || !isset($_POST["aka"])
+			if (!isset($_POST["id"]) || !isset($_POST["oid"]) || !isset($_POST["u"]) || !isset($_POST["e"]) || !isset($_POST["up"]) || !isset($_POST["aka"]) || !isset($_POST["se"]) || !isset($_POST["sr"])
 			|| empty($_POST["id"]) || empty($_POST["oid"]) || empty($_POST["u"]) || empty($_POST["e"]) ) {
 				throw new Exception("Nice troll");
 			}
 
 			// Check if this user exists
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE id = ?", $_POST["id"])) {
+			$id = current($GLOBALS["db"]->fetch("SELECT id FROM users WHERE id = ?", $_POST["id"]));
+			if (!$id) {
 				throw new Exception("That user doesn\'t exists");
 			}
 
@@ -620,13 +621,17 @@ class D {
 				throw new Exception("The email isn't valid");
 			}
 
-			// Save new data (osu_id and email)
-			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ?, email = ? WHERE id = ?", array($_POST["oid"], $_POST["e"], $_POST["id"]));
+			// Check if silence end has changed. if so, we have to kick the client
+			// in order to silence him
+			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
+
+			// Save new data (osu_id, email, silence end and silence reason)
+			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ?, email = ?, silence_end = ?, silence_reason = ? WHERE id = ?", array($_POST["oid"], $_POST["e"], $_POST["se"], $_POST["sr"], $_POST["id"]));
 
 			// Save new userpage
 			$GLOBALS["db"]->execute("UPDATE users_stats SET userpage_content = ? WHERE id = ?", array($_POST["up"], $_POST["id"]));
 
-			// Save new data if set (rank, allowed and UP)
+			// Save new data if set (rank, allowed, UP and silence)
 			if (isset($_POST["r"]) && !empty($_POST["r"]))
 			$GLOBALS["db"]->execute("UPDATE users SET rank = ? WHERE id = ?", array($_POST["r"], $_POST["id"]));
 
@@ -646,6 +651,10 @@ class D {
 
 			// Set username style/color/aka
 			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE osu_id = ?", array($c, $bg, $_POST["aka"], $_POST["oid"]));
+
+			// Check if silence end has changed, if so we have to kick the user
+			//if ($_POST["se"] != $oldse)
+			//	kickUser($id);
 
 			// Done, redirect to success page
 			redirect("index.php?p=102&s=User edited!");
@@ -958,6 +967,84 @@ class D {
 		{
 			// Redirect to Exception page
 			redirect("index.php?p=108&e=".$e->getMessage());
+		}
+	}
+
+
+	/*
+	* SilenceUser
+	* Silence someone (ADMIN CP)
+	*/
+	static function SilenceUser()
+	{
+		try
+		{
+			// Check if everything is set
+			if (!isset($_POST["u"]) || !isset($_POST["c"]) || !isset($_POST["un"]) || !isset($_POST["r"]) || empty($_POST["u"]) || empty($_POST["c"]) || empty($_POST["un"]) || empty($_POST["r"])) {
+				throw new Exception("Invalid request");
+			}
+
+			// Get user id
+			$id = current($GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $_POST["u"]));
+
+			// Check if that user exists
+			if (!$id) {
+				throw new Exception("That user doesn't exists");
+			}
+
+			// Calculate silence period length
+			$sl = $_POST["c"]*$_POST["un"];
+
+			// Make sure silence time is less than 7 days
+			if ($sl > 604800) {
+				throw new Exception("Invalid silence length. Maximum silence length is 7 days.");
+			}
+
+			// Silence and reconnect that user
+			silenceUser($id, time()+$sl, $_POST["r"]);
+			kickUser($id);
+
+			// Done, redirect to success page
+			redirect("index.php?p=102&s=User silenced!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=102&e=".$e->getMessage());
+		}
+	}
+
+	/*
+	* KickUser
+	* Kick someone from bancho (ADMIN CP)
+	*/
+	static function KickUser()
+	{
+		try
+		{
+			// Check if everything is set
+			if (!isset($_POST["u"]) || empty($_POST["u"])) {
+				throw new Exception("Invalid request");
+			}
+
+			// Get user id
+			$id = current($GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $_POST["u"]));
+
+			// Check if that user exists
+			if (!$id) {
+				throw new Exception("That user doesn't exists");
+			}
+
+			// Kick that user
+			kickUser($id);
+
+			// Done, redirect to success page
+			redirect("index.php?p=102&s=User kicked!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=102&e=".$e->getMessage());
 		}
 	}
 

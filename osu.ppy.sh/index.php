@@ -174,6 +174,12 @@
                     {
                         document.getElementsByName("up")[0].value = "[i]:peppy:Userpage resetted by an admin.:peppy:[/i]";
                     }
+
+                    function removeSilence()
+                    {
+                        document.getElementsByName("se")[0].value = 0;
+                        document.getElementsByName("sr")[0].value = "";
+                    }
                 </script>
                 '); break;
         }

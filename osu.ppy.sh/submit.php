@@ -49,6 +49,8 @@
 			case "saveBadge": sessionCheckAdmin(); D::SaveBadge(); break;
 			case "quickEditUserBadges": sessionCheckAdmin(); D::QuickEditUserBadges(); break;
 			case "saveUserBadges": sessionCheckAdmin(); D::SaveUserBadges(); break;
+			case "silenceUser": sessionCheckAdmin(); D::SilenceUser(); break;
+			case "kickUser": sessionCheckAdmin(); D::KickUser(); break;
 		}
 	}
 	catch(Exception $e)

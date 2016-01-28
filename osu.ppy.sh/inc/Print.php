@@ -140,8 +140,10 @@ class P {
 		printAdminPanel("green", "fa fa-star fa-5x", $modUsers, "Mod/Admins");
 		echo('</div>');
 
-		// Quick edit user button
+		// Quick edit/silence/kick user button
 		echo('<br><p align="center"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#quickEditUserModal">Quick edit user</button>');
+		echo('&nbsp;&nbsp; <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#silenceUserModal">Silence user</button>');
+		echo('&nbsp;&nbsp; <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#kickUserModal">Kick user from Bancho</button>');
 
 		// Users plays table
 		echo('<table class="table table-striped table-hover table-50-center">
@@ -222,6 +224,85 @@ class P {
 		</div>
 		</div>');
 
+		// Silence user modal
+		echo('<div class="modal fade" id="silenceUserModal" tabindex="-1" role="dialog" aria-labelledby="silenceUserModal">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title" id="silenceUserModal">Silence user</h4>
+		</div>
+		<div class="modal-body">
+		<p>
+		<form id="silence-user-form" action="submit.php" method="POST">
+		<input name="action" value="silenceUser" hidden>
+
+		<div class="input-group">
+		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+		<input type="text" name="u" class="form-control" placeholder="Username" aria-describedby="basic-addon1" required>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		<div class="input-group">
+		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></span>
+		<input type="number" name="c" class="form-control" placeholder="How long" aria-describedby="basic-addon1" required>
+		<select name="un" class="selectpicker" data-width="30%">
+			<option value="1">Seconds</option>
+			<option value="60">Minutes</option>
+			<option value="3600">Hours</option>
+			<option value="86400">Days</option>
+		</select>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		<div class="input-group">
+		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span></span>
+		<input type="text" name="r" class="form-control" placeholder="Reason" aria-describedby="basic-addon1" required>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		That user will be silenced and kicked from the server. During the silence period, his client will be locked. <b>Max silence time is 7 days.</b>
+
+		</form>
+		</p>
+		</div>
+		<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="submit" form="silence-user-form" class="btn btn-primary">Silence user</button>
+		</div>
+		</div>
+		</div>
+		</div>');
+
+		// Kick user modal
+		echo('<div class="modal fade" id="kickUserModal" tabindex="-1" role="dialog" aria-labelledby="kickUserModalLabel">
+		<div class="modal-dialog">
+		<div class="modal-content">
+		<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title" id="kickUserModalLabel">Kick user from Bancho</h4>
+		</div>
+		<div class="modal-body">
+		<p>
+		<form id="kick-user-form" action="submit.php" method="POST">
+		<input name="action" value="kickUser" hidden>
+		<div class="input-group">
+		<span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+		<input type="text" name="u" class="form-control" placeholder="Username" aria-describedby="basic-addon1" required>
+		</div>
+		</form>
+		</p>
+		</div>
+		<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		<button type="submit" form="kick-user-form" class="btn btn-primary">Kick user</button>
+		</div>
+		</div>
+		</div>
+		</div>');
 	}
 
 
@@ -347,6 +428,14 @@ class P {
 			echo('<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
 			<td><p class="text-center"><textarea name="up" class="form-control" style="overflow:auto;resize:vertical;height:200px">'.$userStatsData["userpage_content"].'</textarea></td>
+			</tr>');
+			echo('<tr>
+			<td>Silence end time<br><a onclick="removeSilence();">(remove silence)</a></td>
+			<td><p class="text-center"><input type="text" name="se" class="form-control" value="'.$userData["silence_end"].'"></td>
+			</tr>');
+			echo('<tr>
+			<td>Silence reason</td>
+			<td><p class="text-center"><input type="text" name="sr" class="form-control" value="'.$userData["silence_reason"].'"></td>
 			</tr>');
 			echo('</tbody></form>');
 			echo('</table>');
@@ -1120,6 +1209,76 @@ class P {
 		echo('</tbody><table>
 		<div class="text-center"><button type="submit" class="btn btn-primary">Save settings</button></div></form>');
 
+
+		echo("</div>");
+	}
+
+
+	/*
+	* AdminChatlog
+	* Prints the admin chatlog page
+	*/
+	static function AdminChatlog()
+	{
+		// Get page
+		$page = 0;
+		if (isset($_GET["pg"]))
+			$page = $_GET["pg"];
+
+		// Get start and end
+		$start = 50*$page;
+		$end =  50*($page+1);
+
+		// Get data
+		$chatData = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages ORDER BY id DESC LIMIT ".$start.",".$end);
+
+		echo('<div id="wrapper">');
+		printAdminSidebar();
+
+		echo('<div id="page-content-wrapper">');
+
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Print Success if set
+		if (isset($_GET["s"]) && !empty($_GET["s"])) P::SuccessMessage($_GET["s"]);
+
+		// Print Exception if set
+		if (isset($_GET["e"]) && !empty($_GET["e"])) P::ExceptionMessage($_GET["e"]);
+
+		echo('<p align="center"><font size=5><i class="fa fa-comment"></i>	Chatlog</font></p>');
+		echo('<table class="table table-striped table-hover table-50-center">');
+		echo('<thead>
+		<tr><th class="text-center"><i class="fa fa-comment"></i>	ID</th><th class="text-center">From</th><th class="text-center">To</th><th class="text-center">Message</th><th class="text-center">Time</th></tr>
+		</thead>');
+		echo('<tbody>');
+
+		foreach ($chatData as $message)
+		{
+			// Print row for this badge
+			echo('<tr>
+			<td><p class="text-center">'.$message["id"].'</p></td>
+			<td><p class="text-center"><b>'.$message["msg_from_username"].'</b></p></td>
+			<td><p class="text-center">'.$message["msg_to"].'</p></td>
+			<td><p class="text-center"><b>'.$message["msg"].'</b></p></td>
+			<td><p class="text-center">'.timeDifference(time(), $message["time"]).'</p></td>
+			</tr>');
+		}
+
+		echo('</tbody>');
+		echo('</table>');
+
+		echo('<p align="center">');
+
+		if($page > 0)
+			echo('<a href="index.php?p=112&pg='.($page-1).'">< Previous Page</a>');
+
+		echo('&nbsp;&nbsp;&nbsp;&nbsp;');
+
+		if($chatData)
+			echo('<a href="index.php?p=112&pg='.($page+1).'">Next Page ></a>');
+
+		echo('</p>');
 
 		echo("</div>");
 	}

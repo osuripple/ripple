@@ -13,6 +13,7 @@
 	require_once(dirname(__FILE__) . "/RememberCookieHandler.php");
 	require_once dirname(__FILE__) . "/PlayStyleEnum.php";
 	require_once dirname(__FILE__) . "/resize.php";
+	require_once dirname(__FILE__) . "/bancho.php";
 
 	// Set timezone to UTC
 	date_default_timezone_set('Europe/Rome');
@@ -156,6 +157,7 @@
 				case 109: echo('<title>RAP - Edit Badge</title>');
 				case 110: echo('<title>RAP - Edit user badges</title>');
 				case 111: echo('<title>RAP - Bancho settings</title>');
+				case 112: echo('<title>RAP - Chatlog</title>');
 
 				case "u": echo('<title>Ripple - Userpage</title>'); break;
 				default: echo('<title>Ripple - 404</title>'); break;
@@ -286,6 +288,9 @@
 
 				// Admin panel - System settings
 				case 111: sessionCheckAdmin(); P::AdminBanchoSettings(); break;
+
+				// Admin panel - Chatlog
+				case 112: sessionCheckAdmin(); P::AdminChatlog(); break;
 
 				// 404 page
 				default: echo('<br><h1>404</h1><p>Page not found. Meh.</p>'); break;
@@ -428,6 +433,9 @@
 						</li>
 						<li>
 							<a href="index.php?p=111"><i class="fa fa-server"></i>	Bancho settings</a>
+						</li>
+						<li>
+							<a href="index.php?p=112"><i class="fa fa-comment"></i>	Chatlog</a>
 						</li>
 						<li>
 							<a href="index.php?p=102"><i class="fa fa-user"></i>	Users</a>
