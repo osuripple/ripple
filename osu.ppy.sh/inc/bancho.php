@@ -338,7 +338,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$m = explode(" ", $m);
 
 				// Get command parameters
-				if (isset($m[1]))
+				if (isset($m[1]) && intval($m[1]))
 					$max = $m[1];
 				else
 					$max = 100;
