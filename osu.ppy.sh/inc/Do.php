@@ -1053,6 +1053,38 @@ class D {
 	}
 
 	/*
+	* ResetAvatar
+	* Reset soneone's avatar (ADMIN CP)
+	*/
+	static function ResetAvatar()
+	{
+		try
+		{
+			// Check if everything is set
+			if (!isset($_GET["id"]) || empty($_GET["id"])) {
+				throw new Exception("Invalid request");
+			}
+
+			// Get user id
+			$avatar = dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".$_GET["id"].".png";
+			if (!file_exists($avatar)) {
+				throw new Exception("That user doesn't have an avatar");
+			}
+
+			// Delete user avatar
+			delete($avatar);
+
+			// Done, redirect to success page
+			redirect("index.php?p=102&s=Avatar reset!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=102&e=".$e->getMessage());
+		}
+	}
+
+	/*
 	 * Logout
 	 * Logout and return to home
 	 */

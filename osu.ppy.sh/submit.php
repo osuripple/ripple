@@ -51,6 +51,7 @@
 			case "saveUserBadges": sessionCheckAdmin(); D::SaveUserBadges(); break;
 			case "silenceUser": sessionCheckAdmin(); D::SilenceUser(); break;
 			case "kickUser": sessionCheckAdmin(); D::KickUser(); break;
+			case "resetAvatar": sessionCheckAdmin(); D::ResetAvatar(); break;
 		}
 	}
 	catch(Exception $e)

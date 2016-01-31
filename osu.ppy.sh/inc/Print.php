@@ -437,6 +437,10 @@ class P {
 			<td>Silence reason</td>
 			<td><p class="text-center"><input type="text" name="sr" class="form-control" value="'.$userData["silence_reason"].'"></td>
 			</tr>');
+			echo('<tr>
+			<td>Avatar</td>
+			<td><img src="http://a.ripple.moe/'.$_GET["id"].'" height="50" width="50"></img>	<a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET["id"].'\')">Reset avatar</a></td>
+			</tr>');
 			echo('</tbody></form>');
 			echo('</table>');
 			echo('<div class="text-center">
