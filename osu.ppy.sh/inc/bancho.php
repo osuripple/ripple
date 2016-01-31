@@ -88,6 +88,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $r;
 	}
 
+	function outputChannel($name, $desc, $users)
+	{
+		$r = "";
+		$r .= "\x41\x00\x00";
+		$r .= pack("L", strlen($name)+strlen($desc)+2+4);
+		$r .= binStr($name);
+		$r .= binStr($desc);
+		$r .= pack("S", 1337);
+		return $r;
+	}
+
 	/*
 	 * sendNotification
 	 * Send a notification to client
@@ -718,14 +729,14 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= binStr("#osu");
 
 			// Channels info packets
-			$output .= "\x41\x00\x00\x16\x00\x00\x00";
-			// Channel name
-			$output .= binStr("#osu");
-			// Channel description
-			$output .= binStr("Fuck bancho");
-			// Connected users
-			$output .= pack("S", 1337);
-			$output .= "\x00";
+			$output .= outputChannel("#osu", "Main ripple chat", 1337);
+			$output .= outputChannel("#italian", "Italian only chat", 1337);
+			$output .= outputChannel("#english", "English only chat", 1337);
+			$output .= outputChannel("#admins", "Admin only chat. Plz no akerino.", 1337);
+			$output .= outputChannel("#support", "Ask for support here.", 1337);
+
+			//$output .= pack("S", 1337);
+			//$output .= "\x00";
 
 			// Default login messages
 			$messages = explode("\r\n", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'")));
@@ -824,12 +835,12 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 
 			// Main menu icon
-			$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+			/*$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 			if ($icon != "")
 			{
 				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
 				$output .= binStr($icon);
-			}
+			}*/
 
 			// Output everything
 			outGz($output);
