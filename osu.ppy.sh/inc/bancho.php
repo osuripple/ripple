@@ -377,7 +377,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 						case 'd': $base = 86400; break;
 						default: $base = 1; break;
 					}
-					
+
 					// Calculate silence end time
 					$end = $num*$base;
 
@@ -481,7 +481,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 	}
 
 	function setChannelStatus($c, $s)
-	{	
+	{
 		$GLOBALS["db"]->execute("UPDATE bancho_channels SET status = ? WHERE name = ?", array($s, $c));
 	}
 
@@ -511,7 +511,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		else
 			return true;
 	}
-	
+
 	function kickUser($uid)
 	{
 		// Make sure the token exists
@@ -779,7 +779,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				{
 					// Channel is not in moderated mode and we are not silenced, or we are admin
 					$msg = readBinStr($data, 9);
-					
+
 					if (strlen($msg) > 0)
 					{
 						addMessageToDB($userID,"#osu",$msg);
@@ -821,6 +821,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// If we have received some messages, update our latest message ID
 			if ($last != 0)
 				updateLatestMessageID($userID, $last);
+
+
+			// Main menu icon
+			$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+			if ($icon != "")
+			{
+				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
+				$output .= binStr($icon);
+			}
 
 			// Output everything
 			outGz($output);
