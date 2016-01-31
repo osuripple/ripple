@@ -1072,7 +1072,7 @@ class D {
 			}
 
 			// Delete user avatar
-			delete($avatar);
+			unlink($avatar);
 
 			// Done, redirect to success page
 			redirect("index.php?p=102&s=Avatar reset!");
