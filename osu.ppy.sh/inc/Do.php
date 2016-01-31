@@ -16,7 +16,8 @@ class D {
 			}
 
 			// 1.5 -- Make sure user exists (if user doen't exist php spams memes)
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($_POST["u"]))) {
+			$uid = $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($_POST["u"]));
+			if (!$uid) {
 				throw new Exception(1);
 			}
 
@@ -34,9 +35,12 @@ class D {
 				throw new Exception(2);
 			}
 
+			// Get username with right case
+			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", array(current($uid))));
+
 			// Everything ok, create session and do login stuff
 			session_start();
-			$_SESSION["username"] = $_POST["u"];
+			$_SESSION["username"] = $username;
 			$_SESSION["password"] = $securePassword;
 			$_SESSION["passwordChanged"] = false;
 
