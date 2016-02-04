@@ -8,12 +8,23 @@
 	{
 		// Check if everything is set
 		if (!isset($_GET["u"]) || !isset($_GET["p"]) || !($_FILES) || empty($_GET["u"]) || empty($_GET["p"])) {
-			throw new Exception("empty");
+			throw new Exception(1);
+		}
+
+
+		// Check if image file is a actual image or fake image
+		if(!getimagesize($_FILES["ss"]["tmp_name"])) {
+			throw new Exception(2);
+		}
+
+		// Check file size
+		if ($_FILES["ss"]["size"] > 5000000) {
+			throw new Exception(3);
 		}
 
 		// Check if the user/password is correct
 		if (!checkOsuUser($_GET["u"], $_GET["p"])) {
-			throw new Exception("pass");
+			throw new Exception(4);
 		}
 
 		// Try to generate a valid screenshot ID
