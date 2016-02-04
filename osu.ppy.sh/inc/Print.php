@@ -678,6 +678,200 @@ class P {
 
 
 	/*
+	* AdminReports
+	* Prints the admin panel beta keys page
+	*/
+	static function AdminReports()
+	{
+		// Get data
+		$reports = $GLOBALS["db"]->fetchAll("SELECT * FROM reports ORDER BY id DESC");
+
+		// Print beta keys stuff
+		echo('<div id="wrapper">');
+		printAdminSidebar();
+
+		echo('<div id="page-content-wrapper">');
+
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Print Success if set
+		if (isset($_GET["s"]) && !empty($_GET["s"])) P::SuccessMessage($_GET["s"]);
+
+		// Print Exception if set
+		if (isset($_GET["e"]) && !empty($_GET["e"])) P::ExceptionMessage($_GET["e"]);
+
+		echo('<p align="center"><font size=5><i class="fa fa-paper-plane"></i>	Reports</font></p>');
+
+		// Reports table
+		echo('<table class="table table-striped table-hover table-75-center">
+		<thead>
+		<tr><th class="text-left"><i class"fa fa-gift"></i>	ID</th><th class="text-center">Type</th><th class="text-center">Name</th><th class="text-center">From</th><th class="text-center">Opened on</th><th class="text-center">Updated on</th><th class="text-center">Status</th><th class="text-center">Action</th></tr>
+		</thead>
+		<tbody>');
+
+		for ($i=0; $i < count($reports); $i++)
+		{
+			// Set status label color and text
+			if ($reports[$i]["status"] == 1)
+			{
+				$statusColor = "success";
+				$statusText = "Open";
+			}
+			else
+			{
+				$statusColor = "danger";
+				$statusText = "Closed";
+			}
+
+			// Set type label color and text
+			if ($reports[$i]["type"] == 1)
+			{
+				$typeColor = "success";
+				$typeText = "Feature";
+			}
+			else
+			{
+				$typeColor = "warning";
+				$typeText = "Bug";
+			}
+
+			// Print row
+			echo('<tr>');
+			echo('<td><p class="text-left">' . $reports[$i]["id"] . '</p></td>');
+			echo('<td><p class="text-center"><span class="label label-'.$typeColor.'">'.$typeText.'</span></p></td>');
+			echo('<td><p class="text-center"><b>' . $reports[$i]["name"] . '</b></p></td>');
+			echo('<td><p class="text-center">' . $reports[$i]["from_username"] . '</p></td>');
+			echo('<td><p class="text-center">' . date("d/m/Y H:i:s", intval($reports[$i]["open_time"])) . '</p></td>');
+			echo('<td><p class="text-center">' . date("d/m/Y H:i:s", intval($reports[$i]["update_time"])) . '</p></td>');
+			echo('<td><p class="text-center"><span class="label label-' . $statusColor . '">' . $statusText . '</span></p></td>');
+
+			// Edit button
+			echo('
+			<td><p class="text-center">
+			<a class="btn btn-xs btn-primary" href="index.php?p=114&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-eye-open"></span></a>
+			<a class="btn btn-xs btn-success" href="submit.php?action=openCloseReport&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-check"></span></a>
+			</p></td>');
+
+			// End row
+			echo('</tr>');
+		}
+		echo("</tbody></table>");
+
+		echo("</div>");
+	}
+
+
+	/*
+	* AdminViewReport
+	* Prints the admin panel view report page
+	*/
+	static function AdminViewReport()
+	{
+		try
+		{
+			// Check if id is set
+			if (!isset($_GET["id"])) {
+				throw new Exception("Invalid report id");
+			}
+
+			// Get report data
+			$reportData = $GLOBALS["db"]->fetch("SELECT * FROM reports WHERE id = ?", $_GET["id"]);
+
+			// Check if this report page exists
+			if (!$reportData) {
+				throw new Exception("That report doesn't exist");
+			}
+
+			// Set type label color and text
+			if ($reportData["type"] == 1)
+			{
+				$typeColor = "success";
+				$typeText = "Feature";
+			}
+			else
+			{
+				$typeColor = "warning";
+				$typeText = "Bug";
+			}
+
+			// Selected thing
+			$selected[0] = "";
+			$selected[1] = "";
+			$selected[$reportData["status"]] = "selected";
+
+			// Print edit report stuff
+			echo('<div id="wrapper">');
+			printAdminSidebar();
+			echo('<div id="page-content-wrapper">');
+
+			// Maintenance check
+			P::MaintenanceStuff();
+
+			echo('<p align="center"><font size=5><i class="fa fa-pencil"></i>	Edit report</font></p>');
+			echo('<table class="table table-striped table-hover table-50-center">');
+			echo('<tbody>');
+			echo('<form id="edit-report-form" action="submit.php" method="POST"><input name="action" value="saveEditReport" hidden>
+			<input name="id" value="' . $reportData["id"] . '" hidden>
+			<tr>
+			<td><b>ID</b></td>
+			<td>' . $reportData["id"] . '</td>
+			</tr>');
+			echo('<tr>
+			<td><b>From</b></td>
+			<td><a href="index.php?u=' . getUserOsuID($reportData["from_username"]) . '">' . $reportData["from_username"] . '</a></td>
+			</tr>');
+			echo('<tr>
+			<td><b>Type</b></td>
+			<td><span class="label label-' . $typeColor . '">' . $typeText . '</span></td>
+			</tr>');
+			echo('<tr>
+			<td><b>Status</b></td>
+			<td>
+			<select name="s" class="selectpicker" data-width="100%">
+			<option value="1" ' . $selected[1] . '>Open</option>
+			<option value="0" ' . $selected[0] . '>Close</option>
+			</select>
+			</td>
+			</tr>');
+			echo('<tr class="success">
+			<td><b>Title</b></td>
+			<td><b>' . htmlspecialchars($reportData["name"]) . '</b></td>
+			</tr>');
+			echo('<tr class="success">
+			<td><b>Content</b></td>
+			<td><i>' . htmlspecialchars($reportData["content"]) . '</i></td>
+			</tr>');
+			echo('<tr class="warning">
+			<td><b>Response</b></td>
+			<td><p class="text-center"><textarea name="r" class="form-control" style="overflow:auto;resize:vertical;height:100px">' . $reportData["response"] . '</textarea></td>
+			</tr>
+			<tr class="warning">
+			<td><b>Presets</b></td>
+			<td>
+			<a onclick="quickReportResponse(0);">Bug accepted</a> |
+			<a onclick="quickReportResponse(1);">Bug already reported</a> |
+			<a onclick="quickReportResponse(2);">Bug fixed</a><br>
+			<a onclick="quickReportResponse(3);">Feature accepted</a> |
+			<a onclick="quickReportResponse(4);">Feature already on tasklist</a> |
+			<a onclick="quickReportResponse(5);">Feature added</a><br>
+			<a onclick="quickReportResponse(6);">Abuse</a>
+			</td>
+			</tr>
+			</form>');
+			echo('</tbody>');
+			echo('</table>');
+			echo('<div class="text-center"><button type="submit" form="edit-report-form" class="btn btn-primary">Save changes</button></div>');
+			echo("</div>");
+		}
+		catch (Exception $e)
+		{
+			// Redirect to exception page
+			redirect("index.php?p=113&e=".$e->getMessage());
+		}
+	}
+
+	/*
 	* AdminSystemSettings
 	* Prints the admin panel system settings page
 	*/
@@ -1800,6 +1994,68 @@ class P {
 
 
 	/*
+	* ReportPage
+	* Prints the Bug report/feature request page.
+	*/
+	static function ReportPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+
+		// Print Exception if set and valid
+		$exceptions = array("Nice troll.");
+
+		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]]))
+			P::ExceptionMessage($exceptions[$_GET["e"]]);
+
+		// Print Success if set
+		if (isset($_GET["s"]) && $_GET["s"] === "ok")
+			P::SuccessMessage("Report send! Thank you for your contribute! We'll try to reply to your report as soon as possible. <b>Check out <a href='index.php?p=24'>this</a> page to get future updates.</b>");
+
+		// Selected thing (for automatic bug report or feature request)
+		$selected[0] = "";
+		$selected[1] = "";
+		if (isset($_GET["type"]) && $_GET["type"] <= 1)
+			$selected[$_GET["type"]] = "selected";
+
+		// Changelog
+		echo('<div id="narrow-content"><h1><i class="fa fa-paper-plane"></i>	Send a report</h1>Here you can report bugs or request features. Please try to descbibe your bug/feature as detailed as possible.<br><br>');
+		echo('<form method="POST" action="submit.php" id="send-report-form">
+		<input name="action" value="sendReport" hidden>
+		<div class="input-group" style="width:100%">
+			<span class="input-group-addon" id="basic-addon1" style="width:40%">Type</span>
+			<select name="t" class="selectpicker" data-width="100%">
+				<option value="0" ' . $selected[0] . '>Bug report</option>
+				<option value="1" ' . $selected[1] . '>Feature request</option>
+			</select>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		<div class="input-group" style="width:100%">
+			<span class="input-group-addon" id="basic-addon1" style="width:40%">Title</span>
+			<input name="n" type="text" class="form-control" placeholder="Name of your report" required></input>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		<div class="input-group" style="width:100%">
+			<span class="input-group-addon" id="basic-addon1" style="width:40%">Report</span>
+			<textarea name="c" class="form-control" placeholder="Main content here. Max 1024 characters" maxlength="1024" style="overflow:auto;resize:vertical;height:100px" required></textarea>
+		</div>
+
+		<p style="line-height: 15px"></p>
+
+		<div class="text-center"><button type="submit" form="send-report-form" class="btn btn-primary">Send</button></div><br><br>
+		</form>');
+		echo('</div>');
+	}
+
+
+	/*
 	* ExceptionMessage
 	* Display an error alert with a custom message.
 	*
@@ -2440,6 +2696,193 @@ class P {
 
 		if ($m != "")
 		echo('<div class="alert alert-warning" role="alert"><p align="center">'.$m.'</p></div>');
+	}
+
+
+	/*
+	* MyReportsPage
+	* Prints the user settings page.
+	*/
+	static function MyReportsPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+
+		// Get user reports
+		$reports = $GLOBALS["db"]->fetchAll("SELECT * FROM reports WHERE from_username = ?", $_SESSION["username"]);
+
+		// Title
+		echo('<h1><i class="fa fa-paper-plane"></i>	My reports</h1>');
+
+		// Print Exception if set
+		$exceptions = array("Invalid report");
+		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
+
+		// Print default message if we have no exception/success
+		if (!isset($_GET["e"]) && !isset($_GET["s"]))
+		echo('<p>Here you can view your bug reports and fetaure requests.</p>');
+
+		if (!$reports)
+		{
+			echo('<b>You haven\'t sent any bug report or feature request. You can send one <a href="index.php?p=22">here</a>.</b>');
+		}
+		else
+		{
+
+			// Reports table
+			echo('<table class="table table-striped table-hover table-100-center">
+			<thead>
+			<tr><th class="text-center">Type</th><th class="text-center">Name</th><th class="text-center">Opened on</th><th class="text-center">Updated on</th><th class="text-center">Status</th><th class="text-center">Action</th></tr>
+			</thead>
+			<tbody>');
+
+			for ($i=0; $i < count($reports); $i++)
+			{
+				// Set status label color and text
+				if ($reports[$i]["status"] == 1)
+				{
+					$statusColor = "success";
+					$statusText = "Open";
+				}
+				else
+				{
+					$statusColor = "danger";
+					$statusText = "Closed";
+				}
+
+				// Set type label color and text
+				if ($reports[$i]["type"] == 1)
+				{
+					$typeColor = "success";
+					$typeText = "Feature";
+				}
+				else
+				{
+					$typeColor = "warning";
+					$typeText = "Bug";
+				}
+
+				// Print row
+				echo('<tr>');
+				echo('<td><p class="text-center"><span class="label label-'.$typeColor.'">'.$typeText.'</span></p></td>');
+				echo('<td><p class="text-center"><b>' . $reports[$i]["name"] . '</b></p></td>');
+				echo('<td><p class="text-center">' . date("d/m/Y H:i:s", intval($reports[$i]["open_time"])) . '</p></td>');
+				echo('<td><p class="text-center">' . date("d/m/Y H:i:s", intval($reports[$i]["update_time"])) . '</p></td>');
+				echo('<td><p class="text-center"><span class="label label-' . $statusColor . '">' . $statusText . '</span></p></td>');
+
+				// Edit button
+				echo('
+				<td><p class="text-center">
+				<a class="btn btn-xs btn-primary" href="index.php?p=25&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-eye-open"></span></a>
+				</p></td>');
+
+				// End row
+				echo('</tr>');
+			}
+			echo("</tbody></table>");
+		}
+	}
+
+
+	/*
+	* MyReportViewPage
+	* Prints the my report view page.
+	*/
+	static function MyReportViewPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+
+		try
+		{
+			// Make sure everything is set
+			if (!isset($_GET["id"]) || empty($_GET["id"])) {
+				throw new Exception(0);
+			}
+
+			// Make sure the report exists and it's ours
+			$reportData = $GLOBALS["db"]->fetch("SELECT * FROM reports WHERE id = ? AND from_username = ?", array($_GET["id"], $_SESSION["username"]));
+			if (!$reportData) {
+				throw new Exception(0);
+			}
+
+			// Title
+			echo('<h1><i class="fa fa-paper-plane"></i>	View report</h1>');
+
+			// Report table
+			// Set type label color and text
+			if ($reportData["type"] == 1)
+			{
+				$typeColor = "success";
+				$typeText = "Feature request";
+			}
+			else
+			{
+				$typeColor = "warning";
+				$typeText = "Bug report";
+			}
+
+			// Set status label color and text
+			if ($reportData["status"] == 1)
+			{
+				$statusColor = "success";
+				$statusText = "Open";
+			}
+			else
+			{
+				$statusColor = "danger";
+				$statusText = "Closed";
+			}
+
+			if (!empty($reportData["response"]))
+				$response = $reportData["response"];
+			else
+				$response = "No response yet";
+
+			echo('<table class="table table-striped table-hover table-50-center">');
+			echo('<tbody>');
+			echo('<tr>
+			<td><b>Title</b></td>
+			<td><b>' . htmlspecialchars($reportData["name"]) . '</b></td>
+			</tr>');
+			echo('<tr>
+			<td><b>Type</b></td>
+			<td><span class="label label-' . $typeColor . '">' . $typeText . '</span></td>
+			</tr>');
+			echo('<tr>
+			<td><b>Status</b></td>
+			<td><span class="label label-' . $statusColor . '">' . $statusText . '</span></td>
+			</tr>');
+			echo('<tr>
+			<td><b>Opened on</b></td>
+			<td>' . date("d/m/Y H:i:s", $reportData["open_time"]) . '</td>
+			</tr>');
+			echo('<tr>
+			<td><b>Updated on</b></td>
+			<td>' . date("d/m/Y H:i:s", $reportData["update_time"]) . '</td>
+			</tr>');
+			echo('<tr class="success">
+			<td><b>Content</b></td>
+			<td><i>' . htmlspecialchars($reportData["content"]) . '</i></td>
+			</tr>');
+			echo('<tr class="warning">
+			<td><b>Response</b></td>
+			<td><i>' . htmlspecialchars($response) . '</i></td>
+			</tr>');
+			echo('</tbody>');
+			echo('</table>');
+		}
+		catch (Exception $e)
+		{
+			redirect("index.php?p=24&e=".$e->getMessage());
+		}
+
 	}
 
 }

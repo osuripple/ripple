@@ -1252,8 +1252,111 @@ class D {
 		catch(Exception $e)
 		{
 			// Redirect to Exception page
-			redirect("index.php?p=5&e=".$e->getMessage().$r);
+			redirect("index.php?p=5&e=".$e->getMessage());
 		}
 	}
 
+	/*
+	* SendReport
+	* Send report function
+	*/
+	static function SendReport()
+	{
+		try
+		{
+			// Check if we are logged in
+			sessionCheck();
+
+			// Check if everything is set
+			if (!isset($_POST["t"]) || !isset($_POST["n"]) || !isset($_POST["c"]) || empty($_POST["n"]) || empty($_POST["c"])) {
+				throw new Exception(0);
+			}
+
+			// Add report
+			$GLOBALS["db"]->execute("INSERT INTO reports (id, name, from_username, content, type, open_time, update_time, status) VALUES (NULL, ?, ?, ?, ?, ?, ?, 1)", array($_POST["n"], $_SESSION["username"], $_POST["c"], $_POST["t"], time(), time()));
+
+			// Done, redirect to success page
+			redirect("index.php?p=22&s=ok");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=22&e=".$e->getMessage());
+		}
+	}
+
+	/*
+	* OpenCloseReport
+	* Open/Close a report (ADMIN CP)
+	*/
+	static function OpenCloseReport()
+	{
+		try
+		{
+			// Check if everything is set
+			if (!isset($_GET["id"]) || empty($_GET["id"])) {
+				throw new Exception("Invalid request");
+			}
+
+			// Get current report status from db
+			$reportStatus = $GLOBALS["db"]->fetch("SELECT status FROM reports WHERE id = ?", array($_GET["id"]));
+
+			// Make sure the report exists
+			if (!$reportStatus) {
+				throw new Exception("That report doesn't exist");
+			}
+
+			// Get report status
+			$reportStatus = current($reportStatus);
+
+			// Get new report status
+			$newReportStatus = $reportStatus == 1 ? 0 : 1;
+
+			// Edit report status
+			$GLOBALS["db"]->execute("UPDATE reports SET status = ?, update_time = ? WHERE id = ?", array($newReportStatus, time(), $_GET["id"]));
+
+			// Done, redirect to success page
+			redirect("index.php?p=113&s=Report status changed!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=113&e=".$e->getMessage());
+		}
+	}
+
+
+	/*
+	* SaveEditReport
+	* Saves an edited report (ADMIN CP)
+	*/
+	static function SaveEditReport()
+	{
+		try
+		{
+			// Check if everything is set
+			if (!isset($_POST["id"]) || !isset($_POST["s"]) || !isset($_POST["r"]) || empty($_POST["id"])) {
+				throw new Exception("Invalid request");
+			}
+
+			// Get current report status from db
+			$reportData = $GLOBALS["db"]->fetch("SELECT * FROM reports WHERE id = ?", array($_POST["id"]));
+
+			// Make sure the report exists
+			if (!$reportData) {
+				throw new Exception("That report doesn't exist");
+			}
+
+			// Edit report status
+			$GLOBALS["db"]->execute("UPDATE reports SET status = ?, response = ?, update_time = ? WHERE id = ?", array($_POST["s"], $_POST["r"], time(), $_POST["id"]));
+
+			// Done, redirect to success page
+			redirect("index.php?p=113&s=Report updated!");
+		}
+		catch(Exception $e)
+		{
+			// Redirect to Exception page
+			redirect("index.php?p=113&e=".$e->getMessage());
+		}
+	}
 }

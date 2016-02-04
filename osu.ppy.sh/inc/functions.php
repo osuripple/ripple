@@ -129,7 +129,7 @@
 				case 3: echo('<title>Ripple - Register</title>'); break;
 				case 4: echo('<title>Ripple - User CP</title>'); break;
 				case 5: echo('<title>Ripple - Change avatar</title>'); break;
-				case 9: case 10: case 11: case 22: echo('<title>Ripple - Coming soon</title>'); break;
+				case 9: case 10: case 11: echo('<title>Ripple - Coming soon</title>'); break;
 				case 6: echo('<title>Ripple - Edit user settings</title>'); break;
 				case 7: echo('<title>Ripple - Change password</title>'); break;
 				case 8: echo('<title>Ripple - Edit userpage</title>'); break;
@@ -143,21 +143,26 @@
 				case 19: echo('<title>Ripple - Finish password recovery</title>'); break;
 				case 20: echo('<title>Ripple - Beta keys</title>'); break;
 				case 21: echo('<title>Ripple - About</title>'); break;
+				case 22: echo('<title>Ripple - Report a bug/Request a feature</title>'); break;
 				case 23: echo('<title>Ripple - Rules</title>'); break;
+				case 24: echo('<title>Ripple - My report</title>'); break;
+				case 25: echo('<title>Ripple - Report</title>'); break;
 
-				case 100: echo('<title>RAP - Dashboard</title>');
-				case 101: echo('<title>RAP - System settings</title>');
-				case 102: echo('<title>RAP - Users</title>');
-				case 103: echo('<title>RAP - Edit user</title>');
-				case 104: echo('<title>RAP - Change identity</title>');
-				case 105: echo('<title>RAP - Beta Keys</title>');
-				case 106: echo('<title>RAP - Docs Pages</title>');
-				case 107: echo('<title>RAP - Edit doc page</title>');
-				case 108: echo('<title>RAP - Badges</title>');
-				case 109: echo('<title>RAP - Edit Badge</title>');
-				case 110: echo('<title>RAP - Edit user badges</title>');
-				case 111: echo('<title>RAP - Bancho settings</title>');
-				case 112: echo('<title>RAP - Chatlog</title>');
+				case 100: echo('<title>RAP - Dashboard</title>'); break;
+				case 101: echo('<title>RAP - System settings</title>'); break;
+				case 102: echo('<title>RAP - Users</title>'); break;
+				case 103: echo('<title>RAP - Edit user</title>'); break;
+				case 104: echo('<title>RAP - Change identity</title>'); break;
+				case 105: echo('<title>RAP - Beta Keys</title>'); break;
+				case 106: echo('<title>RAP - Docs Pages</title>'); break;
+				case 107: echo('<title>RAP - Edit doc page</title>'); break;
+				case 108: echo('<title>RAP - Badges</title>'); break;
+				case 109: echo('<title>RAP - Edit Badge</title>'); break;
+				case 110: echo('<title>RAP - Edit user badges</title>'); break;
+				case 111: echo('<title>RAP - Bancho settings</title>'); break;
+				case 112: echo('<title>RAP - Chatlog</title>'); break;
+				case 113: echo('<title>RAP - Reports</title>'); break;
+				case 114: echo('<title>RAP - Read report</title>'); break;
 
 				case "u": echo('<title>Ripple - Userpage</title>'); break;
 				default: echo('<title>Ripple - 404</title>'); break;
@@ -206,7 +211,7 @@
 				// case 4: sessionCheck(); P::UserCPPage(); break;
 
 				// Coming soon
-				case 9: case 10: case 11: case 22: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
+				case 9: case 10: case 11: echo('<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>'); break;
 
 				// Edit avatar (protected)
 				case 5: sessionCheck(); P::ChangeAvatarPage(); break;
@@ -250,8 +255,17 @@
 				// About page
 				case 21: P::AboutPage(); break;
 
-				// Rules page page
+				// Bug report/feature request page
+				case 22: sessionCheck(); P::ReportPage(); break;
+
+				// Rules page
 				case 23: P::RulesPage(); break;
+
+				// My reports page
+				case 24: sessionCheck(); P::MyReportsPage(); break;
+
+				// My report view page
+				case 25: sessionCheck(); P::MyReportViewPage(); break;
 
 				// Admin panel (> 100 pages are admin ones)
 				case 100: sessionCheckAdmin(); P::AdminDashboard(); break;
@@ -291,6 +305,12 @@
 
 				// Admin panel - Chatlog
 				case 112: sessionCheckAdmin(); P::AdminChatlog(); break;
+
+				// Admin panel - Reports
+				case 113: sessionCheckAdmin(); P::AdminReports(); break;
+
+				// Admin panel - Read report
+				case 114: sessionCheckAdmin(); P::AdminViewReport(); break;
 
 				// 404 page
 				default: echo('<br><h1>404</h1><p>Page not found. Meh.</p>'); break;
@@ -373,8 +393,8 @@
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
 						<li class="divider"></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22"><i class="fa fa-bug"></i> Report a bug</a></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22"><i class="fa fa-plus-circle"></i>	Request a feature</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> Report a bug</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	Request a feature</a></li>
 						<li class="dropdown-submenu"><a href="http://mattermost.zxq.co/ripple"><i class="fa fa-comment"></i>	Get in touch with the team</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="http://y.zxq.co/ngomne.zip"><i class="fa fa-server"></i>	Server switcher</a></li>
@@ -400,6 +420,7 @@
 						<li class="dropdown-submenu"><a href="index.php?p=7"><i class="fa fa-lock"></i>	Change password</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=8"><i class="fa fa-pencil"></i> Edit userpage 	<span class="label label-info">Beta</span></a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=6"><i class="fa fa-cog"></i>	User settings</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=24"><i class="fa fa-paper-plane"></i>	My reports</a></li>
 						<li class="dropdown-submenu"><a href="submit.php?action=forgetEveryCookie"><i class="fa fa-chain-broken"></i>	Delete all login tokens</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="submit.php?action=logout"><i class="fa fa-sign-out"></i>	Logout</a></li>
@@ -456,7 +477,10 @@
 							<a href="index.php?p=106"><i class="fa fa-question-circle"></i>	Documentation</a>
 						</li>
 						<li>
-							<a href="#"><i class="fa fa-info-circle"></i>	<s>Info</s></a>
+							<a href="index.php?p=113"><i class="fa fa-paper-plane"></i>	Reports</a>
+						</li>
+						<li>
+							<a href="1#"><i class="fa fa-info-circle"></i>	<s>Info</s></a>
 						</li>
 					</ul>
 				</div>');
@@ -630,7 +654,7 @@
 	 */
 	function checkAdmin($u)
 	{
-		if (getUserRank($u) < 4) 
+		if (getUserRank($u) < 4)
 			return false;
 		else
 			return true;

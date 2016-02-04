@@ -29,6 +29,7 @@
 			case "forgetEveryCookie": D::ForgetEveryCookie(); break;
 			case "saveUserpage": D::SaveUserpage(); break;
 			case "changeAvatar": D::ChangeAvatar(); break;
+			case "sendReport": D::SendReport(); break;
 			default: throw new Exception("Invalid action value"); break;
 
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
@@ -52,6 +53,8 @@
 			case "silenceUser": sessionCheckAdmin(); D::SilenceUser(); break;
 			case "kickUser": sessionCheckAdmin(); D::KickUser(); break;
 			case "resetAvatar": sessionCheckAdmin(); D::ResetAvatar(); break;
+			case "openCloseReport": sessionCheckAdmin(); D::OpenCloseReport(); break;
+			case "saveEditReport": sessionCheckAdmin(); D::SaveEditReport(); break;
 		}
 	}
 	catch(Exception $e)
