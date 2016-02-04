@@ -1830,7 +1830,6 @@ class P {
 		$modesText[$m] = "<b>" . $modesText[$m] . "</b>";
 
 		// Header stuff
-		echo('<div class="alert alert-warning" role="alert"><b><i class="fa fa-exclamation-triangle"></i>	The leaderboard is still work in progress</b>, an unexpected Cookiezi might appear in the leaderboard at any moment.</div>');
 		echo('<blockquote><p>Plz enjoy game.</p><footer>rrtyui</footer></blockquote>');
 		echo('<a href="index.php?p=13&m=0">'.$modesText[0].'</a> | <a href="index.php?p=13&m=1">'.$modesText[1].'</a> | <a href="index.php?p=13&m=2">'.$modesText[2].'</a> | <a href="index.php?p=13&m=3">'.$modesText[3].'</a>');
 
