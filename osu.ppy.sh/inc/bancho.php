@@ -891,13 +891,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Update our action if needed
-			/*if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && ($data[0][3] == "\x5C" || $data[0][3] == "\x4B" || $data[0][3] == "\x5D") )
+			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
 				// Get new action
 				$action = intval(unpack("C",$data[0][7])[1]);
 				//$action = intval($data[0][7]);
 				setAction($userID, $action);
-			}*/
+			}
 
 			// Update latest packet time
 			updateLatestPacketTime($userID, time());
