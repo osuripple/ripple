@@ -84,7 +84,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$r .= binStr($from);
 		$r .= binStr($msg);
 		$r .= binStr($to);
-		$r .= "\x55\x01\x00\x00";	// User id
+		$r .= pack("L", getUserOsuID($from));	// User ID
 		return $r;
 	}
 
@@ -134,7 +134,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lm = current($lm);
 
 		// Save token, latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, kicked) VALUES (?, ?, ?, 0)", array($t, $uid, $lm));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, time()));
 	}
 
 	// Delete all tokens for $uid user, except the current one ($ct)
@@ -214,19 +214,40 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= "\x18";
 		// Country
 		$output .= pack("L", $userCountry);
-		$output .= "\x00\x00\x00\x00\x00\x00";
+		$output .= "\x00\x00\x00\x00";
+		$output .= "\x00\x00";
 		// Rank
 		$output .= pack("L", $userRank);
 		$output .= "\x0B\x00\x00\x2E\x00\x00\x00";
 		$output .= pack("L", $userID);
-		$output .= "\x00\x00\x00\x00\x00\x00\x00";
+		// Other flags
+		// User status (idle, afk, playing etc)
+		/*
+		x00: Idle,
+		x01: Afk,
+		x02: Playing,
+		x03: Editing,
+		x04: Modding,
+		x05: Multiplayer,
+		x06: Watching,
+		x07: Unknown,
+		x08: Testing,
+		x09: Submitting,
+		x0A: (10) Paused,
+		x0B: (11) Lobby,
+		x0C: (12) Multiplaying,
+		x0D: (13) OsuDirect
+		*/
+		$output .= pack("L", getAction($userID));
+		$output .= "\x00\x00\x00";
+
 		// Game mode
 		// x00: Std
 		// x01: Taiko
 		// x02: Ctb
 		// x03: Mania
 		$output .= pack("c", $gm);
-		$output .= "\x00\x00\x00\x00";
+		$output .= "\x00\x00\x00\x01";
 		// Score
 		$output .= pack("L", $userScore);
 		$output .= "\x00\x00\x00\x00";
@@ -244,6 +265,16 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		// Return the packet
 		return $output;
+	}
+
+	function getAction($uid)
+	{
+		return current($GLOBALS["db"]->fetch("SELECT action FROM bancho_tokens WHERE osu_id = ?", array($uid)));
+	}
+
+	function setAction($uid, $a)
+	{
+		return current($GLOBALS["db"]->execute("UPDATE bancho_tokens SET action = ? WHERE osu_id = ?", array($a, $uid)));
 	}
 
 	// Not used
@@ -554,6 +585,16 @@ we are actually reverse engineering bancho successfully. kinda of.
 		}
 	}
 
+	function updateLatestPacketTime($uid, $t)
+	{
+		// Make sure the token exists
+		$q = $GLOBALS["db"]->fetch("SELECT id FROM bancho_tokens WHERE osu_id = ?", array($uid));
+
+		// If the token exists, update latest packet time
+		if ($q)
+			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_packet_time = ? WHERE osu_id = ?", array($t, $uid));
+	}
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -709,9 +750,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Output user panel stuff
 			$output .= userPanel($userID, 0);
 
-			// Online users info
+			// Old Online users info
 			// Packet start
-			$output .= "\x53\x00\x00";
+			/*$output .= "\x53\x00\x00";
 			// Something related to name length,
 			// if not correct user won't be shown
 			$output .= pack("L", 21+strlen("FokaBot"));
@@ -720,10 +761,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Username
 			$output .= binstr("FokaBot");
 			// Other flags
-			$output .= "\x18\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+			$output .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";*/
+
 
 			// Channel join, maybe?
-			$output .= "\x00\x00\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
+			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
 			$output .= pack("L", $userID);
 			$output .= "\x59\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x40\x00\x00\x06\x00\x00\x00";
 			$output .= binStr("#osu");
@@ -811,11 +853,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Send updated userpanel if we've submitted a score
 			// or we have changed our gamemode
+			// and set our action to idle
 			// (packet starts with \x00\x00\x00\x0E\x00\x00\x00)
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
 			{
 				$gameMode = intval(unpack("C",$data[0][16])[1]);
 				$output .= userPanel($userID, $gameMode);
+				setAction($userID, 0);
 			}
 
 			// Output unreceived messages if needed
@@ -832,6 +876,27 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// If we have received some messages, update our latest message ID
 			if ($last != 0)
 				updateLatestMessageID($userID, $last);
+
+			// Output online users if needed
+			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
+				//$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users WHERE allowed = 1");
+				foreach ($onlineUsers as $user)
+					$output .= userPanel($user["osu_id"], 0);
+			}
+
+			// Update our action if needed
+			/*if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && ($data[0][3] == "\x5C" || $data[0][3] == "\x4B" || $data[0][3] == "\x5D") )
+			{
+				// Get new action
+				$action = intval(unpack("C",$data[0][7])[1]);
+				//$action = intval($data[0][7]);
+				setAction($userID, $action);
+			}*/
+
+			// Update latest packet time
+			updateLatestPacketTime($userID, time());
 
 
 			// Main menu icon
