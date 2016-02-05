@@ -516,12 +516,12 @@ class P {
 			<td><p class="text-center"><input type="text" name="newu" class="form-control"></td>
 			</tr>');
 			echo('<tr>
-			<td>Old Osu! ID</td>
+			<td>Old User ID</td>
 			<td><p class="text-center"><input type="number" name="oldoid" class="form-control" value="'.$userData["osu_id"].'" readonly></td>
 			</tr>');
 			echo('<tr class="success">
-			<td>New Osu! ID</td>
-			<td><p class="text-center"><input type="number" name="newoid" class="form-control"></td>
+			<td>New User ID</td>
+			<td><p class="text-center"><input type="number" name="newoid" class="form-control" value="'.$userData["osu_id"].'" ></td>
 			</tr>');
 			echo('<tr>
 			<td>Keep old scores<br>(with new username)</td>
