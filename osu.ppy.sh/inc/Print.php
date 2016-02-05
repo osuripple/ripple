@@ -11,7 +11,7 @@ class P {
 		$betaKeysLeft = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM beta_keys WHERE allowed = 1"));
 		$rankedBeatmaps = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM beatmaps WHERE ranked = 1"));
 		//$suspiciousScores = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM scores WHERE username = 'FokaWooooo'"));
-		$suspiciousScores = 0;	// add asap
+		$reports = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM reports WHERE status = 1"));
 		$recentPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores ORDER BY id DESC LIMIT 10");
 		$topPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores ORDER BY score DESC LIMIT 10");
 
@@ -31,7 +31,7 @@ class P {
 		printAdminPanel("primary", "fa fa-gamepad fa-5x", $totalScores, "Total scores");
 		printAdminPanel("red", "fa fa-gift fa-5x", $betaKeysLeft, "Beta keys left");
 		printAdminPanel("green", "fa fa-music fa-5x", $rankedBeatmaps, "Ranked beatmaps");
-		printAdminPanel("yellow", "fa fa-question-circle fa-5x", $suspiciousScores, "Suspicious scores");
+		printAdminPanel("yellow", "fa fa-paper-plane fa-5x", $reports, "Opened reports");
 		echo('</div>');
 
 		// Recent plays table
