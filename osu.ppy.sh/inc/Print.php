@@ -188,7 +188,7 @@ class P {
 			echo('<td class="success"><p class="text-center">
 			<div class="btn-group">
 			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>');
-			if ($user["allowed"] == 1) echo('<a title="Ban user" class="btn btn-xs btn-warning" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-down"></span></a>'); else echo('<a title="Unban user" class="btn btn-xs btn-success" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
+			if ($user["allowed"] == 1) echo('<a title="Ban user" class="btn btn-xs btn-warning" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user["id"].'\')"><span class="glyphicon glyphicon-thumbs-down"></span></a>'); else echo('<a title="Unban user" class="btn btn-xs btn-success" onclick="sure(\'submit.php?action=banUnbanUser&id='.$user["id"].'\')"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
 			echo('	<a title="Change user identity" class="btn btn-xs btn-danger" href="index.php?p=104&id='.$user["id"].'"><span class="glyphicon glyphicon-refresh"></span></a>
 			</div>
 			</p></td>');
