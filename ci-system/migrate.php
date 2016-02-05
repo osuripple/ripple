@@ -19,4 +19,6 @@ for (true; file_exists($f . "/../migrations/" . $latest . ".php"); $latest++) {
 $latest--;
 echo "End of migration. Current latest update: " . $latest;
 echo "\n";
+echo "Notifying everyone about the update...\n";
+$GLOBALS["db"]->execute("INSERT INTO bancho_messages (msg_from, msg_to, msg, time) VALUES (999, '#osu', 'A new Ripple update has been pushed! Click (here)[http://ripple.moe/?p=17] to see the changes.', ?)", array(time()));
 file_put_contents($f . "/../migrations/latest.txt", $latest);
