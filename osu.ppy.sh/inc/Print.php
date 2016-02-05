@@ -2711,7 +2711,7 @@ class P {
 		P::GlobalAlert();
 
 		// Get user reports
-		$reports = $GLOBALS["db"]->fetchAll("SELECT * FROM reports WHERE from_username = ?", $_SESSION["username"]);
+		$reports = $GLOBALS["db"]->fetchAll("SELECT * FROM reports WHERE from_username = ? ORDER BY id DESC", $_SESSION["username"]);
 
 		// Title
 		echo('<h1><i class="fa fa-paper-plane"></i>	My reports</h1>');
