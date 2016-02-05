@@ -2036,7 +2036,7 @@ class P {
 
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon1" style="width:40%">Title</span>
-			<input name="n" type="text" class="form-control" placeholder="Name of your report" required></input>
+			<input name="n" type="text" class="form-control" placeholder="Name of your report" maxlength="128" required></input>
 		</div>
 
 		<p style="line-height: 15px"></p>
