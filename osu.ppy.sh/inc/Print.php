@@ -187,9 +187,9 @@ class P {
 			echo('<td class="success"><p class="text-center"><span class="label label-'.$allowedColor.'">' . $allowedText . '</span></p></td>');
 			echo('<td class="success"><p class="text-center">
 			<div class="btn-group">
-			<a class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>');
-			if ($user["allowed"] == 1) echo('<a class="btn btn-xs btn-warning" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-down"></span></a>'); else echo('<a class="btn btn-xs btn-success" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
-			echo('	<a class="btn btn-xs btn-danger" href="index.php?p=104&id='.$user["id"].'"><span class="glyphicon glyphicon-refresh"></span></a>
+			<a title="Edit user" class="btn btn-xs btn-primary" href="index.php?p=103&id='.$user["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>');
+			if ($user["allowed"] == 1) echo('<a title="Ban user" class="btn btn-xs btn-warning" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-down"></span></a>'); else echo('<a title="Unban user" class="btn btn-xs btn-success" href="submit.php?action=banUnbanUser&id='.$user["id"].'"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
+			echo('	<a title="Change user identity" class="btn btn-xs btn-danger" href="index.php?p=104&id='.$user["id"].'"><span class="glyphicon glyphicon-refresh"></span></a>
 			</div>
 			</p></td>');
 			echo('</tr>');
@@ -616,19 +616,19 @@ class P {
 
 			// Delete button
 			echo('<td class="success"><p class="text-center">
-			<div class="btn-group"><a class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBetaKey&id='.$betaKeys[$i]["id"].'\')"><span class="glyphicon glyphicon-trash"></span></a>');
+			<div class="btn-group"><a title="Delete beta key" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBetaKey&id='.$betaKeys[$i]["id"].'\')"><span class="glyphicon glyphicon-trash"></span></a>');
 
 			// Allow/disallow button
 			if ($betaKeys[$i]["allowed"] == 1)
-				echo('<a class="btn btn-xs btn-warning" href="submit.php?action=allowDisallowBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-thumbs-down"></span></a>');
+				echo('<a title="Disallow beta key (mark as already used)" class="btn btn-xs btn-warning" href="submit.php?action=allowDisallowBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-thumbs-down"></span></a>');
 			else
-				echo('<a class="btn btn-xs btn-success" href="submit.php?action=allowDisallowBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
+				echo('<a title="Allow beta key (mark as not used)" class="btn btn-xs btn-success" href="submit.php?action=allowDisallowBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-thumbs-up"></span></a>');
 
 			// Public/private button
 			if ($betaKeys[$i]["public"] == 1)
-				echo('<a class="btn btn-xs btn-warning" href="submit.php?action=publicPrivateBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-remove"></span></a>');
+				echo('<a title="Make private (hide on Beta keys page)" class="btn btn-xs btn-warning" href="submit.php?action=publicPrivateBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-remove"></span></a>');
 			else
-				echo('<a class="btn btn-xs btn-success" href="submit.php?action=publicPrivateBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-ok"></span></a>');
+				echo('<a title="Make public (show on Beta keys page)" class="btn btn-xs btn-success" href="submit.php?action=publicPrivateBetaKey&id='.$betaKeys[$i]["id"].'"><span class="glyphicon glyphicon-ok"></span></a>');
 
 			echo('</div></td>');
 			echo('</tr>');
@@ -663,7 +663,8 @@ class P {
 		<input type="text" name="d" maxlength="128" class="form-control" placeholder="Description (*key* will be replaced with the actual key)" aria-describedby="basic-addon1">
 		</div>
 		<p style="line-height: 15px"></p>
-		<input type="checkbox" name="p">Public (show on Beta Keys page)
+		<input type="checkbox" name="p">Public (show on Beta Keys page)<br>
+		<b>If you want to add public keys, <u>set the description to *key*</u></b>
 		</form>
 		</p>
 		</div>
@@ -749,8 +750,8 @@ class P {
 			// Edit button
 			echo('
 			<td><p class="text-center">
-			<a class="btn btn-xs btn-primary" href="index.php?p=114&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-eye-open"></span></a>
-			<a class="btn btn-xs btn-success" href="submit.php?action=openCloseReport&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-check"></span></a>
+			<a title="View/Edit report" class="btn btn-xs btn-primary" href="index.php?p=114&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-eye-open"></span></a>
+			<a title="Open/Close report" class="btn btn-xs btn-success" href="submit.php?action=openCloseReport&id=' . $reports[$i]["id"] . '"><span class="glyphicon glyphicon-check"></span></a>
 			</p></td>');
 
 			// End row
@@ -952,7 +953,7 @@ class P {
 		echo('</table>');
 		echo('<div class="text-center"><div class="btn-group" role="group">
 		<button type="submit" form="system-settings-form" class="btn btn-primary">Save settings</button>
-		<a href="submit.php?action=runCron" type="button" class="btn btn-warning">Run cron.php</a>
+		<a title="Run cron.php script to refresh some stuff on the server" href="submit.php?action=runCron" type="button" class="btn btn-warning">Run cron.php</a>
 		</div></div>');
 
 
@@ -1011,9 +1012,9 @@ class P {
 			<td><p class="text-center">'.$doc["doc_name"].'</p></td>
 			<td><p class="text-center"><span class="label label-'.$publicColor.'">' . $publicText . '</span></p></td>
 			<td><p class="text-center">
-			<a class="btn btn-xs btn-primary" href="index.php?p=107&id='.$doc["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>
-			<a class="btn btn-xs btn-success" href="index.php?p=16&id='.$doc["id"].'"><span class="glyphicon glyphicon-eye-open"></span></a>
-			<a class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeDoc&id='.$doc["id"].'\');"><span class="glyphicon glyphicon-trash"></span></a>
+			<a title="Edit page" class="btn btn-xs btn-primary" href="index.php?p=107&id='.$doc["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>
+			<a title="View page" class="btn btn-xs btn-success" href="index.php?p=16&id='.$doc["id"].'"><span class="glyphicon glyphicon-eye-open"></span></a>
+			<a title="Delete page" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeDoc&id='.$doc["id"].'\');"><span class="glyphicon glyphicon-trash"></span></a>
 			</p></td>
 			</tr>');
 		}
@@ -1068,8 +1069,8 @@ class P {
 			<td><p class="text-center">'.$badge["name"].'</p></td>
 			<td><p class="text-center"><i class="fa '.$badge["icon"].' fa-2x"></i></p></td>
 			<td><p class="text-center">
-			<a class="btn btn-xs btn-primary" href="index.php?p=109&id='.$badge["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>
-			<a class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBadge&id='.$badge["id"].'\');"><span class="glyphicon glyphicon-trash"></span></a>
+			<a title="Edit badge" class="btn btn-xs btn-primary" href="index.php?p=109&id='.$badge["id"].'"><span class="glyphicon glyphicon-pencil"></span></a>
+			<a title="Delete badge" class="btn btn-xs btn-danger" onclick="sure(\'submit.php?action=removeBadge&id='.$badge["id"].'\');"><span class="glyphicon glyphicon-trash"></span></a>
 			</p></td>
 			</tr>');
 		}
