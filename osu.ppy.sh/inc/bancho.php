@@ -783,7 +783,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Default login messages
 			$loginmessage = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
 			if (!empty($loginmessage)) {
-				$messages = explode("\r\n", );
+				$messages = explode("\r\n", $loginmessage);
 				foreach ($messages as $message) {
 					$messageData = explode('|', $message);
 					$output .= outputMessage($messageData[0], "#osu", $messageData[1]);
