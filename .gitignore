@@ -16,3 +16,4 @@ a.ppy.sh/avatars/*.*
 # other stuff
 osu.ppy.sh/adminer.php
 push-to-prod.bat
+migrations/latest.txt
