@@ -201,6 +201,23 @@
 						document.getElementsByName("r")[0].value = c;
 					}
 				</script>'); break;
+
+			case 22: echo('
+				<script type="text/javascript">
+					function changeTitlePlaceholder()
+					{
+						var c;
+						if (document.getElementsByName("t")[0].value == 0)
+							c = "Bug name";
+						else
+							c = "Feature request name";
+
+						document.getElementsByName("n")[0].placeholder = c;
+					}
+
+					// Update title when the page is loaded
+					window.onload = changeTitlePlaceholder;
+				</script>'); break;
         }
     ?>
 </body>

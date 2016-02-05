@@ -2026,7 +2026,7 @@ class P {
 		<input name="action" value="sendReport" hidden>
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon1" style="width:40%">Type</span>
-			<select name="t" class="selectpicker" data-width="100%">
+			<select name="t" class="selectpicker" data-width="100%" onchange="changeTitlePlaceholder()">
 				<option value="0" ' . $selected[0] . '>Bug report</option>
 				<option value="1" ' . $selected[1] . '>Feature request</option>
 			</select>
@@ -2036,7 +2036,7 @@ class P {
 
 		<div class="input-group" style="width:100%">
 			<span class="input-group-addon" id="basic-addon1" style="width:40%">Title</span>
-			<input name="n" type="text" class="form-control" placeholder="Name of your report" maxlength="128" required></input>
+			<input name="n" type="text" class="form-control" placeholder="" maxlength="128" required></input>
 		</div>
 
 		<p style="line-height: 15px"></p>
