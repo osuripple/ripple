@@ -310,8 +310,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
-		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to == ?", array(getLatestMessageID($uid), getUserUsername($uid)));
+		$lm = getLatestMessageID($uid)
+		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array($lm, $uid));
+		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to = ?", array($lm, getUserUsername($uid)));
 
 		return array_merge($public, $private);
 	}
@@ -940,17 +941,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 						throw new Exception($to." is silenced.");
 
 					// Check if message is valid
-					if (strlen($msg) > 0)
-					{
-						// Send message
-						addMessageToDB($userID, $to, $msg);
+					if (strlen($msg) <= 0)
+						throw new Exception("Error while sending your message. Please try again.");
 
-						// Anti spam
-						if (checkSpam($userID))
-						{
-							silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
-							kickUser($userID);
-						}
+					// Send message
+					addMessageToDB($userID, $to, $msg);
+
+					// Anti spam
+					if (checkSpam($userID))
+					{
+						silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
+						kickUser($userID);
 					}
 				}
 				catch (Exception $e)
