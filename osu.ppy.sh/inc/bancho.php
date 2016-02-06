@@ -310,7 +310,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		$lm = getLatestMessageID($uid)
+		$lm = getLatestMessageID($uid);
 		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array($lm, $uid));
 		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to = ?", array($lm, getUserUsername($uid)));
 
