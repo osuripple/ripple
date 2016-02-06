@@ -1147,6 +1147,24 @@
 
 
 	/*
+	 * getFirstPlacePlayID
+	 * Get #1 play id on $hash beatmap
+	 * Used to send messages on #announce on new first place ranks
+	 *
+	 * @param (int) ($hash) Beatmap hash
+	 * @return (int) Play ID
+	 */
+	function getFirstPlacePlayID($hash)
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT id FROM scores WHERE beatmap_md5 = ? ORDER BY score DESC LIMIT 1", array($hash));
+		if ($q)
+			return current($q);
+		else
+			return 0;
+	}
+
+
+	/*
 	 * saveReplays
 	 * Save score replay in replays folder
 	 *

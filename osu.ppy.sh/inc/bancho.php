@@ -211,7 +211,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Username
 		$output .= binStr($username);
 		// Timezone
-		$output .= "\x18";
+		$output .= "\x19";
 		// Country
 		$output .= pack("L", $userCountry);
 		$output .= "\x00\x00\x00\x00";
@@ -328,7 +328,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		if($s[0][$start] != "\x0B")
 			return false;
 
-		// Check if length is 10 (\x0A, new line char)
+		/* Check if length is 10 (\x0A, new line char)
 		if($s[0][$start+1] == "\x0A")
 		{
 			$start = -2;	// fuck php
@@ -337,8 +337,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 		else
 		{
 			$source = $s[0];
-		}
+		}*/
 
+		$source = $s[0];
 		$str = "";
 		$i = $start+2;
 		while(isset($source[$i]) && $source[$i] != "\x0B")
@@ -352,16 +353,16 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $str;
 	}
 
-	function fokaBotCommands($f, $m)
+	function fokaBotCommands($f, $c, $m)
 	{
 		switch($m)
 		{
 			// Faq commands
-			case checkSubStr($m, "!faq rules"): addMessageToDB(999, "#osu", "Please make sure to check (Ripple's rules)[http://ripple.moe/?p=23]."); break;
-			case checkSubStr($m, "!faq swearing"): addMessageToDB(999, "#osu", "Please don't abuse swearing."); break;
-			case checkSubStr($m, "!faq spam"): addMessageToDB(999, "#osu", "Please don't spam."); break;
-			case checkSubStr($m, "!faq offend"): addMessageToDB(999, "#osu", "Please don't offend other players."); break;
-			case checkSubStr($m, "!report"): addMessageToDB(999, "#osu", "Report command is not here yet."); break;
+			case checkSubStr($m, "!faq rules"): addMessageToDB(999, $c, "Please make sure to check (Ripple's rules)[http://ripple.moe/?p=23]."); break;
+			case checkSubStr($m, "!faq swearing"): addMessageToDB(999, $c, "Please don't abuse swearing."); break;
+			case checkSubStr($m, "!faq spam"): addMessageToDB(999, $c, "Please don't spam."); break;
+			case checkSubStr($m, "!faq offend"): addMessageToDB(999, $c, "Please don't offend other players."); break;
+			case checkSubStr($m, "!report"): addMessageToDB(999, $c, "Report command is not here yet."); break;
 			case checkSubStr($m, "!roll"):
 			{
 				// !roll command
@@ -381,7 +382,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 					$num = rand(0, $max);
 
 				// Output
-				addMessageToDB(999, "#osu", $f." rolls ".$num." points!");
+				addMessageToDB(999, $c, $f." rolls ".$num." points!");
 			}
 			break;
 
@@ -436,7 +437,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				}
 				catch (Exception $e)
 				{
-					addMessageToDB(999, "#osu", $e->getMessage());
+					addMessageToDB(999, $c, $e->getMessage());
 				}
 			}
 			break;
@@ -475,7 +476,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				}
 				catch (Exception $e)
 				{
-					addMessageToDB(999, "#osu", $e->getMessage());
+					addMessageToDB(999, $c, $e->getMessage());
 				}
 			}
 			break;
@@ -486,8 +487,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 				if (checkAdmin($f))
 				{
 					// Enable moderated mode
-					setChannelStatus("#osu", 2);
-					addMessageToDB(999, "#osu", "This channel is now in moderated mode!");
+					setChannelStatus($c, 2);
+					addMessageToDB(999, $c, "This channel is now in moderated mode!");
 				}
 			}
 			break;
@@ -498,8 +499,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 				if (checkAdmin($f))
 				{
 					// Disable moderated mode
-					setChannelStatus("#osu", 1);
-					addMessageToDB(999, "#osu", "This channel is no longer in moderated mode!");
+					setChannelStatus($c, 1);
+					addMessageToDB(999, $c, "This channel is no longer in moderated mode!");
 				}
 			}
 			break;
@@ -595,6 +596,56 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_packet_time = ? WHERE osu_id = ?", array($t, $uid));
 	}
 
+	function joinChannel($u, $chan)
+	{
+		try
+		{
+			// Make sure the channel exists
+			if (!channelExists($chan))
+				throw new Exception($chan." channel doesn't exists");
+
+			// Make sure the channel is public or we are admin
+			if (isChannelPublicRead($chan) == 0 && getUserRank($u) < 3)
+				throw new Exception("You are not allowed to join ".$chan);
+
+			// Channel exists and is public read, join it
+			$output = "";
+			$output .= "\x40\x00\x00";
+			$output .= pack("L", strlen($chan)+2);
+			$output .= binStr($chan);
+			return $output;
+		}
+		catch (Exception $e)
+		{
+			return outputMessage("FokaBot", $u, $e->getMessage());
+		}
+	}
+
+	function isChannelPublicWrite($c)
+	{
+		// Check if channel exists
+		$q = $GLOBALS["db"]->fetch("SELECT public_write FROM bancho_channels WHERE name = ?", array($c));
+		if ($q)
+			return current($q);	// Return public write value
+		else
+			return 0;			// Doesn't exist, no write thing
+	}
+
+	function isChannelPublicRead($c)
+	{
+		// Check if channel exists
+		$q = $GLOBALS["db"]->fetch("SELECT public_read FROM bancho_channels WHERE name = ?", array($c));
+		if ($q)
+			return current($q);	// Return public read value
+		else
+			return 0;			// Doesn't exist, no read thing
+	}
+
+	function channelExists($c)
+	{
+		return $GLOBALS["db"]->fetch("SELECT id FROM bancho_channels WHERE name = ?", array($c));
+	}
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -650,7 +701,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 		}
 
 		// Get data
-		$data = file('php://input');
+		// and fuck php, seriously.
+		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
+			$data = file('php://input');
+		else
+			$data = str_split(str_replace("\x0A", "\x00", file_get_contents('php://input')), 512);
 
 		// Check if this is the first packet
 		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
@@ -764,21 +819,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";*/
 
 
-			// Channel join, maybe?
+			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
 			$output .= pack("L", $userID);
-			$output .= "\x59\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x40\x00\x00\x06\x00\x00\x00";
-			$output .= binStr("#osu");
+			$output .= "\x59\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00";
+
+			// Channel join
+			$output .= joinChannel($username, "#osu");
 
 			// Channels info packets
-			$output .= outputChannel("#osu", "Main ripple chat", 1337);
-			$output .= outputChannel("#italian", "Italian only chat", 1337);
-			$output .= outputChannel("#english", "English only chat", 1337);
-			$output .= outputChannel("#admins", "Admin only chat. Plz no akerino.", 1337);
-			$output .= outputChannel("#support", "Ask for support here.", 1337);
-
-			//$output .= pack("S", 1337);
-			//$output .= "\x00";
+			$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
+			foreach ($channels as $channel) {
+				$output .= outputChannel($channel["name"], $channel["description"], 1337);
+			}
 
 			// Default login messages
 			$messages = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
@@ -831,26 +884,37 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// if so, add it to DB
 			if ($data[0][0] == "\x01" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
-				// Check channel status and silence
-				if ((getChannelStatus("#osu") == 1 && !isSlienced($userID)) || checkAdmin($username))
+				// Get message and channel
+				$msg = readBinStr($data, 9);
+				$channel = substr(readBinStr($data, 9+2+strlen($msg)), 0, -4);
+
+				// Check channel statusand silence
+				$isAdmin = checkAdmin($username);
+				if ((getChannelStatus($channel) == 1 && !isSlienced($userID)) || $isAdmin)
 				{
-					// Channel is not in moderated mode and we are not silenced, or we are admin
-					$msg = readBinStr($data, 9);
-
-					if (strlen($msg) > 0)
+					// Check public meme
+					if (isChannelPublicWrite($channel) == 1 || $isAdmin)
 					{
-						addMessageToDB($userID,"#osu",$msg);
-
-						// Check if this message has triggered a fokabot command
-						fokaBotCommands($username, $msg);
-
-						// Anti spam
-						if (checkSpam($userID))
+						// Channel is not in moderated mode and we are not silenced, or we are admin
+						if (strlen($msg) > 0)
 						{
-							addMessageToDB(999, "#osu", $username." has been silenced (FokaBot spam protection)");
-							silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
-							kickUser($userID);
+							addMessageToDB($userID, $channel, $msg);
+
+							// Check if this message has triggered a fokabot command
+							fokaBotCommands($username, $channel, $msg);
+
+							// Anti spam
+							if (checkSpam($userID))
+							{
+								addMessageToDB(999, $channel, $username." has been silenced (FokaBot spam protection)");
+								silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
+								kickUser($userID);
+							}
 						}
+					}
+					else
+					{
+						$output .= outputMessage("FokaBot", $channel, "You can't talk in this channel.");
 					}
 				}
 			}
@@ -872,7 +936,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			if ($messages)
 			{
 				foreach ($messages as $message) {
-					$output .= outputMessage($message["msg_from_username"], "#osu", $message["msg"]);
+					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
 					$last = $message["id"];
 				}
 			}
@@ -899,6 +963,28 @@ we are actually reverse engineering bancho successfully. kinda of.
 				setAction($userID, $action);
 			}
 
+			// Channel list
+			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				// Channels info packets
+				$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
+				foreach ($channels as $channel) {
+					$output .= outputChannel($channel["name"], $channel["description"], 1337);
+				}
+			}
+
+			// Channel join
+			if ($data[0][0] == "\x3F" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				$channel = readBinStr($data, 7);
+				$output .= joinChannel($username, $channel);
+			}
+
+			/* Channel part
+			if ($data[0][0] == "\x4E" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+			}*/
+
 			// Update latest packet time
 			updateLatestPacketTime($userID, time());
 
@@ -913,25 +999,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Output everything
 			outGz($output);
-
-
-			// Main menu icon
-			/*$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
-			if ($msg != "")
-			{
-				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
-				$output .= binStr($msg);
-			}*/
-
-			// Welcome to ripple message
-			/*$msg = "Welcome to Ripple!";
-			$output .= "\x18\x00\x00";
-			$output .= pack("L", strlen($msg)+2);
-			$output .= binStr($msg);*/
-
-			// Test message
-			/*$output = "";
-			$output .= addMessageToDB("peppy", "#osu", "[DEBUG] Pong", true);*/
 		}
 	}
 ?>

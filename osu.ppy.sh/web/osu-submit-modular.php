@@ -48,11 +48,21 @@
 		{
 			// We've finished a song
 			// Save score (and increase playcount)
-			$replayID = saveScore($scoreDataArray);
+			$playID = saveScore($scoreDataArray);
 
 			// Save replay if we played in rankable mods
 			if (isRankable($scoreDataArray[13]))
-				saveReplay($replayID);
+				saveReplay($playID);
+
+			// Check if we achieved rank #1
+			$firstPlace = getFirstPlacePlayID($scoreDataArray[0]);
+			if ($firstPlace == $playID)
+			{
+				// Send #announce message
+				$song = $GLOBALS["db"]->fetch("SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?", $scoreDataArray[0]);
+				if($song)
+					addMessageToDB(999, "#announce", $scoreDataArray[1]."achieved rank #1 on ".current($song)."!");
+			}
 
 			// Done
 			echo($SUBMIT["okOutput"]);
