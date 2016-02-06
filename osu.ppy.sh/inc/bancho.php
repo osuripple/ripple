@@ -133,8 +133,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 		else
 			$lm = current($lm);
 
+		// Do the same for private messages
+		$lpm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_private_messages ORDER BY id DESC");
+		if (!$lpm)
+			$lpm = 0;
+		else
+			$lpm = current($lm);
+
 		// Save token, latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
 	// Delete all tokens for $uid user, except the current one ($ct)
@@ -299,10 +306,22 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_message_id = ? WHERE osu_id = ?", array($mid, $uid));
 	}
 
+	// Set $uid's latest private message id to $mid
+	function updateLatestPrivateMessageID($uid, $mid)
+	{
+		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_private_message_id = ? WHERE osu_id = ?", array($mid, $uid));
+	}
+
 	// Get user latest message id
 	function getLatestMessageID($uid)
 	{
 		return current($GLOBALS["db"]->fetch("SELECT latest_message_id FROM bancho_tokens WHERE osu_id = ?", array($uid)));
+	}
+
+	// Get user latest private message id
+	function getLatestPrivateMessageID($uid)
+	{
+		return current($GLOBALS["db"]->fetch("SELECT latest_private_message_id FROM bancho_tokens WHERE osu_id = ?", array($uid)));
 	}
 
 	// Return all the unreceived messages for a user
@@ -310,17 +329,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		$lm = getLatestMessageID($uid);
-		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array($lm, $uid));
-		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to = ?", array($lm, getUserUsername($uid)));
+		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+	}
 
-		return array_merge($public, $private);
+	function getUnreceivedPrivateMessages($uid)
+	{
+		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_private_messages WHERE id > ? AND msg_to = ?", array(getLatestPrivateMessageID($uid), getUserUsername($uid)));
 	}
 
 	// Adds a message to DB
-	function addMessageToDB($fuid, $to, $msg)
+	function addMessageToDB($fuid, $to, $msg, $private = false)
 	{
-		$GLOBALS["db"]->execute("INSERT INTO bancho_messages (`msg_from_userid`, `msg_from_username`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?, ?)", array($fuid, getUserUsername($fuid), $to, $msg, time()));
+		$table = $private ? "bancho_private_messages" : "bancho_messages";
+		$GLOBALS["db"]->execute("INSERT INTO ".$table." (`msg_from_userid`, `msg_from_username`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?, ?)", array($fuid, getUserUsername($fuid), $to, $msg, time()));
 	}
 
 	// Reads a binary string.
@@ -945,7 +966,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 						throw new Exception("Error while sending your message. Please try again.");
 
 					// Send message
-					addMessageToDB($userID, $to, $msg);
+					addMessageToDB($userID, $to, $msg, true);
 
 					// Anti spam
 					if (checkSpam($userID))
@@ -972,7 +993,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				setAction($userID, 0);
 			}
 
-			// Output unreceived messages if needed
+			// Output unreceived public messages if needed
 			$messages = getUnreceivedMessages($userID);
 			$last = 0;
 			if ($messages)
@@ -986,6 +1007,23 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// If we have received some messages, update our latest message ID
 			if ($last != 0)
 				updateLatestMessageID($userID, $last);
+
+
+			// Output unreceived private messages if needed
+			$messages = getUnreceivedPrivateMessages($userID);
+			$last = 0;
+			if ($messages)
+			{
+				foreach ($messages as $message) {
+					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
+					$last = $message["id"];
+				}
+			}
+
+			// If we have received some messages, update our latest message ID
+			if ($last != 0)
+				updateLatestPrivateMessageID($userID, $last);
+
 
 			// Output online users if needed
 			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
