@@ -127,18 +127,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 	function saveToken($t, $uid)
 	{
 		// Get latest message id, so we don't send messages sent before this user logged in
-		$lm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_messages ORDER BY id DESC");
+		$lm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_messages ORDER BY id DESC LIMIT 1");
 		if (!$lm)
 			$lm = 0;
 		else
 			$lm = current($lm);
 
 		// Do the same for private messages
-		$lpm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_private_messages ORDER BY id DESC");
+		$lpm = $GLOBALS["db"]->fetch("SELECT id FROM bancho_private_messages ORDER BY id DESC LIMIT 1");
 		if (!$lpm)
 			$lpm = 0;
 		else
-			$lpm = current($lm);
+			$lpm = current($lpm);
 
 		// Save token, latest action time and latest message id
 		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, $lpm, time()));
