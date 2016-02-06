@@ -310,7 +310,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 	// Ignore his own messages
 	function getUnreceivedMessages($uid)
 	{
-		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to == ?", array(getLatestMessageID($uid), getUserUsername($uid)));
+
+		return array_merge($public, $private);
 	}
 
 	// Adds a message to DB
@@ -547,7 +550,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE osu_id = ?", array($se, $sr, $uid));
 	}
 
-	function isSlienced($uid)
+	function isSilenced($uid)
 	{
 		if (getSilenceEnd($uid) <= time())
 			return false;
@@ -890,7 +893,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 				// Check channel statusand silence
 				$isAdmin = checkAdmin($username);
-				if ((getChannelStatus($channel) == 1 && !isSlienced($userID)) || $isAdmin)
+
+				// Check channel status (moderated) and silence
+				if ((getChannelStatus($channel) == 1 && !isSilenced($userID)) || $isAdmin)
 				{
 					// Check public meme
 					if (isChannelPublicWrite($channel) == 1 || $isAdmin)
@@ -918,6 +923,42 @@ we are actually reverse engineering bancho successfully. kinda of.
 					}
 				}
 			}
+
+			// Private chat
+			if ($data[0][0] == "\x19" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				// Get message and channel
+				$msg = readBinStr($data, 9);
+				$to = substr(readBinStr($data, 9+2+strlen($msg)), 0, -4);
+
+				try
+				{
+					if (isSilenced($userID))
+						throw new Exception("You are silenced. You can't talk until your silence ends.");
+
+					if (isSilenced(getUserOsuID($to)))
+						throw new Exception($to." is silenced.");
+
+					// Check if message is valid
+					if (strlen($msg) > 0)
+					{
+						// Send message
+						addMessageToDB($userID, $to, $msg);
+
+						// Anti spam
+						if (checkSpam($userID))
+						{
+							silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
+							kickUser($userID);
+						}
+					}
+				}
+				catch (Exception $e)
+				{
+					$output .= outputMessage("FokaBot", $username, $e->getMessage());
+				}
+			}
+
 
 			// Send updated userpanel if we've submitted a score
 			// or we have changed our gamemode
