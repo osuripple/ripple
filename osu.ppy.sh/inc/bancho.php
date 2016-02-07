@@ -161,7 +161,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lpm = current($lpm);
 
 		// Save token with latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, $lpm, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0, 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
 
@@ -500,6 +500,16 @@ we are actually reverse engineering bancho successfully. kinda of.
 			case checkSubStr($m, "!faq offend"): addMessageToDB(999, $c, "Please don't offend other players."); break;
 			case checkSubStr($m, "!report"): addMessageToDB(999, $c, "Report command is not here yet."); break;
 
+			case checkSubStr($m, "!heavy"):
+			{
+				if (checkAdmin($f))
+				{
+					updateLatestPacketTime(getUserOsuID($f), 0, true);
+					addMessageToDB(999, $c, "Sending heavy packets to ".$f."...");
+				}
+			}
+			break;
+
 			// !roll command
 			case checkSubStr($m, "!roll"):
 			{
@@ -713,7 +723,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 */
 	function getSilenceEnd($uid)
 	{
-		error_log($uid);
 		return current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE osu_id = ?", array($uid)));
 	}
 
@@ -807,15 +816,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 *
 	 * @param (int) ($uid) User ID
 	 * @param (int) ($t) New latest packet time
+	 * @param (bool) ($heavy) If true, update both latest packet and heavy packet time
 	 */
-	function updateLatestPacketTime($uid, $t)
+	function updateLatestPacketTime($uid, $t, $h = false)
 	{
 		// Make sure the token exists
 		$q = $GLOBALS["db"]->fetch("SELECT id FROM bancho_tokens WHERE osu_id = ?", array($uid));
 
 		// If the token exists, update latest packet time
 		if ($q)
+		{
 			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_packet_time = ? WHERE osu_id = ?", array($t, $uid));
+			if($h) $GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_heavy_packet_time = ? WHERE osu_id = ?", array($t, $uid));
+		}
 	}
 
 
@@ -917,6 +930,22 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= userPanel($user["osu_id"], 0);
 
 		return $output;
+	}
+
+	/*
+	 * isHeavy
+	 * Check if we should send an heavy packet
+	 *
+	 * @param (string) ($t) Token
+	 * @return (bool)
+	 */
+	function isHeavy($t)
+	{
+		$t = $GLOBALS["db"]->fetch("SELECT latest_heavy_packet_time FROM bancho_tokens WHERE token = ?", array($t));
+		if (abs(time()-current($t)) >= 30)
+			return true;
+		else
+			return false;
 	}
 
 	/*
@@ -1076,7 +1105,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= userPanel($userID, 0);
 
 			// Output online users
-			$output .= outputOnlineUsers();
+			//$output .= outputOnlineUsers();
 
 			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
@@ -1147,6 +1176,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Get our ID and username from token
 			$userID = getUserIDFromToken($token);
 			$username = getUserUsername($userID);
+
+			// Heavy packet check
+			$heavy = isHeavy($token);
 
 			// Check if user has sent a message (public is \x01, private is \x19)
 			// if so, add it to DB
@@ -1243,8 +1275,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Output online users if needed
-			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
-				outputOnlineUsers();
+			//if (($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00"))
+			if ($heavy)
+				$output .= outputOnlineUsers();
 
 			// Update our action if needed
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
@@ -1276,7 +1309,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}*/
 
 			// Update latest packet time
-			updateLatestPacketTime($userID, time());
+			updateLatestPacketTime($userID, time(), $heavy);
 
 			// Output everything
 			outGz($output);
