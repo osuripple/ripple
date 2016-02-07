@@ -37,6 +37,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 </pre>');
 	}
 
+
 	/*
 	 * outGz
 	 * Outputs a gzip encoded string
@@ -47,6 +48,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		echo(gzencode($str));
 	}
 
+
 	/*
 	 * binStr
 	 * Converts a string in a binary string
@@ -56,16 +58,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 */
 	function binStr($str) {
 		$r = "";
-
-		// Add 0B and length bytes
 		$r .= "\x0B".pack("c", strlen($str));
-
-		// Add Hex ASCII codes
 		$r .= $str;
-
-		// Return result
 		return $r;
 	}
+
 
 	/*
 	 * outputMessage
@@ -84,10 +81,20 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$r .= binStr($from);
 		$r .= binStr($msg);
 		$r .= binStr($to);
-		$r .= pack("L", getUserOsuID($from));	// User ID
+		$r .= pack("L", getUserOsuID($from));
 		return $r;
 	}
 
+
+	/*
+	 * outputChannel
+	 * Output a channel info message
+	 *
+	 * @param (string) ($name) Channel name
+	 * @param (string) ($desc) Channel description
+	 * @param (string) ($users) Connected users
+	 * @return (string)
+	 */
 	function outputChannel($name, $desc, $users)
 	{
 		$r = "";
@@ -99,10 +106,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $r;
 	}
 
+
 	/*
 	 * sendNotification
 	 * Send a notification to client
-	 * Is bugged as fuck with loooooong messages
 	 * Use \\n for new line
 	 *
 	 * @param (string) ($msg) Notification message
@@ -117,13 +124,26 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $r;
 	}
 
-	// Generate a random Ripple Tatoe Token
+
+	/*
+	 * generateToken
+	 * Generate a random ripple token
+	 *
+	 * @return (string)
+	 */
 	function generateToken()
 	{
 		return uniqid("rtt");
 	}
 
-	// Save a token in bancho_tokens
+
+	/*
+	 * saveToken
+	 * Save a ripple token in db
+	 *
+	 * @param (string) ($t) Token string. Use generateToken() to get one.
+	 * @param (int) ($uid) User id
+	 */
 	function saveToken($t, $uid)
 	{
 		// Get latest message id, so we don't send messages sent before this user logged in
@@ -140,19 +160,31 @@ we are actually reverse engineering bancho successfully. kinda of.
 		else
 			$lpm = current($lpm);
 
-		// Save token, latest action time and latest message id
+		// Save token with latest action time and latest message id
 		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
-	// Delete all tokens for $uid user, except the current one ($ct)
+
+	/*
+	 * deleteOldTokens
+	 * Delete all tokens from older session but the current one
+	 *
+	 * @param (int) ($uid) User id
+	 * @param (string) ($ct) Current token
+	 */
 	function deleteOldTokens($uid, $ct)
 	{
 		$GLOBALS["db"]->execute("DELETE FROM bancho_tokens WHERE osu_id = ? AND token != ?", array($uid, $ct));
 	}
 
-	// Get user id from token
-	// Return user id if success
-	// Return -1 if token not found
+
+	/*
+	 * getUserIDFromToken
+	 * Get user id from token
+	 *
+	 * @param (string) ($t) Token
+	 * @return (int) user id if success, -1 if not found
+	 */
 	function getUserIDFromToken($t)
 	{
 		$query = $GLOBALS["db"]->fetch("SELECT osu_id FROM bancho_tokens WHERE token = ?", array($t));
@@ -162,7 +194,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return -1;
 	}
 
-	// Returns an user panel packet from user id
+
+	/*
+	 * userPanel
+	 * Return userpanel packet for $uid user
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($gm) Game mode (0 std,1 taiko,2 ctb,3 mania)
+	 * @return (string) UP Packet
+	 */
 	function userPanel($uid, $gm)
 	{
 		// Get mode for DB
@@ -227,24 +267,23 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= pack("L", $userRank);
 		$output .= "\x0B\x00\x00\x2E\x00\x00\x00";
 		$output .= pack("L", $userID);
+
 		// Other flags
 		// User status (idle, afk, playing etc)
-		/*
-		x00: Idle,
-		x01: Afk,
-		x02: Playing,
-		x03: Editing,
-		x04: Modding,
-		x05: Multiplayer,
-		x06: Watching,
-		x07: Unknown,
-		x08: Testing,
-		x09: Submitting,
-		x0A: (10) Paused,
-		x0B: (11) Lobby,
-		x0C: (12) Multiplaying,
-		x0D: (13) OsuDirect
-		*/
+		//x00: Idle,
+		//x01: Afk,
+		//x02: Playing,
+		//x03: Editing,
+		//x04: Modding,
+		//x05: Multiplayer,
+		//x06: Watching,
+		//x07: Unknown,
+		//x08: Testing,
+		//x09: Submitting,
+		//x0A: (10) Paused,
+		//x0B: (11) Lobby,
+		//x0C: (12) Multiplaying,
+		//x0D: (13) OsuDirect
 		$output .= pack("L", getAction($userID));
 		$output .= "\x00\x00\x00";
 
@@ -274,14 +313,29 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $output;
 	}
 
+
+	/*
+	 * getAction
+	 * Get action (idle, playing etc) for $uid user
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (int) Action code
+	 */
 	function getAction($uid)
 	{
 		return current($GLOBALS["db"]->fetch("SELECT action FROM bancho_tokens WHERE osu_id = ?", array($uid)));
 	}
 
+
+	/*
+	 * setAction
+	 * Sets action (idle, playing etc) for $uid user
+	 *
+	 * @param (int) ($uid) User ID
+	 */
 	function setAction($uid, $a)
 	{
-		return current($GLOBALS["db"]->execute("UPDATE bancho_tokens SET action = ? WHERE osu_id = ?", array($a, $uid)));
+		current($GLOBALS["db"]->execute("UPDATE bancho_tokens SET action = ? WHERE osu_id = ?", array($a, $uid)));
 	}
 
 	// Not used
@@ -300,53 +354,100 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return 0;
 	}*/
 
-	// Set $uid's message id to $mid
+
+	/*
+	 * updateLatestMessageID
+	 * Set $uid latest message id to $mid
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($mid) New latest message ID
+	 */
 	function updateLatestMessageID($uid, $mid)
 	{
 		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_message_id = ? WHERE osu_id = ?", array($mid, $uid));
 	}
 
-	// Set $uid's latest private message id to $mid
+
+	/*
+	 * updateLatestPrivateMessageID
+	 * Set $uid latest private message id to $mid
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($mid) New latest private message ID
+	 */
 	function updateLatestPrivateMessageID($uid, $mid)
 	{
 		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_private_message_id = ? WHERE osu_id = ?", array($mid, $uid));
 	}
 
-	// Get user latest message id
+
+	/*
+	 * getLatestMessageID
+	 * Get $uid latest message id
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (int) Latest message ID
+	 */
 	function getLatestMessageID($uid)
 	{
 		return current($GLOBALS["db"]->fetch("SELECT latest_message_id FROM bancho_tokens WHERE osu_id = ?", array($uid)));
 	}
 
-	// Get user latest private message id
+
+	/*
+	 * getLatestPrivateMessageID
+	 * Get $uid latest private message id
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (int) Latest private message ID
+	 */
 	function getLatestPrivateMessageID($uid)
 	{
 		return current($GLOBALS["db"]->fetch("SELECT latest_private_message_id FROM bancho_tokens WHERE osu_id = ?", array($uid)));
 	}
 
-	// Return all the unreceived messages for a user
-	// Get everything sent after the latest message
-	// Ignore his own messages
+
+	/*
+	 * getUnreceivedMessages
+	 * Return an array with unreceived messages for $uid users
+	 * unreceived messages are those sent after the latest message ID
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (array) Message array
+	 */
 	function getUnreceivedMessages($uid)
 	{
-		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_private_messages WHERE id > ? AND msg_to = ?", array(getLatestPrivateMessageID($uid), getUserUsername($uid)));
+		return array("public" => $public, "private" => $private);
 	}
 
-	function getUnreceivedPrivateMessages($uid)
-	{
-		return $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_private_messages WHERE id > ? AND msg_to = ?", array(getLatestPrivateMessageID($uid), getUserUsername($uid)));
-	}
 
-	// Adds a message to DB
+	/*
+	 * addMessageToDB
+	 * Adds a message to DB
+	 *
+	 * @param (int) ($fuid) Sender user ID
+	 * @param (string) ($to) Receiver user ID
+	 * @param (string) ($msg) Message
+	 * @param (bool) ($private) If true, add the message bancho_private_messages, otherwise add it to bancho_messages
+	 */
 	function addMessageToDB($fuid, $to, $msg, $private = false)
 	{
 		$table = $private ? "bancho_private_messages" : "bancho_messages";
 		$GLOBALS["db"]->execute("INSERT INTO ".$table." (`msg_from_userid`, `msg_from_username`, `msg_to`, `msg`, `time`) VALUES (?, ?, ?, ?, ?)", array($fuid, getUserUsername($fuid), $to, $msg, time()));
 	}
 
-	// Reads a binary string.
-	// Works with messages, might not work with other packets
-	// $s is the input packet, $start is the position of \x0B
+
+	/*
+	 * readBinStr
+	 * Reads a binary string
+	 * Works with messages, might not work with other packets
+	 *
+	 * @param (array) ($s) The byte array. This script reads ONLY THE FIRST LINE
+	 * @param (int) ($s) Start (\x0B byte position)
+	 * @return (string) The string
+	 */
 	function readBinStr($s, $start)
 	{
 		// Make sure this is a string
@@ -378,6 +479,16 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $str;
 	}
 
+
+	/*
+	 * fokaBotCommands
+	 * Check if a message triggers a fokabot command
+	 * If so, add fokabot's response to DB
+	 *
+	 * @param (string) ($f) Sender username
+	 * @param (string) ($c) Channel
+	 * @param (string) ($m) Message
+	 */
 	function fokaBotCommands($f, $c, $m)
 	{
 		switch($m)
@@ -388,9 +499,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 			case checkSubStr($m, "!faq spam"): addMessageToDB(999, $c, "Please don't spam."); break;
 			case checkSubStr($m, "!faq offend"): addMessageToDB(999, $c, "Please don't offend other players."); break;
 			case checkSubStr($m, "!report"): addMessageToDB(999, $c, "Report command is not here yet."); break;
+
+			// !roll command
 			case checkSubStr($m, "!roll"):
 			{
-				// !roll command
 				// Explode message
 				$m = explode(" ", $m);
 
@@ -411,6 +523,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 			break;
 
+			// !silence command
+			// Kick and silence someone
+			// Syntax: !silence <username> <count> <unit (s/m/h/d)> <reason>
 			case checkSubStr($m, "!silence"):
 			{
 				try
@@ -467,6 +582,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 			break;
 
+			// !kick command
+			// Disconnect a user from the server
 			case checkSubStr($m, "!kick"):
 			{
 				try
@@ -506,6 +623,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 			break;
 
+			// !moderated on
+			// Put a channel in moderated mode
 			case checkSubStr($m, "!moderated on"):
 			{
 				// Admin only command
@@ -518,6 +637,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 			break;
 
+			// !moderated off
+			// Turn off moderated mode from a channel
 			case checkSubStr($m, "!moderated off"):
 			{
 				// Admin only command
@@ -532,10 +653,14 @@ we are actually reverse engineering bancho successfully. kinda of.
 		}
 	}
 
-	// Channel mode:
-	// 0: doesn't exists
-	// 1: normal
-	// 2: moderated
+
+	/*
+	 * getChannelStatus
+	 * Get channel status
+	 *
+	 * @param (string) ($c) Channel name
+	 * @return (int) 0: Channel doesn't exist, 1: normal, 2: moderated
+	 */
 	function getChannelStatus($c)
 	{
 		// Make sure the channel exists
@@ -548,11 +673,27 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return 0;
 	}
 
+
+	/*
+	 * setChannelStatus
+	 * Set channel status
+	 *
+	 * @param (string) ($c) Channel name
+	 * @param (int) ($s) Channel status. 1: normal, 2: moderated
+	 */
 	function setChannelStatus($c, $s)
 	{
 		$GLOBALS["db"]->execute("UPDATE bancho_channels SET status = ? WHERE name = ?", array($s, $c));
 	}
 
+
+	/*
+	 * checkKicked
+	 * Check if an user should be kicked from the server
+	 *
+	 * @param (string) ($t) Token
+	 * @return (bool)
+	 */
 	function checkKicked($t)
 	{
 		$q = $GLOBALS["db"]->fetch("SELECT kicked FROM bancho_tokens WHERE token = ?", array($t));
@@ -562,16 +703,42 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return (bool)current($q);
 	}
 
+
+	/*
+	 * getSilenceEnd
+	 * Get user silence end time
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (int) silence end time
+	 */
 	function getSilenceEnd($uid)
 	{
+		error_log($uid);
 		return current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE osu_id = ?", array($uid)));
 	}
 
+
+	/*
+	 * silenceUser
+	 * Set new silence end and reason for $uid
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($se) Silence end time
+	 * @param (string) ($st) Silence reason
+	 */
 	function silenceUser($uid, $se, $sr)
 	{
 		$GLOBALS["db"]->execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE osu_id = ?", array($se, $sr, $uid));
 	}
 
+
+	/*
+	 * isSilenced
+	 * Check if someone is silenced
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (bool)
+	 */
 	function isSilenced($uid)
 	{
 		if (getSilenceEnd($uid) <= time())
@@ -580,6 +747,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return true;
 	}
 
+
+	/*
+	 * kickUser
+	 * Set kick status to 1 for $uid
+	 *
+	 * @param (int) ($uid) User ID
+	 */
 	function kickUser($uid)
 	{
 		// Make sure the token exists
@@ -590,11 +764,26 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET kicked = 1 WHERE osu_id = ?", array($uid));
 	}
 
+
+	/*
+	 * checkUserExists
+	 * Check if given user exists
+	 *
+	 * @param (string) ($i) username
+	 */
 	function checkUserExists($u)
 	{
 		return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $u);
 	}
 
+
+	/*
+	 * checkSpam
+	 * Check if $uid is spamming
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (bool)
+	 */
 	function checkSpam($uid)
 	{
 		$q = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM bancho_messages WHERE msg_from_userid = ? AND time >= ? AND time <= ?", array($uid, time()-10, time()) );
@@ -611,6 +800,14 @@ we are actually reverse engineering bancho successfully. kinda of.
 		}
 	}
 
+
+	/*
+	 * updateLatestPacketTime
+	 * Set latest packet time for $uid
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($t) New latest packet time
+	 */
 	function updateLatestPacketTime($uid, $t)
 	{
 		// Make sure the token exists
@@ -621,7 +818,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_packet_time = ? WHERE osu_id = ?", array($t, $uid));
 	}
 
-	function joinChannel($u, $chan)
+
+	/*
+	 * outputJoin
+	 * Output join channel packet if
+	 * Check if $u can join that channel too
+	 *
+	 * @param (string) ($u) Username (for permissions stuff)
+	 * @param (string) ($chan) Channel name
+	 * @return (string) Channel join packet (and error message from fokabot if $u can't join $chan)
+	 */
+	function outputJoin($u, $chan)
 	{
 		try
 		{
@@ -630,7 +837,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				throw new Exception($chan." channel doesn't exists");
 
 			// Make sure the channel is public or we are admin
-			if (isChannelPublicRead($chan) == 0 && getUserRank($u) < 3)
+			if (getChannelPublicRead($chan) == 0 && getUserRank($u) < 3)
 				throw new Exception("You are not allowed to join ".$chan);
 
 			// Channel exists and is public read, join it
@@ -646,7 +853,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 		}
 	}
 
-	function isChannelPublicWrite($c)
+
+	/*
+	 * getChannelPublicWrite
+	 * Get public write status for $c channel
+	 *
+	 * @param (string) ($c) Channel name
+	 * @return (int) Public write status (0/1)
+	 */
+	function getChannelPublicWrite($c)
 	{
 		// Check if channel exists
 		$q = $GLOBALS["db"]->fetch("SELECT public_write FROM bancho_channels WHERE name = ?", array($c));
@@ -656,7 +871,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return 0;			// Doesn't exist, no write thing
 	}
 
-	function isChannelPublicRead($c)
+
+	/*
+	 * getChannelPublicRead
+	 * Get public read status for $c channel
+	 *
+	 * @param (string) ($c) Channel name
+	 * @return (int) Public read status (0/1)
+	 */
+	function getChannelPublicRead($c)
 	{
 		// Check if channel exists
 		$q = $GLOBALS["db"]->fetch("SELECT public_read FROM bancho_channels WHERE name = ?", array($c));
@@ -666,6 +889,14 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return 0;			// Doesn't exist, no read thing
 	}
 
+
+	/*
+	 * channelExists
+	 * Check if $c channel exists
+	 *
+	 * @param (string) ($c) Channel name
+	 * @return (bool)
+	 */
 	function channelExists($c)
 	{
 		return $GLOBALS["db"]->fetch("SELECT id FROM bancho_channels WHERE name = ?", array($c));
@@ -677,14 +908,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 */
 	function banchoServer()
 	{
-		// Can't output before headers
-		// We don't care about cho-token right now
-		// because we handle only the login packets
-
-		// Global variables
+		// Set token to nothing
 		$token = "";
 
-		// Generate token if first packet
+		// Generate token if this it the first packet
 		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
 		{
 			// We don't have a token, generate it
@@ -705,7 +932,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		header("Vary: Accept-Encoding");
 		header("Content-Encoding: gzip");
 
-		// Check maintenance
+		// Check bancho maintenance
 		if (checkBanchoMaintenance())
 		{
 			$output = "";
@@ -715,7 +942,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			die();
 		}
 
-		// Check kick
+		// Check if we should be kicked
 		if(isset($_SERVER["HTTP_OSU_TOKEN"]) && checkKicked($_SERVER["HTTP_OSU_TOKEN"]))
 		{
 			$output = "";
@@ -735,6 +962,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Check if this is the first packet
 		if(!isset($_SERVER["HTTP_OSU_TOKEN"]))
 		{
+			// First packet, login stuff
 			try
 			{
 				// Get provided username and password.
@@ -766,7 +994,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			}
 
 			// Username, password and allowed are ok
-			// Update latest activity
+			// Update latest activity on website
 			updateLatestActivity($username);
 
 			// Get user data and stats
@@ -786,14 +1014,13 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// want it. Get the right username.
 			$username = getUserUsername($userID);
 
-			// Get silence time
+			// Get silence end time
 			$silenceTime = getSilenceEnd($userID)-time();
 
 			// Reset silence time if silence ended
 			if ($silenceTime < 0)
 				$silenceTime = 0;
 
-			// Set variables
 			// Supporter/GMT
 			// x01: Normal (no supporter)
 			// x02: GMT
@@ -806,19 +1033,20 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$userSupporter = getUserRank($username) >= 3 ? "\x06" : $defaultDirect;
 
 			// Output variable because multiple outGz are bugged.
+			// We output this variable at the end
 			$output = "";
 
-			// Standard stuff (login OK, lock client, memes etc)
+			// Standard stuff (login OK, lock client etc)
 			$output .= "\x5C\x00\x00\x04";
 			$output .= "\x00\x00\x00";
 			$output .= pack("L", $silenceTime);
 			$output .= "\x05\x00\x00\x04\x00\x00\x00";
 			// User ID
 			$output .= pack("L", $userID);
-			// More standard stuff
+			// More unknown but required stuff
 			$output .= "\x4B\x00\x00\x04\x00\x00\x00\x13\x00\x00\x00\x47\x00\x00";
 
-			// Supporter/QAT/Friends stuff
+			// Supporter/QAT/(and Friends) stuff
 			$output .= "\x04\x00\x00\x00".$userSupporter."\x00\x00\x00";
 
 			// Online Friends
@@ -827,22 +1055,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= pack("L", 100);
 			$output .= "";*/
 
-			// Output user panel stuff
+			// Output our userpanel
 			$output .= userPanel($userID, 0);
-
-			// Old Online users info
-			// Packet start
-			/*$output .= "\x53\x00\x00";
-			// Something related to name length,
-			// if not correct user won't be shown
-			$output .= pack("L", 21+strlen("FokaBot"));
-			// User ID
-			$output .= pack("L", 999);
-			// Username
-			$output .= binstr("FokaBot");
-			// Other flags
-			$output .= "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";*/
-
 
 			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
@@ -850,15 +1064,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x59\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00";
 
 			// Channel join
-			$output .= joinChannel($username, "#osu");
+			$output .= outputJoin($username, "#osu");
 
-			// Channels info packets
+			// Channels packets
 			$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
 			foreach ($channels as $channel) {
 				$output .= outputChannel($channel["name"], $channel["description"], 1337);
 			}
 
-			// Default login messages
+			// Default login chat messages
 			$messages = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
 			if ($messages != "")
 			{
@@ -869,11 +1083,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 				}
 			}
 
-			// Restricted meme message
+			// Restricted meme message if needed
 			if (current($GLOBALS["db"]->fetch("SELECT value_int FROM bancho_settings WHERE name = 'restricted_joke'")) == 1)
 				$output .= outputMessage("FokaBot", $username, "Your account is currently in restricted mode. Just kidding xd WOOOOOOOOOOOOOOOOOOOOOOO");
 
-			// Login notification
+			// Login notification if needed
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
 			if ($msg != "")
 				$output .= sendNotification($msg);
@@ -901,78 +1115,60 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Other packets
 			$output = "";
 
-			// Get memes
+			// Get our ID and username from token
 			$userID = getUserIDFromToken($token);
 			$username = getUserUsername($userID);
 
-			// Check if user has sent a message (packet starts with \x01\x00\x00)
+			// Check if user has sent a message (public is \x01, private is \x19)
 			// if so, add it to DB
-			if ($data[0][0] == "\x01" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			if (($data[0][0] == "\x01" || $data[0][0] == "\x19") && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
-				// Get message and channel
-				$msg = readBinStr($data, 9);
-				$channel = substr(readBinStr($data, 9+2+strlen($msg)), 0, -4);
+				// Check if this is a private or public message
+				$private = $data[0][0] == "\x19" ? true : false;
 
-				// Check channel statusand silence
-				$isAdmin = checkAdmin($username);
-
-				// Check channel status (moderated) and silence
-				if ((getChannelStatus($channel) == 1 && !isSilenced($userID)) || $isAdmin)
-				{
-					// Check public meme
-					if (isChannelPublicWrite($channel) == 1 || $isAdmin)
-					{
-						// Channel is not in moderated mode and we are not silenced, or we are admin
-						if (strlen($msg) > 0)
-						{
-							addMessageToDB($userID, $channel, $msg);
-
-							// Check if this message has triggered a fokabot command
-							fokaBotCommands($username, $channel, $msg);
-
-							// Anti spam
-							if (checkSpam($userID))
-							{
-								addMessageToDB(999, $channel, $username." has been silenced (FokaBot spam protection)");
-								silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
-								kickUser($userID);
-							}
-						}
-					}
-					else
-					{
-						$output .= outputMessage("FokaBot", $channel, "You can't talk in this channel.");
-					}
-				}
-			}
-
-			// Private chat
-			if ($data[0][0] == "\x19" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
-			{
 				// Get message and channel
 				$msg = readBinStr($data, 9);
 				$to = substr(readBinStr($data, 9+2+strlen($msg)), 0, -4);
 
+				// Check if we are admin (admins can talk in every channel)
+				$isAdmin = checkAdmin($username);
+
 				try
 				{
+					// Message length check
+					if (strlen($msg) <= 0)
+						throw new Exception("Error while sending your message");
+
+					// Sender silence check
 					if (isSilenced($userID))
 						throw new Exception("You are silenced. You can't talk until your silence ends.");
 
-					if (isSilenced(getUserOsuID($to)))
+					// Moderated check (public chat only)
+					if (!$private && getChannelStatus($to) == 2 && !$isAdmin)
+						throw new Exception("The channel is in moderated mode. You can't talk while moderated mode is on.");
+
+					// Public write check (public chat only)
+					if (!$private && getChannelPublicWrite($to) == 0 && !$isAdmin)
+						throw new Exception("You can't talk in this channel");
+
+					// Receiver silence check (private chat only)
+					if ($private && isSilenced(getUserOsuID($to)))
 						throw new Exception($to." is silenced.");
 
-					// Check if message is valid
-					if (strlen($msg) <= 0)
-						throw new Exception("Error while sending your message. Please try again.");
+					// No errors
+					// Add our message to DB
+					addMessageToDB($userID, $to, $msg, $private);
 
-					// Send message
-					addMessageToDB($userID, $to, $msg, true);
+					// Check if this message has triggered a fokabot command
+					fokaBotCommands($username, $to, $msg);
 
-					// Anti spam
+					// Fokabot spam protection
 					if (checkSpam($userID))
 					{
 						silenceUser($userID, time()+300, "Spamming (FokaBot spam protection)");
 						kickUser($userID);
+						if (!$private)
+							addMessageToDB(999, $to, $username." has been silenced (FokaBot spam protection)");
 					}
 				}
 				catch (Exception $e)
@@ -980,6 +1176,30 @@ we are actually reverse engineering bancho successfully. kinda of.
 					$output .= outputMessage("FokaBot", $username, $e->getMessage());
 				}
 			}
+
+			// Output unreceived messages if needed
+			$messages = getUnreceivedMessages($userID);
+			$lastPublic = 0;
+			$lastPrivate = 0;
+			if ($messages)
+			{
+				foreach ($messages["public"] as $message) {
+					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
+					$lastPublic = $message["id"];
+				}
+
+				foreach ($messages["private"] as $message) {
+					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
+					$lastPrivate = $message["id"];
+				}
+			}
+
+			// If we have received some messages, update our latest message ID
+			if ($lastPublic != 0)
+				updateLatestMessageID($userID, $lastPublic);
+
+			if ($lastPrivate != 0)
+				updateLatestPrivateMessageID($userID, $lastPrivate);
 
 
 			// Send updated userpanel if we've submitted a score
@@ -993,43 +1213,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 				setAction($userID, 0);
 			}
 
-			// Output unreceived public messages if needed
-			$messages = getUnreceivedMessages($userID);
-			$last = 0;
-			if ($messages)
-			{
-				foreach ($messages as $message) {
-					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
-					$last = $message["id"];
-				}
-			}
-
-			// If we have received some messages, update our latest message ID
-			if ($last != 0)
-				updateLatestMessageID($userID, $last);
-
-
-			// Output unreceived private messages if needed
-			$messages = getUnreceivedPrivateMessages($userID);
-			$last = 0;
-			if ($messages)
-			{
-				foreach ($messages as $message) {
-					$output .= outputMessage($message["msg_from_username"], $message["msg_to"], $message["msg"]);
-					$last = $message["id"];
-				}
-			}
-
-			// If we have received some messages, update our latest message ID
-			if ($last != 0)
-				updateLatestPrivateMessageID($userID, $last);
-
-
 			// Output online users if needed
 			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
 				$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
-				//$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users WHERE allowed = 1");
 				foreach ($onlineUsers as $user)
 					$output .= userPanel($user["osu_id"], 0);
 			}
@@ -1039,7 +1226,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 			{
 				// Get new action
 				$action = intval(unpack("C",$data[0][7])[1]);
-				//$action = intval($data[0][7]);
 				setAction($userID, $action);
 			}
 
@@ -1048,16 +1234,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			{
 				// Channels info packets
 				$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
-				foreach ($channels as $channel) {
+				foreach ($channels as $channel)
 					$output .= outputChannel($channel["name"], $channel["description"], 1337);
-				}
 			}
 
 			// Channel join
 			if ($data[0][0] == "\x3F" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
 				$channel = readBinStr($data, 7);
-				$output .= joinChannel($username, $channel);
+				$output .= outputJoin($username, $channel);
 			}
 
 			/* Channel part
