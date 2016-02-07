@@ -902,6 +902,23 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $GLOBALS["db"]->fetch("SELECT id FROM bancho_channels WHERE name = ?", array($c));
 	}
 
+
+	/*
+	 * outputOnlineUsers
+	 * Output online users UPs
+	 *
+	 * @return (string)
+	 */
+	function outputOnlineUsers()
+	{
+		$output = "";
+		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
+		foreach ($onlineUsers as $user)
+			$output .= userPanel($user["osu_id"], 0);
+
+		return $output;
+	}
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -1058,6 +1075,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Output our userpanel
 			$output .= userPanel($userID, 0);
 
+			// Output online users
+			$output .= outputOnlineUsers();
+
 			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
 			$output .= pack("L", $userID);
@@ -1091,8 +1111,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
 			if ($msg != "")
 				$output .= sendNotification($msg);
-		
-			// Main menu icon
+
+			// Main menu icon if needed
 			$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 			if ($icon != "")
 			{
@@ -1224,11 +1244,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Output online users if needed
 			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
-			{
-				$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
-				foreach ($onlineUsers as $user)
-					$output .= userPanel($user["osu_id"], 0);
-			}
+				outputOnlineUsers();
 
 			// Update our action if needed
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
