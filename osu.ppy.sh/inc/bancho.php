@@ -1105,7 +1105,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= userPanel($userID, 0);
 
 			// Output online users
-			//$output .= outputOnlineUsers();
+			$output .= outputOnlineUsers();
 
 			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
