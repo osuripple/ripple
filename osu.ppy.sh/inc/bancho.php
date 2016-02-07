@@ -1091,6 +1091,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
 			if ($msg != "")
 				$output .= sendNotification($msg);
+		
+			// Main menu icon
+			$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
+			if ($icon != "")
+			{
+				$output .= "\x4C\x00\x00";
+				$output .= pack("L", strlen($icon)+2);
+				$output .= binStr($icon);
+			}
 
 			/* Add some memes
 			$output .= outputMessage("BanchoBot", $username, "Wtf? Who is FokaBot? Someone is trying to take my place? I'll restrict his account, give me a minute...", true);
@@ -1252,15 +1261,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Update latest packet time
 			updateLatestPacketTime($userID, time());
-
-
-			// Main menu icon
-			/*$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
-			if ($icon != "")
-			{
-				$output .= "\x4C\x00\x00\x3D\x00\x00\x00";
-				$output .= binStr($icon);
-			}*/
 
 			// Output everything
 			outGz($output);
