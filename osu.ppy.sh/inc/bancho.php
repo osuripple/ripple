@@ -282,8 +282,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		// User stats packet
 		$output .= "\x0B\x00\x00";
-		//$output .= "\x2E\x00\x00\x00";
-		$output .= pack("L", 46);
+		$output .= "\x2E\x00\x00\x00";
 		$output .= pack("L", $userID);
 
 		// Other flags
@@ -302,9 +301,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 		//x0B: (11) Lobby,
 		//x0C: (12) Multiplaying,
 		//x0D: (13) OsuDirect
-		//$output .= pack("L", getAction($userID));
+		$output .= pack("L", getAction($userID));
 		//$output .= pack("L", 2);
-		$output .= pack("L", 2);
 		$output .= "\x00\x00\x00";
 		//$output .= binStr("meme");
 
@@ -974,10 +972,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output = "";
 		// Online friends is \x48
 		$output .= "\x48\x00\x00";
-		$output .= pack("L", 4+4+2);// Packet length (4*online__friends_count+2)
-		$output .= pack("s", 2);	// Online friends count
+		$output .= pack("L", 4+2);// Packet length (4*online__friends_count+2)
+		$output .= pack("s", 1);	// Online friends count
 		$output .= pack("L", 999);	// User IDs
-		$output .= pack("L", 1000);	// ...
 		return $output;
 	}
 
@@ -1202,8 +1199,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 		{
 			// Other packets
 			$output = "";
-
-			$output .= "\x58\x00\x00";
 
 			// Get our ID and username from token
 			$userID = getUserIDFromToken($token);
