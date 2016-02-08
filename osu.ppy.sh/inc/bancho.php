@@ -219,6 +219,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
 		$userID = getUserOsuID($username);
 		$userCountry = 108;
+		$rank = getUserRank($username);
+		switch($rank)
+		{
+			case 1: $userColor = "\x00"; break;	// Normal user
+			case 2: $userColor = "\x04"; break;	// Supporter, yellow
+			case 3: $userColor = "\x06"; break;	// Mod, red
+			case 4: $userColor = "\x10"; break;	// Admin, light blue
+		}
+
+		// Fokabot is red
+		if($username == "FokaBot")
+			$userColor = "\x06";
 
 		// Unexpected copypasterino from Print.php
 		// Get leaderboard with right total scores (to calculate rank)
@@ -228,12 +240,12 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$allowedUsers = getAllowedUsers("osu_id");
 
 		// Calculate rank
-		$userRank = 1;
+		$gameRank = 1;
 		foreach ($leaderboard as $person) {
 			if ($person["osu_id"] == $userID) // We found our user. We know our rank.
 				break;
 			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
-				$userRank += 1;
+				$gameRank += 1;
 		}
 
 		// Total score. Should be longlong,
@@ -260,12 +272,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Timezone
 		$output .= "\x19";
 		// Country
-		$output .= pack("L", $userCountry);
+		$output .= pack("c", $userCountry);
+		$output .= $userColor;
+		$output .= "\x00\x00";
 		$output .= "\x00\x00\x00\x00";
 		$output .= "\x00\x00";
 		// Rank
-		$output .= pack("L", $userRank);
-		$output .= "\x0B\x00\x00\x2E\x00\x00\x00";
+		$output .= pack("L", $gameRank);
+
+		// User stats packet
+		$output .= "\x0B\x00\x00";
+		//$output .= "\x2E\x00\x00\x00";
+		$output .= pack("L", 46);
 		$output .= pack("L", $userID);
 
 		// Other flags
@@ -284,8 +302,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 		//x0B: (11) Lobby,
 		//x0C: (12) Multiplaying,
 		//x0D: (13) OsuDirect
-		$output .= pack("L", getAction($userID));
+		//$output .= pack("L", getAction($userID));
+		//$output .= pack("L", 2);
+		$output .= pack("L", 2);
 		$output .= "\x00\x00\x00";
+		//$output .= binStr("meme");
 
 		// Game mode
 		// x00: Std
@@ -305,7 +326,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= "\x00\x00\x00\x00";
 		$output .= "\x00\x00\x00\x00";
 		// Rank
-		$output .= pack("L", $userRank);
+		$output .= pack("L", $gameRank);
 		// PP
 		$output .= pack("S", $userPP);
 
@@ -948,6 +969,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return false;
 	}
 
+	function outputOnlineFriends()
+	{
+		$output = "";
+		// Online friends is \x48
+		$output .= "\x48\x00\x00";
+		$output .= pack("L", 4+4+2);// Packet length (4*online__friends_count+2)
+		$output .= pack("s", 2);	// Online friends count
+		$output .= pack("L", 999);	// User IDs
+		$output .= pack("L", 1000);	// ...
+		return $output;
+	}
+
 	/*
 	 * banchoServer
 	 * Main bancho """server""" function
@@ -1096,10 +1129,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x04\x00\x00\x00".$userSupporter."\x00\x00\x00";
 
 			// Online Friends
-			/*$output .= "\x48\x00\x00\x0A\x00\x00\x00\x02\x00";
-			$output .= pack("L", 100);
-			$output .= pack("L", 100);
-			$output .= "";*/
+			$output .= outputOnlineFriends();
 
 			// Output our userpanel
 			$output .= userPanel($userID, 0);
@@ -1172,6 +1202,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 		{
 			// Other packets
 			$output = "";
+
+			$output .= "\x58\x00\x00";
 
 			// Get our ID and username from token
 			$userID = getUserIDFromToken($token);
