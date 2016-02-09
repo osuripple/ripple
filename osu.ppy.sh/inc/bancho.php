@@ -255,6 +255,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Other stats
 		$userPlaycount = $userStats["playcount_".$modeForDB];
 		$userAccuracy = $userStats["avg_accuracy_".$modeForDB];
+		$totalScore = $userStats["total_score_".$modeForDB];
 		$userPP = 0;	// Tillerino is sad
 
 		// Packet start
@@ -320,8 +321,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= pack("f", $userAccuracy/100);
 		// Playcount
 		$output .= pack("L", $userPlaycount);
-		// Level progress (will add this later)
-		$output .= "\x00\x00\x00\x00";
+		// Level progress
+		$output .= pack("L", $totalScore);
 		$output .= "\x00\x00\x00\x00";
 		// Rank
 		$output .= pack("L", $gameRank);

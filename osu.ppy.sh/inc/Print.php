@@ -1568,7 +1568,7 @@ class P {
 			$country = $userData[0]["country"];
 			$showCountry = $userData[0]["show_country"];
 			$usernameAka = $userData[0]["username_aka"];
-			$level = $userData[0]["level_" . $modeForDB];
+			$level = $userData[0]["level_" . $modeForDB]-1;
 			$latestActivity = current($GLOBALS["db"]->fetch("SELECT latest_activity FROM users WHERE username = ?", $username));
 			$silenceEndTime = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", $username));
 			$silenceReason = current($GLOBALS["db"]->fetch("SELECT silence_reason FROM users WHERE username = ?", $username));
@@ -1677,9 +1677,11 @@ class P {
 
 			// Calculate required score for our level
 			$reqScore = getRequiredScoreForLevel($level);
+			$reqScoreNext = getRequiredScoreForLevel($level+1);
+			$scoreDiff = $reqScoreNext-$reqScore;
+			$ourScore = $reqScoreNext-$totalScore;
 
-			// Calculate level progression
-			$percText = floor((100*$totalScore)/$reqScore);					// Text percentage, real one
+			$percText = 100-floor((100*$ourScore)/($scoreDiff+1));					// Text percentage, real one
 			if ($percText < 10) $percBar = 10; else $percBar = $percText;	// Progressbar percentage, minimum 10 or it's glitched
 
 			echo('</div><div class="col-md-6">
