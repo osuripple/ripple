@@ -1,6 +1,4 @@
 <?php
-include dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php";
-
 $GLOBALS["db"]->execute("DROP TABLE bancho_channels;");
 
 $GLOBALS["db"]->execute("

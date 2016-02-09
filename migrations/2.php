@@ -1,6 +1,4 @@
 <?php
-include dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php";
-
 $GLOBALS["db"]->execute("
 CREATE TABLE `bancho_private_messages` (
   `id` int(11) NOT NULL,
