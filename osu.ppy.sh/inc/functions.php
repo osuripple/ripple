@@ -1945,6 +1945,35 @@
 
 		return $output;
 	}
+	function post_content_http($url, $content)
+	{
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+
+		// Include header in result? (0 = yes, 1 = no)
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+
+		// Should cURL return or print out the data? (true = return, false = print)
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		// POST data
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
+
+		// Timeout in seconds
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+		// Download the given URL, and return output
+		$output = curl_exec($ch);
+		// Close the cURL resource, and free system resources
+		curl_close($ch);
+
+		return $output;
+	}
 
 	/*
 	 * printBadgeSelect()

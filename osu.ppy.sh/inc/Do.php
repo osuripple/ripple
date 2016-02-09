@@ -1275,6 +1275,27 @@ class D {
 			// Add report
 			$GLOBALS["db"]->execute("INSERT INTO reports (id, name, from_username, content, type, open_time, update_time, status) VALUES (NULL, ?, ?, ?, ?, ?, ?, 1)", array($_POST["n"], $_SESSION["username"], $_POST["c"], $_POST["t"], time(), time()));
 
+			// Webhook stuff
+			global $WebHookReport;
+			global $KeyAkerino;
+			$type = $_POST["t"];
+			switch ($type) {
+				case 0:
+					$type = "bug";
+					break;
+				case 1:
+					$type = "feature";
+					break;
+			}
+			post_content_http($WebHookReport, array(
+				"key"     => $KeyAkerino,
+				"title"   => $_POST["n"],
+				"content" => $_POST["c"],
+				"id"      => $GLOBALS["db"]->lastInsertId(),
+				"type"    => $type,
+				"username"=> $_SESSION["username"],
+			));
+
 			// Done, redirect to success page
 			redirect("index.php?p=22&s=ok");
 		}
