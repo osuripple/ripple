@@ -161,7 +161,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lpm = current($lpm);
 
 		// Save token with latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, joined_channels, action, kicked) VALUES (?, ?, ?, ?, ?, 0, '', 0, 0)", array($t, $uid, $lm, $lpm, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, joined_channels, game_mode, action, kicked) VALUES (?, ?, ?, ?, ?, 0, '', 0, 0, 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
 
@@ -1005,9 +1005,9 @@ we are actually reverse engineering bancho successfully. kinda of.
 	function outputOnlineUsers()
 	{
 		$output = "";
-		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
+		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id,game_mode FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
 		foreach ($onlineUsers as $user)
-			$output .= userPanel($user["osu_id"], 0);
+			$output .= userPanel($user["osu_id"], $user["game_mode"]);
 
 		return $output;
 	}
@@ -1037,6 +1037,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= pack("s", 1);	// Online friends count
 		$output .= pack("L", 999);	// User IDs
 		return $output;
+	}
+
+	function updateGameMode($uid, $gm)
+	{
+		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET game_mode = ? WHERE osu_id = ?", array($gm, $uid));
 	}
 
 	/*
@@ -1356,9 +1361,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// or we have changed our gamemode
 			// and set our action to idle
 			// (packet starts with \x00\x00\x00\x0E\x00\x00\x00)
-			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00" && $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
+			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00"
+			&& $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
 			{
 				$gameMode = intval(unpack("C",$data[0][16])[1]);
+				updateGameMode($userID, $gameMode);
 				$output .= userPanel($userID, $gameMode);
 				setAction($userID, 0);
 			}
