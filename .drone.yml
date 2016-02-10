@@ -1,4 +1,4 @@
 build:
-  image: golang
+  image: php
   commands:
     - find . -type f -iname '*.php' -printf 'php -l %p || exit $?\n' | bash
