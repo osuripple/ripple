@@ -1050,7 +1050,7 @@
 	{
 		// Save exploded string into human readable vars
 		$beatmapHash 	= $scoreDataArray[0];
-		$username 		= $scoreDataArray[1];
+		$username 		= rtrim($scoreDataArray[1], " ");
 		//$??	 		= $scoreDataArray[2];
 		$count300 		= $scoreDataArray[3];
 		$count100 		= $scoreDataArray[4];

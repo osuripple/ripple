@@ -27,8 +27,8 @@
 		// Explode the decrypted score string
 		$scoreDataArray = explode(":", $scoreData);
 
-		// Get username
-		$username = $scoreDataArray[1];
+		// Get username (remove last space)
+		$username = rtrim($scoreDataArray[1], " ");
 
 		// Check if the user/password is correct
 		if (!checkOsuUser($username, $_POST["pass"])) {
