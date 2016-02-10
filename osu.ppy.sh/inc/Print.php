@@ -1502,8 +1502,14 @@ class P {
 		$success = array(
 			"forgetDone" => "Done! Your \"Stay logged in\" tokens have been deleted from the database."
 		);
+		$error = array(
+			 1 => "You are already logged in.",
+		);
 		if (!empty($_GET["s"]) && isset($success[$_GET["s"]]))
 			P::SuccessMessage($success[$_GET["s"]]);
+		if (!empty($_GET["e"]) && isset($error[$_GET["e"]]))
+			P::ExceptionMessage($error[$_GET["e"]]);
+
 
 		// 1.5 -- Changed ripple in ripple 1.5
 		echo('<p align="center"><br><image class="animated bounce" src="./images/logo-256.png"></image><br></p><h1 class="animated bounceIn">Welcome to ripple 1.5</h1>');
@@ -2073,9 +2079,13 @@ class P {
 	*
 	* @param (string) ($e) The custom message (exception) to display.
 	*/
-	static function ExceptionMessage($e)
+	static function ExceptionMessage($e, $ret = false)
 	{
-		echo('<div class="alert alert-danger" role="alert"><p align="center"><b>Something bad happened!<br></b> <i>'.$e.'</p></i></div>');
+		$p = '<div class="alert alert-danger" role="alert"><p align="center"><b>Something bad happened!<br></b> <i>'.$e.'</p></i></div>';
+		if ($ret) {
+			return $p;
+		}
+		echo($p);
 	}
 
 
@@ -2085,9 +2095,13 @@ class P {
 	*
 	* @param (string) ($s) The custom message to display.
 	*/
-	static function SuccessMessage($s)
+	static function SuccessMessage($s, $ret = false)
 	{
-		echo('<div class="alert alert-success" role="alert"><p align="center">'.$s.'</p></i></div>');
+		$p = '<div class="alert alert-success" role="alert"><p align="center">'.$s.'</p></i></div>';
+		if ($ret) {
+			return $p;
+		}
+		echo($p);
 	}
 
 
@@ -2099,55 +2113,6 @@ class P {
 	static function LoggedInAlert()
 	{
 		echo('<div class="alert alert-warning" role="alert">You are already logged in.</i></div>');
-	}
-
-
-	/*
-	* LoginPage
-	* Prints the login page.
-	*/
-	static function LoginPage()
-	{
-		// Maintenance check
-		// 1.5 -- Disabled maintenance in login page
-		// P::MaintenanceStuff();
-
-		// Global alert
-		P::GlobalAlert();
-
-		if (isset($_GET["s"]) && $_GET["s"] == 0) P::SuccessMessage("All right, sunshine! Your password is now changed. Why don't you login with your shiny new password, now?");
-
-		echo('<br><div id="narrow-content"><h1><i class="fa fa-sign-in"></i>	Login</h1>');
-
-		// Print Exception if set and in array.
-		$exceptions = array(
-			"Nice troll.",
-			"Wrong username or password.",
-			"You are banned from ripple. Do not come back.",
-			"You are not logged in.",
-			"Session expired. Please login again.",
-			"Invalid auto-login cookie."
-		);
-		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
-
-		// Print default message if we have no exception/success
-		if (!isset($_GET["e"]) && !isset($_GET["s"]))
-		echo('<p>Please enter your credentials.</p>');
-
-		echo('<p><a href="index.php?p=18">Forgot your password, perhaps?</a></p>');
-
-		// Print login form
-		echo('<form action="submit.php" method="POST">
-		<input name="action" value="login" hidden>
-		<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-user" max-width="25%"></span></span><input type="text" name="u" required class="form-control" placeholder="Username" aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
-		<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" max-width="25%"></span></span><input type="password" name="p" required class="form-control" placeholder="Password" aria-describedby="basic-addon1"></div>
-		<p style="line-height: 15px"></p>
-		<p><label><input type="checkbox" name="remember" value="yes"> Stay logged in?</label></p>
-		<p style="line-height: 15px"></p>
-		<button type="submit" class="btn btn-primary">Login</button>
-		<a href="index.php?p=3" type="button" class="btn btn-default">Sign up</a>
-		</form>
-		</div>');
 	}
 
 
