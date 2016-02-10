@@ -4,7 +4,9 @@ build:
     - find . -type f -iname '*.php' -printf 'php -l %p || exit $?\n' | bash
 notify:
   slack:
+    username: Schiavo
     channel: ripple
+    webhook_url: $$SLACKURL
     when:
       success: true
       failure: true
