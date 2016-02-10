@@ -8,6 +8,5 @@ notify:
     channel: ripple
     webhook_url: $$SLACKURL
     when:
-      success: true
       failure: true
       change: true
