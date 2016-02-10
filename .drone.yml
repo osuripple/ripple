@@ -2,3 +2,11 @@ build:
   image: php
   commands:
     - find . -type f -iname '*.php' -printf 'php -l %p || exit $?\n' | bash
+notify:
+  slack:
+    channel: ripple
+    when:
+      success: true
+      failure: true
+      change: true
+      branch: master
