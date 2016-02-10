@@ -23,7 +23,7 @@
 						}
 					}
 				}
-				$page->Do();
+				$page->D();
 				return;
 			}
 		}

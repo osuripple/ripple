@@ -22,7 +22,7 @@ class Login {
 		"All right, sunshine! Your password is now changed. Why don't you login with your shiny new password, now?",
 	);
 
-	public function Print() {
+	public function P() {
 		if (checkLoggedIn()) {
 			redirect("index.php?p=1&e=1");
 		}
@@ -46,7 +46,7 @@ class Login {
 		</form>
 		</div>');
 	}
-	public function Do() {
+	public function D() {
 		$d = $this->DoGetData();
 		if (isset($d["success"])) {
 			redirect("index.php?p=1");

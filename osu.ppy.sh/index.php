@@ -143,7 +143,7 @@
 							printPage($p);
 						} else {
 							echo $status;
-							$model->Print();
+							$model->P();
 						}
                         echo('
                     </div>
@@ -158,7 +158,7 @@
 			printPage($p);
 		} else {
 			echo $status;
-			$model->Print();
+			$model->P();
 		}
     }
     ?>
