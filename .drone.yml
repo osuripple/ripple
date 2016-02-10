@@ -11,4 +11,3 @@ notify:
       success: true
       failure: true
       change: true
-      branch: master
