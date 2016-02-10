@@ -161,7 +161,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lpm = current($lpm);
 
 		// Save token with latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, joined_channels, game_mode, action, kicked) VALUES (?, ?, ?, ?, ?, 0, '', 0, 0, 0)", array($t, $uid, $lm, $lpm, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, joined_channels, game_mode, action, action_text, kicked) VALUES (?, ?, ?, ?, ?, 0, '', 0, 0, '', 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
 
@@ -203,9 +203,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 * @param (int) ($gm) Game mode (0 std,1 taiko,2 ctb,3 mania)
 	 * @return (string) UP Packet
 	 */
-	function userPanel($uid, $gm)
+	function userPanel($uid)
 	{
 		// Get mode for DB
+		$gm = getGameMode($uid);
 		switch($gm)
 		{
 			case 0: $modeForDB = "std"; break;
@@ -214,12 +215,12 @@ we are actually reverse engineering bancho successfully. kinda of.
 			case 3: $modeForDB = "mania"; break;
 		}
 
-		// Get user data and stats
+		// Get user data
 		$username = getUserUsername($uid);
-		$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE username = ?", array($username));
-		$userID = getUserOsuID($username);
-		$userCountry = 108;
 		$rank = getUserRank($username);
+		$userCountry = 108;
+
+		// Username color
 		switch($rank)
 		{
 			case 1: $userColor = "\x00"; break;	// Normal user
@@ -242,21 +243,11 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// Calculate rank
 		$gameRank = 1;
 		foreach ($leaderboard as $person) {
-			if ($person["osu_id"] == $userID) // We found our user. We know our rank.
+			if ($person["osu_id"] == $uid) // We found our user. We know our rank.
 				break;
 			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
 				$gameRank += 1;
 		}
-
-		// Total score. Should be longlong,
-		// but requires 64bit PHP. Memes incoming.
-		$userScore = $userStats["ranked_score_".$modeForDB];
-
-		// Other stats
-		$userPlaycount = $userStats["playcount_".$modeForDB];
-		$userAccuracy = $userStats["avg_accuracy_".$modeForDB];
-		$totalScore = $userStats["total_score_".$modeForDB];
-		$userPP = 0;	// Tillerino is sad
 
 		// Packet start
 		$output = "";
@@ -267,7 +258,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		// User panel data
 		// User ID
-		$output .= pack("L", $userID);
+		$output .= pack("L", $uid);
 		// Username
 		$output .= binStr($username);
 		// Timezone
@@ -278,13 +269,58 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$output .= "\x00\x00";
 		$output .= "\x00\x00\x00\x00";
 		$output .= "\x00\x00";
-		// Rank
+		// Game rank
 		$output .= pack("L", $gameRank);
 
+		// Return the packet
+		return $output;
+	}
+
+
+	function userStats($uid)
+	{
+		// Get mode for DB
+		$gm = getGameMode($uid);
+		switch($gm)
+		{
+			case 0: $modeForDB = "std"; break;
+			case 1: $modeForDB = "taiko"; break;
+			case 2: $modeForDB = "ctb"; break;
+			case 3: $modeForDB = "mania"; break;
+		}
+
+		// Get user stats
+		$userStats = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE osu_id = ?", array($uid));
+		$userScore = $userStats["ranked_score_".$modeForDB];
+		$userPlaycount = $userStats["playcount_".$modeForDB];
+		$userAccuracy = $userStats["avg_accuracy_".$modeForDB];
+		$totalScore = $userStats["total_score_".$modeForDB];
+		$userPP = 0;	// Tillerino is sad
+		$action = getAction($uid);
+		$actionText = getActionText($uid);
+
+
+		// Unexpected copypasterino from Print.php
+		// Get leaderboard with right total scores (to calculate rank)
+		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_".$modeForDB." DESC");
+
+		// Get all allowed users on ripple
+		$allowedUsers = getAllowedUsers("osu_id");
+
+		// Calculate rank
+		$gameRank = 1;
+		foreach ($leaderboard as $person) {
+			if ($person["osu_id"] == $uid) // We found our user. We know our rank.
+				break;
+			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
+				$gameRank += 1;
+		}
+
 		// User stats packet
+		$output = "";
 		$output .= "\x0B\x00\x00";
-		$output .= "\x2E\x00\x00\x00";
-		$output .= pack("L", $userID);
+		$output .= !empty($actionText) ? pack("L", 48+strlen($actionText)+strlen("md5here")) : pack("L", 46);
+		$output .= pack("L", $uid);
 
 		// Other flags
 		// User status (idle, afk, playing etc)
@@ -302,10 +338,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 		//x0B: (11) Lobby,
 		//x0C: (12) Multiplaying,
 		//x0D: (13) OsuDirect
-		$output .= pack("L", getAction($userID));
-		//$output .= pack("L", 2);
-		$output .= "\x00\x00\x00";
-		//$output .= binStr("meme");
+		//$output .= pack("c", getAction($uid));
+		//$output .= "\x00\x00\x00\x00\x00\x00";
+		$output .= pack("c", $action);
+		if (!empty($actionText))
+		{
+			$output .= binStr($actionText);
+			$output .= binStr("md5here");
+			$output .= "\x00\x00\x00\x00";
+		}
+		else
+		{
+			$output .= "\x00\x00\x00\x00\x00\x00";
+		}
 
 		// Game mode
 		// x00: Std
@@ -329,7 +374,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 		// PP
 		$output .= pack("S", $userPP);
 
-		// Return the packet
 		return $output;
 	}
 
@@ -352,27 +396,39 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 * Sets action (idle, playing etc) for $uid user
 	 *
 	 * @param (int) ($uid) User ID
+	 * @param (int) ($a) Action ID
 	 */
 	function setAction($uid, $a)
 	{
 		current($GLOBALS["db"]->execute("UPDATE bancho_tokens SET action = ? WHERE osu_id = ?", array($a, $uid)));
 	}
 
-	// Not used
-	/*function updateLatestActionTime($uid)
+
+	/*
+	 * getActionText
+	 * Get action text for $uid user
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (string) Action text
+	 */
+	function getActionText($uid)
 	{
-		// Add token check there
-		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET latest_action_time = ? WHERE osu_id = ?", array(time(), $uid));
+		return current($GLOBALS["db"]->fetch("SELECT action_text FROM bancho_tokens WHERE osu_id = ?", array($uid)));
 	}
 
-	function getLatestActionTime($uid)
+
+	/*
+	 * setActionText
+	 * Sets action (idle, playing etc) for $uid user
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (string) ($s) Action text
+	 */
+	function setActionText($uid, $s)
 	{
-		$q = $GLOBALS["db"]->fetch("SELECT latest_action_time FROM bancho_tokens WHERE osu_id = ?", array($uid));
-		if($q)
-			return current($q);
-		else
-			return 0;
-	}*/
+		current($GLOBALS["db"]->execute("UPDATE bancho_tokens SET action_text = ? WHERE osu_id = ?", array($s, $uid)));
+	}
+
 
 
 	/*
@@ -1000,14 +1056,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 * outputOnlineUsers
 	 * Output online users UPs
 	 *
+	 * @param (int) ($stats) If true, output both userpanel and userstats
 	 * @return (string)
 	 */
-	function outputOnlineUsers()
+	function outputOnlineUsers($stats = false)
 	{
 		$output = "";
 		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id,game_mode FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
 		foreach ($onlineUsers as $user)
-			$output .= userPanel($user["osu_id"], $user["game_mode"]);
+		{
+			$output .= userPanel($user["osu_id"]);
+			if ($stats)
+				$output .= userStats($user["osu_id"]);
+		}
 
 		return $output;
 	}
@@ -1039,10 +1100,20 @@ we are actually reverse engineering bancho successfully. kinda of.
 		return $output;
 	}
 
-	function updateGameMode($uid, $gm)
+	function setGameMode($uid, $gm)
 	{
 		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET game_mode = ? WHERE osu_id = ?", array($gm, $uid));
 	}
+
+	function getGameMode($uid)
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT game_mode FROM bancho_tokens WHERE osu_id = ?", array($uid));
+		if ($q)
+			return current($q);
+		else
+			return 0;
+	}
+
 
 	/*
 	 * banchoServer
@@ -1195,10 +1266,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= outputOnlineFriends();
 
 			// Output our userpanel
-			$output .= userPanel($userID, 0);
+			$output .= userPanel($userID);
 
 			// Output online users
-			$output .= outputOnlineUsers();
+			$output .= outputOnlineUsers(true);
 
 			// Required memes
 			$output .= "\x60\x00\x00\x0A\x00\x00\x00\x02\x00\x00\x00\x00\x00";
@@ -1365,15 +1436,20 @@ we are actually reverse engineering bancho successfully. kinda of.
 			&& $data[0][3] == "\x0E" && $data[0][4] == "\x00" && $data[0][5] == "\x00" && $data[0][6] == "\x00")
 			{
 				$gameMode = intval(unpack("C",$data[0][16])[1]);
-				updateGameMode($userID, $gameMode);
-				$output .= userPanel($userID, $gameMode);
+				setGameMode($userID, $gameMode);
 				setAction($userID, 0);
+				setActionText($userID, "");
+				$output .= userPanel($userID);
+				$output .= userStats($userID);
 			}
 
-			// Output online users if needed
-			//if (($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00"))
+			// Output online users (panel only) if needed (and if this is not an heavy packet)
+			if (($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00") && !$heavy)
+				$output .= outputOnlineUsers(false);
+
+			// Heavy packet, output online users panels and stats
 			if ($heavy)
-				$output .= outputOnlineUsers();
+				$output .= outputOnlineUsers(true);
 
 			// Update our action if needed
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
@@ -1381,6 +1457,19 @@ we are actually reverse engineering bancho successfully. kinda of.
 				// Get new action
 				$action = intval(unpack("C",$data[0][7])[1]);
 				setAction($userID, $action);
+
+				// Get new action text if we are playing
+				// if we're not playing, reset action text
+				if ($action == 2 || $action == 3 || $action == 4 || $action == 6 || $action == 8)
+					$actionText = readBinStr($data, 8);
+				else
+					$actionText = "";
+
+				setActionText($userID, $actionText);
+
+				// Output new action
+				$output .= userPanel($userID);
+				$output .= userStats($userID);
 			}
 
 			// Channel list
