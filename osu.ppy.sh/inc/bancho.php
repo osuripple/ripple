@@ -161,7 +161,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$lpm = current($lpm);
 
 		// Save token with latest action time and latest message id
-		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, action, kicked) VALUES (?, ?, ?, ?, ?, 0, 0, 0)", array($t, $uid, $lm, $lpm, time()));
+		$GLOBALS["db"]->execute("INSERT INTO bancho_tokens (token, osu_id, latest_message_id, latest_private_message_id, latest_packet_time, latest_heavy_packet_time, joined_channels, action, kicked) VALUES (?, ?, ?, ?, ?, 0, '', 0, 0)", array($t, $uid, $lm, $lpm, time()));
 	}
 
 
@@ -415,6 +415,22 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 
 	/*
+	 * getGlobalLatestMessageID
+	 * Get global latest message id
+	 *
+	 * @return (int) Latest message ID
+	 */
+	function getGlobalLatestMessageID()
+	{
+		$q = $GLOBALS["db"]->fetch("SELECT id FROM bancho_messages ORDER BY id DESC LIMIT 1");
+		if ($q)
+			return current($q);
+		else
+			return 0;
+	}
+
+
+	/*
 	 * getLatestPrivateMessageID
 	 * Get $uid latest private message id
 	 *
@@ -437,8 +453,28 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 */
 	function getUnreceivedMessages($uid)
 	{
-		$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+		// Public messages array
+		$public = array();
+
+		// Get joined channels
+		$joinedChannels = rtrim(current($GLOBALS["db"]->fetch("SELECT joined_channels FROM bancho_tokens WHERE osu_id = ?", array($uid))), ",");
+		if(!empty($joinedChannels))
+		{
+			// If we've joined some channel, get unreceived messages for that channel and add them to $public
+			$latestMessageID = getLatestMessageID($uid);
+			$joinedChannels = explode(",", $joinedChannels);
+			foreach ($joinedChannels as $channel) {
+				$channelMessages = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_to = ? AND msg_from_userid != ?", array($latestMessageID, $channel, $uid));
+				$public = array_merge($public, $channelMessages);
+			}
+		}
+
+		//$public = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_messages WHERE id > ? AND msg_from_userid != ?", array(getLatestMessageID($uid), $uid));
+
+		// Get unreveived private messages
 		$private = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_private_messages WHERE id > ? AND msg_to = ?", array(getLatestPrivateMessageID($uid), getUserUsername($uid)));
+
+		// Return unreceived public and private messages
 		return array("public" => $public, "private" => $private);
 	}
 
@@ -853,7 +889,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 
 	/*
-	 * outputJoin
+	 * outputChannelJoin
 	 * Output join channel packet if
 	 * Check if $u can join that channel too
 	 *
@@ -861,7 +897,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 * @param (string) ($chan) Channel name
 	 * @return (string) Channel join packet (and error message from fokabot if $u can't join $chan)
 	 */
-	function outputJoin($u, $chan)
+	function outputChannelJoin($u, $chan)
 	{
 		try
 		{
@@ -874,6 +910,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 				throw new Exception("You are not allowed to join ".$chan);
 
 			// Channel exists and is public read, join it
+			$uid = getUserOsuID($u);
+			$joinedChannels = current($GLOBALS["db"]->fetch("SELECT joined_channels FROM bancho_tokens WHERE osu_id = ?", array($uid))).$chan.",";
+			$GLOBALS["db"]->execute("UPDATE bancho_tokens SET joined_channels = ? WHERE osu_id = ?", array($joinedChannels, $uid));
+
+			// Update latest_message_id so we don't get messages sent before we join
+			$mid = getGlobalLatestMessageID();
+			updateLatestMessageID($uid, $mid);
+
+			// Output join packet
 			$output = "";
 			$output .= "\x40\x00\x00";
 			$output .= pack("L", strlen($chan)+2);
@@ -884,6 +929,21 @@ we are actually reverse engineering bancho successfully. kinda of.
 		{
 			return outputMessage("FokaBot", $u, $e->getMessage());
 		}
+	}
+
+
+	/*
+	 * partChannel
+	 * Remove $channel from joined channels for $uid user
+	 *
+	 * @param (string) ($uid) User ID
+	 * @param (string) ($channel) Channel name
+	 */
+	function partChannel($uid, $channel)
+	{
+		$joinedChannels = current($GLOBALS["db"]->fetch("SELECT joined_channels FROM bancho_tokens WHERE osu_id = ?", array($uid)));
+		$joinedChannels = str_replace($channel.",", "", $joinedChannels);
+		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET joined_channels = ? WHERE osu_id = ?", array($joinedChannels, $uid));
 	}
 
 
@@ -1141,7 +1201,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x59\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00";
 
 			// Channel join
-			$output .= outputJoin($username, "#osu");
+			// the client asks to join #osu at login, so we must send a channel joined packet
+			$output .= outputChannelJoin($username, "#osu");
 
 			// Channels packets
 			$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
@@ -1328,13 +1389,15 @@ we are actually reverse engineering bancho successfully. kinda of.
 			if ($data[0][0] == "\x3F" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
 				$channel = readBinStr($data, 7);
-				$output .= outputJoin($username, $channel);
+				$output .= outputChannelJoin($username, $channel);
 			}
 
-			/* Channel part
+			// Channel part
 			if ($data[0][0] == "\x4E" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
-			}*/
+				$channel = readBinStr($data, 7);
+				partChannel($userID, $channel);
+			}
 
 			// Update latest packet time
 			updateLatestPacketTime($userID, time(), $heavy);
