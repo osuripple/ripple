@@ -64,4 +64,8 @@
 		"key" => ""
 	);
 
+	// WebHook configuration. Refer to the wiki for more information.
+	$WebHookReport = "";
+	$KeyAkerino = "";
+
 ?>
