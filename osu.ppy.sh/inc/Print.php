@@ -1352,6 +1352,8 @@ class P {
 		$mi = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
 		$lm = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_messages'"));
 		$ln = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
+		$cv = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_versions'"));
+		$cmd5 = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_md5s'"));
 
 		// Default select stuff
 		$selected[0] = array(1 => "", 2 => "");
@@ -1404,6 +1406,14 @@ class P {
 		echo('<tr>
 		<td>Login notification</td>
 		<td><textarea type="text" name="ln" class="form-control" maxlength="512" style="overflow:auto;resize:vertical;height:100px">'.$ln.'</textarea></td>
+		</tr>');
+		echo('<tr>
+		<td>Supported osu! versions<br>(separated by |)</td>
+		<td><p class="text-center"><input type="text" value="'.$cv.'" name="cv" class="form-control"></td>
+		</tr>');
+		echo('<tr>
+		<td>Supported osu!.exe md5s<br>(separated by |)</td>
+		<td><p class="text-center"><input type="text" value="'.$cmd5.'" name="cmd5" class="form-control"></td>
 		</tr>');
 		echo('</tbody><table>
 		<div class="text-center"><button type="submit" class="btn btn-primary">Save settings</button></div></form>');

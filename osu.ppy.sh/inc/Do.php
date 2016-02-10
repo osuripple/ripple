@@ -557,6 +557,8 @@ class D {
 			if (!empty($_POST["mi"])) $mi = $_POST["mi"]; else $mi = "";
 			if (!empty($_POST["lm"])) $lm = $_POST["lm"]; else $lm = "";
 			if (!empty($_POST["ln"])) $ln = $_POST["ln"]; else $ln = "";
+			if (!empty($_POST["cv"])) $cv = $_POST["cv"]; else $cv = "";
+			if (!empty($_POST["cmd5"])) $cmd5 = $_POST["cmd5"]; else $cmd5 = "";
 
 			// Save new values
 			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_int = ? WHERE name = 'bancho_maintenance'", array($bm));
@@ -565,6 +567,8 @@ class D {
 			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'menu_icon'", array($mi));
 			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'login_messages'", array($lm));
 			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'login_notification'", array($ln));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'osu_versions'", array($cv));
+			$GLOBALS["db"]->execute("UPDATE bancho_settings SET value_string = ? WHERE name = 'osu_md5s'", array($cmd5));
 
 			// Done, redirect to success page
 			redirect("index.php?p=111&s=Settings saved!");

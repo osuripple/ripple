@@ -108,14 +108,14 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 
 	/*
-	 * sendNotification
+	 * outputNotification
 	 * Send a notification to client
 	 * Use \\n for new line
 	 *
 	 * @param (string) ($msg) Notification message
 	 * @return (string)
 	 */
-	function sendNotification($msg)
+	function outputNotification($msg)
 	{
 		$r = "";
 		$r .= "\x18\x00\x00";
@@ -1149,7 +1149,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		if (checkBanchoMaintenance())
 		{
 			$output = "";
-			$output .= sendNotification("Ripple's Bancho server is in manitenance mode.\\nCheck http://ripple.moe/ for more information.");
+			$output .= outputNotification("Ripple's Bancho server is in manitenance mode.\\nCheck http://ripple.moe/ for more information.");
 			$output .= "\x05\x00\x00\x04\x00\x00\x00\xFF\xFF\xFF\xFF";
 			outGz($output);
 			die();
@@ -1159,7 +1159,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		if(isset($_SERVER["HTTP_OSU_TOKEN"]) && checkKicked($_SERVER["HTTP_OSU_TOKEN"]))
 		{
 			$output = "";
-			$output .= sendNotification("You have been kicked from the server. Please login again.");
+			$output .= outputNotification("You have been kicked from the server. Please login again.");
 			$output .= "\x05\x00\x00\x04\x00\x00\x00\xFF\xFF\xFF\xFF";
 			outGz($output);
 			die();
@@ -1183,6 +1183,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 				// Fuck php
 				$username = substr($data[0], 0, -1);
 				$password = substr($data[1], 0, -1);
+				$hardwareData = explode("|", substr($data[2], 0, -1));
+				$hardwareHashes = explode(":", $hardwareData[3]);
+				$output = "";
+
+				// Check osu! version and osu!.exe md5
+				$clientVersions = explode("|", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_versions'")));
+				$clientMd5s = explode("|", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_md5s'")));
+				if (!in_array($hardwareData[0], $clientVersions) || !in_array($hardwareHashes[0], $clientMd5s)) {
+					$output .= outputNotification("You are not using the right version of osu!. Please make sure you are on Stable (fallback) branch and your client is updated.");
+					$output .= outputNotification("To update the client, you need to turn the switcher OFF.");
+					throw new Exception("\xFE");
+				}
 
 				// Check user/password
 				if (!checkOsuUser($username, $password)) {
@@ -1202,7 +1214,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 				// xFC: Banned (CLIENT WILL BE LOCKED)
 				// xFB: Error (use for maintenance and stuff)
 				// xFA: Need supporter (wtf)
-				outGz("\x05\x00\x00\x04\x00\x00\x00".$e->getMessage()."\xFF\xFF\xFF");
+				$output .= "\x05\x00\x00\x04\x00\x00\x00".$e->getMessage()."\xFF\xFF\xFF";
+				outGz($output);
 				die();
 			}
 
@@ -1304,7 +1317,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			// Login notification if needed
 			$msg = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'"));
 			if ($msg != "")
-				$output .= sendNotification($msg);
+				$output .= outputNotification($msg);
 
 			// Main menu icon if needed
 			$icon = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'"));
