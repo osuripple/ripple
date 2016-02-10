@@ -39,8 +39,10 @@
 			$p = 1;
 		$title = setTitle($p);
 	}
-	elseif (isset($_GET["u"]) && !empty($_GET["u"]))
+	elseif (isset($_GET["u"]) && !empty($_GET["u"])) {
 		$title = setTitle("u");
+		$p = "u";
+	}
 	elseif (isset($_GET["__PAGE__"])) {
 		$pages_split = explode("/", $_GET["__PAGE__"]);
 		if (count($_GET["__PAGE__"]) < 2) {
