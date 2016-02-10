@@ -1,6 +1,6 @@
 <?php
 // User Flags Enums. Unused.
-static class UFEnums {
+class UFEnums {
   const Admin       = 1;
   const Moderator   = 2;
   const ChatMod     = 4;

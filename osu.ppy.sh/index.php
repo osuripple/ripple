@@ -18,13 +18,53 @@
 		die();
 	}
 
-	// Do frontend stuff
-?>
+	// Frontend stuff
+	// We're using ob_start to safely send headers while we're processing the script initially.
+	ob_start();
 
-<?php
-    // Frontend stuff
-    // We're using ob_start to safely send headers while we're processing the script initially.
-    ob_start();
+	// CONTROLLER SYSTEM v2
+	$model = "old";
+	if (isset($_GET["p"])) {
+		foreach ($pages as $page) {
+			if ($page::PageID == $_GET["p"]) {
+				$found = true;
+				$model = $page;
+				$title = "<title>" . $page::Title . "</title>";
+				break;
+			}
+		}
+		if (isset($_GET["p"]) && !empty($_GET["p"]))
+			$p = $_GET["p"];
+		else
+			$p = 1;
+		$title = setTitle($p);
+	}
+	elseif (isset($_GET["u"]) && !empty($_GET["u"]))
+		$title = setTitle("u");
+	elseif (isset($_GET["__PAGE__"])) {
+		$pages_split = explode("/", $_GET["__PAGE__"]);
+		if (count($_GET["__PAGE__"]) < 2) {
+			$title = "<title>Ripple</title>";
+			$p = 1;
+		}
+		$found = false;
+		foreach ($pages as $page) {
+			if ($page::URL == $pages_split[1]) {
+				$found = true;
+				$model = $page;
+				$title = "<title>" . $page::Title . "</title>";
+				break;
+			}
+		}
+		if (!$found) {
+			$p = 1;
+			$title = "<title>Ripple</title>";
+		}
+	}
+	else {
+		$p = 1;
+		$title = "<title>Ripple</title>";
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,13 +72,11 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <meta name="description" content="">
     <meta name="author" content="">
 
     <!-- Dynamic title -->
-    <?php if (isset($_GET["u"]) && !empty($_GET["u"])) setTitle("u"); ?>
-    <?php if (isset($_GET["p"]) && !empty($_GET["p"])) $p = $_GET["p"]; else $p = 1; setTitle($p); ?>
+    <?php echo $title; ?>
 
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -80,6 +118,19 @@
 
     <!-- Page content (< 100: Normal pages, >= 100: Admin CP pages) -->
     <?php
+	$status = "";
+	if ($model !== "old") {
+		if (isset($_GET["s"])) {
+			if (isset($model->success_messages[$_GET["s"]])) {
+				$status .= P::SuccessMessage($model->success_messages[$_GET["s"]], true);
+			}
+		}
+		if (isset($_GET["e"])) {
+			if (isset($model->error_messages[$_GET["e"]])) {
+				$status .= P::ExceptionMessage($model->error_messages[$_GET["e"]], true);
+			}
+		}
+	}
     if ($p < 100)
     {
         // Normal page, print normal layout (will fix this in next commit, dw)
@@ -88,7 +139,12 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div id="content">');
-                        printPage($p);
+                        if ($model === "old") {
+							printPage($p);
+						} else {
+							echo $status;
+							$model->Print();
+						}
                         echo('
                     </div>
                 </div>
@@ -98,7 +154,12 @@
     else
     {
         // Admin cp page, print admin cp layout
-        printPage($p);
+		if ($model === "old") {
+			printPage($p);
+		} else {
+			echo $status;
+			$model->Print();
+		}
     }
     ?>
 

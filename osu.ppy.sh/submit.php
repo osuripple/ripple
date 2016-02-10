@@ -14,10 +14,23 @@
 			$action = $_GET["action"];
 		else throw new Exception("Couldn't find action parameter");
 
+		foreach ($pages as $page) {
+			if ($action == $page::URL) {
+				if (isset($page->mh_POST) && count($page->mh_POST) > 0) {
+					foreach ($page->mh_POST as $el) {
+						if (empty($_POST[$el])) {
+							redirect("index.php?p=99&do_missing__" . $el);
+						}
+					}
+				}
+				$page->Do();
+				return;
+			}
+		}
+
 		// What shall we do?
 		switch($action)
 		{
-			case "login": D::Login(); break;
 			case "register": D::Register(); break;
 			case "changePassword": D::ChangePassword(); break;
 			case "logout": D::Logout(); redirect("index.php"); break;

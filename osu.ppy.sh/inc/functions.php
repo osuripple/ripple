@@ -5,15 +5,21 @@
 	 */
 
 	// Include config file and db class
-	require_once(dirname(__FILE__) . "/config.php");
-	require_once(dirname(__FILE__) . "/db.php");
-	require_once(dirname(__FILE__) . "/password_compat.php");
-	require_once(dirname(__FILE__) . "/Do.php");
-	require_once(dirname(__FILE__) . "/Print.php");
-	require_once(dirname(__FILE__) . "/RememberCookieHandler.php");
-	require_once dirname(__FILE__) . "/PlayStyleEnum.php";
-	require_once dirname(__FILE__) . "/resize.php";
-	require_once dirname(__FILE__) . "/bancho.php";
+	$df = dirname(__FILE__);
+	require_once($df . "/config.php");
+	require_once($df . "/db.php");
+	require_once($df . "/password_compat.php");
+	require_once($df . "/Do.php");
+	require_once($df . "/Print.php");
+	require_once($df . "/RememberCookieHandler.php");
+	require_once($df . "/PlayStyleEnum.php");
+	require_once($df . "/resize.php");
+	require_once($df . "/bancho.php");
+	// controller system v2
+	require_once($df . "/pages/Login.php");
+	$pages = array(
+		new Login(),
+	);
 
 	// Set timezone to UTC
 	date_default_timezone_set('Europe/Rome');
@@ -117,55 +123,54 @@
 		if (isset($_COOKIE["st"]) && $_COOKIE["st"] == 1)
 		{
 			// Safe title, so Peppy doesn't know we are browsing Ripple
-			echo('<title>Google</title>');
+			return ('<title>Google</title>');
 		}
 		else
 		{
 			// Unsafe title, show actual title
 			switch($p)
 			{
-				case 1: echo('<title>Ripple - Custom osu! server</title>'); break;
-				case 2: echo('<title>Ripple - Login</title>'); break;
-				case 3: echo('<title>Ripple - Register</title>'); break;
-				case 4: echo('<title>Ripple - User CP</title>'); break;
-				case 5: echo('<title>Ripple - Change avatar</title>'); break;
-				case 9: case 10: case 11: echo('<title>Ripple - Coming soon</title>'); break;
-				case 6: echo('<title>Ripple - Edit user settings</title>'); break;
-				case 7: echo('<title>Ripple - Change password</title>'); break;
-				case 8: echo('<title>Ripple - Edit userpage</title>'); break;
-				case 12: echo('<title>Ripple - Change osu! id</title>'); break;
-				case 13: echo('<title>Ripple - Leaderboard</title>'); break;
-				case 14: echo('<title>Ripple - Documentation files</title>'); break;
-				case 15: echo('<title>Ripple - Read documentation</title>'); break;
-				case 16: echo('<title>Ripple - Read documentation</title>'); break;
-				case 17: echo('<title>Ripple - Changelog</title>'); break;
-				case 18: echo('<title>Ripple - Recover your password</title>'); break;
-				case 19: echo('<title>Ripple - Finish password recovery</title>'); break;
-				case 20: echo('<title>Ripple - Beta keys</title>'); break;
-				case 21: echo('<title>Ripple - About</title>'); break;
-				case 22: echo('<title>Ripple - Report a bug/Request a feature</title>'); break;
-				case 23: echo('<title>Ripple - Rules</title>'); break;
-				case 24: echo('<title>Ripple - My report</title>'); break;
-				case 25: echo('<title>Ripple - Report</title>'); break;
+				case 1: return ('<title>Ripple - Custom osu! server</title>'); break;
+				case 3: return ('<title>Ripple - Register</title>'); break;
+				case 4: return ('<title>Ripple - User CP</title>'); break;
+				case 5: return ('<title>Ripple - Change avatar</title>'); break;
+				case 9: case 10: case 11: return ('<title>Ripple - Coming soon</title>'); break;
+				case 6: return ('<title>Ripple - Edit user settings</title>'); break;
+				case 7: return ('<title>Ripple - Change password</title>'); break;
+				case 8: return ('<title>Ripple - Edit userpage</title>'); break;
+				case 12: return ('<title>Ripple - Change osu! id</title>'); break;
+				case 13: return ('<title>Ripple - Leaderboard</title>'); break;
+				case 14: return ('<title>Ripple - Documentation files</title>'); break;
+				case 15: return ('<title>Ripple - Read documentation</title>'); break;
+				case 16: return ('<title>Ripple - Read documentation</title>'); break;
+				case 17: return ('<title>Ripple - Changelog</title>'); break;
+				case 18: return ('<title>Ripple - Recover your password</title>'); break;
+				case 19: return ('<title>Ripple - Finish password recovery</title>'); break;
+				case 20: return ('<title>Ripple - Beta keys</title>'); break;
+				case 21: return ('<title>Ripple - About</title>'); break;
+				case 22: return ('<title>Ripple - Report a bug/Request a feature</title>'); break;
+				case 23: return ('<title>Ripple - Rules</title>'); break;
+				case 24: return ('<title>Ripple - My report</title>'); break;
+				case 25: return ('<title>Ripple - Report</title>'); break;
 
-				case 100: echo('<title>RAP - Dashboard</title>'); break;
-				case 101: echo('<title>RAP - System settings</title>'); break;
-				case 102: echo('<title>RAP - Users</title>'); break;
-				case 103: echo('<title>RAP - Edit user</title>'); break;
-				case 104: echo('<title>RAP - Change identity</title>'); break;
-				case 105: echo('<title>RAP - Beta Keys</title>'); break;
-				case 106: echo('<title>RAP - Docs Pages</title>'); break;
-				case 107: echo('<title>RAP - Edit doc page</title>'); break;
-				case 108: echo('<title>RAP - Badges</title>'); break;
-				case 109: echo('<title>RAP - Edit Badge</title>'); break;
-				case 110: echo('<title>RAP - Edit user badges</title>'); break;
-				case 111: echo('<title>RAP - Bancho settings</title>'); break;
-				case 112: echo('<title>RAP - Chatlog</title>'); break;
-				case 113: echo('<title>RAP - Reports</title>'); break;
-				case 114: echo('<title>RAP - Read report</title>'); break;
+				case 100: return ('<title>RAP - Dashboard</title>'); break;
+				case 101: return ('<title>RAP - System settings</title>'); break;
+				case 102: return ('<title>RAP - Users</title>'); break;
+				case 103: return ('<title>RAP - Edit user</title>'); break;
+				case 104: return ('<title>RAP - Change identity</title>'); break;
+				case 105: return ('<title>RAP - Beta Keys</title>'); break;
+				case 106: return ('<title>RAP - Docs Pages</title>'); break;
+				case 107: return ('<title>RAP - Edit doc page</title>'); break;
+				case 108: return ('<title>RAP - Badges</title>'); break;
+				case 109: return ('<title>RAP - Edit Badge</title>'); break;
+				case 110: return ('<title>RAP - Edit user badges</title>'); break;
+				case 111: return ('<title>RAP - Bancho settings</title>'); break;
+				case 112: return ('<title>RAP - Chatlog</title>'); break;
+				case 113: return ('<title>RAP - Reports</title>'); break;
+				case 114: return ('<title>RAP - Read report</title>'); break;
 
-				case "u": echo('<title>Ripple - Userpage</title>'); break;
-				default: echo('<title>Ripple - 404</title>'); break;
+				case "u": return ('<title>Ripple - Userpage</title>'); break;
+				default: return ('<title>Ripple - 404</title>'); break;
 			}
 		}
 	}
@@ -196,13 +201,26 @@
 			switch($p)
 			{
 				// Error page
-				case 99: if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) $e = $_GET["e"]; else $e = "9001"; P::ExceptionMessage($exceptions[$e]); break;
+				case 99:
+					if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]]))
+						$e = $_GET["e"];
+					elseif (strlen($_GET["e"]) > 12 && substr($_GET["e"], 0, 12) == "do_missing__") {
+						$s = substr($_GET["e"], 12);
+						if (preg_match("/^[a-z0-9-]*$/i", $s) === 1) {
+							P::ExceptionMessage("Missing parameter while trying to do action: " . $s);
+							$e = -1;
+						} else {
+							$e = "9001";
+						}
+					}
+					else
+						$e = "9001";
+					if ($e != -1)
+						P::ExceptionMessage($exceptions[$e]);
+					break;
 
 				// Home
 				case 1: P::HomePage(); break;
-
-				// Login page (guest)
-				case 2: if (!checkLoggedIn()) P::LoginPage(); else P::LoggedInAlert(); break;
 
 				// Register page (guest)
 				case 3:	if (!checkLoggedIn()) P::RegisterPage(); else P::LoggedInAlert(); break;
