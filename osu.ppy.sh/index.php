@@ -18,10 +18,6 @@
 		die();
 	}
 
-	// Do frontend stuff
-?>
-
-<?php
 	// Frontend stuff
 	// We're using ob_start to safely send headers while we're processing the script initially.
 	ob_start();
