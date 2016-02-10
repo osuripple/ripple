@@ -2040,7 +2040,7 @@ class P {
 			$selected[$_GET["type"]] = "selected";
 
 		// Changelog
-		echo('<div id="narrow-content"><h1><i class="fa fa-paper-plane"></i>	Send a report</h1>Here you can report bugs or request features. Please try to descbibe your bug/feature as detailed as possible.<br><br>');
+		echo('<div id="narrow-content"><h1><i class="fa fa-paper-plane"></i>	Send a report</h1>Here you can report bugs or request features. Please try to descbibe your bug/feature as detailed as possible.<br>The whole team speaks English and Italian. Don\'t be afraid to write in a maccaroni language!<br><br>');
 		echo('<form method="POST" action="submit.php" id="send-report-form">
 		<input name="action" value="sendReport" hidden>
 		<div class="input-group" style="width:100%">
