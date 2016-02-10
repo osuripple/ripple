@@ -1062,7 +1062,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 	function outputOnlineUsers($stats = false)
 	{
 		$output = "";
-		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id,game_mode FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? AND latest_packet_time <= ? OR osu_id = 999", array(time()-120, time()));
+		$onlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id,game_mode FROM bancho_tokens WHERE kicked = 0 AND latest_packet_time >= ? OR osu_id = 999", array(time()-120));
 		foreach ($onlineUsers as $user)
 		{
 			$output .= userPanel($user["osu_id"]);
@@ -1072,6 +1072,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 		return $output;
 	}
+
 
 	/*
 	 * isHeavy
@@ -1089,22 +1090,44 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return false;
 	}
 
-	function outputOnlineFriends()
+
+	/*
+	 * outputFriends
+	 * Output friends
+	 *
+	 */
+	function outputFriends()
 	{
 		$output = "";
 		// Online friends is \x48
 		$output .= "\x48\x00\x00";
-		$output .= pack("L", 4+2);// Packet length (4*online__friends_count+2)
+		$output .= pack("L", 4+2);	// Packet length (4*online__friends_count+2)
 		$output .= pack("s", 1);	// Online friends count
 		$output .= pack("L", 999);	// User IDs
 		return $output;
 	}
 
+
+	/*
+	 * setGameMode
+	 * Set user gamemode for userpanel
+	 *
+	 * @param (int) ($uid) User ID
+	 * @param (int) ($gm) Game mode (0,1,2,3)
+	 */
 	function setGameMode($uid, $gm)
 	{
 		$GLOBALS["db"]->execute("UPDATE bancho_tokens SET game_mode = ? WHERE osu_id = ?", array($gm, $uid));
 	}
 
+
+	/*
+	 * getGameMode
+	 * Get user gamemode for userpanel
+	 *
+	 * @param (int) ($uid) User ID
+	 * @return (int) Game mode (0,1,2,3) Def is 0
+	 */
 	function getGameMode($uid)
 	{
 		$q = $GLOBALS["db"]->fetch("SELECT game_mode FROM bancho_tokens WHERE osu_id = ?", array($uid));
@@ -1112,6 +1135,43 @@ we are actually reverse engineering bancho successfully. kinda of.
 			return current($q);
 		else
 			return 0;
+	}
+
+
+	/*
+	 * outputOfflineUsers
+	 * Output users that went offline
+	 *
+	 * @return (memes) Packet output
+	 */
+	function outputOfflineUsers()
+	{
+		$output = "";
+		$offlineUsers = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM bancho_tokens WHERE latest_packet_time < ? AND osu_id != 999", array(time()-120));
+		foreach ($offlineUsers as $user)
+		{
+			// TODO: Delete token
+			$output .= outputOffline($user["osu_id"]);
+		}
+
+		return $output;
+	}
+
+
+	/*
+	 * outputOffline
+	 * Output an offline packet
+	 *
+	 * @return (memes) Packet output
+	 */
+	function outputOffline($uid)
+	{
+		$output = "";
+		$output .= "\x0C\x00\x00";	// Packet code
+		$output .= pack("L", 5);	// Packet length
+		$output .= pack("L", $uid);	// User ID
+		$output .= "\x00";
+		return $output;
 	}
 
 
@@ -1276,7 +1336,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x04\x00\x00\x00".$userSupporter."\x00\x00\x00";
 
 			// Online Friends
-			$output .= outputOnlineFriends();
+			$output .= outputFriends();
 
 			// Output our userpanel
 			$output .= userPanel($userID);
@@ -1458,7 +1518,10 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 			// Output online users (panel only) if needed (and if this is not an heavy packet)
 			if (($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00") && !$heavy)
+			{
 				$output .= outputOnlineUsers(false);
+				$output .= outputOfflineUsers(false);
+			}
 
 			// Heavy packet, output online users panels and stats
 			if ($heavy)
