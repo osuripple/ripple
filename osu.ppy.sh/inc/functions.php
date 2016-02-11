@@ -957,33 +957,7 @@
 	 */
 	function checkOsuUser($u, $p)
 	{
-		try
-		{
-			// Check if everything is set
-			if (!isset($u) || !isset($p) || empty($u) || empty($p)) {
-				throw new Exception;
-			}
-
-			// Get password and salt
-			$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($u));
-
-			// Check it exists
-			if ($uPass === FALSE) {
-				throw new Exception;
-			}
-
-			// Check the md5 password is valid
-			if ($uPass["password_md5"] != (crypt($p, "$2y$" . base64_decode($uPass["salt"])))) {
-				throw new Exception;
-			}
-
-			// Everything ok, return true
-			return true;
-		}
-		catch (Exception $e)
-		{
-			return false;
-		}
+		return PasswordHelper::CheckPass($u, $p);
 	}
 
 

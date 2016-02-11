@@ -44,4 +44,27 @@ class PasswordHelper {
 		}
 		return -1;
 	}
+	static function CheckPass($u, $pass, $is_already_md5 = true) {
+		if (empty($u) || empty($pass)) {
+			return false;
+		}
+		if (!$is_already_md5) {
+			$pass = md5($pass);
+		}
+
+		$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($u));
+
+		// Check it exists
+		if ($uPass === FALSE) {
+			return false;
+		}
+
+		// Check the md5 password is valid
+		if ($uPass["password_md5"] != (crypt($pass, "$2y$" . base64_decode($uPass["salt"])))) {
+			return false;
+		}
+
+		// Everything ok, return true
+		return true;
+	}
 }
