@@ -26,6 +26,7 @@ ul.nav li:hover > ul.dropdown-menu {
 	text-align: left;
 	width: 100%;
 	height: 120px;
+	position: relative;
 }
 
 #userpage-header p {
@@ -38,12 +39,32 @@ ul.nav li:hover > ul.dropdown-menu {
 }
 
 #rank {
+	display: block;
 	float: right;
 	text-align: right;
 	padding-top: 25px;
-	padding-left: 70%;
+	padding-left: 95%;
 	position: absolute;
 }
+
+#friend-add {
+	padding-top: 60px;
+	padding-left: 85%;
+	position: absolute;
+}
+
+#friend {
+	padding-top: 60px;
+	padding-left: 90%;
+	position: absolute;
+}
+
+#friend-mutual {
+	padding-top: 60px;
+	padding-left: 84%;
+	position: absolute;
+}
+
 
 #user-avatar {
 	float: left;

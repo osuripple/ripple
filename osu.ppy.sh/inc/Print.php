@@ -1613,6 +1613,22 @@ class P {
 			// Get userpage
 			$userpageContent = $userData[0]["userpage_content"];
 
+			// Friend button
+			if (!checkLoggedIn())
+			{
+				$friendButton = '';
+			}
+			else
+			{
+				$friendship = getFriendship($_SESSION["username"], $username);
+				switch($friendship)
+				{
+					case 1: $friendButton = '<div id="friend"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-success"><span class="glyphicon glyphicon-star"></span>	Friend</a></div>'; break;
+					case 2: $friendButton = '<div id="friend-mutual"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-heart"></span>	Mutual Friend</a></div>'; break;
+					default: $friendButton = '<div id="friend-add"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>	Add as Friend</a></div>'; break;
+				}
+			}
+
 			// Calculate rank
 			$rank = 1;
 			foreach ($leaderboard as $person) {
@@ -1623,9 +1639,14 @@ class P {
 			}
 			// Set rank char (trophy for top 3, # for everyone else)
 			if ($rank <= 3)
-			$rankSymbol = '<i class="fa fa-trophy"></i> ';
+			{
+				$rankSymbol = '<i class="fa fa-trophy"></i> ';
+			}
 			else
-			$rankSymbol = "#";
+			{
+				$rank = sprintf('%02d', $rank);
+				$rankSymbol = "#";
+			}
 
 			// Get badges id and icon (max 6 badges)
 			$badgeID = explode(",",$userData[0]["badges_shown"]);
@@ -1673,8 +1694,9 @@ class P {
 				echo('<small><i>aka '.$usernameAka.'</i></small>');
 			echo('<br><a href="index.php?u='.$u.'&m=0">'.$modesText[0].'</a> | <a href="index.php?u='.$u.'&m=1">'.$modesText[1].'</a> | <a href="index.php?u='.$u.'&m=2">'.$modesText[2].'</a> | <a href="index.php?u='.$u.'&m=3">'.$modesText[3].'</a>');
 			if (getUserRank($_SESSION["username"]) >= 4) echo('<br><a href="index.php?p=103&id='.$u.'">Edit user</a> | <a onclick="sure(\'submit.php?action=banUnbanUser&id='.$u.'\')";>Ban user</a> | <a href="index.php?p=110&id='.$u.'">Edit badges</a></p>');
-			echo('<p id="rank"><font size=5><b> '.$rankSymbol.$rank.'</b></font></p>
-			</div>');
+			echo('<div id="rank"><font size=5><b> '.$rankSymbol.$rank.'</b></font></div>');
+			echo($friendButton);
+			echo('</div>');
 			echo('<div id="userpage-content">
 			<div class="col-md-3">');
 

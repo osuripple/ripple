@@ -43,6 +43,7 @@
 			case "saveUserpage": D::SaveUserpage(); break;
 			case "changeAvatar": D::ChangeAvatar(); break;
 			case "sendReport": D::SendReport(); break;
+			case "addRemoveFriend": D::AddRemoveFriend(); break;
 			default: throw new Exception("Invalid action value"); break;
 
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins

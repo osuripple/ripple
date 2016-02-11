@@ -887,18 +887,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 
 
 	/*
-	 * checkUserExists
-	 * Check if given user exists
-	 *
-	 * @param (string) ($i) username
-	 */
-	function checkUserExists($u)
-	{
-		return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $u);
-	}
-
-
-	/*
 	 * checkSpam
 	 * Check if $uid is spamming
 	 *
@@ -1095,15 +1083,28 @@ we are actually reverse engineering bancho successfully. kinda of.
 	 * outputFriends
 	 * Output friends
 	 *
+	 * @param (string) ($friends) Friends list
+	 * @return (string)
 	 */
-	function outputFriends()
+	function outputFriends($friends)
 	{
 		$output = "";
-		// Online friends is \x48
+		if (empty($friends))
+			return $output;
+
+		// Get friend ids and count
+		$friends = explode(",", $friends);
+		$count = count($friends);
+
+		// Packet code, packet length and friends count
 		$output .= "\x48\x00\x00";
-		$output .= pack("L", 4+2);	// Packet length (4*online__friends_count+2)
-		$output .= pack("s", 1);	// Online friends count
-		$output .= pack("L", 999);	// User IDs
+		$output .= pack("L", (4*$count)+2);
+		$output .= pack("s", $count);
+
+		// Friends user IDs
+		foreach ($friends as $friend)
+			$output .= pack("L", $friend);
+
 		return $output;
 	}
 
@@ -1336,7 +1337,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$output .= "\x04\x00\x00\x00".$userSupporter."\x00\x00\x00";
 
 			// Online Friends
-			$output .= outputFriends();
+			$output .= outputFriends($userData["friends"]);
 
 			// Output our userpanel
 			$output .= userPanel($userID);
@@ -1523,9 +1524,17 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$output .= outputOfflineUsers(false);
 			}
 
-			// Heavy packet, output online users panels and stats
+			// Heavy packet, output online users panels, user stats and channels
 			if ($heavy)
+			{
+				// User panels and stats packets
 				$output .= outputOnlineUsers(true);
+
+				// Channels info packets
+				$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
+				foreach ($channels as $channel)
+					$output .= outputChannel($channel["name"], $channel["description"], 1337);
+			}
 
 			// Update our action if needed
 			if ($data[0][0] == "\x00" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
@@ -1548,15 +1557,6 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$output .= userStats($userID);
 			}
 
-			// Channel list
-			if ($data[0][0] == "\x55" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
-			{
-				// Channels info packets
-				$channels = $GLOBALS["db"]->fetchAll("SELECT * FROM bancho_channels");
-				foreach ($channels as $channel)
-					$output .= outputChannel($channel["name"], $channel["description"], 1337);
-			}
-
 			// Channel join
 			if ($data[0][0] == "\x3F" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
 			{
@@ -1569,6 +1569,22 @@ we are actually reverse engineering bancho successfully. kinda of.
 			{
 				$channel = readBinStr($data, 7);
 				partChannel($userID, $channel);
+			}
+
+			// Add friend
+			if ($data[0][0] == "\x49" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				// Get friend ID
+				$uid = intval(unpack("L", $data[0][7].$data[0][8].$data[0][9].$data[0][10])[1]);
+				addFriend($userID, $uid, true);
+			}
+
+			// Remove friend
+			if ($data[0][0] == "\x4A" && $data[0][1] == "\x00" && $data[0][2] == "\x00")
+			{
+				// Get friend ID
+				$uid = intval(unpack("L", $data[0][7].$data[0][8].$data[0][9].$data[0][10])[1]);
+				removeFriend($userID, $uid, true);
 			}
 
 			// Update latest packet time
