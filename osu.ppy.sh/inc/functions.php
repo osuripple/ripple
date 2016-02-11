@@ -2034,3 +2034,163 @@
 	{
 		if (strpos($str, $substr) === false) return false; else return true;
 	}
+
+
+	/*
+	 * checkUserExists
+	 * Check if given user exists
+	 *
+	 * @param (string) ($i) username/osuid
+	 * @param (bool) ($id) if true, search by id. Default: false
+	 */
+	function checkUserExists($u, $id = false)
+	{
+		if ($id)
+			return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", array($u));
+		else
+			return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($u));
+	}
+
+
+	/*
+	 * getFriendship
+	 * Check friendship between u0 and u1
+	 *
+	 * @param (int/string) ($u0) u0 id/username
+	 * @param (int/string) ($u1) u1 id/username
+	 * @param (bool) ($id) If true, u0 and u1 are ids, if false they are usernames
+	 * @return (int) 0: no friendship, 1: u0 friend with u1, 2: mutual
+	 */
+	function getFriendship($u0, $u1, $id = false)
+	{
+		// Get id if needed
+		if (!$id) {
+			$u0 = getUserOsuID($u0);
+			$u1 = getUserOsuID($u1);
+		}
+
+		// Make sure u0 and u1 exist
+		if (!checkUserExists($u0, true) || !checkUserExists($u1, true))
+			return 0;
+
+		// Friends array (will contain both u0 and u1 friends)
+		$friends = array();
+
+		// Get u0 friends
+		array_push($friends, current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($u0))));
+
+		// If u0 friendlist is empty, return 0 (no friendship)
+		if (empty($friends[0]))
+			return 0;
+
+		// If u0 friendlist is not empty, explode it
+		$friends[0] = explode(",", $friends[0]);
+		if (in_array($u1, $friends[0]))
+		{
+			// We've found u1 in u0's friends. Check mutual
+			// Get u1's friendlist
+			array_push($friends, current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($u1))));
+
+			// If u1 has no friends, no mutual
+			if (empty($friends[1]))
+				return 1;
+
+			// u1 is not forever alone. Explode his friends.
+			// rip now he is forever alone.
+			$friends[1] = explode(",", $friends[1]);
+
+			// If u0 is in u1's friendlist, mutual
+			// otherwise, no mutual
+			if (in_array($u0, $friends[1]))
+				return 2;
+			else
+				return 1;
+		}
+	}
+
+
+	/*
+	 * addFriend
+	 * Add $newFriend to $dude's friendlist
+	 *
+	 * @param (int/string) ($dude) user who sent the request
+	 * @param (int/string) ($newFriend) dude's new friend
+	 * @param (bool) ($id) If true, $dude and $newFriend are ids, if false they are usernames
+	 * @return (bool) true if added, false if not (already in friendlist, invalid user...)
+	 */
+	function addFriend($dude, $newFriend, $id = false)
+	{
+		try {
+			// Get id if needed
+			if (!$id) {
+				$dude = getUserOsuID($dude);
+				$newFriend = getUserOsuID($newFriend);
+			}
+
+			// Make sure users exist
+			if (!checkUserExists($dude, true) || !checkUserExists($newFriend, true))
+				throw new Exception;
+
+			// Get friend list, explode, add new friend, filter (remove useless commas) and implode
+			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($dude)));
+			$friends = explode(",", $friends);
+
+			// Make sure newFriend is not already in dude's friendlist
+			if (array_search($newFriend, $friends))
+				throw new Exception;
+
+			array_push($friends, $newFriend);
+			$friends = array_filter($friends);
+			$friends = implode(",", $friends);
+
+			// Update friend list
+			$GLOBALS["db"]->execute("UPDATE users SET friends = ? WHERE osu_id = ?", array($friends, $dude));
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}
+
+
+	/*
+	 * removeFriend
+	 * Remove $oldFriend from $dude's friendlist
+	 *
+	 * @param (int/string) ($dude) user who sent the request
+	 * @param (int/string) ($oldFriend) dude's old friend
+	 * @param (bool) ($id) If true, $dude and $oldFriend are ids, if false they are usernames
+	 * @return (bool) true if removed, false if not (not in friendlist, invalid user...)
+	 */
+	function removeFriend($dude, $oldFriend, $id = false)
+	{
+		try	{
+			// Get id if needed
+			if (!$id) {
+				$dude = getUserOsuID($dude);
+				$oldFriend = getUserOsuID($oldFriend);
+			}
+
+			// Make sure users exist
+			if (!checkUserExists($dude, true) || !checkUserExists($oldFriend, true))
+				throw new Exception;
+
+			// Get friend list, explode, remove friend, filter (remove useless commas) and implode
+			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($dude)));
+			$friends = explode(",", $friends);
+			$pos = array_search($oldFriend, $friends);
+
+			// Make sure the oldFriend is in dude's friendlist
+			if ($pos === FALSE)
+				throw new Exception;
+
+			unset($friends[$pos]);
+			$friends = array_filter($friends);
+			$friends = implode(",", $friends);
+
+			// Update friend list
+			$GLOBALS["db"]->execute("UPDATE users SET friends = ? WHERE osu_id = ?", array($friends, $dude));
+			return true;
+		} catch (Exception $e) {
+			return false;
+		}
+	}

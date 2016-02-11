@@ -1290,4 +1290,37 @@ class D {
 			redirect("index.php?p=113&e=".$e->getMessage());
 		}
 	}
+
+
+	/*
+	* AddRemoveFriend
+	* Add remove friends
+	*/
+	static function AddRemoveFriend()
+	{
+		try {
+			// Check if we are logged in
+			sessionCheck();
+
+			// Check if everything is set
+			if (!isset($_GET["u"]) || empty($_GET["u"]))
+				throw new Exception(0);
+
+			// Get our user id
+			$uid = getUserOsuID($_SESSION["username"]);
+
+			// Add/remove friend
+			if (getFriendship($uid, $_GET["u"], true) == 0)
+				addFriend($uid, $_GET["u"], true);
+			else
+				removeFriend($uid, $_GET["u"], true);
+
+			// Done, redirect
+			redirect("index.php?u=".$_GET["u"]);
+		} catch (Exception $e) {
+			redirect("index.php?p=99&e=".$e->getMessage());
+		}
+	}
+
+
 }
