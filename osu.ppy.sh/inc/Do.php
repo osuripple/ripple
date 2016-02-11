@@ -15,20 +15,10 @@ class D {
 				throw new Exception(0);
 			}
 
-			// Check password length
-			if (strlen($_POST["p1"]) < 8) {
-				throw new Exception(1);
-			}
-
-			// Check if passwords match
-			if ($_POST["p1"] != $_POST["p2"]) {
-				throw new Exception(2);
-			}
-
-			// god damn i hate people
-			if (in_array($_POST["p1"], array("123456", "password", "12345678", "qwerty", "abc123", "123456789", "111111", "1234567", "iloveyou", "adobe123", "123123", "admin", "1234567890", "letmein", "photoshop", "1234", "monkey", "shadow", "sunshine", "12345", "password1",
-			"princess", "azerty", "trustno1", "000000"))) {
-				throw new Exception(3);
+			// Validate password through our helper
+			$pres = PasswordHelper::ValidatePassword($_POST["p1"], $_POST["p2"]);
+			if ($pres !== -1) {
+				throw new Exception($pres);
 			}
 
 			// Check if email is valid
@@ -110,19 +100,9 @@ class D {
 				throw new Exception(0);
 			}
 
-			// Check password length
-			if (strlen($_POST["p1"]) < 8) {
-				throw new Exception(1);
-			}
-
-			// Check if passwords match
-			if ($_POST["p1"] != $_POST["p2"]) {
-				throw new Exception(2);
-			}
-
-			// god damn i hate people
-			if (isPasswordDumb($_POST["p1"])) {
-				throw new Exception(3);
+			$pres = PasswordHelper::ValidatePassword($_POST["p1"], $_POST["p2"]);
+			if ($pres !== -1) {
+				throw new Exception($pres);
 			}
 
 			// Calculate secure password
@@ -257,19 +237,10 @@ class D {
 				throw new Exception(4);
 			}
 
-			// Check password length
-			if (strlen($_POST["p1"]) < 8) {
-				throw new Exception(1);
-			}
-
-			// Check if passwords match
-			if ($_POST["p1"] != $_POST["p2"]) {
-				throw new Exception(2);
-			}
-
-			// god damn i hate people
-			if (in_array($_POST["p1"], array("123456", "password", "12345678", "qwerty", "abc123", "123456789", "111111", "1234567", "iloveyou", "adobe123", "123123", "admin", "1234567890", "letmein", "photoshop", "1234", "monkey", "shadow", "sunshine", "12345", "password1", "princess", "azerty", "trustno1", "000000"))) {
-				throw new Exception(3);
+			// Validate password through our helper
+			$pres = PasswordHelper::ValidatePassword($_POST["p1"], $_POST["p2"]);
+			if ($pres !== -1) {
+				throw new Exception($pres);
 			}
 
 			// Calculate new secure password

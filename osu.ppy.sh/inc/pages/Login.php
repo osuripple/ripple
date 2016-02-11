@@ -51,7 +51,7 @@ class Login {
 		if (isset($d["success"])) {
 			redirect("index.php?p=1");
 		} else {
-			redirect("index.php?p=1&e=" . $d["error"]);
+			redirect("index.php?p=2&e=" . $d["error"]);
 		}
 	}
 	public function PrintGetData() {

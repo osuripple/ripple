@@ -15,6 +15,8 @@
 	require_once($df . "/PlayStyleEnum.php");
 	require_once($df . "/resize.php");
 	require_once($df . "/bancho.php");
+	// Helpers
+	require_once($df . "/helpers/PasswordHelper.php");
 	// controller system v2
 	require_once($df . "/pages/Login.php");
 	$pages = array(
@@ -2044,45 +2046,6 @@
 			$s .= $diff['name']."@".$diff['mode'].",";
 		$s = substr($s, 0, -1);
 		return $s;
-	}
-
-	/*
-	* isPasswordDumb()
-	* Check whether password is dumb.
-	*
-	* @param (string) ($pass) the password to check for dumbness.
-	* @returns (bool) true = dumb; false = not dumb
-	*/
-	function isPasswordDumb($pass)
-	{
-		$dumb = array(
-			"123456",
-			"password",
-			"12345678",
-			"qwerty",
-			"abc123",
-			"123456789",
-			"111111",
-			"1234567",
-			"iloveyou",
-			"adobe123",
-			"123123",
-			"admin",
-			"1234567890",
-			"letmein",
-			"photoshop",
-			"1234",
-			"monkey",
-			"shadow",
-			"sunshine",
-			"12345",
-			"password1",
-			"princess",
-			"azerty",
-			"trustno1",
-			"000000",
-		);
-		return in_array($pass, $dumb);
 	}
 
 	/*
