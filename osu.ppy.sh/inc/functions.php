@@ -1513,11 +1513,33 @@
 	 *
 	 * @param (string) ($bmd5) Beatmap MD5.
 	 * @param (int) ($mode) Playmode.
+	 * @param (int) ($type) Leaderboard type (2: friends, other types aren't supported yet)
+	 * @param (string) ($user) User who called the script, used to get his friends in friend leaderboard
 	 */
-	function printBeatmapTopScores($bmd5, $mode)
+	function printBeatmapTopScores($bmd5, $mode, $type = 1, $user = "")
 	{
 		// Get top 50 scores of this beatmap
-		$pid = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE beatmap_md5 = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 50", array($bmd5, $mode));
+		if ($type == 3) {
+			// Friends leaderboard
+			// Get friends
+			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE username = ?", array($user)));
+			$friends = explode(",", $friends);
+
+			// Score array
+			$pid = array();
+
+			// Get friend scores
+			foreach ($friends as $friend) {
+				$friendName = getUserUsername($friend);
+				$friendScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND completed = 3 AND play_mode = ? AND username = ? ORDER BY score DESC LIMIT 50", array($bmd5, $mode, $friendName));
+				if ($friendScore)
+					array_push($pid, $friendScore);
+			}
+		} else {
+			// Normal leaderboard
+			$pid = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE beatmap_md5 = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 50", array($bmd5, $mode));
+		}
+
 		$su = array();	// Users already in the leaderboard (because we show only the best score)
 		$r = 1;			// Last rank (we start from #1)
 

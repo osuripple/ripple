@@ -75,7 +75,7 @@
 						if (checkGameMaintenance())
 							printBeatmapMaintenance();
 						else
-							printBeatmapTopScores($_GET["c"], $_GET["m"]);
+							printBeatmapTopScores($_GET["c"], $_GET["m"], $_GET["v"], $_GET["us"]);
 
 						// End of scores
 						echo("\r\n");
@@ -92,7 +92,7 @@
 							//{
 								// EDIT:
 								// We save every beatmap to avoid scores not shown on userpages and send fokabot messages in #announce
-								
+
 								// We have scores and beatmap name isn't in the db yet, add it
 								// (we remove last 4 chars from file name aka .osu)
 								$GLOBALS["db"]->execute("INSERT INTO beatmaps_names (`id`, `beatmap_md5`, `beatmap_name`) VALUES (NULL, ?, ?)", array($_GET["c"], substr($_GET["f"], 0, strlen($_GET["f"]) - 4) ));

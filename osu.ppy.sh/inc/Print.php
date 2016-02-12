@@ -1614,12 +1614,9 @@ class P {
 			$userpageContent = $userData[0]["userpage_content"];
 
 			// Friend button
-			if (!checkLoggedIn())
-			{
+			if (!checkLoggedIn() || $_GET["u"] == getUserOsuID($_SESSION["username"])) {
 				$friendButton = '';
-			}
-			else
-			{
+			} else {
 				$friendship = getFriendship($_SESSION["username"], $username);
 				switch($friendship)
 				{
