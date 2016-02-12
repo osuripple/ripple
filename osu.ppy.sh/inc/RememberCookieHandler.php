@@ -99,10 +99,10 @@ class RememberCookieHandler {
 			$this->UnsetCookies();
 			redirect("index.php?p=2&e=2");
 		}
-		$password = $GLOBALS["db"]->fetch("SELECT password_secure FROM users WHERE username = ?", $this->username);
+		$password = $GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $this->username);
 		startSessionIfNotStarted();
 		$_SESSION["username"] = $this->username;
-		$_SESSION["password"] = $password["password_secure"];
+		$_SESSION["password"] = $password["password_md5"];
 		$_SESSION["passwordChanged"] = false;
 
 		// Save latest activity

@@ -622,14 +622,14 @@
 			if ($_SESSION["passwordChanged"])
 			{
 				// Update our session password so we don't get kicked
-				$_SESSION["password"] = current($GLOBALS["db"]->fetch("SELECT password_secure FROM users WHERE username = ?", $_SESSION["username"]));
+				$_SESSION["password"] = current($GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $_SESSION["username"]));
 
 				// Reset passwordChanged
 				$_SESSION["passwordChanged"] = false;
 			}
 
 			// Check if our password is still valid
-			if (current($GLOBALS["db"]->fetch("SELECT password_secure FROM users WHERE username = ?", $_SESSION["username"])) != $_SESSION["password"]) {
+			if (current($GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $_SESSION["username"])) != $_SESSION["password"]) {
 				throw new Exception(4);
 			}
 

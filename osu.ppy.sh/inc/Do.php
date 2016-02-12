@@ -49,16 +49,12 @@ class D {
 			// password_hash options
 			$options = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
 
-			// Hash the password, the secure way
-			$securePassword = crypt($_POST["p1"], "$2y$" . $options["salt"]);
-
-			// Hash the password, the unsecure md5 way that however must be done because the osu! client requires it.
-			// #BlamePeppy2015
+			// Create password
 			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
-			$GLOBALS["db"]->execute("INSERT INTO `users`(id, osu_id, username, password_md5, password_secure, salt, email, register_datetime, rank, allowed) VALUES (NULL, 2, ?, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, $securePassword, base64_encode($options["salt"]), $_POST["e"], time(true)));
+			$GLOBALS["db"]->execute("INSERT INTO `users`(id, osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (NULL, 2, ?, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
 
 			// Put some data into users_stats
 			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (NULL, 2, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", $_POST["u"]);
@@ -105,25 +101,21 @@ class D {
 				throw new Exception($pres);
 			}
 
-			// Calculate secure password
+			// Calculate password
 			$oldOptions = array('cost' => 9, 'salt' => base64_decode(current($GLOBALS["db"]->fetch("SELECT salt FROM users WHERE username = ?", $_SESSION["username"]))) );
-			$oldSecurePassword = crypt($_POST["pold"], "$2y$" . $options["salt"]);
+			$oldPassword = crypt(md5($_POST["pold"]), "$2y$" . $oldOptions["salt"]);
 
 			// Check if the current password is the right one
-			if (current($GLOBALS["db"]->fetch("SELECT password_secure FROM users WHERE username = ?", $_SESSION["username"])) != $oldSecurePassword) {
+			if (current($GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $_SESSION["username"])) != $oldPassword) {
 				throw new Exception(4);
 			}
 
-			// Calculate new secure password
+			// Calculate new password
 			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
-
-			// Calculate new unsecure password
-			$newMd5Password = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
+			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
 
 			// Change both passwords and salt
 			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newMd5Password, $_SESSION["username"]));
-			$GLOBALS["db"]->execute("UPDATE users SET password_secure = ? WHERE username = ?", array($newSecurePassword, $_SESSION["username"]));
 			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_SESSION["username"]));
 
 			// Set in session that we've changed our password otherwise sessionCheck() will kick us
@@ -243,16 +235,12 @@ class D {
 				throw new Exception($pres);
 			}
 
-			// Calculate new secure password
+			// Calculate new password
 			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-			$newSecurePassword = crypt($_POST["p1"], "$2y$" . $newOptions["salt"]);
-
-			// Calculate new unsecure password
-			$newMd5Password = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
+			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
 
 			// Change both passwords and salt
-			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newMd5Password, $_POST["user"]));
-			$GLOBALS["db"]->execute("UPDATE users SET password_secure = ? WHERE username = ?", array($newSecurePassword, $_POST["user"]));
+			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newPassword, $_POST["user"]));
 			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_POST["user"]));
 
 			// Delete password reset key

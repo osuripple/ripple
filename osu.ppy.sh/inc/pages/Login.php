@@ -67,12 +67,12 @@ class Login {
 				throw new Exception(1);
 			}
 
-			// Calculate secure password
+			// Calculate password
 			$options = array('cost' => 9, 'salt' => base64_decode(current($GLOBALS["db"]->fetch("SELECT salt FROM users WHERE username = ?", $_POST["u"]))) );
-			$securePassword = crypt($_POST["p"], "$2y$" . $options["salt"]);
+			$password = crypt(md5($_POST["p"]), "$2y$" . $options["salt"]);
 
 			// Check user/password
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ? AND password_secure = ?", array($_POST["u"], $securePassword)) ) {
+			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ? AND password_md5 = ?", array($_POST["u"], $password)) ) {
 				throw new Exception(1);
 			}
 
@@ -87,7 +87,7 @@ class Login {
 			// Everything ok, create session and do login stuff
 			session_start();
 			$_SESSION["username"] = $username;
-			$_SESSION["password"] = $securePassword;
+			$_SESSION["password"] = $password;
 			$_SESSION["passwordChanged"] = false;
 
 			// Check if the user requested to be remember. If they did, initialize cookies.
