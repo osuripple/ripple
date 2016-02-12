@@ -345,7 +345,7 @@
 
 			// Get playmode (default 0)
 			if (!isset($_GET["m"]) || empty($_GET["m"]))
-				$m = 0;
+				$m = -1;
 			else
 				$m = $_GET["m"];
 

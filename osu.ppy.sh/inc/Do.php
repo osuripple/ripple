@@ -1052,6 +1052,11 @@ class D {
 				}
 			}
 
+			// Update mode
+			if ($_POST["mode"] <= 3 && $_POST["mode"] >= 0) {
+				$GLOBALS["db"]->execute("UPDATE users_stats SET favourite_mode = ? WHERE username = ?", array($_POST["mode"], $_SESSION["username"]));
+			}
+
 			// Save data in db
 			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, show_country = ?, username_aka = ?, safe_title = ?, play_style = ? WHERE username = ?", array($c, $_POST["f"], $_POST["aka"], $_POST["st"], $pm, $_SESSION["username"]));
 

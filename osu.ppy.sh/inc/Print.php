@@ -1526,7 +1526,7 @@ class P {
 	* @param (int) ($u) Osu! ID of user.
 	* @param (int) ($m) Playmode.
 	*/
-	static function UserPage($u, $m = 0)
+	static function UserPage($u, $m = -1)
 	{
 		// Maintenance check
 		P::MaintenanceStuff();
@@ -1557,7 +1557,7 @@ class P {
 			}
 
 			// Get all user stats for all modes and username
-			$userData = $GLOBALS["db"]->fetchAll("SELECT * FROM users_stats WHERE osu_id = ?", $u);
+			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE osu_id = ?", $u);
 			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE osu_id = ?", $u));
 
 			// Set default modes texts, selected is bolded below
@@ -1573,18 +1573,18 @@ class P {
 			$modeReadable = getPlaymodeText($m, true);
 
 			// Make sure that $m is a valid mode integer
-			$m = ($m < 0 || $m > 3 ? 0 : $m);
+			$m = ($m < 0 || $m > 3 ? $userData["favourite_mode"] : $m);
 			// Standard stats
-			$rankedScore = $userData[0]["ranked_score_" . $modeForDB];
-			$totalScore = $userData[0]["total_score_" . $modeForDB];
-			$playCount = $userData[0]["playcount_" . $modeForDB];
-			$totalHits = $userData[0]["total_hits_" . $modeForDB];
-			$accuracy = $userData[0]["avg_accuracy_" . $modeForDB];
-			$replaysWatchedByOthers = $userData[0]["replays_watched_" . $modeForDB];
-			$country = $userData[0]["country"];
-			$showCountry = $userData[0]["show_country"];
-			$usernameAka = $userData[0]["username_aka"];
-			$level = $userData[0]["level_" . $modeForDB]-1;
+			$rankedScore = $userData["ranked_score_" . $modeForDB];
+			$totalScore = $userData["total_score_" . $modeForDB];
+			$playCount = $userData["playcount_" . $modeForDB];
+			$totalHits = $userData["total_hits_" . $modeForDB];
+			$accuracy = $userData["avg_accuracy_" . $modeForDB];
+			$replaysWatchedByOthers = $userData["replays_watched_" . $modeForDB];
+			$country = $userData["country"];
+			$showCountry = $userData["show_country"];
+			$usernameAka = $userData["username_aka"];
+			$level = $userData["level_" . $modeForDB]-1;
 			$latestActivity = current($GLOBALS["db"]->fetch("SELECT latest_activity FROM users WHERE username = ?", $username));
 			$silenceEndTime = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", $username));
 			$silenceReason = current($GLOBALS["db"]->fetch("SELECT silence_reason FROM users WHERE username = ?", $username));
@@ -1611,7 +1611,7 @@ class P {
 			$modesText[$m] = "<b>" . $modesText[$m] . "</b>";
 
 			// Get userpage
-			$userpageContent = $userData[0]["userpage_content"];
+			$userpageContent = $userData["userpage_content"];
 
 			// Friend button
 			if (!checkLoggedIn() || $_GET["u"] == getUserOsuID($_SESSION["username"])) {
@@ -1646,7 +1646,7 @@ class P {
 			}
 
 			// Get badges id and icon (max 6 badges)
-			$badgeID = explode(",",$userData[0]["badges_shown"]);
+			$badgeID = explode(",",$userData["badges_shown"]);
 			for ($i=0; $i < count($badgeID); $i++) {
 				$badgeIcon[$i] = $GLOBALS["db"]->fetch("SELECT icon FROM badges WHERE id = ?", $badgeID[$i]);
 				$badgeName[$i] = $GLOBALS["db"]->fetch("SELECT name FROM badges WHERE id = ?", $badgeID[$i]);
@@ -1686,7 +1686,7 @@ class P {
 			<p id="username"><font size=5><b>');
 			if ($country != "XX" && $showCountry == 1)
 				echo('<img src="./images/flags/'.strtolower($country).'.png">	');
-			echo('<font color="'.$userData[0]["user_color"].'" style="'.$userStyle.'">' . $username . '</font></b></font>	');
+			echo('<font color="'.$userData["user_color"].'" style="'.$userStyle.'">' . $username . '</font></b></font>	');
 			if ($usernameAka != "")
 				echo('<small><i>aka '.$usernameAka.'</i></small>');
 			echo('<br><a href="index.php?u='.$u.'&m=0">'.$modesText[0].'</a> | <a href="index.php?u='.$u.'&m=1">'.$modesText[1].'</a> | <a href="index.php?u='.$u.'&m=2">'.$modesText[2].'</a> | <a href="index.php?u='.$u.'&m=3">'.$modesText[3].'</a>');
@@ -1766,8 +1766,8 @@ class P {
 			</tr>');
 
 			// Playstyle
-			if ($userData[0]["play_style"] > 0)
-				echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData[0]["play_style"], $PlayStyleEnum) . '</b></td></tr>');
+			if ($userData["play_style"] > 0)
+				echo('<tr><td id="stats-name">Play style</td><td id="stats-value"><b>' . BwToString($userData["play_style"], $PlayStyleEnum) . '</b></td></tr>');
 
 			echo('</table>
 			</div>
@@ -2304,6 +2304,16 @@ class P {
 		$selected[0] = array(0 => "", 1 => "");
 		$selected[1] = array(0 => "", 1 => "");
 
+		// Howl is cool so he does it in his own way
+		$mode = $data["favourite_mode"];
+		$cj = function($index) use ($mode) {
+			$r = "value='$index'";
+			if ($index == $mode) {
+				return $r . " selected";
+			}
+			return $r . "";
+		};
+
 		// Selected stuff
 		if ($data["show_country"] == 1) $selected[0][1] = "selected"; else $selected[0][0] = "selected";
 		if (isset($_COOKIE["st"]) && $_COOKIE["st"] == 1) $selected[1][1] = "selected"; else $selected[1][0] = "selected";
@@ -2312,7 +2322,7 @@ class P {
 		echo('<form action="submit.php" method="POST">
 		<input name="action" value="saveUserSettings" hidden>
 		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon1" style="width:40%">Show country flag</span>
+			<span class="input-group-addon" id="basic-addon0" style="width:40%">Show country flag</span>
 			<select name="f" class="selectpicker" data-width="100%">
 				<option value="1" '.$selected[0][1].'>Yes</option>
 				<option value="0" '.$selected[0][0].'>No</option>
@@ -2328,13 +2338,23 @@ class P {
 		</div>
 		<p style="line-height: 15px"></p>
 		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon1" style="width:40%">Username color</span>
-			<input type="text" name="c" class="form-control colorpicker" value="'.$data["user_color"].'" placeholder="HEX/Html color" aria-describedby="basic-addon1" spellcheck="false">
+			<span class="input-group-addon" id="basic-addon4" style="width:40%">Favourite gamemode</span>
+			<select name="mode" class="selectpicker" data-width="100%">
+				<option ' . $cj(0) . '>osu! Standard</option>
+				<option ' . $cj(1) . '>Taiko</option>
+				<option ' . $cj(2) . '>Catch the Beat</option>
+				<option ' . $cj(3) . '>osu!mania</option>
+			</select>
 		</div>
 		<p style="line-height: 15px"></p>
 		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon1" style="width:40%">Aka</span>
-			<input type="text" name="aka" class="form-control" value="'.$data["username_aka"].'" placeholder="Alternative username (not for login)" aria-describedby="basic-addon1" spellcheck="false">
+			<span class="input-group-addon" id="basic-addon2" style="width:40%">Username color</span>
+			<input type="text" name="c" class="form-control colorpicker" value="'.$data["user_color"].'" placeholder="HEX/Html color" aria-describedby="basic-addon2" spellcheck="false">
+		</div>
+		<p style="line-height: 15px"></p>
+		<div class="input-group" style="width:100%">
+			<span class="input-group-addon" id="basic-addon3" style="width:40%">Aka</span>
+			<input type="text" name="aka" class="form-control" value="'.$data["username_aka"].'" placeholder="Alternative username (not for login)" aria-describedby="basic-addon3" spellcheck="false">
 		</div>
 		<p style="line-height: 15px"></p>
 		<h3>Playstyle</h3>
