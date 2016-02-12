@@ -1258,7 +1258,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 				}
 
 				// Check user/password
-				if (!checkOsuUser($username, $password)) {
+				if (!PasswordHelper::CheckPass($username, $password)) {
 					throw new Exception("\xFF");
 				}
 

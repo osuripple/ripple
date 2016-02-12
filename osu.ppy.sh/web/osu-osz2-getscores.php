@@ -17,7 +17,7 @@
 		}
 
 		// Check if the user/password is correct
-		if (!checkOsuUser($_GET["us"], $_GET["ha"])) {
+		if (!PasswordHelper::CheckPass($_GET["us"], $_GET["ha"])) {
 			throw new Exception("pass");
 		}
 

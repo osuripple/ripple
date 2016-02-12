@@ -12,7 +12,7 @@
 		}
 
 		// Check login
-		if (!checkOsuUser($_GET["u"], $_GET["h"])) {
+		if (!PasswordHelper::CheckPass($_GET["u"], $_GET["h"])) {
 			throw new Exception;
 		}
 

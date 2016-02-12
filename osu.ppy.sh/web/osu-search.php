@@ -11,7 +11,7 @@
 			throw new Exception;
 
 		// Check login
-		if (!checkOsuUser($_GET["u"], $_GET["h"]))
+		if (!PasswordHelper::CheckPass($_GET["u"], $_GET["h"]))
 			throw new Exception;
 
 		// Make sure mode and ranked status are set

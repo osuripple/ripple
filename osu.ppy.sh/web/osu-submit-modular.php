@@ -31,7 +31,7 @@
 		$username = rtrim($scoreDataArray[1], " ");
 
 		// Check if the user/password is correct
-		if (!checkOsuUser($username, $_POST["pass"])) {
+		if (!PasswordHelper::CheckPass($username, $_POST["pass"])) {
 			throw new Exception("pass");
 		}
 

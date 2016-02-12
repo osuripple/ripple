@@ -946,21 +946,6 @@
 	 **	 	 GENERAL  OSU  FUNCTIONS   	   **
 	 ****************************************/
 
-	/*
-	 * checkOsuUser
-	 * Check if a user exists and if his password is correct
-	 * Used for osu stuff (uses MD5 password)
-	 *
-	 * @param (string) ($u) Username
-	 * @param (string) ($p) MD5 Password
-	 * @return (bool)
-	 */
-	function checkOsuUser($u, $p)
-	{
-		return PasswordHelper::CheckPass($u, $p);
-	}
-
-
 	$cachedOsuID = false;
 	/*
 	 * getUserOsuID

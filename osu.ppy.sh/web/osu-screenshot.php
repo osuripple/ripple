@@ -23,7 +23,7 @@
 		}
 
 		// Check if the user/password is correct
-		if (!checkOsuUser($_GET["u"], $_GET["p"])) {
+		if (!PasswordHelper::CheckPass($_GET["u"], $_GET["p"])) {
 			throw new Exception(4);
 		}
 
