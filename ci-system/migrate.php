@@ -4,7 +4,7 @@ require_once $f . "/../osu.ppy.sh/inc/functions.php";
 
 $latest = -1;
 if (file_exists($f . "/../migrations/latest.txt")) {
-	$latest = file_get_contents($f . "/../migrations/latest.txt");
+	$latest = trim(file_get_contents($f . "/../migrations/latest.txt"));
 }
 if (!is_numeric($latest)) {
 	$latest = -1;
