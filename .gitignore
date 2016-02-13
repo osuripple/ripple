@@ -17,3 +17,6 @@ a.ppy.sh/avatars/*.*
 osu.ppy.sh/adminer.php
 push-to-prod.bat
 migrations/latest.txt
+
+# new pep.py server
+c.ppy.sh/*.*

@@ -209,7 +209,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$gm = getGameMode($uid);
 		switch($gm)
 		{
-			case 0: $modeForDB = "std"; break;
+			default: $modeForDB = "std"; break;
 			case 1: $modeForDB = "taiko"; break;
 			case 2: $modeForDB = "ctb"; break;
 			case 3: $modeForDB = "mania"; break;
@@ -233,21 +233,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 		if($username == "FokaBot")
 			$userColor = "\x06";
 
-		// Unexpected copypasterino from Print.php
-		// Get leaderboard with right total scores (to calculate rank)
-		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_".$modeForDB." DESC");
-
-		// Get all allowed users on ripple
-		$allowedUsers = getAllowedUsers("osu_id");
-
-		// Calculate rank
-		$gameRank = 1;
-		foreach ($leaderboard as $person) {
-			if ($person["osu_id"] == $uid) // We found our user. We know our rank.
-				break;
-			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
-				$gameRank += 1;
-		}
+		// Get game rank
+		$gameRank = Leaderboard::GetUserRank($uid, $modeForDB);
 
 		// Packet start
 		$output = "";
@@ -283,7 +270,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$gm = getGameMode($uid);
 		switch($gm)
 		{
-			case 0: $modeForDB = "std"; break;
+			default: $modeForDB = "std"; break;
 			case 1: $modeForDB = "taiko"; break;
 			case 2: $modeForDB = "ctb"; break;
 			case 3: $modeForDB = "mania"; break;
@@ -299,22 +286,8 @@ we are actually reverse engineering bancho successfully. kinda of.
 		$action = getAction($uid);
 		$actionText = getActionText($uid);
 
-
-		// Unexpected copypasterino from Print.php
-		// Get leaderboard with right total scores (to calculate rank)
-		$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_".$modeForDB." DESC");
-
-		// Get all allowed users on ripple
-		$allowedUsers = getAllowedUsers("osu_id");
-
-		// Calculate rank
-		$gameRank = 1;
-		foreach ($leaderboard as $person) {
-			if ($person["osu_id"] == $uid) // We found our user. We know our rank.
-				break;
-			if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
-				$gameRank += 1;
-		}
+		// Get game rank
+		$gameRank = Leaderboard::GetUserRank($uid, $modeForDB);
 
 		// User stats packet
 		$output = "";
