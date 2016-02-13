@@ -2802,4 +2802,49 @@ class P {
 
 	}
 
+
+
+	/*
+	* FriendlistPage
+	* Prints the friendlist page.
+	*/
+	static function FriendlistPage()
+	{
+		// Maintenance check
+		P::MaintenanceStuff();
+
+		// Global alert
+		P::GlobalAlert();
+
+		// Get user friends
+		$ourID = getUserOsuID($_SESSION["username"]);
+		$friendList = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", $ourID));
+
+		// Title and header message
+		echo('<h1><i class="fa fa-star"></i>	Friendlist</h1>');
+
+		if ($friendList == '') {
+			echo('<b>You don\'t have any friends.</b> You can add someone to your friendlist<br>by clicking the <b>"Add as friend"</b> on someones\'s profile.<br>You can add friends from the game client too.');
+		} else {
+			// Friendlist
+			echo('<table class="table table-striped table-hover table-50-center">
+			<thead>
+			<tr><th class="text-center">Username</th><th class="text-center">Mutual</th></tr>
+			</thead>
+			<tbody>');
+
+			// Explode friendlist
+			$friendList = explode(",", $friendList);
+
+			// Loop through every friend and output its username and mutual status
+			foreach($friendList as $friend) {
+				$mutualIcon = (getFriendship($friend, $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
+				echo('<tr><td><div align="center"><a href="index.php?u='.$friend.'">'.getUserUsername($friend).'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>');
+			}
+
+			echo("</tbody></table>");
+		}
+	}
+
+
 }
