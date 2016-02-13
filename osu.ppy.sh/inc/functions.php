@@ -22,6 +22,7 @@
 	require_once($df . "/pages/Leaderboard.php");
 	$pages = array(
 		new Login(),
+		new Leaderboard(),
 	);
 
 	// Set timezone to UTC
@@ -142,7 +143,6 @@
 				case 7: return ('<title>Ripple - Change password</title>'); break;
 				case 8: return ('<title>Ripple - Edit userpage</title>'); break;
 				case 12: return ('<title>Ripple - Change osu! id</title>'); break;
-				case 13: return ('<title>Ripple - Leaderboard</title>'); break;
 				case 14: return ('<title>Ripple - Documentation files</title>'); break;
 				case 15: return ('<title>Ripple - Read documentation</title>'); break;
 				case 16: return ('<title>Ripple - Read documentation</title>'); break;
@@ -248,9 +248,6 @@
 
 				// Change osu! id (protected)
 				case 12: sessionCheck(); P::SetOsuIDPage(); break;
-
-				// Leaderboard
-				case 13: sessionCheck(); P::Leaderboard(); break;
 
 				// List documentation files
 				case 14: listDocumentationFiles(); break;
@@ -2205,5 +2202,10 @@
 			return true;
 		} catch (Exception $e) {
 			return false;
+		}
+	}
+	function clir($must = FALSE, $redirTo = "index.php?p=2&e=3") {
+		if (checkLoggedIn() === $must) {
+			redirect($redirTo);
 		}
 	}

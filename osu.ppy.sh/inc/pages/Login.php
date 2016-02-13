@@ -23,9 +23,7 @@ class Login {
 	);
 
 	public function P() {
-		if (checkLoggedIn()) {
-			redirect("index.php?p=1&e=1");
-		}
+		clir(TRUE, "index.php?p=1&e=1");
 		echo('<br><div id="narrow-content"><h1><i class="fa fa-sign-in"></i>	Login</h1>');
 
 		if (!isset($_GET["e"]) && !isset($_GET["s"]))
