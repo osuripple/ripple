@@ -54,7 +54,7 @@ class D {
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
-			$GLOBALS["db"]->execute("INSERT INTO `users`(id, osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (NULL, 2, ?, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
+			$GLOBALS["db"]->execute("INSERT INTO `users`(id, osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (NULL, 2, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
 
 			// Put some data into users_stats
 			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (NULL, 2, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", $_POST["u"]);

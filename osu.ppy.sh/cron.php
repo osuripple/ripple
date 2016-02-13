@@ -190,14 +190,20 @@
 
 		echo("<b>Deleted ".$n." inactive accounts!</b><br>\n");
 
+		echo("<br>\n<b>Building leaderboard...</b></br>\n");
+		Leaderboard::BuildLeaderboard();
+		echo("<br>\n<b>Leaderboard built!</b></br>\n");
+
 		// Get execution time
 		$endTime = microtime(true);
 		$executionTime = ($endTime - $startTime);
-		echo('<br>\n<b>Ripple cron.php stopped</b><br>\n<b>Total execution time:</b> '.$executionTime.' seconds<br>\n');
+		echo('<br>
+<b>Ripple cron.php stopped</b><br>
+<b>Total execution time:</b> '.$executionTime.' seconds<br>');
 
 		// Get max execution time
 		$maxTime = ini_get('max_execution_time');
-		echo("<b>Maximum execution time:</b> ".$maxTime." seconds<br>\n");
+		echo("\n<b>Maximum execution time:</b> ".$maxTime." seconds<br>\n");
 
 		// Check if script is safe to run
 		if ($maxTime == 0 || $maxTime-$executionTime > 5)

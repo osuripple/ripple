@@ -19,6 +19,7 @@
 	require_once($df . "/helpers/PasswordHelper.php");
 	// controller system v2
 	require_once($df . "/pages/Login.php");
+	require_once($df . "/pages/Leaderboard.php");
 	$pages = array(
 		new Login(),
 	);
@@ -56,7 +57,7 @@
 	 */
 	function outputVariable($fn, $v)
 	{
-		file_put_contents($fn, print_r($v, true), FILE_APPEND);
+		file_put_contents($fn, var_export($v, true), FILE_APPEND);
 	}
 
 
@@ -1105,6 +1106,11 @@
 			{
 				// Update ranked score
 				$GLOBALS["db"]->execute("UPDATE users_stats SET ranked_score_" . $playModeText . "=ranked_score_" . $playModeText . "+? WHERE username = ?", array($scoreDifference, $username));
+
+				// Update leaderboard
+				// Ayy lmao, we don't know the score
+				$rankedscore = $GLOBALS["db"]->fetch("SELECT ranked_score_$playModeText FROM users_stats WHERE username = ?", array($username));
+				Leaderboard::Update(getUserOsuID($username), $rankedscore["ranked_score_$playModeText"], $playModeText);
 			}
 		}
 
