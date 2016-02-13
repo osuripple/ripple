@@ -154,6 +154,7 @@
 				case 23: return ('<title>Ripple - Rules</title>'); break;
 				case 24: return ('<title>Ripple - My report</title>'); break;
 				case 25: return ('<title>Ripple - Report</title>'); break;
+				case 26: return ('<title>Ripple - Friendlist</title>'); break;
 
 				case 100: return ('<title>RAP - Dashboard</title>'); break;
 				case 101: return ('<title>RAP - System settings</title>'); break;
@@ -286,6 +287,9 @@
 
 				// My report view page
 				case 25: sessionCheck(); P::MyReportViewPage(); break;
+
+				// Friendlist page
+				case 26: sessionCheck(); P::FriendlistPage(); break;
 
 				// Admin panel (> 100 pages are admin ones)
 				case 100: sessionCheckAdmin(); P::AdminDashboard(); break;
@@ -436,6 +440,7 @@
 					<a data-toggle="dropdown"><img src="http://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="index.php?p=5"><i class="fa fa-picture-o"></i> Change avatar</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=7"><i class="fa fa-lock"></i>	Change password</a></li>
