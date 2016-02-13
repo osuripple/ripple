@@ -1601,9 +1601,6 @@ class P {
 			$topPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 10", array($username, $m));
 			$recentPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY time DESC LIMIT 10", array($username, $m));
 
-			// Get leaderboard with right total scores (to calculate rank)
-			$leaderboard = $GLOBALS["db"]->fetchAll("SELECT osu_id FROM users_stats ORDER BY ranked_score_" . $modeForDB . " DESC");
-
 			// Get all allowed users on ripple
 			$allowedUsers = getAllowedUsers("osu_id");
 
@@ -1627,13 +1624,7 @@ class P {
 			}
 
 			// Calculate rank
-			$rank = 1;
-			foreach ($leaderboard as $person) {
-				if ($person["osu_id"] == $u) // We found our user. We know our rank.
-				break;
-				if ($person["osu_id"] != 2 && $allowedUsers[$person["osu_id"]]) // Only add 1 to the users if they are not banned and are confirmed.
-				$rank += 1;
-			}
+			$rank = Leaderboard::GetUserRank($_GET["u"], $modeForDB);
 			// Set rank char (trophy for top 3, # for everyone else)
 			if ($rank <= 3)
 			{
