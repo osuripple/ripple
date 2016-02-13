@@ -25,19 +25,25 @@
 	// CONTROLLER SYSTEM v2
 	$model = "old";
 	if (isset($_GET["p"])) {
+		$found = false;
 		foreach ($pages as $page) {
 			if ($page::PageID == $_GET["p"]) {
 				$found = true;
 				$model = $page;
 				$title = "<title>" . $page::Title . "</title>";
+				if (defined(get_class($page) . "::PageID")) {
+					$p = $page::PageID;
+				}
 				break;
 			}
 		}
-		if (isset($_GET["p"]) && !empty($_GET["p"]))
-			$p = $_GET["p"];
-		else
-			$p = 1;
-		$title = setTitle($p);
+		if (!$found) {
+			if (isset($_GET["p"]) && !empty($_GET["p"]))
+				$p = $_GET["p"];
+			else
+				$p = 1;
+			$title = setTitle($p);
+		}
 	}
 	elseif (isset($_GET["u"]) && !empty($_GET["u"])) {
 		$title = setTitle("u");
