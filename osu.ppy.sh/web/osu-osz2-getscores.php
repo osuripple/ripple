@@ -44,7 +44,7 @@
 					{
 						// Latest pending version
 						printBeatmapHeader(0, $_GET["c"]);
-						echo("\r\n");
+						echo(chr(10));
 						printBeatmapSongInfo($_GET["c"]);
 						printBeatmapAppreciation();
 					}
@@ -52,7 +52,7 @@
 					{
 						// Update to latest version
 						printBeatmapHeader(1, $_GET["c"]);
-						echo("\r\n");
+						echo(chr(10));
 						printBeatmapSongInfo($_GET["c"]);
 						printBeatmapAppreciation();
 					}
@@ -66,7 +66,7 @@
 					{
 						// Ranked and right md5, show top 50 ranks
 						printBeatmapHeader(2, $_GET["c"]);
-						echo("\r\n");
+						echo(chr(10));
 						printBeatmapSongInfo($_GET["c"]);
 						printBeatmapAppreciation();
 						printBeatmapPlayerScore($_GET["us"], $_GET["c"], $_GET["m"]);
@@ -78,7 +78,7 @@
 							printBeatmapTopScores($_GET["c"], $_GET["m"], $_GET["v"], $_GET["us"]);
 
 						// End of scores
-						echo("\r\n");
+						echo(chr(10));
 
 						// If everything is ranked, set beatmap name in beatmaps_names
 						// based on file name, so we can do top/latest plays without
