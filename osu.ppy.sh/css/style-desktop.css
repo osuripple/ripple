@@ -48,20 +48,20 @@ ul.nav li:hover > ul.dropdown-menu {
 }
 
 #friend-add {
-	padding-top: 60px;
-	padding-left: 85%;
+	margin-top: 60px;
+	margin-left: 85%;
 	position: absolute;
 }
 
 #friend {
-	padding-top: 60px;
-	padding-left: 90%;
+	margin-top: 60px;
+	margin-left: 90%;
 	position: absolute;
 }
 
 #friend-mutual {
-	padding-top: 60px;
-	padding-left: 84%;
+	margin-top: 60px;
+	margin-left: 84%;
 	position: absolute;
 }
 
