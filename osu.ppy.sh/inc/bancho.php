@@ -1221,13 +1221,18 @@ we are actually reverse engineering bancho successfully. kinda of.
 				$hardwareHashes = explode(":", $hardwareData[3]);
 				$output = "";
 
-				// Check osu! version and osu!.exe md5
-				$clientVersions = explode("|", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_versions'")));
-				$clientMd5s = explode("|", current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_md5s'")));
-				if (!in_array($hardwareData[0], $clientVersions) || !in_array($hardwareHashes[0], $clientMd5s)) {
-					$output .= outputNotification("You are not using the right version of osu!. Please make sure you are on Stable (fallback) branch and your client is updated.");
-					$output .= outputNotification("To update the client, you need to turn the switcher OFF.");
-					throw new Exception("\xFE");
+				// Check osu! version and osu!.exe md5 if set from RAP
+				$clientVersions = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_versions'"));
+				$clientMd5s = current($GLOBALS["db"]->fetch("SELECT value_string FROM bancho_settings WHERE name = 'osu_md5s'"));
+				if (!empty($clientVersions) && !empty($clientMd5s))
+				{
+					$clientVersions = explode("|", $clientVersions);
+					$clientMd5s = explode("|", $clientMd5s);
+					if (!in_array($hardwareData[0], $clientVersions) || !in_array($hardwareHashes[0], $clientMd5s)) {
+						$output .= outputNotification("You are not using the right version of osu!. Please make sure you are on Stable (fallback) branch and your client is updated.");
+						$output .= outputNotification("To update the client, you need to turn the switcher OFF.");
+						throw new Exception("\xFE");
+					}
 				}
 
 				// Check user/password
