@@ -2828,8 +2828,9 @@ class P {
 
 			// Loop through every friend and output its username and mutual status
 			foreach($friendList as $friend) {
-				$mutualIcon = (getFriendship($friend, $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
-				echo('<tr><td><div align="center"><a href="index.php?u='.$friend.'">'.getUserUsername($friend).'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>');
+				$uname = getUserUsername($friend);
+				$mutualIcon = ($uname == "FokaBot" || getFriendship($friend, $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
+				echo('<tr><td><div align="center"><a href="index.php?u='.$friend.'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>');
 			}
 
 			echo("</tbody></table>");
