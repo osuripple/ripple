@@ -1473,7 +1473,7 @@
 		}
 
 		// Echo song data
-		echo("[bold:0,size:10]".current($songArtist)."|".current($songTitle)."\r\n");
+		echo("[bold:0,size:10]".current($songArtist)."|".current($songTitle).chr(10));
 	}
 
 
@@ -1485,7 +1485,7 @@
 	function printBeatmapAppreciation()
 	{
 		// Not implemented yet, output 0
-		echo("\r\n");
+		echo(chr(10));
 	}
 
 
@@ -1510,7 +1510,7 @@
 		else
 		{
 			// Player has not played that beatmap yet, print empty line
-			echo("\r\n");
+			echo(chr(10));
 		}
 	}
 
@@ -1657,19 +1657,19 @@
 			}
 		}
 
-		echo($replayID."|".$playerName."|".$score."|".$maxCombo."|".$count50."|".$count100."|".$count300."|".$countMisses."|".$countKatu."|".$countGeki."|".$fullCombo."|".$mods."|".$userID."|".$rank."|".$actualDate."|".$hasReplay."\r\n");
+		echo($replayID."|".$playerName."|".$score."|".$maxCombo."|".$count50."|".$count100."|".$count300."|".$countMisses."|".$countKatu."|".$countGeki."|".$fullCombo."|".$mods."|".$userID."|".$rank."|".$actualDate."|".$hasReplay.chr(10));
 	}
 
 	function printBeatmapMaintenance()
 	{
-		echo("0|ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|maintenance mode|7|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|check|6|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|your server's website|5|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|for more info.|4|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|SCORES WON'T BE SAVED!|3|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|SCORES WON'T BE SAVED!!|2|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
-		echo("0|SCORES WON'T BE SAVED!!!|1|0|0|0|0|0|0|0|0|0|0|0|0|0\r\n");
+		echo("0|ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|maintenance mode|7|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|check|6|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|your server's website|5|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|for more info.|4|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|SCORES WON'T BE SAVED!|3|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|SCORES WON'T BE SAVED!!|2|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|SCORES WON'T BE SAVED!!!|1|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
 	}
 
 	function osuDateToUNIXTimestamp($date) {
