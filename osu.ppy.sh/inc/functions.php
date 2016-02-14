@@ -2103,6 +2103,11 @@
 		if (in_array($u1, $friends[0]))
 		{
 			// We've found u1 in u0's friends. Check mutual
+
+			// Fokabot automutual
+			if ($u1 == 999)
+				return 2;
+
 			// Get u1's friendlist
 			array_push($friends, current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($u1))));
 
