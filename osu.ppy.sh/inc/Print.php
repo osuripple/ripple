@@ -1569,11 +1569,10 @@ class P {
 			);
 
 			// Get stats for selected mode
+			$m = ($m < 0 || $m > 3 ? $userData["favourite_mode"] : $m);
 			$modeForDB = getPlaymodeText($m);
 			$modeReadable = getPlaymodeText($m, true);
 
-			// Make sure that $m is a valid mode integer
-			$m = ($m < 0 || $m > 3 ? $userData["favourite_mode"] : $m);
 			// Standard stats
 			$rankedScore = $userData["ranked_score_" . $modeForDB];
 			$totalScore = $userData["total_score_" . $modeForDB];

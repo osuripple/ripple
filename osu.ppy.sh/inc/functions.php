@@ -346,7 +346,7 @@
 			sessionCheck();
 
 			// Get playmode (default 0)
-			if (!isset($_GET["m"]) || empty($_GET["m"]))
+			if (!isset($_GET["m"]) || !is_numeric($_GET["m"]))
 				$m = -1;
 			else
 				$m = $_GET["m"];
