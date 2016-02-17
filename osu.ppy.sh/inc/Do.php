@@ -115,7 +115,7 @@ class D {
 			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
 
 			// Change both passwords and salt
-			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newMd5Password, $_SESSION["username"]));
+			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newPassword, $_SESSION["username"]));
 			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_SESSION["username"]));
 
 			// Set in session that we've changed our password otherwise sessionCheck() will kick us

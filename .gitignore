@@ -20,3 +20,6 @@ migrations/latest.txt
 
 # new pep.py server
 c.ppy.sh/*.*
+
+# ignore this
+osu.ppy.sh/aesmeme.php
