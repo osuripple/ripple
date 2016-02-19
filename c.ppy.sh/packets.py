@@ -3,6 +3,7 @@ import dataTypes
 
 
 # Login errors
+# (userID packets derivates)
 def loginFailed():
 	return packetHelper.buildPacket(5, [[-1, dataTypes.sInt32]])
 
@@ -20,22 +21,33 @@ def needSupporter():
 
 
 # Login packets
-def userID(__uid):
-	return packetHelper.buildPacket(5, [[__uid, dataTypes.sInt32]])
+def userID(uid):
+	return packetHelper.buildPacket(5, [[uid, dataTypes.sInt32]])
 
-def silenceEndTime(__seconds):
-	return packetHelper.buildPacket(92, [[__seconds, dataTypes.uInt32]])
+def silenceEndTime(seconds):
+	return packetHelper.buildPacket(92, [[seconds, dataTypes.uInt32]])
 
-def silenceEndTime(__seconds):
-	return packetHelper.buildPacket(92, [[__seconds, dataTypes.uInt32]])
+def protocolVersion(version = 19):
+	return packetHelper.buildPacket(75, [[version, dataTypes.uInt32]])
+
+def userSupporterGMT(supporter, GMT):
+	result = 1;
+	if (supporter == True):
+		result += 4
+	if (GMT == True):
+		result += 2
+	return packetHelper.buildPacket(71, [[result, dataTypes.uInt32]])
+
+def channelJoin(channel):
+	return packetHelper.buildPacket(64, [[channel, dataTypes.string]])
 
 
 # Other packets
-def notification(__message):
-	return packetHelper.buildPacket(24, [[__message, dataTypes.string]])
+def notification(message):
+	return packetHelper.buildPacket(24, [[message, dataTypes.string]])
 
-def jumpscare(__message):
-	return packetHelper.buildPacket(105, [[__message, dataTypes.string]])
+def jumpscare(message):
+	return packetHelper.buildPacket(105, [[message, dataTypes.string]])
 
 
 # Testing stuff

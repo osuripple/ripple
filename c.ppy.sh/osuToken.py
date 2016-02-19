@@ -32,7 +32,7 @@ class token:
 		self.queue += __bytes
 
 
-	def resetQuete(self):
+	def resetQueue(self):
 		"""Resets the queue. Call when enqueued packets have been sent"""
 
 		self.queue = bytes()

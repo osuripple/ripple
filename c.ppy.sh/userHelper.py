@@ -37,3 +37,18 @@ def checkLogin(db, userID, password):
 
 	# Return password valid/invalid
 	return passwordHelper.checkPassword(password, passwordData["salt"], passwordData["password_md5"])
+
+
+# TODO: User exists function
+
+
+def getUserAllowed(db, userID):
+	"""Get allowed status for userID
+
+	db -- database connection
+	userID -- user ID
+
+	return -- allowed int"""
+
+	# Return user ID
+	return db.fetch("SELECT allowed FROM users WHERE osu_id = ?", [userID])["allowed"]

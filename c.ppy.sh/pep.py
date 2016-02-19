@@ -19,6 +19,7 @@ import dataTypes
 import userHelper
 import osuToken
 import tokenList
+import exceptions
 
 import packetHelper
 import consoleHelper
@@ -50,8 +51,8 @@ def banchoServer():
 		requestToken = flask.request.headers.get('osu-token')	# Client's token
 		requestData = str(flask.request.data)					# Client's request data
 
-		responseData = bytes()							# Server's response data
-		responseToken = "";								# Server's response token
+		responseData = bytes()								# Server's response data
+		responseTokenString = "ayy";						# Server's response token string
 
 		if (requestToken == None):
 			# We don't have a token, this is the first packet aka login
@@ -65,23 +66,55 @@ def banchoServer():
 			# Process login
 			print("> Processing login request for "+loginData[0]+"...")
 			try:
+				# Try to get the ID
 				userID = userHelper.getUserID(dbConnection, str(loginData[0]))
 				if (userID == False):
-					raise
+					# Invalid username
+					raise exceptions.loginFailedException()
 				if (userHelper.checkLogin(dbConnection, userID, loginData[1]) == False):
-					raise
+					# Invalid password
+					raise exceptions.loginFailedException()
+
+				# Make sure we are not banned
+				userAllowed = userHelper.getUserAllowed(dbConnection, userID)
+				if (userAllowed == 0):
+					# Banned
+					raise exceptions.loginBannedException()
 
 				# Delete old tokens for that user and generate a new one
 				tokens.deleteOldTokens(userID)
 				tokens.addToken(userID)
 
+				# Get our new token object
+				responseToken = tokens.getTokenFromUserID(userID)
+
+				# Send all needed login packets
+				responseData = packets.silenceEndTime(0)
+				responseData += packets.userID(userID)
+				responseData += packets.protocolVersion()
+				responseData += packets.userSupporterGMT(True, True)
+				responseData += packets.channelJoin("#osu")
 				responseData += packets.notification("Logged in!")
+
+				# Print logged in message
+				# TODO: Output token too
 				consoleHelper.printColored("> "+loginData[0]+" logged in", bcolors.GREEN)
 
-				# TODO: Other login packets
-			except:
-				consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
+				# Set reponse data and tokenstring to right value and reset our queue
+				responseTokenString = responseToken.token
+				#responseData = responseToken.queue
+				#reponseToken.resetQueue()
+			except exceptions.loginFailedException:
+				# Login failed error packet
+				# (we don't use enqueue because we don't have a token since login has failed)
 				responseData += packets.loginFailed()
+			except exceptions.loginBannedException:
+				# Login banned error packet
+				responseData += packets.loginBanned()
+			finally:
+				# Print login failed message to console
+				consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
+
 
 			#responseData += packets.silenceEndTime(0)
 			#responseData += packets.jumpscare("BANCHOBOT WILL KILL YOU\nHE IS EVIL\n...")
@@ -97,7 +130,8 @@ def banchoServer():
 			#print(tokens)
 
 		# Send server's response to client
-		return responseHelper.generateResponse(responseToken, responseData)
+		# We don't use token object because we might not have a token (failed login)
+		return responseHelper.generateResponse(responseTokenString, responseData)
 	else:
 		# Not a POST request, send html page
 		# TODO: Fix this crap

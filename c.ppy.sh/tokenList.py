@@ -30,6 +30,19 @@ class tokenList:
 		return self.tokens[self.tokens.index(__token)].userID;
 
 
+	def getTokenFromUserID(self, __userID):
+		"""Get token from a user ID
+
+		__userID -- user ID to find
+
+		return: false if not found, token object if found"""
+
+		# Make sure the token exists
+		for key, value in self.tokens.items():
+			if (value.userID == __userID):
+				return value
+
+
 	def deleteOldTokens(self, __userID):
 		"""Delete old userID's tokens if found
 
