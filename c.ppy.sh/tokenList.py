@@ -2,13 +2,15 @@ import osuToken
 
 class tokenList:
 	# Connected users
-	# Contains token objects
+	# Index: token string
+	# Value: token object
 	tokens = {}
 
 	def addToken(self, __userID):
 		"""Add a token object to tokens list
 
 		__userID -- user id associated to that token"""
+
 		newToken = osuToken.token(__userID)
 		self.tokens[newToken.token] = newToken
 
@@ -26,6 +28,7 @@ class tokenList:
 
 		# Get userID associated to that token
 		return self.tokens[self.tokens.index(__token)].userID;
+
 
 	def deleteOldTokens(self, __userID):
 		"""Delete old userID's tokens if found

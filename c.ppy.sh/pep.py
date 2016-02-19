@@ -1,8 +1,8 @@
 # TODO: Remove useless imports
 # TODO: Use __memes only on classes
+# TODO: Docs
 import struct
 import flask
-#from flask import Flask, request	# TODO: Remove this import
 import gzip
 import string
 import logging
@@ -26,9 +26,8 @@ import databaseHelper
 import passwordHelper
 import responseHelper
 
-
+# Create token list
 tokens = tokenList.tokenList()
-
 
 # Create flask instance
 app = flask.Flask(__name__)
@@ -102,27 +101,7 @@ def banchoServer():
 	else:
 		# Not a POST request, send html page
 		# TODO: Fix this crap
-		html = 	"<html><head><title>MA MAURO ESISTE?</title><style type='text/css'>body{width:30%}</style></head><body><pre>"
-		html += "           _                 __<br>"
-		html += "          (_)              /  /<br>"
-		html += "   ______ __ ____   ____  /  /____<br>"
-		html += "  /  ___/  /  _  \\/  _  \\/  /  _  \\<br>"
-		html += " /  /  /  /  /_) /  /_) /  /  ____/<br>"
-		html += "/__/  /__/  .___/  .___/__/ \\_____/<br>"
-		html += "        /  /   /  /<br>"
-		html += "       /__/   /__/<br>"
-		html += "<b>THERE'S A PYTHON ABROAD VERSION</b><br><br>"
-		html += "<marquee style='white-space:pre;'><br>"
-		html += "                          .. o  .<br>"
-		html += "                         o.o o . o<br>"
-		html += "                        oo...<br>"
-		html += "                    __[]__<br>"
-		html += "    phwr-->  _\\:D/_/o_o_o_|__     <span style=\"font-family: 'Comic Sans MS'; font-size: 8pt;\">u wot m8</span><br>"
-		html += "             \\\"\"\"\"\"\"\"\"\"\"\"\"\"\"/<br>"
-		html += "              \\ . ..  .. . /<br>"
-		html += "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>"
-		html += "</marquee><br><strike>reverse engineering a protocol impossible to reverse engineer since always</strike><br>we are actually reverse engineering bancho successfully. for the third time.</pre></body></html>"
-		return html
+		return responseHelper.HTMLResponse()
 
 
 
@@ -131,7 +110,7 @@ consoleHelper.printServerStartHeader(True);
 
 # Read config.ini
 consoleHelper.printNoNl("> Loading config file... ")
-conf = config.config()
+conf = config.config("config.ini")
 
 if (conf.default == True):
 	# We have generated a default config.ini, quit server

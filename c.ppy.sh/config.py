@@ -3,21 +3,32 @@ import configparser
 
 class config:
 	config = configparser.ConfigParser()
+	fileName = "";		# config filename
 	default = True      # if true, we have generated a default config.ini
 
 	# Check if config.ini exists and load/generate it
-	def __init__(self):
-		if (os.path.isfile("config.ini")):
+	def __init__(self, __file):
+		"""Initialize a config object
+
+		__file -- filename"""
+
+		fileName = __file
+		if (os.path.isfile(fileName)):
 			# config.ini found, load it
-			self.config.read("config.ini")
+			self.config.read(fileName)
 			self.default = False
 		else:
 			# config.ini not found, generate a default one
 			self.generateDefaultConfig()
 			self.default = True
 
+
 	# Check if config.ini has all needed the keys
 	def checkConfig(self):
+		"""Check if this config has the required keys
+
+		return -- True if valid, False if not"""
+
 		try:
 			# Try to get all the required keys
 			self.config.get("db","host")
@@ -32,10 +43,13 @@ class config:
 		except:
 			return False
 
+
 	# Generate a default config.ini
 	def generateDefaultConfig(self):
+		"""Open and set default keys for that confg files"""
+
 		# Open config.ini in write mode
-		f = open("config.ini", "w")
+		f = open(fileName, "w")
 
 		# Set keys to config object
 		self.config.add_section("db")

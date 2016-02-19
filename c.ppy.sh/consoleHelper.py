@@ -1,7 +1,11 @@
 import bcolors
 
-def printServerStartHeader(__asciiArt):
-	if (__asciiArt == True):
+def printServerStartHeader(asciiArt):
+	"""Print server start header with optional ascii art
+
+	asciiArt -- if True, will print ascii art too"""
+
+	if (asciiArt == True):
 		print(bcolors.GREEN)
 		print("           _                 __")
 		print("          (_)              /  /")
@@ -23,17 +27,37 @@ def printServerStartHeader(__asciiArt):
 
 	print(bcolors.GREEN+"> Welcome to pep.py osu! Server v0.5\n> Made by the ripple team\n> Press CTRL+C to exit"+bcolors.ENDC+"\n")
 
-def printNoNl(__string):
-	print(__string, end="")
 
-def printColored(__string, __color):
-	print(__color+__string+bcolors.ENDC)
+def printNoNl(string):
+	""" Print string without new line at the end
+
+	string -- string to print"""
+
+	print(string, end="")
+
+
+def printColored(string, color):
+	""" Print colored string
+
+	string -- string to print
+	color -- see bcolors.py"""
+
+	print(color+string+bcolors.ENDC)
+
 
 def printError():
+	""" Print error text FOR LOADING"""
+
 	printColored("Error", bcolors.REd)
 
+
 def printDone():
+	""" Print error text FOR LOADING"""
+
 	printColored("Done", bcolors.GREEN)
 
+
 def printWarning():
+	""" Print error text FOR LOADING"""
+
 	printColored("Warning", bcolors.YELLOW)

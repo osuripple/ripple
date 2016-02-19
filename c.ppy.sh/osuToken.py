@@ -6,6 +6,7 @@ class token:
 	userID = 0;
 	queue = bytes();
 
+
 	def __init__(self, __userID, __token = None):
 		"""Create a token object and set userID and token
 
@@ -22,12 +23,16 @@ class token:
 		else:
 			self.token = str(uuid.uuid4())
 
+
 	def enqueue(self, __bytes):
 		"""Add bytes (packets) to queue
 
 		__bytes -- (packet) bytes to enqueue"""
+
 		self.queue += __bytes
+
 
 	def resetQuete(self):
 		"""Resets the queue. Call when enqueued packets have been sent"""
+
 		self.queue = bytes()

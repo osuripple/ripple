@@ -1,8 +1,15 @@
 import passwordHelper
 
-def getUserID(__db, __username):
+def getUserID(db, username):
+	"""Get username's user ID
+
+	db -- database connection
+	username -- user
+
+	return -- user id or false"""
+
 	# Get user ID from db
-	userID = __db.fetch("SELECT osu_id FROM users WHERE username = ?", [__username])
+	userID = db.fetch("SELECT osu_id FROM users WHERE username = ?", [username])
 
 	# Make sure the query returned something
 	if (userID == None):
@@ -11,13 +18,22 @@ def getUserID(__db, __username):
 	# Return user ID
 	return userID["osu_id"]
 
-def checkLogin(__db, __userID, __password):
+
+def checkLogin(db, userID, password):
+	"""Check userID's login with specified password
+
+	db -- database connection
+	userID -- user id
+	password -- plain md5 password
+
+	return -- true or false"""
+
 	# Get password data
-	passwordData = __db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [__userID])
+	passwordData = db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
 
 	# Make sure the query returned something
 	if (passwordData == None):
 		return False
 
 	# Return password valid/invalid
-	return passwordHelper.checkPassword(__password, passwordData["salt"], passwordData["password_md5"])
+	return passwordHelper.checkPassword(password, passwordData["salt"], passwordData["password_md5"])

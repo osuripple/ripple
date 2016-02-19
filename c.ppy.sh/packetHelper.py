@@ -5,6 +5,13 @@ import sys
 import dataTypes
 
 def packData(__data, __dataType):
+	"""Packs data according to dataType
+
+	data -- bytes to pack
+	dataType -- data type. See dataTypes.py
+
+	return -- packed bytes"""
+
 	data = bytes()	# data to return
 	pack = True		# if True, use pack. False only with strings
 
@@ -37,7 +44,15 @@ def packData(__data, __dataType):
 
 	return data
 
+
 def buildPacket(__packet, __packetData = []):
+	"""Build a packet
+
+	packet -- packet id (int)
+	packetData -- array [[data, dataType], [data, dataType], ...]
+
+	return -- packet bytes"""
+	
 	try:
 		# Set some variables
 		packetData = bytes()
