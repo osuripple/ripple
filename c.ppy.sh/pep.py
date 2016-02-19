@@ -1,7 +1,8 @@
 # TODO: Remove useless imports
+# TODO: Use __memes only on classes
 import struct
 import flask
-from flask import Flask, request	# TODO: Remove this import
+#from flask import Flask, request	# TODO: Remove this import
 import gzip
 import string
 import logging
@@ -13,26 +14,24 @@ import os
 # pep.py files
 import bcolors
 import packets
-import packetHelper
-import responseBuilder
 import config
+import dataTypes
+import userHelper
+import osuToken
+import tokenList
+
+import packetHelper
 import consoleHelper
 import databaseHelper
-import dataTypes
 import passwordHelper
-import userHelper
+import responseHelper
 
 
-# Connected users
-# slots[[token, userID], [token, userID], ...]
-slots = [[]]
-
-# Remove slot 0 because it's empty
-slots.pop(0)
+tokens = tokenList.tokenList()
 
 
 # Create flask instance
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 # Get flask logger
 flaskLogger = logging.getLogger("werkzeug")
@@ -48,27 +47,21 @@ def stringToBool(s):
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
 def banchoServer():
-	if request.method == 'POST':
-		requestToken = request.headers.get('osu-token')	# Client's token
-		requestData = str(request.data)					# Client's request data
+	if (flask.request.method == 'POST'):
+		requestToken = flask.request.headers.get('osu-token')	# Client's token
+		requestData = str(flask.request.data)					# Client's request data
 
 		responseData = bytes()							# Server's response data
 		responseToken = "";								# Server's response token
 
 		if (requestToken == None):
 			# We don't have a token, this is the first packet aka login
-			print("> Accepting connection from "+request.remote_addr+"...")
+			print("> Accepting connection from "+flask.request.remote_addr+"...")
 
 			# Split POST body so we can get username/password/hardware data
 			# We remove the first two and last three characters because they are
 			# some escape stuff that we don't need
 			loginData = requestData[2:-3].split("\\n")
-
-			# Generate token and add it to connected tokens
-			responseToken = str(uuid.uuid4())
-			slots.append([responseToken, -1])
-
-			print("> Generated token for "+loginData[0]+": "+responseToken)
 
 			# Process login
 			print("> Processing login request for "+loginData[0]+"...")
@@ -78,12 +71,16 @@ def banchoServer():
 					raise
 				if (userHelper.checkLogin(dbConnection, userID, loginData[1]) == False):
 					raise
+
+				# Delete old tokens for that user and generate a new one
+				tokens.deleteOldTokens(userID)
+				tokens.addToken(userID)
+
 				responseData += packets.notification("Logged in!")
 				consoleHelper.printColored("> "+loginData[0]+" logged in", bcolors.GREEN)
 
 				# TODO: Other login packets
 			except:
-				# TODO: Delete token when login fails
 				consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
 				responseData += packets.loginFailed()
 
@@ -98,10 +95,10 @@ def banchoServer():
 			#responseData += packetHelper.buildPacket(packets.unknown1)
 			#responseData += packetHelper.buildPacket(packets.mainChannel, {"channel": "#osu"})
 			#responseData += packetHelper.buildPacket(packets.notification, {"message": "Welcome to the pep.py server!"})
-			#print(slots)
+			#print(tokens)
 
 		# Send server's response to client
-		return responseBuilder.response(responseToken, responseData).getResponse()
+		return responseHelper.generateResponse(responseToken, responseData)
 	else:
 		# Not a POST request, send html page
 		# TODO: Fix this crap

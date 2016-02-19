@@ -36,3 +36,11 @@ def notification(__message):
 
 def jumpscare(__message):
 	return packetHelper.buildPacket(105, [[__message, dataTypes.string]])
+
+
+# Testing stuff
+def openChat():
+	return packetHelper.buildPacket(23)
+
+def packet80():
+	return packetHelper.buildPacket(80)
