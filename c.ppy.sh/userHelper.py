@@ -1,6 +1,8 @@
 import passwordHelper
+import gameModes
+import glob
 
-def getUserID(db, username):
+def getUserID(username):
 	"""Get username's user ID
 
 	db -- database connection
@@ -9,7 +11,7 @@ def getUserID(db, username):
 	return -- user id or false"""
 
 	# Get user ID from db
-	userID = db.fetch("SELECT osu_id FROM users WHERE username = ?", [username])
+	userID = glob.db.fetch("SELECT osu_id FROM users WHERE username = ?", [username])
 
 	# Make sure the query returned something
 	if (userID == None):
@@ -19,7 +21,7 @@ def getUserID(db, username):
 	return userID["osu_id"]
 
 
-def checkLogin(db, userID, password):
+def checkLogin(userID, password):
 	"""Check userID's login with specified password
 
 	db -- database connection
@@ -29,7 +31,7 @@ def checkLogin(db, userID, password):
 	return -- true or false"""
 
 	# Get password data
-	passwordData = db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
+	passwordData = glob.db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
 
 	# Make sure the query returned something
 	if (passwordData == None):
@@ -42,7 +44,7 @@ def checkLogin(db, userID, password):
 # TODO: User exists function
 
 
-def getUserAllowed(db, userID):
+def getUserAllowed(userID):
 	"""Get allowed status for userID
 
 	db -- database connection
@@ -50,5 +52,40 @@ def getUserAllowed(db, userID):
 
 	return -- allowed int"""
 
-	# Return user ID
-	return db.fetch("SELECT allowed FROM users WHERE osu_id = ?", [userID])["allowed"]
+	return glob.db.fetch("SELECT allowed FROM users WHERE osu_id = ?", [userID])["allowed"]
+
+
+def getUserRank(userID):
+	"""This returns rank (PRIVILEGES), not game rank (like #1337)
+	If you want to get that rank, user getUserGameRank instead"""
+	return glob.db.fetch("SELECT rank FROM users WHERE osu_id = ?", [userID])["rank"]
+
+
+def getUserSilenceEnd(userID):
+	"""Remember to subtract time.time() to get the actual silence time"""
+	return glob.db.fetch("SELECT silence_end FROM users WHERE osu_id = ?", [userID])["silence_end"]
+
+
+def getUserRankedScore(userID, gameMode):
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT ranked_score_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["ranked_score_"+modeForDB]
+
+
+def getUserTotalScore(userID, gameMode):
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT total_score_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["total_score_"+modeForDB]
+
+
+def getUserAccuracy(userID, gameMode):
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT avg_accuracy_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["avg_accuracy_"+modeForDB]
+
+
+def getUserGameRank(userID, gameMode):
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT position FROM leaderboard_"+modeForDB+" WHERE user = ?", [userID])["position"]
+
+
+def getUserPlaycount(userID, gameMode):
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["playcount_"+modeForDB]

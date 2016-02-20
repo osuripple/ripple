@@ -1,5 +1,7 @@
 import packetHelper
 import dataTypes
+import gameModes
+import userHelper
 
 
 # Login errors
@@ -40,6 +42,46 @@ def userSupporterGMT(supporter, GMT):
 
 def channelJoin(channel):
 	return packetHelper.buildPacket(64, [[channel, dataTypes.string]])
+
+def userPanel(userID):
+	username = "Nyo"
+	timezone = 25
+	country = 108
+	usernameColor = 0
+	gameRank = 1
+	return packetHelper.buildPacket(83, [[userID, dataTypes.sInt32], [username, dataTypes.string], [timezone, dataTypes.byte], [country, dataTypes.byte], [usernameColor, dataTypes.byte], [0, dataTypes.sInt32], [0, dataTypes.sInt32], [gameRank, dataTypes.uInt32]])
+
+
+def userStats(userID):
+	actionID = 0				# TODO: Read action id, text and md5 from token
+	actionText = "Ayy lmao"
+	actionMd5 = "md5here"
+	gameMode = gameModes.std
+
+	rankedScore = 	userHelper.getUserRankedScore(userID, gameMode)
+	accuracy = 		userHelper.getUserAccuracy(userID, gameMode)/100
+	playcount = 	userHelper.getUserPlaycount(userID, gameMode)
+	totalScore = 	userHelper.getUserTotalScore(userID, gameMode)
+	gameRank = 		userHelper.getUserGameRank(userID, gameMode)
+	pp = 0
+	return packetHelper.buildPacket(11,
+	[
+		[userID, 		dataTypes.uInt32],
+		[actionID, 		dataTypes.byte],
+		[actionText, 	dataTypes.string],
+		[actionMd5, 	dataTypes.string],
+		[0, 			dataTypes.sInt32],	# Unknown
+		[gameMode, 		dataTypes.byte],
+		[0, 			dataTypes.sInt32],
+		[rankedScore, 	dataTypes.uInt32],	# TODO: uInt64
+		[0, 			dataTypes.sInt32],	# other 4 bytes of int64
+		[accuracy, 		dataTypes.ffloat],
+		[playcount, 	dataTypes.uInt32],
+		[totalScore, 	dataTypes.uInt32],	# TODO: uInt64
+		[0, 			dataTypes.sInt32],	# other 4 bytes of int64
+		[gameRank,	 	dataTypes.uInt32],
+		[pp, 			dataTypes.uInt16]
+	])
 
 
 # Other packets

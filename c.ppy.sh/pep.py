@@ -1,5 +1,4 @@
 # TODO: Remove useless imports
-# TODO: Use __memes only on classes
 # TODO: Docs
 import struct
 import flask
@@ -10,6 +9,7 @@ import sys
 import uuid
 import pymysql
 import os
+import time
 
 # pep.py files
 import bcolors
@@ -20,15 +20,14 @@ import userHelper
 import osuToken
 import tokenList
 import exceptions
+import gameModes
+import glob
 
 import packetHelper
 import consoleHelper
 import databaseHelper
 import passwordHelper
 import responseHelper
-
-# Create token list
-tokens = tokenList.tokenList()
 
 # Create flask instance
 app = flask.Flask(__name__)
@@ -66,54 +65,69 @@ def banchoServer():
 			# Process login
 			print("> Processing login request for "+loginData[0]+"...")
 			try:
-				# Try to get the ID
-				userID = userHelper.getUserID(dbConnection, str(loginData[0]))
+				# If true, print error to console
+				err = False
+
+				# Try to get the ID from username
+				userID = userHelper.getUserID(str(loginData[0]))
+
 				if (userID == False):
 					# Invalid username
 					raise exceptions.loginFailedException()
-				if (userHelper.checkLogin(dbConnection, userID, loginData[1]) == False):
+				if (userHelper.checkLogin(userID, loginData[1]) == False):
 					# Invalid password
 					raise exceptions.loginFailedException()
 
 				# Make sure we are not banned
-				userAllowed = userHelper.getUserAllowed(dbConnection, userID)
+				userAllowed = userHelper.getUserAllowed(userID)
 				if (userAllowed == 0):
 					# Banned
 					raise exceptions.loginBannedException()
 
-				# Delete old tokens for that user and generate a new one
-				tokens.deleteOldTokens(userID)
-				tokens.addToken(userID)
+				# Get silence end
+				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
 
-				# Get our new token object
-				responseToken = tokens.getTokenFromUserID(userID)
+				# Get supporter/GMT
+				userRank = userHelper.getUserRank(userID)
+				userGMT = False
+				userSupporter = True
+				if (userRank >= 3):
+					userGMT = True
+
+				# Delete old tokens for that user and generate a new one
+				glob.tokens.deleteOldTokens(userID)
+				responseToken = glob.tokens.addToken(userID)
 
 				# Send all needed login packets
-				responseData = packets.silenceEndTime(0)
-				responseData += packets.userID(userID)
-				responseData += packets.protocolVersion()
-				responseData += packets.userSupporterGMT(True, True)
-				responseData += packets.channelJoin("#osu")
-				responseData += packets.notification("Logged in!")
+				responseToken.enqueue(packets.silenceEndTime(userSilenceEnd))
+				responseToken.enqueue(packets.userID(userID))
+				responseToken.enqueue(packets.protocolVersion())
+				responseToken.enqueue(packets.userSupporterGMT(userSupporter, userGMT))
+				responseToken.enqueue(packets.userPanel(userID))
+				responseToken.enqueue(packets.userStats(userID))
+				responseToken.enqueue(packets.channelJoin("#osu"))
+				responseToken.enqueue(packets.notification("Logged in!"))
 
 				# Print logged in message
-				# TODO: Output token too
-				consoleHelper.printColored("> "+loginData[0]+" logged in", bcolors.GREEN)
+				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
 
 				# Set reponse data and tokenstring to right value and reset our queue
 				responseTokenString = responseToken.token
-				#responseData = responseToken.queue
-				#reponseToken.resetQueue()
+				responseData = responseToken.queue
+				responseToken.resetQueue()
 			except exceptions.loginFailedException:
 				# Login failed error packet
 				# (we don't use enqueue because we don't have a token since login has failed)
+				err = True
 				responseData += packets.loginFailed()
 			except exceptions.loginBannedException:
 				# Login banned error packet
+				err = True
 				responseData += packets.loginBanned()
 			finally:
-				# Print login failed message to console
-				consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
+				# Print login failed message to console if needed
+				if (err == True):
+					consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
 
 
 			#responseData += packets.silenceEndTime(0)
@@ -166,8 +180,7 @@ else:
 # Connect to db
 try:
 	consoleHelper.printNoNl("> Connecting to MySQL db... ")
-	#dbConnection = pymysql.connect(host=conf.config["db"]["host"], user=conf.config["db"]["username"], password=conf.config["db"]["password"], db=conf.config["db"]["database"], cursorclass=pymysql.cursors.DictCursor)
-	dbConnection = databaseHelper.db(conf.config["db"]["host"], conf.config["db"]["username"], conf.config["db"]["password"], conf.config["db"]["database"])
+	glob.db = databaseHelper.db(conf.config["db"]["host"], conf.config["db"]["username"], conf.config["db"]["password"], conf.config["db"]["database"])
 	consoleHelper.printDone()
 except:
 	# Exception while connecting to db

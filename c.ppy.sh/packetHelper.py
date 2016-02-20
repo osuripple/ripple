@@ -36,6 +36,8 @@ def packData(__data, __dataType):
 		packType = "q"
 	elif (__dataType == dataTypes.string):
 		packType = "s"
+	elif (__dataType == dataTypes.ffloat):
+		packType = "f"
 	else:
 		packType = "B"
 
@@ -52,7 +54,7 @@ def buildPacket(__packet, __packetData = []):
 	packetData -- array [[data, dataType], [data, dataType], ...]
 
 	return -- packet bytes"""
-	
+
 	try:
 		# Set some variables
 		packetData = bytes()

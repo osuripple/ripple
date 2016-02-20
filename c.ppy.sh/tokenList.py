@@ -13,6 +13,7 @@ class tokenList:
 
 		newToken = osuToken.token(__userID)
 		self.tokens[newToken.token] = newToken
+		return newToken
 
 
 	def getUserIDFromToken(self, __token):
@@ -42,6 +43,9 @@ class tokenList:
 			if (value.userID == __userID):
 				return value
 
+		# Return none if not found
+		return None
+
 
 	def deleteOldTokens(self, __userID):
 		"""Delete old userID's tokens if found
@@ -51,4 +55,8 @@ class tokenList:
 		# Delete older tokens
 		for key, value in self.tokens.items():
 			if (value.userID == __userID):
-				self.tokens.pop(i)
+				# Delete this token from the dictionary
+				self.tokens.pop(key)
+
+				# break or items() function throws errors
+				break
