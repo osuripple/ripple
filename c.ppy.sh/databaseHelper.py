@@ -62,7 +62,7 @@ class db:
 		__params -- array with params. Optional
 		__all -- if true, will fetch all values. Same as fetchAll
 
-		return -- dictionary with result data"""
+		return -- dictionary with result data or False if failed"""
 
 		#try:
 		with self.connection.cursor() as cursor:

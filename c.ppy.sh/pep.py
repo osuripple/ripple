@@ -21,6 +21,7 @@ import osuToken
 import tokenList
 import exceptions
 import gameModes
+import locationHelper
 import glob
 
 import packetHelper
@@ -43,24 +44,36 @@ def stringToBool(s):
 	else:
 		return False
 
+def hexString(s):
+	return ":".join("{:02x}".format(ord(c)) for c in s)
+
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
 def banchoServer():
 	if (flask.request.method == 'POST'):
-		requestToken = flask.request.headers.get('osu-token')	# Client's token
-		requestData = str(flask.request.data)					# Client's request data
+		# Client's token
+		requestToken = flask.request.headers.get('osu-token')
 
-		responseData = bytes()								# Server's response data
-		responseTokenString = "ayy";						# Server's response token string
+		# Client's request data
+		# We remove the first two and last three characters because they are
+		# some escape stuff that we don't need
+		requestData = flask.request.data
+
+		# Client's IP
+		requestIP = flask.request.remote_addr
+
+		# Server's response data
+		responseData = bytes()
+
+		# Server's response token string
+		responseTokenString = "ayy";
 
 		if (requestToken == None):
 			# We don't have a token, this is the first packet aka login
-			print("> Accepting connection from "+flask.request.remote_addr+"...")
+			print("> Accepting connection from "+requestIP+"...")
 
 			# Split POST body so we can get username/password/hardware data
-			# We remove the first two and last three characters because they are
-			# some escape stuff that we don't need
-			loginData = requestData[2:-3].split("\\n")
+			loginData = str(requestData)[2:-3].split("\\n")
 
 			# Process login
 			print("> Processing login request for "+loginData[0]+"...")
@@ -84,6 +97,11 @@ def banchoServer():
 					# Banned
 					raise exceptions.loginBannedException()
 
+				# No login errors!
+				# Delete old tokens for that user and generate a new one
+				glob.tokens.deleteOldTokens(userID)
+				responseToken = glob.tokens.addToken(userID)
+
 				# Get silence end
 				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
 
@@ -94,10 +112,6 @@ def banchoServer():
 				if (userRank >= 3):
 					userGMT = True
 
-				# Delete old tokens for that user and generate a new one
-				glob.tokens.deleteOldTokens(userID)
-				responseToken = glob.tokens.addToken(userID)
-
 				# Send all needed login packets
 				responseToken.enqueue(packets.silenceEndTime(userSilenceEnd))
 				responseToken.enqueue(packets.userID(userID))
@@ -105,11 +119,22 @@ def banchoServer():
 				responseToken.enqueue(packets.userSupporterGMT(userSupporter, userGMT))
 				responseToken.enqueue(packets.userPanel(userID))
 				responseToken.enqueue(packets.userStats(userID))
-				responseToken.enqueue(packets.channelJoin("#osu"))
-				responseToken.enqueue(packets.notification("Logged in!"))
+
+				# Output channels info
+				for key, value in glob.channels.channels.items():
+					responseToken.enqueue(packets.channelInfo(key))
+
+				responseToken.enqueue(packets.channelJoined("#osu"))
+				responseToken.enqueue(packets.notification("O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA IT WORKS!!!!"))
+
+				# TODO: Friends and online users IDs
+				#responseToken.enqueue(packets.onlineUsers())
 
 				# Print logged in message
 				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
+
+				# Set position
+				responseToken.setLocation(locationHelper.getLocation(requestIP))
 
 				# Set reponse data and tokenstring to right value and reset our queue
 				responseTokenString = responseToken.token
@@ -128,20 +153,76 @@ def banchoServer():
 				# Print login failed message to console if needed
 				if (err == True):
 					consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
+		else:
+			try:
+				# This is not the first packet, send response based on client's request
 
+				# Make sure the token exists
+				if (requestToken not in glob.tokens.tokens):
+					raise exceptions.tokenNotFoundException()
 
-			#responseData += packets.silenceEndTime(0)
-			#responseData += packets.jumpscare("BANCHOBOT WILL KILL YOU\nHE IS EVIL\n...")
-			#responseData += packetHelper.buildPacket(packets.silenceEndTime, {"endTime": 0})
-			#responseData += packetHelper.buildPacket(packets.userID, {"userID": 1337})
-			#responseData += packetHelper.buildPacket(packets.protocolVersion)
-			#responseData += packetHelper.buildPacket(packets.userSupporterQAT, {"rank": 6})
-			#responseData += packetHelper.buildPacket(packets.userpanel)
-			#responseData += packetHelper.buildPacket(packets.onlineUsers, {"count": 2, "u1": 0, "u2": 1337})
-			#responseData += packetHelper.buildPacket(packets.unknown1)
-			#responseData += packetHelper.buildPacket(packets.mainChannel, {"channel": "#osu"})
-			#responseData += packetHelper.buildPacket(packets.notification, {"message": "Welcome to the pep.py server!"})
-			#print(tokens)
+				# Token exists, get its object
+				userToken = glob.tokens.tokens[requestToken]
+
+				# Get userID and username from token
+				userID = userToken.userID
+				username = userToken.username
+
+				# Get packet ID and length
+				packetID = packetHelper.readPacketID(requestData)
+				packetLength = packetHelper.readPacketLength(requestData)
+
+				# Console output if needed
+				if (serverOutputPackets == True):
+					consoleHelper.printColored("Incoming packet ("+requestToken+")("+username+"):", bcolors.GREEN)
+					consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(packetLength)+"\nPacket data: "+str(requestData)+"\n", bcolors.YELLOW)
+
+				# Packet switch
+				if (packetID == 4):
+					# Ping packet, nothing to do
+					# New packets are automatically taken from the queue
+					pass
+				elif (packetID == 1):
+					# Public chat packet
+					packetData = packets.sendPublicMessage(requestData)
+
+					# Send this packet to everyone except us
+					glob.tokens.multipleEnqueue(packets.publicMessage(username, packetData["to"], packetData["message"]), [userID], True)
+
+					# Console output
+					consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+				elif (packetID == 0):
+					# Change action packet
+					packetData = packets.userActionChange(requestData)
+
+					# Update our action id, text and md5
+					userToken.actionID = packetData["actionID"]
+					userToken.actionText = packetData["actionText"]
+					userToken.actionMd5 = packetData["actionMd5"]
+
+					# Enqueue user stats packet to everyone
+					glob.tokens.enqueueAll(packets.userPanel(userID))
+					glob.tokens.enqueueAll(packets.userStats(userID))
+
+					print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
+				elif (packetID == 2):
+					# Logout packet
+					# Delete token
+					glob.tokens.deleteToken(requestToken)
+
+					consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
+
+				# Set reponse data and tokenstring to right value and reset our queue
+				# TODO: Move somewhere else
+				responseTokenString = userToken.token
+				responseData = userToken.queue
+				userToken.resetQueue()
+			except exceptions.tokenNotFoundException:
+				# Token not found. Disconnect that user
+				responseData = packets.loginError()
+				responseData += packets.notification("Whoops! Something went wrong, please login again.")
+				consoleHelper.printColored("[!] Received packet from unknown token ("+requestToken+").", bcolors.RED)
+				consoleHelper.printColored("[!] "+requestToken+" user has been disconnected (invalid token)", bcolors.RED)
 
 		# Send server's response to client
 		# We don't use token object because we might not have a token (failed login)
@@ -189,28 +270,34 @@ except:
 	consoleHelper.printColored("[!] Please check your config.ini and run the server again", bcolors.RED)
 	sys.exit()
 
-# Start HTTP server
-try:
-	# Get server parameters from config.ini
-	serverPort = int(conf.config["server"]["port"])
-	serverThreaded = stringToBool(conf.config["server"]["threaded"])
-	serverDebug = stringToBool(conf.config["server"]["debug"])
+# Initialize chat channels
+consoleHelper.printNoNl("> Initializing chat channels... ")
+glob.channels.loadChannels()
+consoleHelper.printDone()
 
-	# Set flask debug mode
-	app.debug = serverDebug
+# Get server parameters from config.ini
+serverPort = int(conf.config["server"]["port"])
+serverThreaded = stringToBool(conf.config["server"]["threaded"])
+serverDebug = stringToBool(conf.config["server"]["debug"])
+serverOutputPackets = stringToBool(conf.config["server"]["outputpackets"])
 
-	if (serverDebug == False):
-		# Disable flask logger if we are not in debug mode
-		flaskLogger.disabled = True
-		print("> Starting server...");
-	else:
-		print("> Starting server in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+# Set flask debug mode
+app.debug = serverDebug
+flaskLogger.disabled = True
 
-	# Run server
-	app.run(host=conf.config["server"]["host"], port=serverPort, threaded=serverThreaded)
-except:
+if (serverDebug == False):
+	# Disable flask logger if we are not in debug mode
+	#flaskLogger.disabled = True
+	print("> Starting server...");
+else:
+	print("> Starting server in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+
+# Run server
+app.run(host=conf.config["server"]["host"], port=serverPort, threaded=serverThreaded)
+
+#except:
 	# Server critical error handling
 	# TODO: Fix this
-	consoleHelper.printColored("[!] Error while running server.", bcolors.RED)
-	consoleHelper.printColored("[!] The server has shut down unexpectedly.", bcolors.RED)
-	consoleHelper.printColored(str(sys.exc_info()[1]), bcolors.RED)
+	#consoleHelper.printColored("[!] Error while running server.", bcolors.RED)
+	#consoleHelper.printColored("[!] The server has shut down unexpectedly.", bcolors.RED)
+	#consoleHelper.printColored(str(sys.exc_info()[1]), bcolors.RED)

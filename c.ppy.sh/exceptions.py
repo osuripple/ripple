@@ -3,3 +3,6 @@ class loginFailedException(Exception):
 
 class loginBannedException(Exception):
 	pass
+
+class tokenNotFoundException(Exception):
+	pass

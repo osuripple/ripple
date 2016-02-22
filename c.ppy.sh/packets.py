@@ -2,8 +2,12 @@ import packetHelper
 import dataTypes
 import gameModes
 import userHelper
+import glob
+import usernameColors
 
-
+'''
+SERVER PACKETS
+'''
 # Login errors
 # (userID packets derivates)
 def loginFailed():
@@ -40,49 +44,78 @@ def userSupporterGMT(supporter, GMT):
 		result += 2
 	return packetHelper.buildPacket(71, [[result, dataTypes.uInt32]])
 
-def channelJoin(channel):
+def channelJoined(channel):
 	return packetHelper.buildPacket(64, [[channel, dataTypes.string]])
 
 def userPanel(userID):
-	username = "Nyo"
-	timezone = 25
+	# Get user data
+	userToken = glob.tokens.getTokenFromUserID(userID)
+	username = userHelper.getUserUsername(userID)
+	timezone = 25	# TODO: Timezone and country
 	country = 108
-	usernameColor = 0
-	gameRank = 1
-	return packetHelper.buildPacket(83, [[userID, dataTypes.sInt32], [username, dataTypes.string], [timezone, dataTypes.byte], [country, dataTypes.byte], [usernameColor, dataTypes.byte], [0, dataTypes.sInt32], [0, dataTypes.sInt32], [gameRank, dataTypes.uInt32]])
+	gameRank = userHelper.getUserGameRank(userID, userToken.gameMode)
+	latitude = userToken.getLatitude()
+	longitude = userToken.getLongitude()
+
+	# Get username color according to rank
+	# Only admins and normal users are currently supported
+	rank = userHelper.getUserRank(userID)
+	if (rank == 4):
+		usernameColor = usernameColors.admin
+	else:
+		usernameColor = usernameColors.normal
+
+
+	return packetHelper.buildPacket(83,
+	[
+		[userID, dataTypes.sInt32],
+		[username, dataTypes.string],
+		[timezone, dataTypes.byte],
+		[country, dataTypes.byte],
+		[usernameColor, dataTypes.byte],
+		[longitude, dataTypes.ffloat],
+		[latitude, dataTypes.ffloat],
+		[gameRank, dataTypes.uInt32]
+	])
 
 
 def userStats(userID):
-	actionID = 0				# TODO: Read action id, text and md5 from token
-	actionText = "Ayy lmao"
-	actionMd5 = "md5here"
-	gameMode = gameModes.std
+	# Get userID's token from tokens list
+	userToken = glob.tokens.getTokenFromUserID(userID)
 
-	rankedScore = 	userHelper.getUserRankedScore(userID, gameMode)
-	accuracy = 		userHelper.getUserAccuracy(userID, gameMode)/100
-	playcount = 	userHelper.getUserPlaycount(userID, gameMode)
-	totalScore = 	userHelper.getUserTotalScore(userID, gameMode)
-	gameRank = 		userHelper.getUserGameRank(userID, gameMode)
+	# Get stats from DB
+	# TODO: Caching system
+	rankedScore = 	userHelper.getUserRankedScore(userID, userToken.gameMode)
+	accuracy = 		userHelper.getUserAccuracy(userID, userToken.gameMode)/100
+	playcount = 	userHelper.getUserPlaycount(userID, userToken.gameMode)
+	totalScore = 	userHelper.getUserTotalScore(userID, userToken.gameMode)
+	gameRank = 		userHelper.getUserGameRank(userID, userToken.gameMode)
 	pp = 0
+
 	return packetHelper.buildPacket(11,
 	[
-		[userID, 		dataTypes.uInt32],
-		[actionID, 		dataTypes.byte],
-		[actionText, 	dataTypes.string],
-		[actionMd5, 	dataTypes.string],
-		[0, 			dataTypes.sInt32],	# Unknown
-		[gameMode, 		dataTypes.byte],
-		[0, 			dataTypes.sInt32],
-		[rankedScore, 	dataTypes.uInt32],	# TODO: uInt64
-		[0, 			dataTypes.sInt32],	# other 4 bytes of int64
-		[accuracy, 		dataTypes.ffloat],
-		[playcount, 	dataTypes.uInt32],
-		[totalScore, 	dataTypes.uInt32],	# TODO: uInt64
-		[0, 			dataTypes.sInt32],	# other 4 bytes of int64
-		[gameRank,	 	dataTypes.uInt32],
-		[pp, 			dataTypes.uInt16]
+		[userID, 				dataTypes.uInt32],
+		[userToken.actionID, 	dataTypes.byte],
+		[userToken.actionText, 	dataTypes.string],
+		[userToken.actionMd5, 	dataTypes.string],
+		[0, 					dataTypes.sInt32],	# Unknown
+		[userToken.gameMode, 	dataTypes.byte],
+		[0, 					dataTypes.sInt32],
+		[rankedScore, 			dataTypes.uInt64],	# TODO: uInt64
+		[accuracy, 				dataTypes.ffloat],
+		[playcount, 			dataTypes.uInt32],
+		[totalScore, 			dataTypes.uInt64],	# TODO: uInt64
+		[gameRank,	 			dataTypes.uInt32],
+		[pp, 					dataTypes.uInt16]
 	])
 
+
+# Chat packets
+def publicMessage(fro, to, message):
+	return packetHelper.buildPacket(7, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string]])
+
+def channelInfo(channel):
+	return packetHelper.buildPacket(65, [[channel, dataTypes.string], [glob.channels.channels[channel][0], dataTypes.string], [glob.channels.getConnectedUsers(channel), dataTypes.uInt16]])
 
 # Other packets
 def notification(message):
@@ -91,6 +124,8 @@ def notification(message):
 def jumpscare(message):
 	return packetHelper.buildPacket(105, [[message, dataTypes.string]])
 
+def banchoRestart():
+	return packetHelper.buildPacket(86)
 
 # Testing stuff
 def openChat():
@@ -98,3 +133,26 @@ def openChat():
 
 def packet80():
 	return packetHelper.buildPacket(80)
+
+
+
+
+
+'''
+CLIENT PACKETS
+'''
+def userActionChange(stream):
+	return packetHelper.readPacketData(stream,
+	[
+		["actionID", 	dataTypes.byte],
+		["actionText", 	dataTypes.string],
+		["actionMd5", 	dataTypes.string]
+	])
+
+def sendPublicMessage(stream):
+	return packetHelper.readPacketData(stream,
+	[
+		["unknown", 	dataTypes.string],
+		["message", 	dataTypes.string],
+		["to", 			dataTypes.string]
+	])

@@ -42,6 +42,17 @@ def checkLogin(userID, password):
 
 
 # TODO: User exists function
+def userExists(userID):
+	"""Check if userID exists
+
+	userID -- user ID to check
+
+	return -- bool"""
+	result = glob.db.fetch("SELECT id FROM users WHERE osu_id = ?", [userID])
+	if (result == None):
+		return False
+	else:
+		return True
 
 
 def getUserAllowed(userID):
@@ -83,9 +94,17 @@ def getUserAccuracy(userID, gameMode):
 
 def getUserGameRank(userID, gameMode):
 	modeForDB = gameModes.getGameModeForDB(gameMode)
-	return glob.db.fetch("SELECT position FROM leaderboard_"+modeForDB+" WHERE user = ?", [userID])["position"]
+	result = glob.db.fetch("SELECT position FROM leaderboard_"+modeForDB+" WHERE user = ?", [userID])
+	if (result == None):
+		return 0
+	else:
+		return result["position"]
 
 
 def getUserPlaycount(userID, gameMode):
 	modeForDB = gameModes.getGameModeForDB(gameMode)
 	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["playcount_"+modeForDB]
+
+
+def getUserUsername(userID):
+	return glob.db.fetch("SELECT username FROM users WHERE osu_id = ?", [userID])["username"]

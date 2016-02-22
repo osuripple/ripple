@@ -1,16 +1,15 @@
 import crypt
 import base64
 
-def checkPassword(__password, __salt, __rightPassword):
+def checkPassword(password, salt, rightPassword):
 	"""Check if password+salt corresponds to rightPassword
 
-	__password -- input password
-	__salt -- __password's salt
-	__rightPassword -- right password
-	__params -- array with params. Optional
+	password 		-- input password
+	salt 			-- password's salt
+	rightPassword 	-- right password
 
 	return -- bool"""
-	if (__rightPassword == crypt.crypt(__password, "$2y$"+str(base64.b64decode(__salt)))):
+	if (rightPassword == crypt.crypt(password, "$2y$"+str(base64.b64decode(salt)))):
 		return True
 	else:
 		return False

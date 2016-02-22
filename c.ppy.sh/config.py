@@ -39,6 +39,7 @@ class config:
 			self.config.get("server","port")
 			self.config.get("server","threaded")
 			self.config.get("server","debug")
+			self.config.get("server","outputpackets")
 			return True
 		except:
 			return False
@@ -63,6 +64,7 @@ class config:
 		self.config.set("server", "port", "80")
 		self.config.set("server", "threaded", "True")
 		self.config.set("server", "debug", "False")
+		self.config.set("server", "outputpackets", "False")
 
 		# Write ini to file and close
 		self.config.write(f)
