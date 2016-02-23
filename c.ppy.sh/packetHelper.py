@@ -19,7 +19,6 @@ def uleb128Encode(num):
 			arr[length] = arr[length] | 128
 		length+=1
 
-	consoleHelper.printColored(str(arr), bcolors.HEADER)
 	return arr
 
 def uleb128Decode(num):
@@ -136,7 +135,6 @@ def buildPacket(__packet, __packetData = []):
 	packetBytes += bytes(b"\x00")					# unused byte
 	packetBytes += struct.pack("l", packetLength)	# packet lenght (iint32)
 	packetBytes += packetData						# packet data
-	#print(str(packetBytes))
 	return packetBytes
 
 def readPacketID(__stream):
@@ -166,7 +164,7 @@ def readPacketData(__stream, __structure = []):
 
 			# Read bytes
 			string = ""
-			data[i[0]] = ''.join(chr(j) for j in __stream[start+3:end])
+			data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
 		elif (i[1] == dataTypes.byte):
 			end = start+1
 		elif (i[1] == dataTypes.uInt16 or i[1] == dataTypes.sInt16):

@@ -125,7 +125,7 @@ def banchoServer():
 					responseToken.enqueue(packets.channelInfo(key))
 
 				responseToken.enqueue(packets.channelJoined("#osu"))
-				responseToken.enqueue(packets.notification("O-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAAO-oooooooooo AAAAE-A-A-I-A-U- JO-oooooooooooo AAE-O-A-A-U-U-A- E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA IT WORKS!!!!"))
+				responseToken.enqueue(packets.notification("Welcome to pep.py server!"))
 
 				# TODO: Friends and online users IDs
 				#responseToken.enqueue(packets.onlineUsers())
@@ -135,6 +135,14 @@ def banchoServer():
 
 				# Set position
 				responseToken.setLocation(locationHelper.getLocation(requestIP))
+
+				# Send to everyone our userpanel (so they now we have logged in)
+				glob.tokens.enqueueAll(packets.userPanel(userID))
+
+				# Get everyone else userpanel
+				# TODO: Better online users handling
+				for key, value in glob.tokens.tokens.items():
+					responseToken.enqueue(packets.userPanel(value.userID))
 
 				# Set reponse data and tokenstring to right value and reset our queue
 				responseTokenString = responseToken.token
