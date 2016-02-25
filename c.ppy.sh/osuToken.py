@@ -64,7 +64,7 @@ class token:
 
 		__channel -- channel name"""
 		if (__channel in self.joinedChannels):
-			self.joinedChannels.pop(__channel)
+			self.joinedChannels.remove(__channel)
 
 	def setLocation(self, __location):
 		"""Set location (latitude and longitude)

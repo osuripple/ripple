@@ -63,6 +63,21 @@ class tokenList:
 		return None
 
 
+	def getTokenFromUsername(self, __username):
+		"""Get token from a username
+
+		__username -- username to find
+
+		return: false if not found, token object if found"""
+
+		# Make sure the token exists
+		for key, value in self.tokens.items():
+			if (value.username == __username):
+				return value
+
+		# Return none if not found
+		return None
+
 	def deleteOldTokens(self, __userID):
 		"""Delete old userID's tokens if found
 

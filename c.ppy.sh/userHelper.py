@@ -105,6 +105,23 @@ def getUserPlaycount(userID, gameMode):
 	modeForDB = gameModes.getGameModeForDB(gameMode)
 	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["playcount_"+modeForDB]
 
-
+# TODO: Remove user user user user meme from function names
 def getUserUsername(userID):
 	return glob.db.fetch("SELECT username FROM users WHERE osu_id = ?", [userID])["username"]
+
+def getFriendList(userID):
+	# Get friends from db
+	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
+
+	if (friends != ""):
+		# If we have some friends, split to get their IDs
+		friends = friends.split(",")
+
+		# Cast strings to ints
+		friends = [int(i) for i in friends]
+
+		# Return friend IDs
+		return friends
+	else:
+		# We have no friends, return 0 list
+		return [0]

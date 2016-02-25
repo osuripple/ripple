@@ -18,13 +18,22 @@ class channelList:
 
 	def loadChannels(self):
 		"""Load chat channels from db"""
-		
+
 		channels = glob.db.fetchAll("SELECT * FROM bancho_channels")
 		for i in channels:
 			self.addChannel(i["name"], i["description"])
 
 
 	def getConnectedUsers(self, __channel):
+		"""Get __channel connected users IDs
+
+		__channel -- Channel name
+
+		return -- connected users IDs list"""
+
+		return self.channels[__channel][1]
+
+	def getConnectedUsersCount(self, __channel):
 		"""Count __channel connected users
 
 		__channel -- Channel name
@@ -53,4 +62,4 @@ class channelList:
 
 		connectedUsers = self.channels[__channel][1]
 		if (__userID in connectedUsers):
-			connectedUsers.pop(__userID)
+			connectedUsers.remove(__userID)

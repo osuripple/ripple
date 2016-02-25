@@ -1,5 +1,4 @@
 import struct
-import packets
 import bcolors
 import sys
 import dataTypes

@@ -13,7 +13,9 @@ import time
 
 # pep.py files
 import bcolors
-import packets
+import packetIDs
+import serverPackets
+import clientPackets
 import config
 import dataTypes
 import userHelper
@@ -113,22 +115,31 @@ def banchoServer():
 					userGMT = True
 
 				# Send all needed login packets
-				responseToken.enqueue(packets.silenceEndTime(userSilenceEnd))
-				responseToken.enqueue(packets.userID(userID))
-				responseToken.enqueue(packets.protocolVersion())
-				responseToken.enqueue(packets.userSupporterGMT(userSupporter, userGMT))
-				responseToken.enqueue(packets.userPanel(userID))
-				responseToken.enqueue(packets.userStats(userID))
+				responseToken.enqueue(serverPackets.silenceEndTime(userSilenceEnd))
+				responseToken.enqueue(serverPackets.userID(userID))
+				responseToken.enqueue(serverPackets.protocolVersion())
+				responseToken.enqueue(serverPackets.userSupporterGMT(userSupporter, userGMT))
+				responseToken.enqueue(serverPackets.userPanel(userID))
+				responseToken.enqueue(serverPackets.userStats(userID))
+
+				# Channel info end (before starting!?! wtf bancho?)
+				responseToken.enqueue(serverPackets.channelInfoEnd())
+
+				# TODO: Configurable default channels
+				# Default opened channels
+				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#osu"))
+				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#announce"))
+
+				# Test notification
+				responseToken.enqueue(serverPackets.notification("Welcome to pep.py server!"))
 
 				# Output channels info
 				for key, value in glob.channels.channels.items():
-					responseToken.enqueue(packets.channelInfo(key))
+					responseToken.enqueue(serverPackets.channelInfo(key))
 
-				responseToken.enqueue(packets.channelJoined("#osu"))
-				responseToken.enqueue(packets.notification("Welcome to pep.py server!"))
-
-				# TODO: Friends and online users IDs
-				#responseToken.enqueue(packets.onlineUsers())
+				# TODO: Online users IDs
+				responseToken.enqueue(serverPackets.friendList(userID))
+				#responseToken.enqueue(serverPackets.onlineUsers())
 
 				# Print logged in message
 				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
@@ -136,13 +147,15 @@ def banchoServer():
 				# Set position
 				responseToken.setLocation(locationHelper.getLocation(requestIP))
 
-				# Send to everyone our userpanel (so they now we have logged in)
-				glob.tokens.enqueueAll(packets.userPanel(userID))
+				# Send to everyone our userpanel and userStats (so they now we have logged in)
+				glob.tokens.enqueueAll(serverPackets.userPanel(userID))
+				glob.tokens.enqueueAll(serverPackets.userStats(userID))
 
 				# Get everyone else userpanel
 				# TODO: Better online users handling
 				for key, value in glob.tokens.tokens.items():
-					responseToken.enqueue(packets.userPanel(value.userID))
+					responseToken.enqueue(serverPackets.userPanel(value.userID))
+					responseToken.enqueue(serverPackets.userStats(value.userID))
 
 				# Set reponse data and tokenstring to right value and reset our queue
 				responseTokenString = responseToken.token
@@ -152,11 +165,11 @@ def banchoServer():
 				# Login failed error packet
 				# (we don't use enqueue because we don't have a token since login has failed)
 				err = True
-				responseData += packets.loginFailed()
+				responseData += serverPackets.loginFailed()
 			except exceptions.loginBannedException:
 				# Login banned error packet
 				err = True
-				responseData += packets.loginBanned()
+				responseData += serverPackets.loginBanned()
 			finally:
 				# Print login failed message to console if needed
 				if (err == True):
@@ -186,37 +199,73 @@ def banchoServer():
 					consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(packetLength)+"\nPacket data: "+str(requestData)+"\n", bcolors.YELLOW)
 
 				# Packet switch
-				if (packetID == 4):
+				if (packetID == packetIDs.client_pong):
 					# Ping packet, nothing to do
 					# New packets are automatically taken from the queue
 					pass
-				elif (packetID == 1):
+				elif (packetID == packetIDs.client_sendPublicMessage):
 					# Public chat packet
-					packetData = packets.sendPublicMessage(requestData)
+					packetData = clientPackets.sendPublicMessage(requestData)
 
-					# Send this packet to everyone except us
-					glob.tokens.multipleEnqueue(packets.publicMessage(username, packetData["to"], packetData["message"]), [userID], True)
+					# Send this packet to everyone in that channel except us
+					who = glob.channels.getConnectedUsers(packetData["to"]).copy()
+					if userID in who:
+						who.remove(userID)
+
+					# Send packet to required users
+					glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 					# Console output
 					consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
-				elif (packetID == 0):
+				elif (packetID == packetIDs.client_sendPrivateMessage):
+					# Private message packet
+					packetData = clientPackets.sendPrivateMessage(requestData)
+
+					# Send packet message to target if it exists
+					glob.tokens.getTokenFromUsername(packetData["to"]).enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
+
+					# Console output
+					consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+				elif (packetID == packetIDs.client_channelJoin):
+					# Channel join packet
+					packetData = clientPackets.channelJoin(requestData)
+
+					# Send channel joined (join stuff is done inside channelJoinSuccess)
+					userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
+
+					# Console output
+					consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
+				elif (packetID == packetIDs.client_channelPart):
+					# Channel part packet
+					packetData = clientPackets.channelPart(requestData)
+
+					# Remove us from joined users and joined channels
+					userToken.partChannel(packetData["channel"])
+					glob.channels.partChannel(packetData["channel"], userID)
+
+					# Console output
+					consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
+				elif (packetID == packetIDs.client_changeAction):
 					# Change action packet
-					packetData = packets.userActionChange(requestData)
+					packetData = clientPackets.userActionChange(requestData)
 
 					# Update our action id, text and md5
 					userToken.actionID = packetData["actionID"]
 					userToken.actionText = packetData["actionText"]
 					userToken.actionMd5 = packetData["actionMd5"]
 
-					# Enqueue user stats packet to everyone
-					glob.tokens.enqueueAll(packets.userPanel(userID))
-					glob.tokens.enqueueAll(packets.userStats(userID))
+					# Enqueue our new user panel and stats to everyone
+					glob.tokens.enqueueAll(serverPackets.userPanel(userID))
+					glob.tokens.enqueueAll(serverPackets.userStats(userID))
 
 					print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
-				elif (packetID == 2):
-					# Logout packet
+				elif (packetID == packetIDs.client_logout):
+					# Logout packet, no parameters to read
 					# Delete token
 					glob.tokens.deleteToken(requestToken)
+
+					# Enqueue our disconnection to everyone else
+					glob.tokens.enqueueAll(serverPackets.userLogout(userID))
 
 					consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
 
@@ -227,8 +276,8 @@ def banchoServer():
 				userToken.resetQueue()
 			except exceptions.tokenNotFoundException:
 				# Token not found. Disconnect that user
-				responseData = packets.loginError()
-				responseData += packets.notification("Whoops! Something went wrong, please login again.")
+				responseData = serverPackets.loginError()
+				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
 				consoleHelper.printColored("[!] Received packet from unknown token ("+requestToken+").", bcolors.RED)
 				consoleHelper.printColored("[!] "+requestToken+" user has been disconnected (invalid token)", bcolors.RED)
 

@@ -1,5 +1,5 @@
 # Console colors
-HEADER = '\033[95m'
+HEADER = '\033[95m'	# TODO: Rename color
 BLUE = '\033[94m'
 GREEN = '\033[92m'
 YELLOW = '\033[93m'
