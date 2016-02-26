@@ -216,7 +216,7 @@ def banchoServer():
 					glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 					# Console output
-					consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+					consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
 				elif (packetID == packetIDs.client_sendPrivateMessage):
 					# Private message packet
 					packetData = clientPackets.sendPrivateMessage(requestData)
