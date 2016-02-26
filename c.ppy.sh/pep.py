@@ -190,6 +190,7 @@ def banchoServer():
 				# Get userID and username from token
 				userID = userToken.userID
 				username = userToken.username
+				userRank = userToken.rank
 
 				# Keep reading packets until everything has been read
 				while pos < len(requestData):
@@ -201,9 +202,9 @@ def banchoServer():
 					dataLength = packetHelper.readPacketLength(packetData)
 
 					# Console output if needed
-					if (serverOutputPackets == True):
+					if (serverOutputPackets == True and packetID != 4):
 						consoleHelper.printColored("Incoming packet ("+requestToken+")("+username+"):", bcolors.GREEN)
-						consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(dataLength)+"\Single packet data: "+str(packetData)+"\n", bcolors.YELLOW)
+						consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(dataLength)+"\nSingle packet data: "+str(packetData)+"\n", bcolors.YELLOW)
 
 					# Packet switch
 					if (packetID == packetIDs.client_pong):
@@ -211,19 +212,54 @@ def banchoServer():
 						# New packets are automatically taken from the queue
 						pass
 					elif (packetID == packetIDs.client_sendPublicMessage):
-						# Public chat packet
-						packetData = clientPackets.sendPublicMessage(packetData)
+						try:
+							# Public chat packet
+							packetData = clientPackets.sendPublicMessage(packetData)
 
-						# Send this packet to everyone in that channel except us
-						who = glob.channels.getConnectedUsers(packetData["to"]).copy()
-						if userID in who:
-							who.remove(userID)
+							# Receivers
+							who = []
 
-						# Send packet to required users
-						glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
+							# Check #spectator
+							if (packetData["to"] != "#spectator"):
+								# Standard channel
+								# Make sure the channel exists
+								if (packetData["to"] not in glob.channels.channels):
+									raise exceptions.channelUnknownException
 
-						# Console output
-						consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
+								# Make sure we have write permissions
+								if ((glob.channels.channels[packetData["to"]].publicWrite == False or glob.channels.channels[packetData["to"]].moderated == True) and userRank < 2):
+									raise exceptions.channelNoPermissionsException
+
+								# Send this packet to everyone in that channel except us
+								who = glob.channels.channels[packetData["to"]].getConnectedUsers().copy()
+								if userID in who:
+									who.remove(userID)
+							else:
+								# Spectator channel
+								# Send this packet to every spectator
+								if (userToken.spectating == 0):
+									# We have sent to send a message to our #spectator channel
+									targetToken = userToken
+								else:
+									# We have sent a message to someone else's #spectator
+									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
+								#print(str(ayy))
+								who = targetToken.spectators.copy()
+								if userID in who:
+									who.remove(userID)
+
+							# Send packet to required users
+							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
+
+							# Console output
+							consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
+						except exceptions.channelModeratedException:
+							consoleHelper.printColored("[!] "+username+" has attempted to send a message to a channel that is in moderated mode ("+packetData["to"]+")", bcolors.RED)
+						except exceptions.channelUnknownException:
+							consoleHelper.printColored("[!] "+username+" has attempted to send a message to an unknown channel ("+packetData["to"]+")", bcolors.RED)
+						except exceptions.channelNoPermissionsException:
+							consoleHelper.printColored("[!] "+username+" has attempted to send a message to channel "+packetData["to"]+", but he has no write permissions", bcolors.RED)
+
 					elif (packetID == packetIDs.client_sendPrivateMessage):
 						# Private message packet
 						packetData = clientPackets.sendPrivateMessage(packetData)
@@ -234,24 +270,48 @@ def banchoServer():
 						# Console output
 						consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
 					elif (packetID == packetIDs.client_channelJoin):
-						# Channel join packet
-						packetData = clientPackets.channelJoin(packetData)
+						try:
+							# Channel join packet
+							packetData = clientPackets.channelJoin(packetData)
 
-						# Send channel joined (join stuff is done inside channelJoinSuccess)
-						userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
+							# Check spectator channel
+							# If it's spectator channel, skin checks and list stuff
+							if (packetData["channel"] != "#spectator"):
+								# Normal channel, do check stuff
+								# Make sure the channel exists
+								if (packetData["channel"] not in glob.channels.channels):
+									raise exceptions.channelUnknownException
 
-						# Console output
-						consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
+								# Check channel permissions
+								if ((glob.channels.channels[packetData["channel"]].publicWrite == False or glob.channels.channels[packetData["channel"]].moderated == True) and userRank < 2):
+									raise exceptions.channelNoPermissionsException
+
+								# Add our userID to users in that channel
+								glob.channels.channels[packetData["channel"]].userJoin(userID)
+
+								# Add the channel to our joined channel
+								userToken.joinChannel(packetData["channel"])
+
+							# Send channel joined
+							userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
+
+							# Console output
+							consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
+						except exceptions.channelNoPermissionsException:
+							consoleHelper.printColored("[!] "+username+" has attempted to join channel "+packetData["channel"]+", but he has no read permissions", bcolors.RED)
+						except exceptions.channelUnknownException:
+							consoleHelper.printColored("[!] "+username+" has attempted to join an unknown channel ("+packetData["channel"]+")", bcolors.RED)
 					elif (packetID == packetIDs.client_channelPart):
 						# Channel part packet
 						packetData = clientPackets.channelPart(packetData)
 
 						# Remove us from joined users and joined channels
-						userToken.partChannel(packetData["channel"])
-						glob.channels.partChannel(packetData["channel"], userID)
+						if packetData["channel"] in glob.channels.channels:
+							userToken.partChannel(packetData["channel"])
+							glob.channels.channels[packetData["channel"]].userPart(userID)
 
-						# Console output
-						consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
+							# Console output
+							consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
 					elif (packetID == packetIDs.client_changeAction):
 						# Change action packet
 						packetData = clientPackets.userActionChange(packetData)
@@ -265,7 +325,60 @@ def banchoServer():
 						glob.tokens.enqueueAll(serverPackets.userPanel(userID))
 						glob.tokens.enqueueAll(serverPackets.userStats(userID))
 
+						# Console output
 						print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
+					elif (packetID == packetIDs.client_startSpectating):
+						try:
+							# Start spectating packet
+							packetData = clientPackets.startSpectating(packetData)
+
+							# Set spectating user ID
+							userToken.startSpectating(packetData["userID"])
+
+							# Add new spectator to tatget's spectators
+							targetToken = glob.tokens.getTokenFromUserID(packetData["userID"])
+							if (targetToken == None):
+								raise exceptions.tokenNotFoundException
+							targetToken.addSpectator(userID)
+							targetToken.enqueue(serverPackets.addSpectator(userID))
+
+							# Console output
+							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.HEADER)
+						except exceptions.tokenNotFoundException:
+							consoleHelper.printColored("[!] Spectator start: token not found", bcolors.RED)
+					elif (packetID == packetIDs.client_stopSpectating):
+						try:
+							# Stop spectating packet, has no parameters
+
+							# Remove our ID spectator from tatget's spectators
+							target = userToken.spectating
+							targetToken = glob.tokens.getTokenFromUserID(target)
+							if (targetToken == None):
+								raise exceptions.tokenNotFoundException
+							targetToken.removeSpectator(userID)
+							targetToken.enqueue(serverPackets.removeSpectator(userID))
+							# Set spectating userID to 0
+							userToken.stopSpectating()
+
+							# Console output
+							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.HEADER)
+						except exceptions.tokenNotFoundException:
+							consoleHelper.printColored("[!] Spectator stop: token not found", bcolors.RED)
+					elif (packetID == packetIDs.client_cantSpectate):
+						try:
+							# We don't have the beatmap, we can't spectate
+							target = userToken.spectating
+							targetToken = glob.tokens.getTokenFromUserID(target)
+							targetToken.enqueue(serverPackets.noSongSpectator(userID))
+						except exceptions.tokenNotFoundException:
+							consoleHelper.printColored("[!] Spectator can't spectate: token not found", bcolors.RED)
+					elif (packetID == packetIDs.client_spectateFrames):
+						# Client spectate frames
+						# Send spectator frames to every spectator
+						for i in userToken.spectators:
+							spectatorToken = glob.tokens.getTokenFromUserID(i)
+							if (spectatorToken != None):
+								spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
 					elif (packetID == packetIDs.client_logout):
 						# Logout packet, no parameters to read
 						# Delete token

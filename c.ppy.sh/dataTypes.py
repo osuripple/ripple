@@ -8,3 +8,4 @@ uInt64 	= 5
 sInt64 	= 6
 string 	= 7
 ffloat	= 8		# because float is a keyword
+bbytes 	= 9

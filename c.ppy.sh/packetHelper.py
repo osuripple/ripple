@@ -78,7 +78,11 @@ def packData(__data, __dataType):
 	pack = True		# if True, use pack. False only with strings
 
 	# Get right pack Type
-	if (__dataType == dataTypes.string):
+	if (__dataType == dataTypes.bbytes):
+		# Bytes, do not use pack, do manually
+		pack = False
+		data = __data
+	elif (__dataType == dataTypes.string):
 		# String, do not use pack, do manually
 		pack = False
 		data += b"\x0B"

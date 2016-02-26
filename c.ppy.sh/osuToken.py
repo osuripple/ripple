@@ -9,6 +9,7 @@ class token:
 	token = ""
 	userID = 0
 	username = ""
+	rank = 0
 	actionID = actions.idle
 	actionText = ""
 	actionMd5 = ""
@@ -18,6 +19,9 @@ class token:
 
 	queue = bytes()
 	joinedChannels = []
+
+	spectating = 0
+	spectators = []
 
 
 	def __init__(self, __userID, __token = None):
@@ -30,6 +34,7 @@ class token:
 		# Set userID and username
 		self.userID = __userID
 		self.username = userHelper.getUserUsername(self.userID)
+		self.rank = userHelper.getUserRank(self.userID)
 
 		# Generate/set token
 		if (__token != None):
@@ -85,3 +90,27 @@ class token:
 
 		return -- longitude"""
 		return self.location[1]
+
+	def startSpectating(self, __userID):
+		"""Set the spectating user to __userID
+
+		userID -- target userID"""
+
+		self.spectating = __userID
+
+	def stopSpectating(self):
+		"""Set the spectating user to 0, aka no user"""
+		self.spectating = 0
+
+	def addSpectator(self, __userID):
+		"""Add __userID to our spectators
+
+		userID -- new spectator userID"""
+		self.spectators.append(__userID)
+
+	def removeSpectator(self, __userID):
+		"""Remove __userID from our spectators
+
+		userID -- old spectator userID"""
+		if (__userID in self.spectators):
+			self.spectators.remove(__userID)

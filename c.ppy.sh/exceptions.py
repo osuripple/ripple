@@ -6,3 +6,12 @@ class loginBannedException(Exception):
 
 class tokenNotFoundException(Exception):
 	pass
+
+class channelNoPermissionsException(Exception):
+	pass
+
+class channelUnknownException(Exception):
+	pass
+
+class channelModeratedException(Exception):
+	pass

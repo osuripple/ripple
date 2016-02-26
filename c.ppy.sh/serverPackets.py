@@ -132,21 +132,29 @@ def userStats(userID):
 def sendMessage(fro, to, message):
 	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string]])
 
-def channelJoinSuccess(userID, channel):
-	# Add our userID to users in that channel
-	glob.channels.joinChannel(channel, userID)
+def channelJoinSuccess(userID, chan):
+	return packetHelper.buildPacket(packetIDs.server_channelJoinSuccess, [[chan, dataTypes.string]])
 
-	# Add the channel to our joined channel
-	glob.tokens.getTokenFromUserID(userID).joinChannel(channel)
-
-	# Build the packet
-	return packetHelper.buildPacket(packetIDs.server_channelJoinSuccess, [[channel, dataTypes.string]])
-
-def channelInfo(channel):
-	return packetHelper.buildPacket(packetIDs.server_channelInfo, [[channel, dataTypes.string], [glob.channels.channels[channel][0], dataTypes.string], [glob.channels.getConnectedUsersCount(channel), dataTypes.uInt16]])
+def channelInfo(chan):
+	channel = glob.channels.channels[chan]
+	return packetHelper.buildPacket(packetIDs.server_channelInfo, [[chan, dataTypes.string], [channel.description, dataTypes.string], [channel.getConnectedUsersCount(), dataTypes.uInt16]])
 
 def channelInfoEnd():
 	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd)
+
+
+# Spectator packets
+def addSpectator(userID):
+	return packetHelper.buildPacket(packetIDs.server_spectatorJoined, [[userID, dataTypes.sInt32]])
+
+def removeSpectator(userID):
+	return packetHelper.buildPacket(packetIDs.server_spectatorLeft, [[userID, dataTypes.sInt32]])
+
+def spectatorFrames(data):
+	return packetHelper.buildPacket(packetIDs.server_spectateFrames, [[data, dataTypes.bbytes]])
+
+def noSongSpectator(userID):
+	return packetHelper.buildPacket(packetIDs.server_spectatorCantSpectate, [[userID, dataTypes.sInt32]])
 
 
 # Other packets

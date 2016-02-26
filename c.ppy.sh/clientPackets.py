@@ -34,3 +34,8 @@ def channelJoin(stream):
 
 def channelPart(stream):
 	return packetHelper.readPacketData(stream,[["channel", 	dataTypes.string]])
+
+
+''' SPECTATOR PACKETS '''
+def startSpectating(stream):
+	return packetHelper.readPacketData(stream,[["userID", 	dataTypes.sInt32]])
