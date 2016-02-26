@@ -177,6 +177,8 @@ def banchoServer():
 		else:
 			try:
 				# This is not the first packet, send response based on client's request
+				# Packet start position, used to read stacked packets
+				pos = 0
 
 				# Make sure the token exists
 				if (requestToken not in glob.tokens.tokens):
@@ -189,87 +191,98 @@ def banchoServer():
 				userID = userToken.userID
 				username = userToken.username
 
-				# Get packet ID and length
-				packetID = packetHelper.readPacketID(requestData)
-				packetLength = packetHelper.readPacketLength(requestData)
+				# Keep reading packets until everything has been read
+				while pos < len(requestData):
+					# Get packet from stack
+					packetData = requestData[pos:]
 
-				# Console output if needed
-				if (serverOutputPackets == True):
-					consoleHelper.printColored("Incoming packet ("+requestToken+")("+username+"):", bcolors.GREEN)
-					consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(packetLength)+"\nPacket data: "+str(requestData)+"\n", bcolors.YELLOW)
+					# Get packet ID and data length
+					packetID = packetHelper.readPacketID(packetData)
+					dataLength = packetHelper.readPacketLength(packetData)
 
-				# Packet switch
-				if (packetID == packetIDs.client_pong):
-					# Ping packet, nothing to do
-					# New packets are automatically taken from the queue
-					pass
-				elif (packetID == packetIDs.client_sendPublicMessage):
-					# Public chat packet
-					packetData = clientPackets.sendPublicMessage(requestData)
+					# Console output if needed
+					if (serverOutputPackets == True):
+						consoleHelper.printColored("Incoming packet ("+requestToken+")("+username+"):", bcolors.GREEN)
+						consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(dataLength)+"\Single packet data: "+str(packetData)+"\n", bcolors.YELLOW)
 
-					# Send this packet to everyone in that channel except us
-					who = glob.channels.getConnectedUsers(packetData["to"]).copy()
-					if userID in who:
-						who.remove(userID)
+					# Packet switch
+					if (packetID == packetIDs.client_pong):
+						# Ping packet, nothing to do
+						# New packets are automatically taken from the queue
+						pass
+					elif (packetID == packetIDs.client_sendPublicMessage):
+						# Public chat packet
+						packetData = clientPackets.sendPublicMessage(packetData)
 
-					# Send packet to required users
-					glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
+						# Send this packet to everyone in that channel except us
+						who = glob.channels.getConnectedUsers(packetData["to"]).copy()
+						if userID in who:
+							who.remove(userID)
 
-					# Console output
-					consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
-				elif (packetID == packetIDs.client_sendPrivateMessage):
-					# Private message packet
-					packetData = clientPackets.sendPrivateMessage(requestData)
+						# Send packet to required users
+						glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
-					# Send packet message to target if it exists
-					glob.tokens.getTokenFromUsername(packetData["to"]).enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
+						# Console output
+						consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
+					elif (packetID == packetIDs.client_sendPrivateMessage):
+						# Private message packet
+						packetData = clientPackets.sendPrivateMessage(packetData)
 
-					# Console output
-					consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
-				elif (packetID == packetIDs.client_channelJoin):
-					# Channel join packet
-					packetData = clientPackets.channelJoin(requestData)
+						# Send packet message to target if it exists
+						glob.tokens.getTokenFromUsername(packetData["to"]).enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
-					# Send channel joined (join stuff is done inside channelJoinSuccess)
-					userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
+						# Console output
+						consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+					elif (packetID == packetIDs.client_channelJoin):
+						# Channel join packet
+						packetData = clientPackets.channelJoin(packetData)
 
-					# Console output
-					consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
-				elif (packetID == packetIDs.client_channelPart):
-					# Channel part packet
-					packetData = clientPackets.channelPart(requestData)
+						# Send channel joined (join stuff is done inside channelJoinSuccess)
+						userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
 
-					# Remove us from joined users and joined channels
-					userToken.partChannel(packetData["channel"])
-					glob.channels.partChannel(packetData["channel"], userID)
+						# Console output
+						consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
+					elif (packetID == packetIDs.client_channelPart):
+						# Channel part packet
+						packetData = clientPackets.channelPart(packetData)
 
-					# Console output
-					consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
-				elif (packetID == packetIDs.client_changeAction):
-					# Change action packet
-					packetData = clientPackets.userActionChange(requestData)
+						# Remove us from joined users and joined channels
+						userToken.partChannel(packetData["channel"])
+						glob.channels.partChannel(packetData["channel"], userID)
 
-					# Update our action id, text and md5
-					userToken.actionID = packetData["actionID"]
-					userToken.actionText = packetData["actionText"]
-					userToken.actionMd5 = packetData["actionMd5"]
+						# Console output
+						consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
+					elif (packetID == packetIDs.client_changeAction):
+						# Change action packet
+						packetData = clientPackets.userActionChange(packetData)
 
-					# Enqueue our new user panel and stats to everyone
-					glob.tokens.enqueueAll(serverPackets.userPanel(userID))
-					glob.tokens.enqueueAll(serverPackets.userStats(userID))
+						# Update our action id, text and md5
+						userToken.actionID = packetData["actionID"]
+						userToken.actionText = packetData["actionText"]
+						userToken.actionMd5 = packetData["actionMd5"]
 
-					print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
-				elif (packetID == packetIDs.client_logout):
-					# Logout packet, no parameters to read
-					# Delete token
-					glob.tokens.deleteToken(requestToken)
+						# Enqueue our new user panel and stats to everyone
+						glob.tokens.enqueueAll(serverPackets.userPanel(userID))
+						glob.tokens.enqueueAll(serverPackets.userStats(userID))
 
-					# Enqueue our disconnection to everyone else
-					glob.tokens.enqueueAll(serverPackets.userLogout(userID))
+						print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
+					elif (packetID == packetIDs.client_logout):
+						# Logout packet, no parameters to read
+						# Delete token
+						glob.tokens.deleteToken(requestToken)
 
-					consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
+						# Enqueue our disconnection to everyone else
+						glob.tokens.enqueueAll(serverPackets.userLogout(userID))
 
-				# Set reponse data and tokenstring to right value and reset our queue
+						consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
+
+					# Set reponse data and tokenstring to right value and reset our queue
+
+					# Update pos so we can read the next stacked packet
+					pos += dataLength+7	# add packet ID bytes, unused byte and data length bytes
+				# WHILE END
+
+				# Token queue built, send it
 				# TODO: Move somewhere else
 				responseTokenString = userToken.token
 				responseData = userToken.queue
