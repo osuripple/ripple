@@ -45,23 +45,23 @@ def unpackData(__data, __dataType):
 
 	# Get right pack Type
 	if (__dataType == dataTypes.uInt16):
-		unpackType = "H"
+		unpackType = "<H"
 	elif (__dataType == dataTypes.sInt16):
-		unpackType = "h"
+		unpackType = "<h"
 	elif (__dataType == dataTypes.uInt32):
-		unpackType = "L"
+		unpackType = "<L"
 	elif (__dataType == dataTypes.sInt32):
-		unpackType = "l"
+		unpackType = "<l"
 	elif (__dataType == dataTypes.uInt64):
-		unpackType = "Q"
+		unpackType = "<Q"
 	elif (__dataType == dataTypes.sInt64):
-		unpackType = "q"
+		unpackType = "<q"
 	elif (__dataType == dataTypes.string):
-		unpackType = "s"
+		unpackType = "<s"
 	elif (__dataType == dataTypes.ffloat):
-		unpackType = "f"
+		unpackType = "<f"
 	else:
-		unpackType = "B"
+		unpackType = "<B"
 
 	return struct.unpack(unpackType, bytes(__data))[0]
 
@@ -89,23 +89,23 @@ def packData(__data, __dataType):
 		data += uleb128Encode(len(__data))
 		data += str.encode(__data, "latin_1")
 	elif (__dataType == dataTypes.uInt16):
-		packType = "H"
+		packType = "<H"
 	elif (__dataType == dataTypes.sInt16):
-		packType = "h"
+		packType = "<h"
 	elif (__dataType == dataTypes.uInt32):
-		packType = "L"
+		packType = "<L"
 	elif (__dataType == dataTypes.sInt32):
-		packType = "l"
+		packType = "<l"
 	elif (__dataType == dataTypes.uInt64):
-		packType = "Q"
+		packType = "<Q"
 	elif (__dataType == dataTypes.sInt64):
-		packType = "q"
+		packType = "<q"
 	elif (__dataType == dataTypes.string):
-		packType = "s"
+		packType = "<s"
 	elif (__dataType == dataTypes.ffloat):
-		packType = "f"
+		packType = "<f"
 	else:
-		packType = "B"
+		packType = "<B"
 
 	if (pack == True):
 		data += struct.pack(packType, __data)
@@ -134,9 +134,9 @@ def buildPacket(__packet, __packetData = []):
 	packetLength = len(packetData)
 
 	# Return packet as bytes
-	packetBytes += struct.pack("h", __packet)		# packet id (int16)
+	packetBytes += struct.pack("<h", __packet)		# packet id (int16)
 	packetBytes += bytes(b"\x00")					# unused byte
-	packetBytes += struct.pack("l", packetLength)	# packet lenght (iint32)
+	packetBytes += struct.pack("<l", packetLength)	# packet lenght (iint32)
 	packetBytes += packetData						# packet data
 	return packetBytes
 
@@ -161,7 +161,7 @@ def readPacketData(__stream, __structure = []):
 			unpack = False
 
 			# Read length and calculate end
-			#length = struct.unpack("B", __stream[start+1:start+2])[0]
+			#length = struct.unpack("<B", __stream[start+1:start+2])[0]
 			length = uleb128Decode(__stream[start+1:])
 			end = start+length[0]+length[1]+1
 
