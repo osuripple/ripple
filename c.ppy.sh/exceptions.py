@@ -15,3 +15,6 @@ class channelUnknownException(Exception):
 
 class channelModeratedException(Exception):
 	pass
+
+class noAdminException(Exception):
+	pass

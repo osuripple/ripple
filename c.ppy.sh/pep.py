@@ -25,6 +25,7 @@ import exceptions
 import gameModes
 import locationHelper
 import glob
+import fokabot
 
 import packetHelper
 import consoleHelper
@@ -127,6 +128,13 @@ def banchoServer():
 
 				# TODO: Configurable default channels
 				# Default opened channels
+
+				# TODO: Move this thing
+				glob.channels.channels["#osu"].userJoin(userID)
+				responseToken.joinChannel("#osu")
+				glob.channels.channels["#announce"].userJoin(userID)
+				responseToken.joinChannel("#announce")
+
 				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#osu"))
 				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#announce"))
 
@@ -226,8 +234,12 @@ def banchoServer():
 								if (packetData["to"] not in glob.channels.channels):
 									raise exceptions.channelUnknownException
 
+								# Make sure the channel is not in moderated mode
+								if (glob.channels.channels[packetData["to"]].moderated == True and userRank < 2):
+									raise exceptions.channelModeratedException
+
 								# Make sure we have write permissions
-								if ((glob.channels.channels[packetData["to"]].publicWrite == False or glob.channels.channels[packetData["to"]].moderated == True) and userRank < 2):
+								if (glob.channels.channels[packetData["to"]].publicWrite == False and userRank < 2):
 									raise exceptions.channelNoPermissionsException
 
 								# Send this packet to everyone in that channel except us
@@ -235,6 +247,7 @@ def banchoServer():
 								if userID in who:
 									who.remove(userID)
 							else:
+								print("spectmeme")
 								# Spectator channel
 								# Send this packet to every spectator
 								if (userToken.spectating == 0):
@@ -243,13 +256,19 @@ def banchoServer():
 								else:
 									# We have sent a message to someone else's #spectator
 									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
-								#print(str(ayy))
+
 								who = targetToken.spectators.copy()
 								if userID in who:
 									who.remove(userID)
 
 							# Send packet to required users
 							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
+
+							# Fokabot command check
+							fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
+							if (fokaMessage != False):
+								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), glob.channels.channels[packetData["to"]].getConnectedUsers().copy(), False)
+								consoleHelper.printColored("> FokaBot@"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.HEADER)
 
 							# Console output
 							consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
@@ -275,7 +294,7 @@ def banchoServer():
 							packetData = clientPackets.channelJoin(packetData)
 
 							# Check spectator channel
-							# If it's spectator channel, skin checks and list stuff
+							# If it's spectator channel, skip checks and list stuff
 							if (packetData["channel"] != "#spectator"):
 								# Normal channel, do check stuff
 								# Make sure the channel exists
@@ -381,6 +400,7 @@ def banchoServer():
 								spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
 					elif (packetID == packetIDs.client_logout):
 						# Logout packet, no parameters to read
+						# TODO: Channel part at logout
 						# Delete token
 						glob.tokens.deleteToken(requestToken)
 
