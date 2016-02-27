@@ -18,8 +18,8 @@ osu.ppy.sh/adminer.php
 push-to-prod.bat
 migrations/latest.txt
 
-# new pep.py server
-c.ppy.sh/*.*
+# pep.py config file
+c.ppy.sh/config.ini
 
 # ignore this
 osu.ppy.sh/aesmeme.php

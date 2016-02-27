@@ -1,0 +1,110 @@
+osu_SendUserState, // update osu about the user state
+osu_SendIRCMessage, // receive message from IRC
+osu_Exit, // osu closes
+osu_RequestStatusUpdate, // update player stats
+osu_Pong, // ping callback
+Bancho_LoginReply, // login
+Bancho_CommandError, // reply to an error
+Bancho_SendMessage, // i have no idea how is this handled
+Bancho_Ping, // ping request
+Bancho_HandleIRCUsernameChange, // someone changes name in irc
+Bancho_HandleIRCQuit, // someone logged out
+Bancho_HandleUserUpdate, // someone else's stats updated
+Bancho_HandleUserQuit, // user quit bancho entirely (not irc)
+Bancho_SpectatorJoined, // new spec
+Bancho_SpectatorLeft, // spectator left
+Bancho_SpectateFrames, // spectator frames chunks
+osu_StartSpectating, // request to spectate someone
+osu_StopSpectating, // stop spectating
+osu_SpectateFrames, // spectator frames (client packet, not from bancho unlike Bancho_SpectateFrames)
+Bancho_VersionUpdate, // check for updates
+osu_ErrorReport, // report error to osu.ppy.sh
+osu_CantSpectate, // can't spectate the host for whatever reason
+Bancho_SpectatorCantSpectate, // can't spectate because no map
+Bancho_GetAttention, // make osu popup
+Bancho_Announce, // announcement popup
+osu_SendIRCMessagePrivate, // not sure
+Bancho_MatchUpdate, // update match details
+Bancho_MatchNew, // new match
+Bancho_MatchDisband, // close room
+osu_LobbyPart, // client left lobby
+osu_LobbyJoin, // client joined lobby
+osu_MatchCreate, // client created a new lobby
+osu_MatchJoin, // sends a request to bancho (join lobby)
+osu_SOMETHING_LOBBY, // i can't figure out this
+Bancho_LobbyJoin_OBSOLETE, // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby, this is obsolete now.
+Bancho_LobbyPart_OBSOLETE, // according to the mid-2014 decompiled code this is when bancho informs a client about a new player that joins a lobby, this is obsolete now.
+Bancho_MatchJoinSuccess,
+Bancho_MatchJoinFail,
+osu_MatchChangeSlot,
+osu_MatchReady,
+osu_MatchLock,
+osu_MatchChangeSettings,
+Bancho_FellowSpectatorJoined,
+Bancho_FellowSpectatorLeft,
+osu_MatchStart,
+AllPlayersLoaded, // no one is missing beatmap
+Bancho_MatchStart,
+osu_MatchScoreUpdate,
+Bancho_MatchScoreUpdate,
+osu_MatchComplete,
+Bancho_MatchTransferHost,
+osu_MatchChangeMods,
+osu_MatchLoadComplete,
+Bancho_MatchAllPlayersLoaded,
+osu_MatchNoBeatmap,
+osu_MatchNotReady,
+osu_MatchFailed,
+Bancho_MatchPlayerFailed,
+Bancho_MatchComplete,
+osu_MatchHasBeatmap,
+osu_MatchSkipRequest,
+Bancho_MatchSkip,
+Bancho_Unauthorised,
+osu_ChannelJoin,
+Bancho_ChannelJoinSuccess,
+Bancho_ChannelAvailable,
+Bancho_ChannelRevoked,
+Bancho_ChannelAvailableAutojoin,
+osu_BeatmapInfoRequest,
+Bancho_BeatmapInfoReply,
+osu_MatchTransferHost,
+Bancho_LoginPermissions,
+Bancho_FriendsList,
+osu_FriendAdd,
+osu_FriendRemove,
+Bancho_NOTSURE, // i dunno what's that but it's a bancho packet
+Bancho_TitleUpdate,
+osu_MatchChangeTeam,
+osu_ChannelLeave,
+osu_ReceiveUpdates,
+Bancho_Monitor,
+Bancho_MatchPlayerSkipped,
+osu_SetIrcAwayMessage,
+Bancho_UserPresence,
+IRC_Only,
+osu_UserStatsRequest,
+Bancho_Restart,
+osu_Invite,
+Bancho_Invite,
+Bancho_ChannelListingComplete,
+osu_MatchChangePassword,
+Bancho_MatchChangePassword,
+Bancho_BanInfo,
+osu_SpecialMatchInfoRequest,
+Bancho_UserSilenced,
+Bancho_UserPresenceSingle,
+Bancho_UserPresenceBundle,
+osu_UserPresenceRequest,
+osu_UserPresenceRequestAll,
+osu_UserToggleBlockNonFriendPM,
+Bancho_UserPMBlocked,
+Bancho_TargetIsSilenced,
+Bancho_VersionUpdateForced, // force client update
+Bancho_SwitchServer,
+Bancho_AccountRestricted,
+Bancho_RTX, // pops up spooky message on your screen
+osu_MatchAbort,
+Bancho_SwitchTourneyServer,
+osu_SpecialJoinMatchChannel, // force a client to join lobby (this is what osu_SQL uses afaik)
+osu_SpecialLeaveMatchChannel // force a client to leave lobby

@@ -35,7 +35,6 @@
 		// Decrypt score data, returns a string with all the score data separed by colons
 		$scoreData = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($_POST["score"]), MCRYPT_MODE_CBC, base64_decode($_POST["iv"]));
 
-
 		// Explode the decrypted score string
 		$scoreDataArray = explode(":", $scoreData);
 
