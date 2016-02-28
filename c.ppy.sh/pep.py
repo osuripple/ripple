@@ -415,6 +415,7 @@ def banchoServer():
 						# TODO: Channel part at logout
 						# Delete token
 						glob.tokens.deleteToken(requestToken)
+						print(str(glob.tokens.tokens))
 
 						# Enqueue our disconnection to everyone else
 						glob.tokens.enqueueAll(serverPackets.userLogout(userID))
@@ -454,9 +455,9 @@ consoleHelper.printServerStartHeader(True);
 
 # Read config.ini
 consoleHelper.printNoNl("> Loading config file... ")
-conf = config.config("config.ini")
+glob.conf = config.config("config.ini")
 
-if (conf.default == True):
+if (glob.conf.default == True):
 	# We have generated a default config.ini, quit server
 	consoleHelper.printWarning()
 	consoleHelper.printColored("[!] config.ini not found. A default one has been generated.", bcolors.YELLOW)
@@ -464,7 +465,7 @@ if (conf.default == True):
 	sys.exit()
 
 # If we haven't generated a default config.ini, check if it's valid
-if (conf.checkConfig() == False):
+if (glob.conf.checkConfig() == False):
 	consoleHelper.printError()
 	consoleHelper.printColored("[!] Invalid config.ini. Please configure it properly", bcolors.RED)
 	consoleHelper.printColored("[!] Delete your config.ini to generate a default one", bcolors.RED)
@@ -476,7 +477,7 @@ else:
 # Connect to db
 try:
 	consoleHelper.printNoNl("> Connecting to MySQL db... ")
-	glob.db = databaseHelper.db(conf.config["db"]["host"], conf.config["db"]["username"], conf.config["db"]["password"], conf.config["db"]["database"])
+	glob.db = databaseHelper.db(glob.conf.config["db"]["host"], glob.conf.config["db"]["username"], glob.conf.config["db"]["password"], glob.conf.config["db"]["database"])
 	consoleHelper.printDone()
 except:
 	# Exception while connecting to db
@@ -491,10 +492,10 @@ glob.channels.loadChannels()
 consoleHelper.printDone()
 
 # Get server parameters from config.ini
-serverName = conf.config["server"]["server"]
-serverHost = conf.config["server"]["host"]
-serverPort = int(conf.config["server"]["port"])
-serverOutputPackets = stringToBool(conf.config["server"]["outputpackets"])
+serverName = glob.conf.config["server"]["server"]
+serverHost = glob.conf.config["server"]["host"]
+serverPort = int(glob.conf.config["server"]["port"])
+serverOutputPackets = stringToBool(glob.conf.config["server"]["outputpackets"])
 
 # Run server sanic way
 if (serverName == "tornado"):
@@ -506,9 +507,9 @@ if (serverName == "tornado"):
 elif (serverName == "flask"):
 	# Flask server
 	# Get flask settings
-	flaskThreaded = stringToBool(conf.config["flask"]["threaded"])
-	flaskDebug = stringToBool(conf.config["flask"]["debug"])
-	flaskLoggerStatus = not stringToBool(conf.config["flask"]["logger"])
+	flaskThreaded = stringToBool(glob.conf.config["flask"]["threaded"])
+	flaskDebug = stringToBool(glob.conf.config["flask"]["debug"])
+	flaskLoggerStatus = not stringToBool(glob.conf.config["flask"]["logger"])
 
 	# Set flask debug mode and logger
 	app.debug = flaskDebug

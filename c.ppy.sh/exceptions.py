@@ -18,3 +18,6 @@ class channelModeratedException(Exception):
 
 class noAdminException(Exception):
 	pass
+
+class commandSyntaxException(Exception):
+	pass
