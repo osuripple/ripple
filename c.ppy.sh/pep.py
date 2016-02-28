@@ -31,6 +31,7 @@ import gameModes
 import locationHelper
 import glob
 import fokabot
+import countryHelper
 
 # pep.py helpers
 import packetHelper
@@ -160,8 +161,9 @@ def banchoServer():
 				# Print logged in message
 				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
 
-				# Set position
+				# Set position and country
 				responseToken.setLocation(locationHelper.getLocation(requestIP))
+				responseToken.setCountry(countryHelper.getCountryID(locationHelper.getCountry(requestIP)))
 
 				# Send to everyone our userpanel and userStats (so they now we have logged in)
 				glob.tokens.enqueueAll(serverPackets.userPanel(userID))

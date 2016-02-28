@@ -69,8 +69,8 @@ def userPanel(userID):
 	# Get user data
 	userToken = glob.tokens.getTokenFromUserID(userID)
 	username = userHelper.getUserUsername(userID)
-	timezone = 25	# TODO: Timezone and country
-	country = 108
+	timezone = 24	# TODO: Timezone and country
+	country = userToken.getCountry()
 	gameRank = userHelper.getUserGameRank(userID, userToken.gameMode)
 	latitude = userToken.getLatitude()
 	longitude = userToken.getLongitude()
@@ -119,10 +119,10 @@ def userStats(userID):
 		[userToken.actionMods,	dataTypes.sInt32],
 		[userToken.gameMode, 	dataTypes.byte],
 		[0, 					dataTypes.sInt32],
-		[rankedScore, 			dataTypes.uInt64],	# TODO: uInt64
+		[rankedScore, 			dataTypes.uInt64],
 		[accuracy, 				dataTypes.ffloat],
 		[playcount, 			dataTypes.uInt32],
-		[totalScore, 			dataTypes.uInt64],	# TODO: uInt64
+		[totalScore, 			dataTypes.uInt64],
 		[gameRank,	 			dataTypes.uInt32],
 		[pp, 					dataTypes.uInt16]
 	])

@@ -125,3 +125,6 @@ def getFriendList(userID):
 	else:
 		# We have no friends, return 0 list
 		return [0]
+
+def getCountry(userID):
+	return glob.db.fetch("SELECT country FROM users_stats WHERE osu_id = ?", [userID])["country"]

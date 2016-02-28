@@ -25,6 +25,8 @@ class token:
 
 	actionMods = 0
 
+	country = 0
+
 
 	def __init__(self, __userID, __token = None):
 		"""Create a token object and set userID and token
@@ -116,3 +118,15 @@ class token:
 		userID -- old spectator userID"""
 		if (__userID in self.spectators):
 			self.spectators.remove(__userID)
+
+	def setCountry(self, __countryID):
+		"""Set country to __countryID
+
+		__countryID -- numeric country ID. See countryHelper.py"""
+		self.country = __countryID
+
+	def getCountry(self):
+		"""Get numeric country ID
+
+		return -- numeric country ID. See countryHelper.py"""
+		return self.country
