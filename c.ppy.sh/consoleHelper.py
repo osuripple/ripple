@@ -48,7 +48,7 @@ def printColored(string, color):
 def printError():
 	""" Print error text FOR LOADING"""
 
-	printColored("Error", bcolors.REd)
+	printColored("Error", bcolors.RED)
 
 
 def printDone():

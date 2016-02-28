@@ -1,7 +1,6 @@
 # TODO: Remove useless imports
 # TODO: Docs
 import struct
-import flask
 import gzip
 import string
 import logging
@@ -10,6 +9,12 @@ import uuid
 import pymysql
 import os
 import time
+import flask
+
+# Tornado server
+from tornado.wsgi import WSGIContainer
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
 
 # pep.py files
 import bcolors
@@ -27,6 +32,7 @@ import locationHelper
 import glob
 import fokabot
 
+# pep.py helpers
 import packetHelper
 import consoleHelper
 import databaseHelper
@@ -63,7 +69,9 @@ def banchoServer():
 		requestData = flask.request.data
 
 		# Client's IP
-		requestIP = flask.request.remote_addr
+		requestIP = flask.request.headers.get('X-Real-IP')
+		if (requestIP == None):
+			requestIP = flask.request.remote_addr
 
 		# Server's response data
 		responseData = bytes()
@@ -479,28 +487,37 @@ glob.channels.loadChannels()
 consoleHelper.printDone()
 
 # Get server parameters from config.ini
+serverName = conf.config["server"]["server"]
+serverHost = conf.config["server"]["host"]
 serverPort = int(conf.config["server"]["port"])
-serverThreaded = stringToBool(conf.config["server"]["threaded"])
-serverDebug = stringToBool(conf.config["server"]["debug"])
 serverOutputPackets = stringToBool(conf.config["server"]["outputpackets"])
 
-# Set flask debug mode
-app.debug = serverDebug
-flaskLogger.disabled = True
+# Run server sanic way
+if (serverName == "tornado"):
+	# Tornado server
+	print("> Starting tornado...");
+	webServer = HTTPServer(WSGIContainer(app))
+	webServer.listen(serverPort)
+	IOLoop.instance().start()
+elif (serverName == "flask"):
+	# Flask server
+	# Get flask settings
+	flaskThreaded = stringToBool(conf.config["flask"]["threaded"])
+	flaskDebug = stringToBool(conf.config["flask"]["debug"])
+	flaskLoggerStatus = not stringToBool(conf.config["flask"]["logger"])
 
-if (serverDebug == False):
-	# Disable flask logger if we are not in debug mode
-	#flaskLogger.disabled = True
-	print("> Starting server...");
+	# Set flask debug mode and logger
+	app.debug = flaskDebug
+	flaskLogger.disabled = flaskLoggerStatus
+
+	# Console output
+	if (flaskDebug == False):
+		print("> Starting flask...");
+	else:
+		print("> Starting flask in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+
+	# Run flask server
+	app.run(host=serverHost, port=serverPort, threaded=flaskThreaded)
 else:
-	print("> Starting server in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
-
-# Run server
-app.run(host=conf.config["server"]["host"], port=serverPort, threaded=serverThreaded)
-
-#except:
-	# Server critical error handling
-	# TODO: Fix this
-	#consoleHelper.printColored("[!] Error while running server.", bcolors.RED)
-	#consoleHelper.printColored("[!] The server has shut down unexpectedly.", bcolors.RED)
-	#consoleHelper.printColored(str(sys.exc_info()[1]), bcolors.RED)
+	print(bcolors.RED+"[!] Unknown server. Please set the server key in config.ini to "+bcolors.ENDC+bcolors.YELLOW+"tornado"+bcolors.ENDC+bcolors.RED+" or "+bcolors.ENDC+bcolors.YELLOW+"flask"+bcolors.ENDC)
+	sys.exit()

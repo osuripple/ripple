@@ -14,7 +14,7 @@ def generateResponse(token, data = None):
 	resp.headers['cho-token'] = token
 	resp.headers['cho-protocol'] = '19'
 	resp.headers['Keep-Alive'] = 'timeout=5, max=100'
-	resp.headers['Connection'] = 'Keep-Alive'
+	resp.headers['Connection'] = 'keep-alive'
 	resp.headers['Content-Type'] = 'text/html; charset=UTF-8'
 	resp.headers['Vary'] = 'Accept-Encoding'
 	resp.headers['Content-Encoding'] = 'gzip'
@@ -23,7 +23,7 @@ def generateResponse(token, data = None):
 
 def HTMLResponse():
 	"""Return HTML bancho meme response"""
-	
+
 	html = 	"<html><head><title>MA MAURO ESISTE?</title><style type='text/css'>body{width:30%}</style></head><body><pre>"
 	html += "           _                 __<br>"
 	html += "          (_)              /  /<br>"
@@ -33,7 +33,7 @@ def HTMLResponse():
 	html += "/__/  /__/  .___/  .___/__/ \\_____/<br>"
 	html += "        /  /   /  /<br>"
 	html += "       /__/   /__/<br>"
-	html += "<b>THERE'S A PYTHON ABROAD VERSION</b><br><br>"
+	html += "<b>PYTHON > ALL VERSION</b><br><br>"
 	html += "<marquee style='white-space:pre;'><br>"
 	html += "                          .. o  .<br>"
 	html += "                         o.o o . o<br>"
@@ -44,3 +44,4 @@ def HTMLResponse():
 	html += "              \\ . ..  .. . /<br>"
 	html += "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>"
 	html += "</marquee><br><strike>reverse engineering a protocol impossible to reverse engineer since always</strike><br>we are actually reverse engineering bancho successfully. for the third time.</pre></body></html>"
+	return html

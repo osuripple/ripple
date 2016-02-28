@@ -12,10 +12,10 @@ class config:
 
 		__file -- filename"""
 
-		fileName = __file
-		if (os.path.isfile(fileName)):
+		self.fileName = __file
+		if (os.path.isfile(self.fileName)):
 			# config.ini found, load it
-			self.config.read(fileName)
+			self.config.read(self.fileName)
 			self.default = False
 		else:
 			# config.ini not found, generate a default one
@@ -35,11 +35,15 @@ class config:
 			self.config.get("db","username")
 			self.config.get("db","password")
 			self.config.get("db","database")
+
+			self.config.get("server","server")
 			self.config.get("server","host")
 			self.config.get("server","port")
-			self.config.get("server","threaded")
-			self.config.get("server","debug")
 			self.config.get("server","outputpackets")
+
+			self.config.get("flask","threaded")
+			self.config.get("flask","debug")
+			self.config.get("flask","logger")
 			return True
 		except:
 			return False
@@ -50,7 +54,7 @@ class config:
 		"""Open and set default keys for that confg files"""
 
 		# Open config.ini in write mode
-		f = open(fileName, "w")
+		f = open(self.fileName, "w")
 
 		# Set keys to config object
 		self.config.add_section("db")
@@ -60,11 +64,15 @@ class config:
 		self.config.set("db", "database", "ripple")
 
 		self.config.add_section("server")
+		self.config.set("server", "server", "tornado")
 		self.config.set("server", "host", "0.0.0.0")
-		self.config.set("server", "port", "80")
-		self.config.set("server", "threaded", "True")
-		self.config.set("server", "debug", "False")
-		self.config.set("server", "outputpackets", "False")
+		self.config.set("server", "port", "5001")
+		self.config.set("server", "outputpackets", "0")
+
+		self.config.add_section("flask")
+		self.config.set("flask", "threaded", "1")
+		self.config.set("flask", "debug", "0")
+		self.config.set("flask", "logger", "0")
 
 		# Write ini to file and close
 		self.config.write(f)
