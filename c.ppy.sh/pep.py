@@ -154,9 +154,9 @@ def banchoServer():
 				for key, value in glob.channels.channels.items():
 					responseToken.enqueue(serverPackets.channelInfo(key))
 
-				# TODO: Online users IDs
 				responseToken.enqueue(serverPackets.friendList(userID))
-				#responseToken.enqueue(serverPackets.onlineUsers())
+				responseToken.enqueue(serverPackets.onlineUsers())
+				responseToken.enqueue(serverPackets.mainMenuIcon("http://y.zxq.co/mpyxts.png|http://ripple.moe"))	# TODO: Configurable main menu icon
 
 				# Print logged in message
 				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)

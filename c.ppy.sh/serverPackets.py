@@ -39,6 +39,9 @@ def silenceEndTime(seconds):
 def protocolVersion(version = 19):
 	return packetHelper.buildPacket(packetIDs.server_protocolVersion, [[version, dataTypes.uInt32]])
 
+def mainMenuIcon(icon):
+	return packetHelper.buildPacket(packetIDs.server_mainMenuIcon, [[icon, dataTypes.string]])
+
 def userSupporterGMT(supporter, GMT):
 	result = 1;
 	if (supporter == True):
@@ -61,6 +64,20 @@ def friendList(userID):
 		friendsData.append([i, dataTypes.sInt32])
 
 	return packetHelper.buildPacket(packetIDs.server_friendsList, friendsData)
+
+def onlineUsers():
+	onlineUsersData = []
+
+	users = glob.tokens.tokens;
+
+	# Friends number
+	onlineUsersData.append([len(users), dataTypes.uInt16])
+
+	# Add all friend user IDs to friendsData
+	for key,value in users.items():
+		onlineUsersData.append([value.userID, dataTypes.sInt32])
+
+	return packetHelper.buildPacket(packetIDs.server_userPresenceBundle, onlineUsersData)
 
 def userLogout(userID):
 	return packetHelper.buildPacket(packetIDs.server_userLogout, [[userID, dataTypes.sInt32], [0, dataTypes.byte]])
@@ -140,7 +157,7 @@ def channelInfo(chan):
 	return packetHelper.buildPacket(packetIDs.server_channelInfo, [[chan, dataTypes.string], [channel.description, dataTypes.string], [channel.getConnectedUsersCount(), dataTypes.uInt16]])
 
 def channelInfoEnd():
-	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd)
+	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd, [[0, dataTypes.uInt32]])
 
 
 # Spectator packets
