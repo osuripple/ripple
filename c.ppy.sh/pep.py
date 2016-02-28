@@ -347,6 +347,8 @@ def banchoServer():
 						userToken.actionID = packetData["actionID"]
 						userToken.actionText = packetData["actionText"]
 						userToken.actionMd5 = packetData["actionMd5"]
+						userToken.actionMods = packetData["actionMods"]
+						userToken.gameMode = packetData["gameMode"]
 
 						# Enqueue our new user panel and stats to everyone
 						glob.tokens.enqueueAll(serverPackets.userPanel(userID))

@@ -116,7 +116,7 @@ def userStats(userID):
 		[userToken.actionID, 	dataTypes.byte],
 		[userToken.actionText, 	dataTypes.string],
 		[userToken.actionMd5, 	dataTypes.string],
-		[0, 					dataTypes.sInt32],	# Unknown
+		[userToken.actionMods,	dataTypes.sInt32],
 		[userToken.gameMode, 	dataTypes.byte],
 		[0, 					dataTypes.sInt32],
 		[rankedScore, 			dataTypes.uInt64],	# TODO: uInt64

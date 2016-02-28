@@ -9,7 +9,9 @@ def userActionChange(stream):
 	[
 		["actionID", 	dataTypes.byte],
 		["actionText", 	dataTypes.string],
-		["actionMd5", 	dataTypes.string]
+		["actionMd5", 	dataTypes.string],
+		["actionMods",	dataTypes.uInt32],
+		["gameMode",	dataTypes.byte]
 	])
 
 def sendPublicMessage(stream):

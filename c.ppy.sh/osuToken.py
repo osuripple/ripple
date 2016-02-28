@@ -23,6 +23,8 @@ class token:
 	spectating = 0
 	spectators = []
 
+	actionMods = 0
+
 
 	def __init__(self, __userID, __token = None):
 		"""Create a token object and set userID and token
