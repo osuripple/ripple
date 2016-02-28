@@ -257,7 +257,6 @@ def banchoServer():
 								if userID in who:
 									who.remove(userID)
 							else:
-								print("spectmeme")
 								# Spectator channel
 								# Send this packet to every spectator
 								if (userToken.spectating == 0):
@@ -267,17 +266,24 @@ def banchoServer():
 									# We have sent a message to someone else's #spectator
 									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
 
+								# Send to every spectator except us
 								who = targetToken.spectators.copy()
 								if userID in who:
 									who.remove(userID)
 
+								# Send to host too if needed
+								if (userID != targetToken.userID):
+									who.append(targetToken.userID)
+
 							# Send packet to required users
+							consoleHelper.printColored(str(who), bcolors.BLUE)
 							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 							# Fokabot command check
 							fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
 							if (fokaMessage != False):
-								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), glob.channels.channels[packetData["to"]].getConnectedUsers().copy(), False)
+								who.append(userID)
+								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), who, False)
 								consoleHelper.printColored("> FokaBot@"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.HEADER)
 
 							# Console output
@@ -372,6 +378,13 @@ def banchoServer():
 								raise exceptions.tokenNotFoundException
 							targetToken.addSpectator(userID)
 							targetToken.enqueue(serverPackets.addSpectator(userID))
+
+							# Join spectator
+							userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
+
+							if (len(targetToken.spectators) == 1):
+								# First spectator, send #spectator join also to target
+								targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							# Console output
 							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.HEADER)

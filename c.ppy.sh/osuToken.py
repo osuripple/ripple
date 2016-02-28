@@ -27,6 +27,8 @@ class token:
 
 	country = 0
 
+	pingTime = 0
+
 
 	def __init__(self, __userID, __token = None):
 		"""Create a token object and set userID and token
@@ -130,3 +132,7 @@ class token:
 
 		return -- numeric country ID. See countryHelper.py"""
 		return self.country
+
+	def updatePingTime(self):
+		"""Update latest ping time"""
+		self.pingTime = int(time.time())
