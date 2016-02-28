@@ -2,7 +2,6 @@ import struct
 import bcolors
 import sys
 import dataTypes
-import consoleHelper	#TODO: Remove me
 
 def uleb128Encode(num):
 	arr = bytearray()

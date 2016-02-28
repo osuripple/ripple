@@ -428,7 +428,6 @@ def banchoServer():
 						# TODO: Channel part at logout
 						# Delete token
 						glob.tokens.deleteToken(requestToken)
-						print(str(glob.tokens.tokens))
 
 						# Enqueue our disconnection to everyone else
 						glob.tokens.enqueueAll(serverPackets.userLogout(userID))
