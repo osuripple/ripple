@@ -25,7 +25,7 @@ def getSystemInfo():
 
 	# Unix only stats
 	if (data["unix"] == True):
-		data["loadAverage"] = os.loadAverage
+		data["loadAverage"] = os.getloadavg()
 	else:
 		data["loadAverage"] = (0,0,0)
 
