@@ -14,7 +14,7 @@ class db:
 		__password -- MySQL password
 		__database -- MySQL database name"""
 
-		self.connection = pymysql.connect(host=__host, user=__username, password=__password, db=__database, cursorclass=pymysql.cursors.DictCursor)
+		self.connection = pymysql.connect(host=__host, user=__username, password=__password, db=__database, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
 
 
 	def bindParams(self, __query, __params):
@@ -38,21 +38,20 @@ class db:
 		__query -- query, can contain ?s
 		__params -- array with params. Optional"""
 
-		#try:
-		with self.connection.cursor() as cursor:
-			# Bind params if needed
-			if (__params != None):
-				__query = self.bindParams(__query, __params)
+		try:
+			with self.connection.cursor() as cursor:
+				# Bind params if needed
+				if (__params != None):
+					__query = self.bindParams(__query, __params)
 
-			# Execute the query
-			cursor.execute(__query)
+				# Execute the query
+				cursor.execute(__query)
 
-			# Commit changes
-			self.connection.commit()
-		#except:
-			#print(bcolors.RED+"[!] Error while executing query ("+str(__query)+")"+"\r\n"+str(sys.exc_info()[1])+bcolors.ENDC)
-		#finally:
-			self.connection.close()
+				# Commit changes
+				#self.connection.commit()
+		finally:
+			pass
+			#self.connection.close()
 
 
 	def fetch(self, __query, __params = None, __all = False):
@@ -64,27 +63,26 @@ class db:
 
 		return -- dictionary with result data or False if failed"""
 
-		#try:
-		with self.connection.cursor() as cursor:
-			# Bind params if needed
-			if (__params != None):
-				__query = self.bindParams(__query, __params)
+		try:
+			with self.connection.cursor() as cursor:
+				# Bind params if needed
+				if (__params != None):
+					__query = self.bindParams(__query, __params)
 
-			# Execute the query with binded params
-			cursor.execute(self.bindParams(__query, __params))
+				# Execute the query with binded params
+				cursor.execute(__query)
 
-			# Get first result and return it
-			if (__all == False):
-				return cursor.fetchone()
-			else:
-				return cursor.fetchall()
-		#except:
-			#print(bcolors.RED+"[!] Error while fetching values ("+str(__query)+")"+"\r\n"+str(sys.exc_info()[1])+bcolors.ENDC)
-		#finally:
-			self.connection.close()
+				# Get first result and return it
+				if (__all == False):
+					return cursor.fetchone()
+				else:
+					return cursor.fetchall()
+		finally:
+			pass
+			#self.connection.close()
 
 
-	def fetchAll(self, __query, __params = []):
+	def fetchAll(self, __query, __params = None):
 		"""Fetch the all elements of SQL query result
 
 		__query -- query, can contain ?s

@@ -5,6 +5,17 @@ import bcolors
 import userHelper
 import glob
 import systemHelper
+import actions
+
+def connect():
+	"""Add FokaBot to connected users"""
+	token = glob.tokens.addToken(999)
+	token.actionID = actions.idle
+
+
+def disconnect():
+	"""Remove FokaBot from connected users"""
+	glob.tokens.deleteToken(getTokenFromUserID(999))
 
 '''JUST A TEMPORARY MEME'''
 def fokabotResponse(fro, chan, message):
@@ -14,7 +25,7 @@ def fokabotResponse(fro, chan, message):
 
 		# Get max number if needed
 		if (len(message) >= 2):
-			if (message[1].isdigit() == True):
+			if (message[1].isdigit() == True and int(message[1]) > 0):
 				maxPoints = int(message[1])
 
 		points = random.randrange(0,maxPoints)
@@ -68,9 +79,11 @@ def fokabotResponse(fro, chan, message):
 			# Get parameters
 			if (len(message) >= 2):
 				if (message[1] == "restart"):
+					# Restart the server
 					systemHelper.restartServer()
 					return False
 				if (message[1] == "status"):
+					# Print some server info
 					data = systemHelper.getSystemInfo()
 
 					# Final message
@@ -88,6 +101,11 @@ def fokabotResponse(fro, chan, message):
 						msg += "Load average: "+str(data["loadAverage"][0])+"/"+str(data["loadAverage"][1])+"/"+str(data["loadAverage"][2])+"\n"
 
 					return msg
+				if (message[1] == "reload"):
+					#Reload settings from bancho_settings
+					glob.banchoConf.loadSettings()
+					print(glob.banchoConf.config["menuIcon"])
+					return "Bancho settings reloaded!"
 			else:
 				raise exceptions.commandSyntaxException
 

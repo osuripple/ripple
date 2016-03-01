@@ -1,0 +1,26 @@
+import glob
+import generalFunctions
+import consoleHelper
+import bcolors
+
+class banchoConfig:
+	config = {"banchoMaintenance": False, "freeDirect": True, "menuIcon": "", "loginNotification": ""}
+
+	def __init__(self, __loadFromDB = True):
+		"""Initialize a banchoConfig object (and load bancho_settings from db)
+
+		[__loadFromDB -- if True, load values from db. If False, don't load values. Default: True]"""
+
+		if (__loadFromDB):
+			try:
+				self.loadSettings()
+			except:
+				raise
+
+	def loadSettings(self):
+		"""Load bancho_settings from DB"""
+
+		self.config["banchoMaintenance"] = generalFunctions.stringToBool(glob.db.fetch("SELECT value_int FROM bancho_settings WHERE name = 'bancho_maintenance'")["value_int"])
+		self.config["freeDirect"] = generalFunctions.stringToBool(glob.db.fetch("SELECT value_int FROM bancho_settings WHERE name = 'free_direct'")["value_int"])
+		self.config["menuIcon"] = glob.db.fetch("SELECT value_string FROM bancho_settings WHERE name = 'menu_icon'")["value_string"]
+		self.config["loginNotification"] = glob.db.fetch("SELECT value_string FROM bancho_settings WHERE name = 'login_notification'")["value_string"]

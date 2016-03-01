@@ -24,11 +24,12 @@ class tokenList:
 				self.addToken(i)
 
 	def deleteToken(self, __token):
-		"""Delete a token from token list
+		"""Delete a token from token list if it exists
 
 		__token -- token string"""
 
-		self.tokens.pop(__token)
+		if (__token in self.tokens):
+			self.tokens.pop(__token)
 
 
 	def getUserIDFromToken(self, __token):

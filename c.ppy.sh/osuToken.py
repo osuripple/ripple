@@ -4,6 +4,7 @@ import actions
 import gameModes
 import userHelper
 import channelList
+import time
 
 class token:
 	token = ""
@@ -28,6 +29,7 @@ class token:
 	country = 0
 
 	pingTime = 0
+	loginTime = 0
 
 
 	def __init__(self, __userID, __token = None):
@@ -37,10 +39,11 @@ class token:
 		__token -- 	if passed, set token to that value
 					if not passed, token will be generated"""
 
-		# Set userID and username
+		# Set stuff
 		self.userID = __userID
 		self.username = userHelper.getUserUsername(self.userID)
 		self.rank = userHelper.getUserRank(self.userID)
+		self.loginTime = int(time.time())
 
 		# Generate/set token
 		if (__token != None):

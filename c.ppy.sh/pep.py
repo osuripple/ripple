@@ -32,6 +32,7 @@ import locationHelper
 import glob
 import fokabot
 import countryHelper
+import banchoConfig
 
 # pep.py helpers
 import packetHelper
@@ -39,23 +40,13 @@ import consoleHelper
 import databaseHelper
 import passwordHelper
 import responseHelper
+import generalFunctions
 
 # Create flask instance
 app = flask.Flask(__name__)
 
 # Get flask logger
 flaskLogger = logging.getLogger("werkzeug")
-
-# Convert a string (True/true/1) to bool
-# TODO: Move this function to another file
-def stringToBool(s):
-	if (s == "True" or s== "true" or s == "1" or s == 1):
-		return True
-	else:
-		return False
-
-def hexString(s):
-	return ":".join("{:02x}".format(ord(c)) for c in s)
 
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
@@ -147,16 +138,19 @@ def banchoServer():
 				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#osu"))
 				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#announce"))
 
-				# Test notification
-				responseToken.enqueue(serverPackets.notification("Welcome to pep.py server!"))
-
 				# Output channels info
 				for key, value in glob.channels.channels.items():
 					responseToken.enqueue(serverPackets.channelInfo(key))
 
 				responseToken.enqueue(serverPackets.friendList(userID))
 				responseToken.enqueue(serverPackets.onlineUsers())
-				responseToken.enqueue(serverPackets.mainMenuIcon("http://y.zxq.co/mpyxts.png|http://ripple.moe"))	# TODO: Configurable main menu icon
+
+				# Send main menu icon and login notification if needed
+				if (glob.banchoConf.config["menuIcon"] != ""):
+					responseToken.enqueue(serverPackets.mainMenuIcon(glob.banchoConf.config["menuIcon"]))
+
+				if (glob.banchoConf.config["loginNotification"] != ""):
+					responseToken.enqueue(serverPackets.notification(glob.banchoConf.config["loginNotification"]))
 
 				# Print logged in message
 				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
@@ -276,7 +270,7 @@ def banchoServer():
 									who.append(targetToken.userID)
 
 							# Send packet to required users
-							consoleHelper.printColored(str(who), bcolors.BLUE)
+							#consoleHelper.printColored(str(who), bcolors.BLUE)
 							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 							# Fokabot command check
@@ -425,14 +419,19 @@ def banchoServer():
 								spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
 					elif (packetID == packetIDs.client_logout):
 						# Logout packet, no parameters to read
-						# TODO: Channel part at logout
-						# Delete token
-						glob.tokens.deleteToken(requestToken)
 
-						# Enqueue our disconnection to everyone else
-						glob.tokens.enqueueAll(serverPackets.userLogout(userID))
+						# Big client meme here. If someone logs out and logs in right after,
+						# the old logout packet will still be in the queue and will be sent to
+						# the server, so we accept logout packets sent at least 5 seconds after login
+						if (int(time.time()-userToken.loginTime) >= 5):
+							# TODO: Channel part at logout
+							# Delete token
+							glob.tokens.deleteToken(requestToken)
 
-						consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
+							# Enqueue our disconnection to everyone else
+							glob.tokens.enqueueAll(serverPackets.userLogout(userID))
+
+							consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
 
 					# Set reponse data and tokenstring to right value and reset our queue
 
@@ -494,20 +493,34 @@ try:
 except:
 	# Exception while connecting to db
 	consoleHelper.printError()
-	consoleHelper.printColored("[!] Error while connection to database", bcolors.RED)
-	consoleHelper.printColored("[!] Please check your config.ini and run the server again", bcolors.RED)
-	sys.exit()
+	consoleHelper.printColored("[!] Error while connection to database. Please check your config.ini and run the server again", bcolors.RED)
+	raise
+
+# Load bancho_settings
+try:
+	consoleHelper.printNoNl("> Loading bancho settings from DB... ")
+	glob.banchoConf = banchoConfig.banchoConfig()
+	consoleHelper.printDone()
+except:
+	consoleHelper.printError()
+	consoleHelper.printColored("[!] Error while loading bancho_settings. Please make sure the table in DB has all the required rows", bcolors.RED)
+	raise
 
 # Initialize chat channels
 consoleHelper.printNoNl("> Initializing chat channels... ")
 glob.channels.loadChannels()
 consoleHelper.printDone()
 
+# Start fokabot
+consoleHelper.printNoNl("> Connecting FokaBot... ")
+fokabot.connect()
+consoleHelper.printDone()
+
 # Get server parameters from config.ini
 serverName = glob.conf.config["server"]["server"]
 serverHost = glob.conf.config["server"]["host"]
 serverPort = int(glob.conf.config["server"]["port"])
-serverOutputPackets = stringToBool(glob.conf.config["server"]["outputpackets"])
+serverOutputPackets = generalFunctions.stringToBool(glob.conf.config["server"]["outputpackets"])
 
 # Run server sanic way
 if (serverName == "tornado"):
@@ -519,9 +532,9 @@ if (serverName == "tornado"):
 elif (serverName == "flask"):
 	# Flask server
 	# Get flask settings
-	flaskThreaded = stringToBool(glob.conf.config["flask"]["threaded"])
-	flaskDebug = stringToBool(glob.conf.config["flask"]["debug"])
-	flaskLoggerStatus = not stringToBool(glob.conf.config["flask"]["logger"])
+	flaskThreaded = generalFunctions.stringToBool(glob.conf.config["flask"]["threaded"])
+	flaskDebug = generalFunctions.stringToBool(glob.conf.config["flask"]["debug"])
+	flaskLoggerStatus = not generalFunctions.stringToBool(glob.conf.config["flask"]["logger"])
 
 	# Set flask debug mode and logger
 	app.debug = flaskDebug

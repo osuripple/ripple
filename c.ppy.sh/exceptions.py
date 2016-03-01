@@ -21,3 +21,6 @@ class noAdminException(Exception):
 
 class commandSyntaxException(Exception):
 	pass
+
+class banchoConfigErrorException(Exception):
+	pass
