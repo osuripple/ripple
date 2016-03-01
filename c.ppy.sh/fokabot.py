@@ -27,6 +27,8 @@ def fokabotResponse(fro, chan, message):
 		return "Please don't spam"
 	elif "!faq offend" in message:
 		return "Please offend other players"
+	elif "!help" in message:
+		return "Click (here)[https://ripple.moe/index.php?p=16&id=4] for full FokaBot's command list"
 	elif "!report" in message:
 		return "Report command is not here yet :("
 
