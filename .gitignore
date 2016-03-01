@@ -18,8 +18,6 @@ osu.ppy.sh/adminer.php
 push-to-prod.bat
 migrations/latest.txt
 
-# pep.py config file
+# pep.py config and python cache
 c.ppy.sh/config.ini
-
-# ignore this
-osu.ppy.sh/aesmeme.php
+c.ppy.sh/__pycache__/*.*
