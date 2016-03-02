@@ -24,3 +24,6 @@ class commandSyntaxException(Exception):
 
 class banchoConfigErrorException(Exception):
 	pass
+
+class banchoMaintenanceException(Exception):
+	pass

@@ -104,6 +104,7 @@ def banchoServer():
 				# Delete old tokens for that user and generate a new one
 				glob.tokens.deleteOldTokens(userID)
 				responseToken = glob.tokens.addToken(userID)
+				responseTokenString = responseToken.token
 
 				# Get silence end
 				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
@@ -114,6 +115,16 @@ def banchoServer():
 				userSupporter = True
 				if (userRank >= 3):
 					userGMT = True
+
+				# Maintenance check
+				if (glob.banchoConf.config["banchoMaintenance"] == True):
+					if (userGMT == False):
+						# We are not mod/admin, delete token, send notification and logout
+						glob.tokens.deleteToken(responseTokenString)
+						raise exceptions.banchoMaintenanceException()
+					else:
+						# We are mod/admin, send warning notification and continue
+						responseToken.enqueue(serverPackets.notification("Bancho is in maintenance mode. Only mods/admins have full access to the server.\nType !system maintenance off in chat to turn off maintenance mode."))
 
 				# Send all needed login packets
 				responseToken.enqueue(serverPackets.silenceEndTime(userSilenceEnd))
@@ -169,8 +180,7 @@ def banchoServer():
 					responseToken.enqueue(serverPackets.userPanel(value.userID))
 					responseToken.enqueue(serverPackets.userStats(value.userID))
 
-				# Set reponse data and tokenstring to right value and reset our queue
-				responseTokenString = responseToken.token
+				# Set reponse data to right value and reset our queue
 				responseData = responseToken.queue
 				responseToken.resetQueue()
 			except exceptions.loginFailedException:
@@ -182,6 +192,10 @@ def banchoServer():
 				# Login banned error packet
 				err = True
 				responseData += serverPackets.loginBanned()
+			except exceptions.banchoMaintenanceException:
+				# Bancho is in maintenance mode
+				responseData += serverPackets.notification("Our bancho server is in maintenance mode. Please try to login again later.")
+				responseData += serverPackets.loginError()
 			finally:
 				# Print login failed message to console if needed
 				if (err == True):

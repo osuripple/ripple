@@ -6,6 +6,7 @@ import userHelper
 import glob
 import systemHelper
 import actions
+import serverPackets
 
 def connect():
 	"""Add FokaBot to connected users"""
@@ -82,7 +83,7 @@ def fokabotResponse(fro, chan, message):
 					# Restart the server
 					systemHelper.restartServer()
 					return False
-				if (message[1] == "status"):
+				elif (message[1] == "status"):
 					# Print some server info
 					data = systemHelper.getSystemInfo()
 
@@ -101,11 +102,43 @@ def fokabotResponse(fro, chan, message):
 						msg += "Load average: "+str(data["loadAverage"][0])+"/"+str(data["loadAverage"][1])+"/"+str(data["loadAverage"][2])+"\n"
 
 					return msg
-				if (message[1] == "reload"):
+				elif (message[1] == "reload"):
 					#Reload settings from bancho_settings
 					glob.banchoConf.loadSettings()
 					print(glob.banchoConf.config["menuIcon"])
 					return "Bancho settings reloaded!"
+				elif (message[1] == "maintenance"):
+					# Turn on/off bancho maintenance
+					maintenance = True
+
+					# Get on/off
+					if (len(message) >= 2):
+						if (message[2] == "off"):
+							maintenance = False
+
+					# Set new maintenance value in bancho_settings table
+					glob.banchoConf.setMaintenance(maintenance)
+
+					if (maintenance == True):
+						# We have turned on maintenance mode
+						# Users that will be disconnected
+						who = []
+
+						# Disconnect everyone but mod/admins
+						for key,value in glob.tokens.tokens.items():
+							if (value.rank <= 2):
+								who.append(value.userID)
+
+						glob.tokens.enqueueAll(serverPackets.notification("Our bancho server is in maintenance mode. Please try to login again later."))
+						glob.tokens.multipleEnqueue(serverPackets.loginError(), who)
+						msg = "The server is now in maintenance mode!"
+					else:
+						# We have turned off maintenance mode
+						# Send message if we have turned off maintenance mode
+						msg = "The server is no longer in maintenance mode!"
+
+					# Chat output
+					return msg
 			else:
 				raise exceptions.commandSyntaxException
 
