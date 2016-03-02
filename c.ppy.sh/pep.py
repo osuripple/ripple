@@ -417,6 +417,20 @@ def banchoServer():
 							spectatorToken = glob.tokens.getTokenFromUserID(i)
 							if (spectatorToken != None):
 								spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
+					elif (packetID == packetIDs.client_friendAdd):
+						# Friend add packet
+						packetData = clientPackets.addRemoveFriend(packetData)
+						userHelper.addFriend(userID, packetData["friendID"])
+
+						# Console output
+						print("> "+username+" has added "+str(packetData["friendID"])+" to his friends")
+					elif (packetID == packetIDs.client_friendRemove):
+						# Friend remove packet
+						packetData = clientPackets.addRemoveFriend(packetData)
+						userHelper.removeFriend(userID, packetData["friendID"])
+
+						# Console output
+						print("> "+username+" has removed "+str(packetData["friendID"])+" from his friends")
 					elif (packetID == packetIDs.client_logout):
 						# Logout packet, no parameters to read
 

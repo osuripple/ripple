@@ -126,5 +126,51 @@ def getFriendList(userID):
 		# We have no friends, return 0 list
 		return [0]
 
+def addFriend(userID, friendID):
+	"""Add friendID to userID's friend list
+
+	userID -- user
+	friendID -- new friend"""
+
+	# Get current friend list
+	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
+
+	# Values from db are strings, go convert friendID to string
+	friendID = str(friendID)
+
+	# Split in array, append new friend (if not already in friend list) and join array to string again
+	friends = friends.split(",")
+	if (friendID in friends):
+		return
+	friends.append(friendID)
+	friends = str.join(",", friends)
+
+	# Set new value
+	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
+
+def removeFriend(userID, friendID):
+	"""Remove friendID from userID's friend list
+
+	userID -- user
+	friendID -- old friend"""
+
+	# Get current friend list
+	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
+
+	# Values from db are strings, go convert friendID to string
+	friendID = str(friendID)
+
+	# Split in array, remove friend (if it is in friend list) and join array to string again
+	friends = friends.split(",")
+	if (friendID not in friends):
+		return
+	friends.remove(friendID)
+	friends = str.join(",", friends)
+
+	print(str(friends))
+
+	# Set new value
+	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
+
 def getCountry(userID):
 	return glob.db.fetch("SELECT country FROM users_stats WHERE osu_id = ?", [userID])["country"]
