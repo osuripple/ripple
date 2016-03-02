@@ -29,6 +29,6 @@ class banchoConfig:
 		"""Turn on/off bancho maintenance mode. Write new value to db too
 
 		__maintenance -- if True, turn on maintenance mode. If false, turn it off"""
-		
+
 		self.config["banchoMaintenance"] = __maintenance
 		glob.db.execute("UPDATE bancho_settings SET value_int = ? WHERE name = 'bancho_maintenance'", [int(__maintenance)])

@@ -8,6 +8,9 @@ import systemHelper
 import actions
 import serverPackets
 
+import time
+import threading
+
 def connect():
 	"""Add FokaBot to connected users"""
 	token = glob.tokens.addToken(999)
@@ -80,9 +83,18 @@ def fokabotResponse(fro, chan, message):
 			# Get parameters
 			if (len(message) >= 2):
 				if (message[1] == "restart"):
-					# Restart the server
-					systemHelper.restartServer()
-					return False
+					# Console output
+					consoleHelper.printColored("[!] PEP.PY WILL RESTART IN 60 SECONDS!!", bcolors.RED)
+
+					# Send notification
+					msg = "We are performing some maintenance. Bancho will restart in 1 minute. Thank you for your patience."
+					glob.tokens.enqueueAll(serverPackets.notification(msg))
+
+					# Schedule server restart packet (after 40 seconds) and pep.py restart (after 60 seconds)
+					threading.Timer(40.0, glob.tokens.enqueueAll, [serverPackets.banchoRestart(25000)]).start()
+					threading.Timer(60.0, systemHelper.restartServer).start()
+
+					return msg
 				elif (message[1] == "status"):
 					# Print some server info
 					data = systemHelper.getSystemInfo()

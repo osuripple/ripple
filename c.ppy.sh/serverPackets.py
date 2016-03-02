@@ -181,8 +181,11 @@ def notification(message):
 def jumpscare(message):
 	return packetHelper.buildPacket(packetIDs.server_jumpscare, [[message, dataTypes.string]])
 
-def banchoRestart():
-	return packetHelper.buildPacket(packetIDs.server_restart)
+def banchoRestart(t):
+	"""Send banchoRestart packet
+
+	t -- Time (in ms) before attempting a new connection"""
+	return packetHelper.buildPacket(packetIDs.server_restart, [[t, dataTypes.uInt32]])
 
 # Testing stuff
 def getAttention():

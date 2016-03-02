@@ -2,6 +2,7 @@ import glob
 import serverPackets
 import psutil
 import os
+import sys
 
 def runningUnderUnix():
 	'''Get if the server is running under UNIX or NT
@@ -10,11 +11,9 @@ def runningUnderUnix():
 	return True if os.name == "posix" else False
 
 def restartServer():
-	'''Enqueue notification and server restart packets'''
-
-	# TODO: Schedule restart
-	glob.tokens.enqueueAll(serverPackets.notification("We are performing some maintenance. Bancho will be restarted in 1 minute. Thank you for your patience."))
-	glob.tokens.enqueueAll(serverPackets.banchoRestart())
+	'''Restart pep.py script'''
+	print("> Restarting pep.py...")
+	os.execv(sys.executable, [sys.executable] + sys.argv)
 
 def getSystemInfo():
 	'''Get a dictionary with some system/server info
