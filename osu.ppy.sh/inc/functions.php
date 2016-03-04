@@ -398,6 +398,8 @@
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i>	Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
 					</ul>
 				</li>');
@@ -421,6 +423,8 @@
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="http://y.zxq.co/ngomne.zip"><i class="fa fa-server"></i>	Kwisk\'s Server switcher</a></li>
 						<li class="dropdown-submenu"><a href="https://mu.nyodev.xyz/upd.php?id=18"><i class="fa fa-server"></i>	Phwr\'s Server switcher</a></li>
+						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
 					</ul>
 				</li>');
