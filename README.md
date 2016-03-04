@@ -1,6 +1,6 @@
 # Ripple
 
-This is the source code that powers [ripple](http://osu.ppy.sh), a private/custom osu! server that has been in development for longer than I'd like to admit. (there's actually a longer history and commit log, but that's part of the shitty code).
+This is the source code that powers [ripple](http://ripple.moe), a private/custom osu! server that has been in development for longer than I'd like to admit. (there's actually a longer history and commit log, but that's part of the shitty code).
 
 ## Requirements
 
