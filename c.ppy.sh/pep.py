@@ -267,25 +267,25 @@ def banchoServer():
 									who.remove(userID)
 							else:
 								# Spectator channel
-								# Send this packet to every spectator
+								# Send this packet to every spectator and host
 								if (userToken.spectating == 0):
 									# We have sent to send a message to our #spectator channel
 									targetToken = userToken
+									who = targetToken.spectators.copy()
+									# No need to remove us because we are the host so we are not in spectators list
 								else:
 									# We have sent a message to someone else's #spectator
 									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
+									who = targetToken.spectators.copy()
 
-								# Send to every spectator except us
-								who = targetToken.spectators.copy()
-								if userID in who:
-									who.remove(userID)
+									# Remove us
+									if (userID in who):
+										who.remove(userID)
 
-								# Send to host too if needed
-								if (userID != targetToken.userID):
+									# Add host
 									who.append(targetToken.userID)
 
 							# Send packet to required users
-							#consoleHelper.printColored(str(who), bcolors.BLUE)
 							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 							# Fokabot command check
@@ -381,18 +381,22 @@ def banchoServer():
 							# Set spectating user ID
 							userToken.startSpectating(packetData["userID"])
 
-							# Add new spectator to tatget's spectators
+							# Get host token
 							targetToken = glob.tokens.getTokenFromUserID(packetData["userID"])
 							if (targetToken == None):
 								raise exceptions.tokenNotFoundException
+
+							# Add us to spectators
 							targetToken.addSpectator(userID)
+
+							# Send spectator join packet to host
 							targetToken.enqueue(serverPackets.addSpectator(userID))
 
-							# Join spectator
+							# Join #spectator
 							userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							if (len(targetToken.spectators) == 1):
-								# First spectator, send #spectator join also to target
+								# First spectator, send #spectator join to host too
 								targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							# Console output
@@ -403,14 +407,16 @@ def banchoServer():
 						try:
 							# Stop spectating packet, has no parameters
 
-							# Remove our ID spectator from tatget's spectators
+							# Remove our ID spectator from host's spectators
 							target = userToken.spectating
 							targetToken = glob.tokens.getTokenFromUserID(target)
 							if (targetToken == None):
 								raise exceptions.tokenNotFoundException
+
+							# Remove spectator from spectators
 							targetToken.removeSpectator(userID)
-							targetToken.enqueue(serverPackets.removeSpectator(userID))
-							# Set spectating userID to 0
+
+							# Set our spectating userID to 0
 							userToken.stopSpectating()
 
 							# Console output
@@ -422,6 +428,8 @@ def banchoServer():
 							# We don't have the beatmap, we can't spectate
 							target = userToken.spectating
 							targetToken = glob.tokens.getTokenFromUserID(target)
+
+							# Send the packet to host
 							targetToken.enqueue(serverPackets.noSongSpectator(userID))
 						except exceptions.tokenNotFoundException:
 							consoleHelper.printColored("[!] Spectator can't spectate: token not found", bcolors.RED)
@@ -429,9 +437,11 @@ def banchoServer():
 						# Client spectate frames
 						# Send spectator frames to every spectator
 						for i in userToken.spectators:
-							spectatorToken = glob.tokens.getTokenFromUserID(i)
-							if (spectatorToken != None):
-								spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
+							if (i != userID):
+								# Send to every spectator but us (host)
+								spectatorToken = glob.tokens.getTokenFromUserID(i)
+								if (spectatorToken != None):
+									spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
 					elif (packetID == packetIDs.client_friendAdd):
 						# Friend add packet
 						packetData = clientPackets.addRemoveFriend(packetData)

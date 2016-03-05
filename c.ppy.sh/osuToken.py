@@ -115,15 +115,20 @@ class token:
 		"""Add __userID to our spectators
 
 		userID -- new spectator userID"""
-		self.spectators.append(__userID)
+
+		# Add userID to spectators if not already in
+		if (__userID not in self.spectators):
+			self.spectators.append(__userID)
 
 	def removeSpectator(self, __userID):
 		"""Remove __userID from our spectators
 
 		userID -- old spectator userID"""
+
+		# Remove spectator
 		if (__userID in self.spectators):
 			self.spectators.remove(__userID)
-
+			
 	def setCountry(self, __countryID):
 		"""Set country to __countryID
 
