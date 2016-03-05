@@ -113,7 +113,10 @@ def getFriendList(userID):
 	# Get friends from db
 	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
 
-	if (friends != ""):
+	if (friends == None or friends == ""):
+		# We have no friends, return 0 list
+		return [0]
+	else:
 		# If we have some friends, split to get their IDs
 		friends = friends.split(",")
 
@@ -122,9 +125,7 @@ def getFriendList(userID):
 
 		# Return friend IDs
 		return friends
-	else:
-		# We have no friends, return 0 list
-		return [0]
+
 
 def addFriend(userID, friendID):
 	"""Add friendID to userID's friend list
