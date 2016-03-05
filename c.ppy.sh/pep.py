@@ -305,14 +305,21 @@ def banchoServer():
 							consoleHelper.printColored("[!] "+username+" has attempted to send a message to channel "+packetData["to"]+", but he has no write permissions", bcolors.RED)
 
 					elif (packetID == packetIDs.client_sendPrivateMessage):
-						# Private message packet
-						packetData = clientPackets.sendPrivateMessage(packetData)
+						try:
+							# Private message packet
+							packetData = clientPackets.sendPrivateMessage(packetData)
 
-						# Send packet message to target if it exists
-						glob.tokens.getTokenFromUsername(packetData["to"]).enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
+							# Send packet message to target if it exists
+							token = glob.tokens.getTokenFromUsername(packetData["to"])
+							if (token == None):
+								raise exceptions.tokenNotFoundException()
+							token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
-						# Console output
-						consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+							# Console output
+							consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+						except exceptions.tokenNotFoundException:
+							# Token not found, user disconnected
+							consoleHelper.printColored("[!] "+username+" has tried to send a message to "+packetData["to"]+", but its token couldn't be found", bcolors.RED)
 					elif (packetID == packetIDs.client_channelJoin):
 						try:
 							# Channel join packet

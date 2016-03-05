@@ -70,10 +70,10 @@ def onlineUsers():
 
 	users = glob.tokens.tokens;
 
-	# Friends number
+	# Users number
 	onlineUsersData.append([len(users), dataTypes.uInt16])
 
-	# Add all friend user IDs to friendsData
+	# Add all users user IDs to onlineUsersData
 	for key,value in users.items():
 		onlineUsersData.append([value.userID, dataTypes.sInt32])
 
@@ -95,7 +95,9 @@ def userPanel(userID):
 	# Get username color according to rank
 	# Only admins and normal users are currently supported
 	rank = userHelper.getUserRank(userID)
-	if (rank == 4):
+	if (username == "FokaBot"):
+		usernameColor = usernameColors.mod
+	elif (rank == 4):
 		usernameColor = usernameColors.admin
 	else:
 		usernameColor = usernameColors.normal
@@ -147,7 +149,7 @@ def userStats(userID):
 
 # Chat packets
 def sendMessage(fro, to, message):
-	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string]])
+	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string], [userHelper.getUserID(fro), dataTypes.sInt32]])
 
 def channelJoinSuccess(userID, chan):
 	return packetHelper.buildPacket(packetIDs.server_channelJoinSuccess, [[chan, dataTypes.string]])
