@@ -416,6 +416,9 @@ def banchoServer():
 							# Remove spectator from spectators
 							targetToken.removeSpectator(userID)
 
+							# Send the packet to host
+							targetToken.enqueue(serverPackets.removeSpectator(userID))
+
 							# Set our spectating userID to 0
 							userToken.stopSpectating()
 
