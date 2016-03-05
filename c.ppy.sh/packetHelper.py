@@ -22,17 +22,17 @@ def uleb128Encode(num):
 def uleb128Decode(num):
 	shift = 0
 
-	stuff = [0,0]	#total, length
+	arr = [0,0]	#total, length
 
 	while True:
-		b = num[stuff[1]]
-		stuff[1]+=1
-		stuff[0] = stuff[0] | (int(b & 127) << shift)
+		b = num[arr[1]]
+		arr[1]+=1
+		arr[0] = arr[0] | (int(b & 127) << shift)
 		if (b & 128 == 0):
 			break
 		shift += 7
 
-	return stuff
+	return arr
 
 def unpackData(__data, __dataType):
 	"""Unpacks data according to dataType

@@ -220,12 +220,13 @@ def banchoServer():
 
 				# Keep reading packets until everything has been read
 				while pos < len(requestData):
-					# Get packet from stack
-					packetData = requestData[pos:]
+					# Get packet from stack starting from new packet
+					leftData = requestData[pos:]
 
-					# Get packet ID and data length
-					packetID = packetHelper.readPacketID(packetData)
-					dataLength = packetHelper.readPacketLength(packetData)
+					# Get packet ID, data length and data
+					packetID = packetHelper.readPacketID(leftData)
+					dataLength = packetHelper.readPacketLength(leftData)
+					packetData = requestData[pos:(pos+dataLength+7)]
 
 					# Console output if needed
 					if (serverOutputPackets == True and packetID != 4):
