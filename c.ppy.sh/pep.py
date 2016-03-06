@@ -294,10 +294,10 @@ def banchoServer():
 							if (fokaMessage != False):
 								who.append(userID)
 								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), who, False)
-								consoleHelper.printColored("> FokaBot@"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.HEADER)
+								consoleHelper.printColored("> FokaBot@"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)
 
 							# Console output
-							consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.HEADER)
+							consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.PINK)
 						except exceptions.channelModeratedException:
 							consoleHelper.printColored("[!] "+username+" has attempted to send a message to a channel that is in moderated mode ("+packetData["to"]+")", bcolors.RED)
 						except exceptions.channelUnknownException:
@@ -317,7 +317,7 @@ def banchoServer():
 							token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
 							# Console output
-							consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.HEADER)
+							consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.PINK)
 						except exceptions.tokenNotFoundException:
 							# Token not found, user disconnected
 							consoleHelper.printColored("[!] "+username+" has tried to send a message to "+packetData["to"]+", but its token couldn't be found", bcolors.RED)
@@ -408,7 +408,7 @@ def banchoServer():
 								targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							# Console output
-							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.HEADER)
+							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.PINK)
 						except exceptions.tokenNotFoundException:
 							consoleHelper.printColored("[!] Spectator start: token not found", bcolors.RED)
 					elif (packetID == packetIDs.client_stopSpectating):
@@ -431,7 +431,7 @@ def banchoServer():
 							userToken.stopSpectating()
 
 							# Console output
-							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.HEADER)
+							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.PINK)
 						except exceptions.tokenNotFoundException:
 							consoleHelper.printColored("[!] Spectator stop: token not found", bcolors.RED)
 					elif (packetID == packetIDs.client_cantSpectate):
