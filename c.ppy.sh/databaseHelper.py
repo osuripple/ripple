@@ -45,21 +45,18 @@ class db:
 		__params -- array with params. Optional
 		"""
 
-		try:
-			with self.connection.cursor() as cursor:
+
+		with self.connection.cursor() as cursor:
+			try:
 				# Bind params if needed
 				if (__params != None):
 					__query = self.bindParams(__query, __params)
 
 				# Execute the query
 				cursor.execute(__query)
-
-				# Commit changes
-				# TODO: Cursor close
-				#self.connection.commit()
-		finally:
-			pass
-			#self.connection.close()
+			finally:
+				# Close this connection
+				cursor.close()
 
 
 	def fetch(self, __query, __params = None, __all = False):
@@ -73,8 +70,9 @@ class db:
 		return -- dictionary with result data or False if failed
 		"""
 
-		try:
-			with self.connection.cursor() as cursor:
+
+		with self.connection.cursor() as cursor:
+			try:
 				# Bind params if needed
 				if (__params != None):
 					__query = self.bindParams(__query, __params)
@@ -87,11 +85,9 @@ class db:
 					return cursor.fetchone()
 				else:
 					return cursor.fetchall()
-
-				# TODO: Cursor close
-		finally:
-			pass
-			#self.connection.close()
+			finally:
+				# Close this connection
+				cursor.close()
 
 
 	def fetchAll(self, __query, __params = None):
