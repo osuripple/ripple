@@ -7,6 +7,27 @@ import channelList
 import time
 
 class token:
+	"""Osu Token object
+
+	token -- token string
+	userID -- userID associated to that token
+	username -- username relative to userID (cache)
+	rank -- rank (permissions) relative to userID (cache)
+	actionID -- current user action (see actions.py)
+	actionText -- current user action text
+	actionMd5 -- md5 relative to user action
+	actionMods -- current acton mods
+	gameMode -- current user game mode
+	location -- [latitude,longitude]
+	queue -- packets queue
+	joinedChannels -- list. Contains joined channel names
+	spectating -- userID of spectating user. 0 if not spectating.
+	spectators -- list. Contains userIDs of spectators
+	country -- osu country code. Use countryHelper to convert from letter country code to osu country code
+	pingTime -- latest packet received UNIX time
+	loginTime -- login UNIX time
+	"""
+
 	token = ""
 	userID = 0
 	username = ""
@@ -14,8 +35,10 @@ class token:
 	actionID = actions.idle
 	actionText = ""
 	actionMd5 = ""
+	actionMods = 0
 	gameMode = gameModes.std
 
+	country = 0
 	location = [0,0]
 
 	queue = bytes()
@@ -24,20 +47,18 @@ class token:
 	spectating = 0
 	spectators = []
 
-	actionMods = 0
-
-	country = 0
-
 	pingTime = 0
 	loginTime = 0
 
 
 	def __init__(self, __userID, __token = None):
-		"""Create a token object and set userID and token
+		"""
+		Create a token object and set userID and token
 
 		__userID -- user associated to this token
 		__token -- 	if passed, set token to that value
-					if not passed, token will be generated"""
+					if not passed, token will be generated
+		"""
 
 		# Set stuff
 		self.userID = __userID
@@ -53,9 +74,12 @@ class token:
 
 
 	def enqueue(self, __bytes):
-		"""Add bytes (packets) to queue
+		"""
+		Add bytes (packets) to queue
 
-		__bytes -- (packet) bytes to enqueue"""
+		__bytes -- (packet) bytes to enqueue
+		"""
+
 		self.queue += __bytes
 
 
@@ -77,8 +101,10 @@ class token:
 		"""Remove __channel from joined channels list
 
 		__channel -- channel name"""
+
 		if (__channel in self.joinedChannels):
 			self.joinedChannels.remove(__channel)
+
 
 	def setLocation(self, __location):
 		"""Set location (latitude and longitude)
@@ -87,6 +113,7 @@ class token:
 
 		self.location = __location
 
+
 	def getLatitude(self):
 		"""Get latitude
 
@@ -94,11 +121,13 @@ class token:
 
 		return self.location[0]
 
+
 	def getLongitude(self):
 		"""Get longitude
 
 		return -- longitude"""
 		return self.location[1]
+
 
 	def startSpectating(self, __userID):
 		"""Set the spectating user to __userID
@@ -107,9 +136,11 @@ class token:
 
 		self.spectating = __userID
 
+
 	def stopSpectating(self):
 		"""Set the spectating user to 0, aka no user"""
 		self.spectating = 0
+
 
 	def addSpectator(self, __userID):
 		"""Add __userID to our spectators
@@ -120,6 +151,7 @@ class token:
 		if (__userID not in self.spectators):
 			self.spectators.append(__userID)
 
+
 	def removeSpectator(self, __userID):
 		"""Remove __userID from our spectators
 
@@ -128,18 +160,23 @@ class token:
 		# Remove spectator
 		if (__userID in self.spectators):
 			self.spectators.remove(__userID)
-			
+
+
 	def setCountry(self, __countryID):
 		"""Set country to __countryID
 
 		__countryID -- numeric country ID. See countryHelper.py"""
+		
 		self.country = __countryID
+
 
 	def getCountry(self):
 		"""Get numeric country ID
 
 		return -- numeric country ID. See countryHelper.py"""
+
 		return self.country
+
 
 	def updatePingTime(self):
 		"""Update latest ping time"""

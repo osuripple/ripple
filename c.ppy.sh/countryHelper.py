@@ -1,3 +1,5 @@
+"""Contains all country codes with their osu numeric code"""
+
 countryCodes = {}
 countryCodes["LV"] = 132
 countryCodes["AD"] = 3
@@ -251,10 +253,12 @@ countryCodes["SI"] = 194
 countryCodes["AI"] = 7
 
 def getCountryID(code):
-	'''Get country ID for osu client
+	"""
+	Get country ID for osu client
 
 	code -- country name abbreviation (eg: US)
-	return -- country code int'''
+	return -- country code int
+	"""
 
 	if (code in countryCodes):
 		return countryCodes[code]

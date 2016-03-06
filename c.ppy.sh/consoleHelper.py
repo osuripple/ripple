@@ -1,3 +1,5 @@
+"""Some console related functions"""
+
 import bcolors
 
 def printServerStartHeader(asciiArt):
@@ -29,35 +31,39 @@ def printServerStartHeader(asciiArt):
 
 
 def printNoNl(string):
-	""" Print string without new line at the end
+	"""
+	Print string without new line at the end
 
-	string -- string to print"""
+	string -- string to print
+	"""
 
 	print(string, end="")
 
 
 def printColored(string, color):
-	""" Print colored string
+	"""
+	Print colored string
 
 	string -- string to print
-	color -- see bcolors.py"""
+	color -- see bcolors.py
+	"""
 
 	print(color+string+bcolors.ENDC)
 
 
 def printError():
-	""" Print error text FOR LOADING"""
+	"""Print error text FOR LOADING"""
 
 	printColored("Error", bcolors.RED)
 
 
 def printDone():
-	""" Print error text FOR LOADING"""
+	"""Print error text FOR LOADING"""
 
 	printColored("Done", bcolors.GREEN)
 
 
 def printWarning():
-	""" Print error text FOR LOADING"""
+	"""Print error text FOR LOADING"""
 
 	printColored("Warning", bcolors.YELLOW)

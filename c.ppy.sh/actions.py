@@ -1,3 +1,4 @@
+"""Contains user actions"""
 idle 		= 0
 afk 		= 1
 playing 	= 2

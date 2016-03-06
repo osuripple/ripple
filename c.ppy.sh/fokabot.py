@@ -1,3 +1,5 @@
+"""FokaBot related functions"""
+
 import random
 import exceptions
 import consoleHelper
@@ -13,16 +15,28 @@ import threading
 
 def connect():
 	"""Add FokaBot to connected users"""
+
 	token = glob.tokens.addToken(999)
 	token.actionID = actions.idle
 
 
 def disconnect():
 	"""Remove FokaBot from connected users"""
+
 	glob.tokens.deleteToken(getTokenFromUserID(999))
 
-'''JUST A TEMPORARY MEME'''
+
 def fokabotResponse(fro, chan, message):
+	"""
+	Check if a message has triggered fokabot (and return its response)
+
+	fro -- sender username (for permissions stuff with admin commands)
+	chan -- channel name
+	message -- message
+
+	return -- fokabot's response string or False
+	"""
+
 	if "!roll" in message:
 		maxPoints = 100
 		message = message.split(" ")

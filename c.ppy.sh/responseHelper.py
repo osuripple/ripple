@@ -2,13 +2,13 @@ import flask
 import gzip
 
 def generateResponse(token, data = None):
-	"""Return a flask response with required headers
-	right token and gzip compressed data
+	"""
+	Return a flask response with required headers for osu! client, token and gzip compressed data
 
 	token -- user token
 	data -- plain response body
-
-	return -- flask response"""
+	return -- flask response
+	"""
 
 	resp = flask.Response(gzip.compress(data, 6))
 	resp.headers['cho-token'] = token

@@ -3,27 +3,32 @@ import bcolors
 import sys
 
 class db:
+	"""A MySQL database connection"""
+
 	connection = None
 
-
 	def __init__(self, __host, __username, __password, __database):
-		"""Open a db connection
+		"""
+		Connect to MySQL database
 
 		__host -- MySQL host name
 		__username -- MySQL username
 		__password -- MySQL password
-		__database -- MySQL database name"""
+		__database -- MySQL database name
+		"""
 
 		self.connection = pymysql.connect(host=__host, user=__username, password=__password, db=__database, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
 
 
 	def bindParams(self, __query, __params):
-		"""Replace every ? with the respective escaped parameter in array
+		"""
+		Replace every ? with the respective **escaped** parameter in array
 
 		__query -- query with ?s
 		__params -- array with params
 
-		return -- new query"""
+		return -- new query
+		"""
 
 		for i in __params:
 			escaped = self.connection.escape(i)
@@ -33,10 +38,12 @@ class db:
 
 
 	def execute(self, __query, __params = None):
-		"""Execute a SQL query
+		"""
+		Execute a SQL query
 
 		__query -- query, can contain ?s
-		__params -- array with params. Optional"""
+		__params -- array with params. Optional
+		"""
 
 		try:
 			with self.connection.cursor() as cursor:
@@ -48,6 +55,7 @@ class db:
 				cursor.execute(__query)
 
 				# Commit changes
+				# TODO: Cursor close
 				#self.connection.commit()
 		finally:
 			pass
@@ -55,13 +63,15 @@ class db:
 
 
 	def fetch(self, __query, __params = None, __all = False):
-		"""Fetch the first (or all) element(s) of SQL query result
+		"""
+		Fetch the first (or all) element(s) of SQL query result
 
 		__query -- query, can contain ?s
 		__params -- array with params. Optional
 		__all -- if true, will fetch all values. Same as fetchAll
 
-		return -- dictionary with result data or False if failed"""
+		return -- dictionary with result data or False if failed
+		"""
 
 		try:
 			with self.connection.cursor() as cursor:
@@ -77,17 +87,21 @@ class db:
 					return cursor.fetchone()
 				else:
 					return cursor.fetchall()
+
+				# TODO: Cursor close
 		finally:
 			pass
 			#self.connection.close()
 
 
 	def fetchAll(self, __query, __params = None):
-		"""Fetch the all elements of SQL query result
+		"""
+		Fetch the all elements of SQL query result
 
 		__query -- query, can contain ?s
 		__params -- array with params. Optional
 
-		return -- dictionary with result data"""
+		return -- dictionary with result data
+		"""
 
 		return self.fetch(__query, __params, True)

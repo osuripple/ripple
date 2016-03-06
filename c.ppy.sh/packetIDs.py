@@ -1,3 +1,5 @@
+"""Contain server and client packet IDs"""
+
 client_changeAction = 0
 client_sendPublicMessage = 1
 client_logout = 2

@@ -1,9 +1,9 @@
+""" Contains functions used to read specific client packets from byte stream """
 import dataTypes
 import packetHelper
 
-'''
-Read client packets functions
-'''
+
+""" General packets """
 def userActionChange(stream):
 	return packetHelper.readPacketData(stream,
 	[
@@ -14,6 +14,9 @@ def userActionChange(stream):
 		["gameMode",	dataTypes.byte]
 	])
 
+
+
+""" Client chat packets """
 def sendPublicMessage(stream):
 	return packetHelper.readPacketData(stream,
 	[
@@ -41,6 +44,7 @@ def addRemoveFriend(stream):
 	return packetHelper.readPacketData(stream, [["friendID", dataTypes.sInt32]])
 
 
-''' SPECTATOR PACKETS '''
+
+""" SPECTATOR PACKETS """
 def startSpectating(stream):
 	return packetHelper.readPacketData(stream,[["userID", 	dataTypes.sInt32]])

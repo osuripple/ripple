@@ -2,15 +2,24 @@ import os
 import configparser
 
 class config:
+	"""
+	config.ini object
+
+	config -- list with ini data
+	default -- if true, we have generated a default config.ini
+	"""
+
 	config = configparser.ConfigParser()
 	fileName = "";		# config filename
-	default = True      # if true, we have generated a default config.ini
+	default = True
 
 	# Check if config.ini exists and load/generate it
 	def __init__(self, __file):
-		"""Initialize a config object
+		"""
+		Initialize a config object
 
-		__file -- filename"""
+		__file -- filename
+		"""
 
 		self.fileName = __file
 		if (os.path.isfile(self.fileName)):
@@ -25,9 +34,11 @@ class config:
 
 	# Check if config.ini has all needed the keys
 	def checkConfig(self):
-		"""Check if this config has the required keys
+		"""
+		Check if this config has the required keys
 
-		return -- True if valid, False if not"""
+		return -- True if valid, False if not
+		"""
 
 		try:
 			# Try to get all the required keys
@@ -52,7 +63,7 @@ class config:
 
 	# Generate a default config.ini
 	def generateDefaultConfig(self):
-		"""Open and set default keys for that confg files"""
+		"""Open and set default keys for that config file"""
 
 		# Open config.ini in write mode
 		f = open(self.fileName, "w")

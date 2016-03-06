@@ -1,3 +1,4 @@
+""" Contains functions used to write specific server packets to byte streams """
 import packetHelper
 import dataTypes
 import gameModes
@@ -8,11 +9,8 @@ import consoleHelper
 import bcolors
 import packetIDs
 
-'''
-Write server packets functions
-'''
-# Login errors
-# (userID packets derivates)
+""" Login errors packets
+(userID packets derivates) """
 def loginFailed():
 	return packetHelper.buildPacket(packetIDs.server_userID, [[-1, dataTypes.sInt32]])
 
@@ -29,7 +27,7 @@ def needSupporter():
 	return packetHelper.buildPacket(packetIDs.server_userID, [[-6, dataTypes.sInt32]])
 
 
-# Login packets
+""" Login packets """
 def userID(uid):
 	return packetHelper.buildPacket(packetIDs.server_userID, [[uid, dataTypes.sInt32]])
 
@@ -79,6 +77,8 @@ def onlineUsers():
 
 	return packetHelper.buildPacket(packetIDs.server_userPresenceBundle, onlineUsersData)
 
+
+""" Users packets """
 def userLogout(userID):
 	return packetHelper.buildPacket(packetIDs.server_userLogout, [[userID, dataTypes.sInt32], [0, dataTypes.byte]])
 
@@ -147,7 +147,7 @@ def userStats(userID):
 	])
 
 
-# Chat packets
+""" Chat packets """
 def sendMessage(fro, to, message):
 	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string], [userHelper.getUserID(fro), dataTypes.sInt32]])
 
@@ -162,7 +162,7 @@ def channelInfoEnd():
 	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd, [[0, dataTypes.uInt32]])
 
 
-# Spectator packets
+""" Spectator packets """
 def addSpectator(userID):
 	return packetHelper.buildPacket(packetIDs.server_spectatorJoined, [[userID, dataTypes.sInt32]])
 
@@ -176,20 +176,18 @@ def noSongSpectator(userID):
 	return packetHelper.buildPacket(packetIDs.server_spectatorCantSpectate, [[userID, dataTypes.sInt32]])
 
 
-# Other packets
+""" Other packets """
 def notification(message):
 	return packetHelper.buildPacket(packetIDs.server_notification, [[message, dataTypes.string]])
 
 def jumpscare(message):
 	return packetHelper.buildPacket(packetIDs.server_jumpscare, [[message, dataTypes.string]])
 
-def banchoRestart(t):
-	"""Send banchoRestart packet
+def banchoRestart(msUntilReconnection):
+	return packetHelper.buildPacket(packetIDs.server_restart, [[msUntilReconnection, dataTypes.uInt32]])
 
-	t -- Time (in ms) before attempting a new connection"""
-	return packetHelper.buildPacket(packetIDs.server_restart, [[t, dataTypes.uInt32]])
 
-# Testing stuff
+""" WIP Packets """
 def getAttention():
 	return packetHelper.buildPacket(packetIDs.server_getAttention)
 

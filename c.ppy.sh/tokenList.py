@@ -2,42 +2,45 @@ import osuToken
 import userHelper
 
 class tokenList:
-	# Connected users
-	# Index: token string
-	# Value: token object
+	"""
+	List of connected osu tokens
+
+	tokens -- dictionary. key: token string, value: token object
+	"""
+
 	tokens = {}
 
 	def addToken(self, __userID):
-		"""Add a token object to tokens list
+		"""
+		Add a token object to tokens list
 
 		__userID -- user id associated to that token
-
-		return -- token object"""
+		return -- token object
+		"""
 
 		newToken = osuToken.token(__userID)
 		self.tokens[newToken.token] = newToken
 		return newToken
 
-	def fakeUsers(self):
-		for i in range (1000,1041):
-			if (userHelper.userExists(i) == True):
-				self.addToken(i)
-
 	def deleteToken(self, __token):
-		"""Delete a token from token list if it exists
+		"""
+		Delete a token from token list if it exists
 
-		__token -- token string"""
+		__token -- token string
+		"""
 
 		if (__token in self.tokens):
 			self.tokens.pop(__token)
 
 
 	def getUserIDFromToken(self, __token):
-		"""Get user ID from a token
+		"""
+		Get user ID from a token
 
 		__token -- token to find
 
-		return: false if not found, userID if found"""
+		return: false if not found, userID if found
+		"""
 
 		# Make sure the token exists
 		if (__token not in self.tokens):
@@ -45,15 +48,15 @@ class tokenList:
 
 		# Get userID associated to that token
 		return self.tokens[__token].userID;
-		#return self.tokens[self.tokens.index(__token)].userID;
 
 
 	def getTokenFromUserID(self, __userID):
-		"""Get token from a user ID
+		"""
+		Get token from a user ID
 
 		__userID -- user ID to find
-
-		return: false if not found, token object if found"""
+		return -- False if not found, token object if found
+		"""
 
 		# Make sure the token exists
 		for key, value in self.tokens.items():
@@ -65,11 +68,12 @@ class tokenList:
 
 
 	def getTokenFromUsername(self, __username):
-		"""Get token from a username
+		"""
+		Get token from a username
 
 		__username -- username to find
-
-		return: false if not found, token object if found"""
+		return -- False if not found, token object if found
+		"""
 
 		# Make sure the token exists
 		for key, value in self.tokens.items():
@@ -79,10 +83,13 @@ class tokenList:
 		# Return none if not found
 		return None
 
-	def deleteOldTokens(self, __userID):
-		"""Delete old userID's tokens if found
 
-		__userID -- tokens associated to this user will be deleted"""
+	def deleteOldTokens(self, __userID):
+		"""
+		Delete old userID's tokens if found
+
+		__userID -- tokens associated to this user will be deleted
+		"""
 
 		# Delete older tokens
 		for key, value in self.tokens.items():
@@ -93,12 +100,15 @@ class tokenList:
 				# break or items() function throws errors
 				break
 
+
 	def multipleEnqueue(self, __packet, __who, __but = False):
-		""" Enqueue a packet to multiple users
+		"""
+		Enqueue a packet to multiple users
 
 		__packet -- packet bytes to enqueue
 		__who -- userIDs array
-		__but -- if True, will enqueue to everyone but users in __who array"""
+		__but -- if True, enqueue to everyone but users in __who array
+		"""
 
 		for key, value in self.tokens.items():
 			shouldEnqueue = False
@@ -113,9 +123,11 @@ class tokenList:
 
 
 	def enqueueAll(self, __packet):
-		"""Enqueue packet(s) to every connected user
+		"""
+		Enqueue packet(s) to every connected user
 
-		__packet -- packet bytes to enqueue"""
+		__packet -- packet bytes to enqueue
+		"""
 
 		for key, value in self.tokens.items():
 			value.enqueue(__packet)

@@ -1,3 +1,5 @@
+"""Bancho exceptions"""
+
 class loginFailedException(Exception):
 	pass
 

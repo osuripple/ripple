@@ -9,10 +9,12 @@ url = "http://ip.zxq.co/"
 
 
 def getCountry(ip):
-	"""Get country from IP address
+	"""
+	Get country from IP address
 
 	ip -- IP Address
-	return -- Country code (2 letters)"""
+	return -- Country code (2 letters)
+	"""
 
 	# Default value, sent if API is memeing
 	country = "XX"
@@ -27,10 +29,12 @@ def getCountry(ip):
 
 
 def getLocation(ip):
-	"""Get latitude and longitude from IP address
+	"""
+	Get latitude and longitude from IP address
 
 	ip -- IP address
-	return -- [latitude, longitude]"""
+	return -- [latitude, longitude]
+	"""
 
 	# Default value, sent if API is memeing
 	data = [0,0]

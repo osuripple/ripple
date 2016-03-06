@@ -4,6 +4,13 @@ import sys
 import dataTypes
 
 def uleb128Encode(num):
+	"""
+	Encode int -> uleb128
+
+	num -- int to encode
+	return -- bytearray with encoded number
+	"""
+
 	arr = bytearray()
 	length = 0
 
@@ -19,7 +26,15 @@ def uleb128Encode(num):
 
 	return arr
 
+
 def uleb128Decode(num):
+	"""
+	Decode uleb128 -> int
+
+	num -- encoded uleb128
+	return -- list. [total, length]
+	"""
+
 	shift = 0
 
 	arr = [0,0]	#total, length
@@ -34,13 +49,16 @@ def uleb128Decode(num):
 
 	return arr
 
+
 def unpackData(__data, __dataType):
-	"""Unpacks data according to dataType
+	"""
+	Unpacks data according to dataType
 
 	__data -- bytes array to unpack
 	__dataType -- data type. See dataTypes.py
 
-	return -- unpacked stuff"""
+	return -- unpacked bytes
+	"""
 
 	# Get right pack Type
 	if (__dataType == dataTypes.uInt16):
@@ -62,16 +80,19 @@ def unpackData(__data, __dataType):
 	else:
 		unpackType = "<B"
 
+	# Unpack
 	return struct.unpack(unpackType, bytes(__data))[0]
 
 
 def packData(__data, __dataType):
-	"""Packs data according to dataType
+	"""
+	Packs data according to dataType
 
 	data -- bytes to pack
 	dataType -- data type. See dataTypes.py
 
-	return -- packed bytes"""
+	return -- packed bytes
+	"""
 
 	data = bytes()	# data to return
 	pack = True		# if True, use pack. False only with strings
@@ -106,6 +127,7 @@ def packData(__data, __dataType):
 	else:
 		packType = "<B"
 
+	# Pack if needed
 	if (pack == True):
 		data += struct.pack(packType, __data)
 
@@ -113,12 +135,14 @@ def packData(__data, __dataType):
 
 
 def buildPacket(__packet, __packetData = []):
-	"""Build a packet
+	"""
+	Build a packet
 
 	packet -- packet id (int)
-	packetData -- array [[data, dataType], [data, dataType], ...]
+	packetData -- list [[data, dataType], [data, dataType], ...]
 
-	return -- packet bytes"""
+	return -- packet bytes
+	"""
 
 	# Set some variables
 	packetData = bytes()
@@ -139,13 +163,38 @@ def buildPacket(__packet, __packetData = []):
 	packetBytes += packetData						# packet data
 	return packetBytes
 
+
 def readPacketID(__stream):
+	"""
+	Read packetID from __stream (0-1 bytes)
+
+	__stream -- data stream
+	return -- packet ID (int)
+	"""
+
 	return unpackData(__stream[0:2], dataTypes.uInt16)
 
+
 def readPacketLength(__stream):
+	"""
+	Read packet length from __stream (3-4-5-6 bytes)
+
+	__stream -- data stream
+	return -- packet length (int)
+	"""
+
 	return unpackData(__stream[3:7], dataTypes.uInt32)
 
+
 def readPacketData(__stream, __structure = []):
+	"""
+	Read packet data from __stream according to __structure
+
+	__stream -- data stream
+	__structure -- [[name, dataType], [name, dataType], ...]
+	return -- dictionary. key: name, value: read data
+	"""
+
 	# Read packet ID (first 2 bytes)
 	data = {}
 
@@ -160,7 +209,6 @@ def readPacketData(__stream, __structure = []):
 			unpack = False
 
 			# Read length and calculate end
-			#length = struct.unpack("<B", __stream[start+1:start+2])[0]
 			length = uleb128Decode(__stream[start+1:])
 			end = start+length[0]+length[1]+1
 

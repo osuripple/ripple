@@ -1,3 +1,4 @@
+"""Hello, pep.py here, ex-owner of ripple and prime minister of Ripwot."""
 # TODO: Remove useless imports
 # TODO: Docs
 import struct

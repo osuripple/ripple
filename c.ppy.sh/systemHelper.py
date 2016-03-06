@@ -5,20 +5,28 @@ import os
 import sys
 
 def runningUnderUnix():
-	'''Get if the server is running under UNIX or NT
+	"""
+	Get if the server is running under UNIX or NT
 
-	return --- True if running under UNIX, otherwise False'''
+	return --- True if running under UNIX, otherwise False
+	"""
+
 	return True if os.name == "posix" else False
 
+
 def restartServer():
-	'''Restart pep.py script'''
+	"""Restart pep.py script"""
 	print("> Restarting pep.py...")
 	os.execv(sys.executable, [sys.executable] + sys.argv)
 
-def getSystemInfo():
-	'''Get a dictionary with some system/server info
 
-	return -- ["unix", "connectedUsers", "webServer", "cpuUsage", "totalMemory", "usedMemory", "loadAverage"]'''
+def getSystemInfo():
+	"""
+	Get a dictionary with some system/server info
+
+	return -- ["unix", "connectedUsers", "webServer", "cpuUsage", "totalMemory", "usedMemory", "loadAverage"]
+	"""
+	
 	data = {}
 
 	# Get if server is running under unix/nt
