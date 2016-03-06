@@ -52,10 +52,11 @@ class config:
 			self.config.get("server","port")
 			self.config.get("server","outputpackets")
 
-			# TODO: Flask config if server = flask
-			self.config.get("flask","threaded")
-			self.config.get("flask","debug")
-			self.config.get("flask","logger")
+			if (self.config["server"]["server"] == "flask"):
+				# Flask only config
+				self.config.get("flask","threaded")
+				self.config.get("flask","debug")
+				self.config.get("flask","logger")
 			return True
 		except:
 			return False
