@@ -243,8 +243,6 @@ def removeFriend(userID, friendID):
 	friends.remove(friendID)
 	friends = str.join(",", friends)
 
-	print(str(friends))
-
 	# Set new value
 	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
 
@@ -258,5 +256,5 @@ def getCountry(userID):
 	userID -- user
 	return -- country code (two letters)
 	"""
-	
+
 	return glob.db.fetch("SELECT country FROM users_stats WHERE osu_id = ?", [userID])["country"]

@@ -499,7 +499,7 @@ def banchoServer():
 				responseData = serverPackets.loginError()
 				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
 				consoleHelper.printColored("[!] Received packet from unknown token ("+requestToken+").", bcolors.RED)
-				consoleHelper.printColored("[!] "+requestToken+" user has been disconnected (invalid token)", bcolors.RED)
+				consoleHelper.printColored("> "+requestToken+" has been disconnected (invalid token)", bcolors.YELLOW)
 
 		# Send server's response to client
 		# We don't use token object because we might not have a token (failed login)

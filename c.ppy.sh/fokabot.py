@@ -131,7 +131,6 @@ def fokabotResponse(fro, chan, message):
 				elif (message[1] == "reload"):
 					#Reload settings from bancho_settings
 					glob.banchoConf.loadSettings()
-					print(glob.banchoConf.config["menuIcon"])
 					return "Bancho settings reloaded!"
 				elif (message[1] == "maintenance"):
 					# Turn on/off bancho maintenance
