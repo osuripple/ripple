@@ -1,5 +1,8 @@
 # THE SUPER CONTINUOUS INTEGRATION SYSTEM FOR ripple 1.5
 
+# Go to the right directory.
+cd /var/www/ripple.moe/ci-system
+
 # Stop avatar server (with basic ctrl+c)
 tmux send -t avatarserver C-c
 
@@ -10,14 +13,10 @@ curl 127.0.0.1:5001/ci-trigger?k=$cikey
 # Wait until bancho has been killed (25 seconds, 5 seconds of margin)
 sleep 30
 
-# Go to the right directory.
-cd /var/www/ripple.moe
-
 # First of all, we need to fetch the repo and merge its contents.
 git pull origin production
 
 # Migrations
-cd ci-system
 php migrate.php
 
 # Start bancho
