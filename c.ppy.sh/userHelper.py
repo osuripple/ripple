@@ -218,6 +218,10 @@ def addFriend(userID, friendID):
 	friends.append(friendID)
 	friends = str.join(",", friends)
 
+	# Remove leading comma if needed
+	if (friends.startswith(",")):
+		friends = friends[1:]
+
 	# Set new value
 	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
 
@@ -242,6 +246,10 @@ def removeFriend(userID, friendID):
 		return
 	friends.remove(friendID)
 	friends = str.join(",", friends)
+
+	# Remove leading comma if needed
+	if (friends.startswith(",")):
+		friends = friends[1:]
 
 	# Set new value
 	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
