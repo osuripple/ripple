@@ -336,11 +336,18 @@ def banchoServer():
 							# Private message packet
 							packetData = clientPackets.sendPrivateMessage(packetData)
 
-							# Send packet message to target if it exists
-							token = glob.tokens.getTokenFromUsername(packetData["to"])
-							if (token == None):
-								raise exceptions.tokenNotFoundException()
-							token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
+							if (packetData["to"] == "FokaBot"):
+								# FokaBot command check
+								fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
+								if (fokaMessage != False):
+									userToken.enqueue(serverPackets.sendMessage("FokaBot", username, fokaMessage))
+									consoleHelper.printColored("> FokaBot>"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)							
+							else:
+								# Send packet message to target if it exists
+								token = glob.tokens.getTokenFromUsername(packetData["to"])
+								if (token == None):
+									raise exceptions.tokenNotFoundException()
+								token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
 							# Console output
 							consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.PINK)

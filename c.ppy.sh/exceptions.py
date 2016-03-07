@@ -29,3 +29,6 @@ class banchoConfigErrorException(Exception):
 
 class banchoMaintenanceException(Exception):
 	pass
+
+class moderatedPMException(Exception):
+	pass

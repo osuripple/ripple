@@ -68,6 +68,10 @@ def fokabotResponse(fro, chan, message):
 			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
 				raise exceptions.noAdminException
 
+			# Make sure we are in a channel and not PM
+			if (chan.startswith("#") == False):
+				raise exceptions.moderatedPMException
+
 			# Split message and default value
 			message = message.lower().split(" ")
 			enable = True
@@ -80,10 +84,13 @@ def fokabotResponse(fro, chan, message):
 			# Turn on/off moderated mode
 			glob.channels.channels[chan].moderated = enable
 
-			return "This channel is now in moderated mode!" if enable else "This channel is no longer in moderated mode!"
+			return "This channel is {} in moderated mode!".format("now" if enable else "no longer")
 		except exceptions.noAdminException:
 			consoleHelper.printColored("[!] "+fro+" has tried to put "+chan+" in moderated mode, but he is not an admin.", bcolors.RED)
 			return False
+		except exceptions.moderatedPMException:
+			consoleHelper.printColored("[!] "+fro+" has tried to put a PM chat in moderated mode.", bcolors.RED)
+			return "Are you trying to put a private chat in moderated mode? Are you serious?!? You're fired."
 	elif "!system" in message:
 		# System commands
 		try:
