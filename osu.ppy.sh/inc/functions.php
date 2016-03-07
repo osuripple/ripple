@@ -14,7 +14,7 @@
 	require_once($df . "/RememberCookieHandler.php");
 	require_once($df . "/PlayStyleEnum.php");
 	require_once($df . "/resize.php");
-	require_once($df . "/bancho.php");
+	//require_once($df . "/bancho.php");
 	// Helpers
 	require_once($df . "/helpers/PasswordHelper.php");
 	// controller system v2
@@ -2224,4 +2224,18 @@
 		if (checkLoggedIn() === $must) {
 			redirect($redirTo);
 		}
+	}
+
+	/*
+	 * binStr
+	 * Converts a string in a binary string
+	 *
+	 * @param (string) ($str) String
+	 * @return (string) (0B+length+ASCII_STRING)
+	 */
+	function binStr($str) {
+		$r = "";
+		$r .= "\x0B".pack("c", strlen($str));	// won't do uleb128
+		$r .= $str;
+		return $r;
 	}

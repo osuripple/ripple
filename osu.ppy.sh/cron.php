@@ -155,7 +155,7 @@
 
 		for ($i=0; $i < count($notopScores); $i++) {
 			// Check if this useless replay exists and delete it
-			$f = "web/replays/replay_".$notopScores[$i]["id"].".osr";
+			$f = "./replays/replay_".$notopScores[$i]["id"].".osr";
 			if (file_exists($f))
 			{
 				unlink($f);
@@ -163,8 +163,24 @@
 			}
 		}
 
+
 		// Replays cleared
 		echo("<b>Replays cleaned!</b><br>\n");
+
+		// Clear full replays cache
+		echo("<br>\n<b>Deleting full replays cache...</b><br>\n");
+
+		$files = scandir("./replays_full");
+		foreach ($files as $file)
+		{
+			unlink("./replays_full/".$file);
+			echo("<b>".$file."</b> deleted!<br>\n");
+		}
+
+
+		// Replays cleared
+		echo("<b>Full replays cache cleaned!</b><br>\n");
+
 
 		// Delete inactive accounts (not activated in osu!/no osu! id within 30 minutes after registration)
 		echo("<br>\n<b>Deleting inactive accounts...</b><br>\n");

@@ -1778,7 +1778,7 @@ class P {
 						echo('<tr>');
 						echo('<td class="warning"><p class="text-left">' . current($bn) . ' <b>'.getScoreMods($topPlays[$i]["mods"]).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($topPlays[$i]["time"])).'</small>' . '</b></p></td>');
 						echo('<td class="warning"><p class="text-right">' . round($topPlays[$i]["accuracy"], 2) . '%</p></td>');
-						echo('<td class="warning"><p class="text-right"><b>' . number_format($topPlays[$i]["score"]) . '</b></p></td>');
+						echo('<td class="warning"><p class="text-right"><b>' . number_format($topPlays[$i]["score"]) . '</b>	<a href="/web/osu-getreplay-full.php?c='.$topPlays[$i]["id"].'"><i class="fa fa-star"></i></a></p></td>');
 						echo('</tr>');
 					}
 				}
