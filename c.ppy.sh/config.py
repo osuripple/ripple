@@ -57,6 +57,8 @@ class config:
 				self.config.get("flask","threaded")
 				self.config.get("flask","debug")
 				self.config.get("flask","logger")
+
+			self.config.get("ci","key")
 			return True
 		except:
 			return False
@@ -86,6 +88,9 @@ class config:
 		self.config.set("flask", "threaded", "1")
 		self.config.set("flask", "debug", "0")
 		self.config.set("flask", "logger", "0")
+
+		self.config.add_section("ci")
+		self.config.set("ci", "key", "changeme")
 
 		# Write ini to file and close
 		self.config.write(f)

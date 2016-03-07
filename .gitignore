@@ -2,7 +2,7 @@
 *.php~
 *.sql~
 *.log
-ci-system/mysqlpassword.txt
+ci-system/cikey.txt
 ci-system/changelog.json
 
 # server data

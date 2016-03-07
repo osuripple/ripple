@@ -42,12 +42,38 @@ import databaseHelper
 import passwordHelper
 import responseHelper
 import generalFunctions
+import systemHelper
+
+import threading
 
 # Create flask instance
 app = flask.Flask(__name__)
 
 # Get flask logger
 flaskLogger = logging.getLogger("werkzeug")
+
+# Ci trigger
+@app.route("/ci-trigger")
+def ciTrigger():
+	# Ci restart trigger
+
+	# Get ket from GET
+	key = flask.request.args.get('k')
+
+	# Get request ip
+	requestIP = flask.request.headers.get('X-Real-IP')
+	if (requestIP == None):
+		requestIP = flask.request.remote_addr
+
+	# Check key
+	if (key is None or key != glob.conf.config["ci"]["key"]):
+		consoleHelper.printColored("[!] Invalid ci trigger from {}".format(requestIP), bcolors.RED)
+		return "Invalid key"
+
+	# Ci event triggered, schedule server shutdown
+	consoleHelper.printColored("[!] Ci event triggered from {}".format(requestIP), bcolors.PINK)
+	systemHelper.scheduleShutdown(5, False, "A new Bancho update is available and the server will be restarted in 5 seconds. Thank you for your patience.")
+	return "Ci event triggered"
 
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
