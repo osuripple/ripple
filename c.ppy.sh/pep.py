@@ -133,6 +133,9 @@ def banchoServer():
 				responseToken = glob.tokens.addToken(userID)
 				responseTokenString = responseToken.token
 
+				# Print logged in message
+				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
+
 				# Get silence end
 				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
 
@@ -166,8 +169,6 @@ def banchoServer():
 
 				# TODO: Configurable default channels
 				# Default opened channels
-
-				# TODO: Move this thing
 				glob.channels.channels["#osu"].userJoin(userID)
 				responseToken.joinChannel("#osu")
 				glob.channels.channels["#announce"].userJoin(userID)
@@ -181,7 +182,6 @@ def banchoServer():
 					responseToken.enqueue(serverPackets.channelInfo(key))
 
 				responseToken.enqueue(serverPackets.friendList(userID))
-				responseToken.enqueue(serverPackets.onlineUsers())
 
 				# Send main menu icon and login notification if needed
 				if (glob.banchoConf.config["menuIcon"] != ""):
@@ -190,22 +190,22 @@ def banchoServer():
 				if (glob.banchoConf.config["loginNotification"] != ""):
 					responseToken.enqueue(serverPackets.notification(glob.banchoConf.config["loginNotification"]))
 
-				# Print logged in message
-				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
-
-				# Set position and country
-				responseToken.setLocation(locationHelper.getLocation(requestIP))
-				responseToken.setCountry(countryHelper.getCountryID(locationHelper.getCountry(requestIP)))
-
-				# Send to everyone our userpanel and userStats (so they now we have logged in)
-				glob.tokens.enqueueAll(serverPackets.userPanel(userID))
-				glob.tokens.enqueueAll(serverPackets.userStats(userID))
-
 				# Get everyone else userpanel
 				# TODO: Better online users handling
 				for key, value in glob.tokens.tokens.items():
 					responseToken.enqueue(serverPackets.userPanel(value.userID))
 					responseToken.enqueue(serverPackets.userStats(value.userID))
+
+				# Send online users IDs array
+				responseToken.enqueue(serverPackets.onlineUsers())
+
+				# Send to everyone our userpanel and userStats (so they now we have logged in)
+				glob.tokens.enqueueAll(serverPackets.userPanel(userID))
+				glob.tokens.enqueueAll(serverPackets.userStats(userID))
+
+				# Set position and country
+				responseToken.setLocation(locationHelper.getLocation(requestIP))
+				responseToken.setCountry(countryHelper.getCountryID(locationHelper.getCountry(requestIP)))
 
 				# Set reponse data to right value and reset our queue
 				responseData = responseToken.queue
@@ -341,7 +341,7 @@ def banchoServer():
 								fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
 								if (fokaMessage != False):
 									userToken.enqueue(serverPackets.sendMessage("FokaBot", username, fokaMessage))
-									consoleHelper.printColored("> FokaBot>"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)							
+									consoleHelper.printColored("> FokaBot>"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)
 							else:
 								# Send packet message to target if it exists
 								token = glob.tokens.getTokenFromUsername(packetData["to"])

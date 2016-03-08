@@ -13,3 +13,4 @@ paused 		= 10
 lobby 		= 11
 multiplaying= 12
 osuDirect 	= 13
+none		= 14

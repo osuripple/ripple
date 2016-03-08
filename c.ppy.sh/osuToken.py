@@ -166,7 +166,7 @@ class token:
 		"""Set country to __countryID
 
 		__countryID -- numeric country ID. See countryHelper.py"""
-		
+
 		self.country = __countryID
 
 

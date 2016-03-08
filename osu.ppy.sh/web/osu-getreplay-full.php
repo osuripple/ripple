@@ -59,14 +59,14 @@
 			else
 				$rank = "S";
 		}
-        else if (($perc300 > 0.8 && $replayData["misses_count"] == 0) || ($perc300 > 0.9))
-            $rank = "A";
-        else if (($perc300 > 0.7 && $replayData["misses_count"] == 0) || ($perc300 > 0.8))
-            $rank = "B";
-        else if ($perc300 > 0.6)
-            $rank = "C";
+		else if (($perc300 > 0.8 && $replayData["misses_count"] == 0) || ($perc300 > 0.9))
+			$rank = "A";
+		else if (($perc300 > 0.7 && $replayData["misses_count"] == 0) || ($perc300 > 0.8))
+			$rank = "B";
+		else if ($perc300 > 0.6)
+			$rank = "C";
 		else
-        	$rank = "D";
+			$rank = "D";
 
 		// ...why
 		$magicString = md5(sprintf("%dp%do%do%dt%da%dr%de%sy%do%du%s%d%s",
