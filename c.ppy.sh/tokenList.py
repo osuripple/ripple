@@ -75,9 +75,12 @@ class tokenList:
 		return -- False if not found, token object if found
 		"""
 
+		# lowercase
+		who  = __username.lower()
+
 		# Make sure the token exists
 		for key, value in self.tokens.items():
-			if (value.username == __username):
+			if (value.username.lower() == who):
 				return value
 
 		# Return none if not found

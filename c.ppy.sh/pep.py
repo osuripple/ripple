@@ -508,11 +508,11 @@ def banchoServer():
 						# the server, so we accept logout packets sent at least 5 seconds after login
 						if (int(time.time()-userToken.loginTime) >= 5):
 							# TODO: Channel part at logout
-							# Delete token
-							glob.tokens.deleteToken(requestToken)
-
 							# Enqueue our disconnection to everyone else
 							glob.tokens.enqueueAll(serverPackets.userLogout(userID))
+
+							# Delete token
+							glob.tokens.deleteToken(requestToken)
 
 							consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
 

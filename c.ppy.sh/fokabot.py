@@ -171,5 +171,60 @@ def fokabotResponse(fro, chan, message):
 		except exceptions.commandSyntaxException:
 			consoleHelper.printColored("[!] Fokabot command syntax error", bcolors.RED)
 			return False
+	elif "!scareall" in message:
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Get parameters
+			message = message.lower().split(" ")
+			if (len(message) < 2):
+				raise exceptions.commandSyntaxException
+			scaryMessage = ' '.join(message[1:])
+
+			# Send packet to everyone
+			consoleHelper.printColored("> {} is turning osu! into an horror game ({})".format(fro, scaryMessage), bcolors.PINK)
+			glob.tokens.enqueueAll(serverPackets.jumpscare(scaryMessage))
+
+		except exceptions.noAdminException:
+			consoleHelper.printColored("[!] {} has tried to run !scareall command, but he is not an admin.".format(fro), bcolors.RED)
+		except exceptions.commandSyntaxException:
+			consoleHelper.printColored("[!] !scareall syntax error", bcolors.RED)
+		finally:
+			# No respobnse
+			return False
+	elif "!scare" in message:
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Get parameters
+			message = message.lower().split(" ")
+			if (len(message) < 3):
+				raise exceptions.commandSyntaxException
+			target = message[1]
+			scaryMessage = ' '.join(message[2:])
+
+			# Get target token and make sure is connected
+			targetToken = glob.tokens.getTokenFromUsername(target)
+			if (targetToken == None):
+				raise exceptions.tokenNotFoundException
+
+			# Send packet to target
+			consoleHelper.printColored("> Rip {}'s heart ({}). ~ <3, {}".format(target, scaryMessage, fro), bcolors.PINK)
+			targetToken.enqueue(serverPackets.jumpscare(scaryMessage))
+
+			# No response
+			return False
+		except exceptions.noAdminException:
+			consoleHelper.printColored("[!] {} has tried to run !scare command, but he is not an admin.".format(fro), bcolors.RED)
+		except exceptions.tokenNotFoundException:
+			consoleHelper.printColored("[!] {} has tried to scare {}, but the user is not online.".format(fro, message[1]), bcolors.RED)
+			return "{} is not online".format(message[1])
+		except exceptions.commandSyntaxException:
+			consoleHelper.printColored("[!] !scare syntax error", bcolors.RED)
+			return "Wrong syntax. !scare <target> <message>"
 	else:
 		return False
