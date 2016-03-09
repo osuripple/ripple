@@ -289,7 +289,7 @@ def banchoServer():
 									raise exceptions.channelNoPermissionsException
 
 								# Send this packet to everyone in that channel except us
-								who = glob.channels.channels[packetData["to"]].getConnectedUsers().copy()
+								who = glob.channels.channels[packetData["to"]].getConnectedUsers()[:]
 								if userID in who:
 									who.remove(userID)
 							else:
@@ -298,12 +298,12 @@ def banchoServer():
 								if (userToken.spectating == 0):
 									# We have sent to send a message to our #spectator channel
 									targetToken = userToken
-									who = targetToken.spectators.copy()
+									who = targetToken.spectators[:]
 									# No need to remove us because we are the host so we are not in spectators list
 								else:
 									# We have sent a message to someone else's #spectator
 									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
-									who = targetToken.spectators.copy()
+									who = targetToken.spectators[:]
 
 									# Remove us
 									if (userID in who):
@@ -419,7 +419,13 @@ def banchoServer():
 							# Start spectating packet
 							packetData = clientPackets.startSpectating(packetData)
 
-							# Set spectating user ID
+							# Stop spectating old user if needed
+							if (userToken.spectating != 0):
+								oldTargetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
+								oldTargetToken.enqueue(serverPackets.removeSpectator(userID))
+								userToken.stopSpectating()
+
+							# Start spectating new user
 							userToken.startSpectating(packetData["userID"])
 
 							# Get host token
@@ -427,13 +433,13 @@ def banchoServer():
 							if (targetToken == None):
 								raise exceptions.tokenNotFoundException
 
-							# Add us to spectators
+							# Add us to host's spectators
 							targetToken.addSpectator(userID)
 
 							# Send spectator join packet to host
 							targetToken.enqueue(serverPackets.addSpectator(userID))
 
-							# Join #spectator
+							# Join #spectator channel
 							userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							if (len(targetToken.spectators) == 1):
@@ -442,31 +448,33 @@ def banchoServer():
 
 							# Console output
 							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.PINK)
+							consoleHelper.printColored("> {}'s spectators: {}".format(str(packetData["userID"]), str(targetToken.spectators)), bcolors.BLUE)
 						except exceptions.tokenNotFoundException:
+							# Stop spectating if token not found
 							consoleHelper.printColored("[!] Spectator start: token not found", bcolors.RED)
+							userToken.stopSpectating()
 					elif (packetID == packetIDs.client_stopSpectating):
 						try:
 							# Stop spectating packet, has no parameters
 
-							# Remove our ID spectator from host's spectators
+							# Remove our userID from host's spectators
 							target = userToken.spectating
 							targetToken = glob.tokens.getTokenFromUserID(target)
 							if (targetToken == None):
 								raise exceptions.tokenNotFoundException
-
-							# Remove spectator from spectators
 							targetToken.removeSpectator(userID)
 
-							# Send the packet to host
+							# Send the spectator left packet to host
 							targetToken.enqueue(serverPackets.removeSpectator(userID))
-
-							# Set our spectating userID to 0
-							userToken.stopSpectating()
 
 							# Console output
 							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.PINK)
+							consoleHelper.printColored("> {}'s spectators: {}".format(str(target), str(targetToken.spectators)), bcolors.BLUE)
 						except exceptions.tokenNotFoundException:
 							consoleHelper.printColored("[!] Spectator stop: token not found", bcolors.RED)
+						finally:
+							# Set our spectating user to 0
+							userToken.stopSpectating()
 					elif (packetID == packetIDs.client_cantSpectate):
 						try:
 							# We don't have the beatmap, we can't spectate
@@ -476,16 +484,24 @@ def banchoServer():
 							# Send the packet to host
 							targetToken.enqueue(serverPackets.noSongSpectator(userID))
 						except exceptions.tokenNotFoundException:
+							# Stop spectating if token not found
 							consoleHelper.printColored("[!] Spectator can't spectate: token not found", bcolors.RED)
+							userToken.stopSpectating()
 					elif (packetID == packetIDs.client_spectateFrames):
 						# Client spectate frames
 						# Send spectator frames to every spectator
+						consoleHelper.printColored("> {}'s spectators: {}".format(str(userID), str(userToken.spectators)), bcolors.BLUE)
 						for i in userToken.spectators:
 							if (i != userID):
 								# Send to every spectator but us (host)
 								spectatorToken = glob.tokens.getTokenFromUserID(i)
 								if (spectatorToken != None):
+									# Token found, send frames
 									spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
+								else:
+									# Token not found, remove it
+									userToken.removeSpectator(i)
+									userToken.enqueue(serverPackets.removeSpectator(i))
 					elif (packetID == packetIDs.client_friendAdd):
 						# Friend add packet
 						packetData = clientPackets.addRemoveFriend(packetData)
