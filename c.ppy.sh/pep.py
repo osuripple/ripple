@@ -543,6 +543,9 @@ def banchoServer():
 				responseTokenString = userToken.token
 				responseData = userToken.queue
 				userToken.resetQueue()
+
+				# Update ping time for timeout
+				userToken.updatePingTime()
 			except exceptions.tokenNotFoundException:
 				# Token not found. Disconnect that user
 				responseData = serverPackets.loginError()
@@ -614,6 +617,17 @@ consoleHelper.printDone()
 consoleHelper.printNoNl("> Connecting FokaBot... ")
 fokabot.connect()
 consoleHelper.printDone()
+
+# Initialize user timeout check loop
+try:
+	consoleHelper.printNoNl("> Initializing user timeout check loop... ")
+	glob.tokens.usersTimeoutCheckLoop(int(glob.conf.config["server"]["timeouttime"]), int(glob.conf.config["server"]["timeoutlooptime"]))
+	consoleHelper.printDone()
+except:
+	consoleHelper.printError()
+	consoleHelper.printColored("[!] Error while initializing user timeout check loop", bcolors.RED)
+	consoleHelper.printColored("[!] Make sure that 'timeouttime' and 'timeoutlooptime' in config.ini are numbers", bcolors.RED)
+	raise
 
 # Get server parameters from config.ini
 serverName = glob.conf.config["server"]["server"]

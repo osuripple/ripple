@@ -1,5 +1,10 @@
 import osuToken
 import userHelper
+import time
+import threading
+import consoleHelper
+import bcolors
+import serverPackets
 
 class tokenList:
 	"""
@@ -134,3 +139,37 @@ class tokenList:
 
 		for key, value in self.tokens.items():
 			value.enqueue(__packet)
+
+	def usersTimeoutCheckLoop(self, __timeoutTime = 100, __checkTime = 100):
+		"""
+		Deletes all timed out users.
+		If called once, will recall after __checkTime seconds and so on, forever
+		CALL THIS FUNCTION ONLY ONCE!
+
+		__timeoutTime - seconds of inactivity required to disconnect someone (Default: 100)
+		__checkTime - seconds between loops (Default: 100)
+		"""
+
+		timedOutTokens = []		# timed out users
+		timeoutLimit = time.time()-__timeoutTime
+		for key, value in self.tokens.items():
+			# Check timeout (fokabot is ignored)
+			if (value.pingTime < timeoutLimit and value.userID != 999):
+				# That user has timed out, add to disconnected tokens
+				# We can't delete it while iterating or items() throws an error
+				timedOutTokens.append(key)
+
+				# Send logout packet to everyone
+				# TODO: Move to event handler
+				self.enqueueAll(serverPackets.userLogout(value.userID))
+
+				# Console output
+				consoleHelper.printColored("> {} has been disconnected (timeout)".format(value.username), bcolors.YELLOW)
+
+		# Delete timed out users from self.tokens
+		# i is token string (dictionary key)
+		for i in timedOutTokens:
+			self.tokens.pop(i)
+
+		# Schedule a new check (endless loop)
+		threading.Timer(__checkTime, self.usersTimeoutCheckLoop, [__timeoutTime, __checkTime]).start()

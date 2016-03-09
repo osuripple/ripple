@@ -51,6 +51,8 @@ class config:
 			self.config.get("server","host")
 			self.config.get("server","port")
 			self.config.get("server","outputpackets")
+			self.config.get("server","timeouttime")
+			self.config.get("server","timeoutlooptime")
 
 			if (self.config["server"]["server"] == "flask"):
 				# Flask only config
@@ -83,6 +85,8 @@ class config:
 		self.config.set("server", "host", "0.0.0.0")
 		self.config.set("server", "port", "5001")
 		self.config.set("server", "outputpackets", "0")
+		self.config.set("server", "timeouttime", "100")
+		self.config.set("server", "timeoutlooptime", "100")
 
 		self.config.add_section("flask")
 		self.config.set("flask", "threaded", "1")
