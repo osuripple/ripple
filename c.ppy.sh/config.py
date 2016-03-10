@@ -46,6 +46,7 @@ class config:
 			self.config.get("db","username")
 			self.config.get("db","password")
 			self.config.get("db","database")
+			self.config.get("db","pingtime")
 
 			self.config.get("server","server")
 			self.config.get("server","host")
@@ -79,6 +80,7 @@ class config:
 		self.config.set("db", "username", "root")
 		self.config.set("db", "password", "")
 		self.config.set("db", "database", "ripple")
+		self.config.set("db", "pingtime", "600")
 
 		self.config.add_section("server")
 		self.config.set("server", "server", "tornado")

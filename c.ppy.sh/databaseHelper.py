@@ -1,13 +1,17 @@
 import pymysql
 import bcolors
+import consoleHelper
 import sys
+import threading
 
 class db:
 	"""A MySQL database connection"""
 
 	connection = None
+	disconnected = False
+	pingTime = 600
 
-	def __init__(self, __host, __username, __password, __database):
+	def __init__(self, __host, __username, __password, __database, __pingTime = 600):
 		"""
 		Connect to MySQL database
 
@@ -15,9 +19,12 @@ class db:
 		__username -- MySQL username
 		__password -- MySQL password
 		__database -- MySQL database name
+		__pingTime -- MySQL database ping time (default: 600)
 		"""
 
 		self.connection = pymysql.connect(host=__host, user=__username, password=__password, db=__database, cursorclass=pymysql.cursors.DictCursor, autocommit=True)
+		self.pingTime = __pingTime
+		self.pingLoop()
 
 
 	def bindParams(self, __query, __params):
@@ -101,3 +108,31 @@ class db:
 		"""
 
 		return self.fetch(__query, __params, True)
+
+	def pingLoop(self):
+		"""
+		Pings MySQL server. We need to ping/execute a query at least once every 8 hours
+		or the connection will die.
+		If called once, will recall after 30 minutes and so on, forever
+		CALL THIS FUNCTION ONLY ONCE!
+		"""
+
+		# Default loop time
+		time = self.pingTime
+
+		# Make sure the connection is alive
+		try:
+			# Try to ping and reconnect if not connected
+			self.connection.ping()
+			if (self.disconnected == True):
+				# If we were disconnected, set disconnected to false and print message
+				self.disconnected = False
+				consoleHelper.printColored("> Reconnected to MySQL server!", bcolors.GREEN)
+		except:
+			# Can't ping MySQL server. Show error and call loop in 5 seconds
+			consoleHelper.printColored("[!] CRITICAL!! MySQL connection died! Make sure your MySQL server is running! Checking again in 5 seconds...", bcolors.RED)
+			self.disconnected = True
+			time = 5
+
+		# Schedule a new check (endless loop)
+		threading.Timer(time, self.pingLoop).start()

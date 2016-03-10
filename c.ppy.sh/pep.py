@@ -468,6 +468,7 @@ def banchoServer():
 							targetToken.enqueue(serverPackets.removeSpectator(userID))
 
 							# Console output
+							# TODO: Move messages in stop spectating
 							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.PINK)
 							consoleHelper.printColored("> {}'s spectators: {}".format(str(target), str(targetToken.spectators)), bcolors.BLUE)
 						except exceptions.tokenNotFoundException:
@@ -493,6 +494,7 @@ def banchoServer():
 						consoleHelper.printColored("> {}'s spectators: {}".format(str(userID), str(userToken.spectators)), bcolors.BLUE)
 						for i in userToken.spectators:
 							if (i != userID):
+								# TODO: Check that spectators are spectating us
 								# Send to every spectator but us (host)
 								spectatorToken = glob.tokens.getTokenFromUserID(i)
 								if (spectatorToken != None):
@@ -590,7 +592,7 @@ else:
 # Connect to db
 try:
 	consoleHelper.printNoNl("> Connecting to MySQL db... ")
-	glob.db = databaseHelper.db(glob.conf.config["db"]["host"], glob.conf.config["db"]["username"], glob.conf.config["db"]["password"], glob.conf.config["db"]["database"])
+	glob.db = databaseHelper.db(glob.conf.config["db"]["host"], glob.conf.config["db"]["username"], glob.conf.config["db"]["password"], glob.conf.config["db"]["database"], int(glob.conf.config["db"]["pingtime"]))
 	consoleHelper.printDone()
 except:
 	# Exception while connecting to db
