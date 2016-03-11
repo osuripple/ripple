@@ -188,7 +188,7 @@ def fokabotResponse(fro, chan, message):
 			glob.tokens.enqueueAll(serverPackets.jumpscare(scaryMessage))
 
 		except exceptions.noAdminException:
-			consoleHelper.printColored("[!] {} has tried to run !scareall command, but he is not an admin.".format(fro), bcolors.RED)
+			pass
 		except exceptions.commandSyntaxException:
 			return "Wrong syntax. !scareall <message>"
 		finally:
@@ -219,9 +219,8 @@ def fokabotResponse(fro, chan, message):
 			# No response
 			return False
 		except exceptions.noAdminException:
-			consoleHelper.printColored("[!] {} has tried to run !scare command, but he is not an admin.".format(fro), bcolors.RED)
+			return False
 		except exceptions.tokenNotFoundException:
-			consoleHelper.printColored("[!] {} has tried to scare {}, but the user is not online.".format(fro, message[1]), bcolors.RED)
 			return "{} is not online".format(message[1])
 		except exceptions.commandSyntaxException:
 			return "Wrong syntax. !scare <target> <message>"
@@ -251,12 +250,107 @@ def fokabotResponse(fro, chan, message):
 			# Bot response
 			return "{} has been kicked from the server.".format(message[1])
 		except exceptions.noAdminException:
-			consoleHelper.printColored("[!] {} has tried to run !kick command, but he is not an admin.".format(fro), bcolors.RED)
 			return False
 		except exceptions.tokenNotFoundException:
-			consoleHelper.printColored("[!] {} has tried to kick {}, but the user is not online.".format(fro, message[1]), bcolors.RED)
 			return "{} is not online.".format(message[1])
 		except exceptions.commandSyntaxException:
 			return "Wrong syntax. !kick <target>"
+	elif "!silence" in message:
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Get parameters
+			message = message.lower().split(" ")
+			if (len(message) < 4):
+				raise exceptions.commandSyntaxException
+			target = message[1]
+			amount = message[2]
+			unit = message[3]
+			reason = ' '.join(message[4:])
+
+			# Get target user ID
+			targetUserID = userHelper.getUserID(target)
+
+			# Make sure the user exists
+			if (targetUserID == False):
+				raise exceptions.userNotFoundException
+
+			# Calculate silence seconds
+			if (unit == 's'):
+				silenceTime = int(amount)
+			elif (unit == 'm'):
+				silenceTime = int(amount)*60
+			elif (unit == 'h'):
+				silenceTime = int(amount)*3600
+			elif (unit == 'd'):
+				silenceTime = int(amount)*86400
+			else:
+				raise exceptions.commandSyntaxException
+
+			# Max silence time is 7 days
+			if (silenceTime > 604800):
+				raise exceptions.commandSyntaxException
+
+			# Calculate silence end time
+			endTime = int(time.time())+silenceTime
+
+			# Update silence end in db
+			userHelper.silenceUser(targetUserID, endTime, reason)
+
+			# Check if target is connected
+			targetToken = glob.tokens.getTokenFromUsername(target)
+			if (targetToken == None):
+				tokenFound = False
+			else:
+				tokenFound = True
+
+			# Send silence packets if user is online
+			if (tokenFound == True):
+				targetToken.enqueue(serverPackets.silenceEndTime(silenceTime))
+
+			consoleHelper.printColored("{} has been silenced for {} seconds the following reason: {}".format(target, silenceTime, reason), bcolors.PINK)
+
+			# Bot response
+			return "{} has been silenced for the following reason: {}".format(target, reason)
+		except exceptions.userNotFoundException:
+			return "{}: user not found".format(message[1])
+		except exceptions.noAdminException:
+			return False
+		except exceptions.commandSyntaxException:
+			return "Wrong syntax. !silence <target> <amount> <unit (s/m/h/d)> <reason>. Max silence time is 7 days."
+	elif "!removesilence" in message or "!resetsilence":
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Get parameters
+			message = message.lower().split(" ")
+			if (len(message) < 2):
+				raise exceptions.commandSyntaxException
+			target = message[1]
+
+			# Make sure the user exists
+			targetUserID = userHelper.getUserID(target)
+			if (targetUserID == False):
+				raise exceptions.userNotFoundException
+
+			# Reset user silence time and reason in db
+			userHelper.silenceUser(targetUserID, 0, "")
+
+			# Send new silence end packet to user if he's online
+			targetToken = glob.tokens.getTokenFromUsername(target)
+			if (targetToken != None):
+				targetToken.enqueue(serverPackets.silenceEndTime(0))
+
+			return "{}'s silence reset".format(target)
+		except exceptions.commandSyntaxException:
+			return "Wrong syntax. !removesilence <target>"
+		except exceptions.noAdminException:
+			return False
+		except exceptions.userNotFoundException:
+			return "{}: user not found".format(message[1])
 	else:
 		return False

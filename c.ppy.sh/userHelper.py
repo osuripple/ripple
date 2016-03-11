@@ -57,7 +57,6 @@ def userExists(userID):
 	else:
 		return True
 
-
 def getUserAllowed(userID):
 	"""
 	Get allowed status for userID
@@ -90,6 +89,18 @@ def getUserSilenceEnd(userID):
 
 	return glob.db.fetch("SELECT silence_end FROM users WHERE osu_id = ?", [userID])["silence_end"]
 
+
+def silenceUser(userID, silenceEndTime, silenceReason):
+	"""
+	Set userID's **ABSOLUTE** silence end UNIX time
+	Remember to add time.time() to the silence length
+
+	userID -- userID
+	silenceEndtime -- UNIX time when the silence ends
+	silenceReason -- Silence reason shown on website
+	"""
+
+	glob.db.execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE osu_id = ?", [silenceEndTime, silenceReason, userID])
 
 def getUserRankedScore(userID, gameMode):
 	"""

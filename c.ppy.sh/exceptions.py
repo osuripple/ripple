@@ -32,3 +32,6 @@ class banchoMaintenanceException(Exception):
 
 class moderatedPMException(Exception):
 	pass
+
+class userNotFoundException(Exception):
+	pass
