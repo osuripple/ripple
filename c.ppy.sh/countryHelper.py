@@ -264,3 +264,17 @@ def getCountryID(code):
 		return countryCodes[code]
 	else:
 		return 0
+
+def getCountryLetters(code):
+	"""
+	Get country letters from osu country ID
+
+	code -- country code int
+	return -- country name (2 letters) (XX if code not found)
+	"""
+
+	for key, value in countryCodes.items():
+		if (value == code):
+			return key
+
+	return "XX"

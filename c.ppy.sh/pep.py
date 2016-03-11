@@ -10,6 +10,7 @@ import uuid
 import pymysql
 import os
 import time
+import threading
 import flask
 
 # Tornado server
@@ -44,8 +45,6 @@ import responseHelper
 import generalFunctions
 import systemHelper
 
-import threading
-
 # Create flask instance
 app = flask.Flask(__name__)
 
@@ -54,6 +53,7 @@ flaskLogger = logging.getLogger("werkzeug")
 
 # Ci trigger
 @app.route("/ci-trigger")
+@app.route("/api/ci-trigger")
 def ciTrigger():
 	# Ci restart trigger
 
@@ -68,12 +68,13 @@ def ciTrigger():
 	# Check key
 	if (key is None or key != glob.conf.config["ci"]["key"]):
 		consoleHelper.printColored("[!] Invalid ci trigger from {}".format(requestIP), bcolors.RED)
-		return "Invalid key"
+		return flask.jsonify({"response" : "-1"})
 
 	# Ci event triggered, schedule server shutdown
 	consoleHelper.printColored("[!] Ci event triggered from {}".format(requestIP), bcolors.PINK)
 	systemHelper.scheduleShutdown(5, False, "A new Bancho update is available and the server will be restarted in 5 seconds. Thank you for your patience.")
-	return "Ci event triggered"
+
+	return flask.jsonify({"response" : "1"})
 
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
