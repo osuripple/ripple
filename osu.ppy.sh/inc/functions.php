@@ -1073,7 +1073,7 @@
 		{
 			// We've finished a song
 			// Get our best play for this beatmap
-			$topScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND username = ? AND completed = 3", array($beatmapHash, $username) );
+			$topScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND username = ? AND play_mode = ? completed = 3", array($beatmapHash, $username, $playMode) );
 			if ($topScore)
 			{
 				// We have a top score on this map, so it's not a first play.
