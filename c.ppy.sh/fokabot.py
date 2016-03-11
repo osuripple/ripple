@@ -320,7 +320,7 @@ def fokabotResponse(fro, chan, message):
 			return False
 		except exceptions.commandSyntaxException:
 			return "Wrong syntax. !silence <target> <amount> <unit (s/m/h/d)> <reason>. Max silence time is 7 days."
-	elif "!removesilence" in message or "!resetsilence":
+	elif "!removesilence" in message or "!resetsilence" in message:
 		try:
 			# Admin check
 			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
