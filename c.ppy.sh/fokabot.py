@@ -190,7 +190,7 @@ def fokabotResponse(fro, chan, message):
 		except exceptions.noAdminException:
 			consoleHelper.printColored("[!] {} has tried to run !scareall command, but he is not an admin.".format(fro), bcolors.RED)
 		except exceptions.commandSyntaxException:
-			consoleHelper.printColored("[!] !scareall syntax error", bcolors.RED)
+			return "Wrong syntax. !scareall <message>"
 		finally:
 			# No respobnse
 			return False
@@ -224,7 +224,39 @@ def fokabotResponse(fro, chan, message):
 			consoleHelper.printColored("[!] {} has tried to scare {}, but the user is not online.".format(fro, message[1]), bcolors.RED)
 			return "{} is not online".format(message[1])
 		except exceptions.commandSyntaxException:
-			consoleHelper.printColored("[!] !scare syntax error", bcolors.RED)
 			return "Wrong syntax. !scare <target> <message>"
+	elif "!kick" in message:
+		try:
+			# Admin check
+			# TODO: God this sucks
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Get parameters
+			message = message.lower().split(" ")
+			if (len(message) < 2):
+				raise exceptions.commandSyntaxException
+			target = message[1]
+
+			# Get target token and make sure is connected
+			targetToken = glob.tokens.getTokenFromUsername(target)
+			if (targetToken == None):
+				raise exceptions.tokenNotFoundException
+
+			# Send packet to target
+			consoleHelper.printColored("> {} has been disconnected. (kick)".format(target), bcolors.YELLOW)
+			targetToken.enqueue(serverPackets.notification("You have been kicked from the server. Please login again."))
+			targetToken.enqueue(serverPackets.loginFailed())
+
+			# Bot response
+			return "{} has been kicked from the server.".format(message[1])
+		except exceptions.noAdminException:
+			consoleHelper.printColored("[!] {} has tried to run !kick command, but he is not an admin.".format(fro), bcolors.RED)
+			return False
+		except exceptions.tokenNotFoundException:
+			consoleHelper.printColored("[!] {} has tried to kick {}, but the user is not online.".format(fro, message[1]), bcolors.RED)
+			return "{} is not online.".format(message[1])
+		except exceptions.commandSyntaxException:
+			return "Wrong syntax. !kick <target>"
 	else:
 		return False
