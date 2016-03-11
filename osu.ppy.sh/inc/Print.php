@@ -1610,20 +1610,20 @@ class P {
 			$userpageContent = $userData["userpage_content"];
 
 			// Friend button
-			if (!checkLoggedIn() || $_GET["u"] == getUserOsuID($_SESSION["username"])) {
+			if (!checkLoggedIn() || $u == getUserOsuID($_SESSION["username"])) {
 				$friendButton = '';
 			} else {
 				$friendship = getFriendship($_SESSION["username"], $username);
 				switch($friendship)
 				{
-					case 1: $friendButton = '<div id="friend"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-success"><span class="glyphicon glyphicon-star"></span>	Friend</a></div>'; break;
-					case 2: $friendButton = '<div id="friend-mutual"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-heart"></span>	Mutual Friend</a></div>'; break;
-					default: $friendButton = '<div id="friend-add"><a href="submit.php?action=addRemoveFriend&u='.$_GET["u"].'" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>	Add as Friend</a></div>'; break;
+					case 1: $friendButton = '<div id="friend"><a href="submit.php?action=addRemoveFriend&u='.$u.'" type="button" class="btn btn-success"><span class="glyphicon glyphicon-star"></span>	Friend</a></div>'; break;
+					case 2: $friendButton = '<div id="friend-mutual"><a href="submit.php?action=addRemoveFriend&u='.$u.'" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-heart"></span>	Mutual Friend</a></div>'; break;
+					default: $friendButton = '<div id="friend-add"><a href="submit.php?action=addRemoveFriend&u='.$u.'" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>	Add as Friend</a></div>'; break;
 				}
 			}
 
 			// Calculate rank
-			$rank = Leaderboard::GetUserRank($_GET["u"], $modeForDB);
+			$rank = Leaderboard::GetUserRank($u, $modeForDB);
 			// Set rank char (trophy for top 3, # for everyone else)
 			if ($rank <= 3)
 			{
