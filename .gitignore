@@ -22,3 +22,7 @@ migrations/latest.txt
 # pep.py config and python cache
 c.ppy.sh/config.ini
 c.ppy.sh/__pycache__/*.*
+
+# backup system
+backup-system/config.ini
+backup-system/temp/*.*
