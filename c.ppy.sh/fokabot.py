@@ -14,10 +14,12 @@ import time
 import threading
 
 def connect():
-	"""Add FokaBot to connected users"""
+	"""Add FokaBot to connected users and send userpanel/stats packet to everyone"""
 
 	token = glob.tokens.addToken(999)
 	token.actionID = actions.idle
+	glob.tokens.enqueueAll(serverPackets.userPanel(999))
+	glob.tokens.enqueueAll(serverPackets.userStats(999))
 
 
 def disconnect():
@@ -352,5 +354,22 @@ def fokabotResponse(fro, chan, message):
 			return False
 		except exceptions.userNotFoundException:
 			return "{}: user not found".format(message[1])
+	elif "!fokabot reconnect" in message:
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Check if fokabot is already connected
+			if (glob.tokens.getTokenFromUserID(999) != None):
+				raise exceptions.alreadyConnectedException
+
+			# Fokabot is not connected, connect it
+			connect()
+			return False
+		except exceptions.noAdminException:
+			return False
+		except exceptions.alreadyConnectedException:
+			return "Fokabot is already connected to Bancho"
 	else:
 		return False

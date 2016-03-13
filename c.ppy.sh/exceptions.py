@@ -35,3 +35,6 @@ class moderatedPMException(Exception):
 
 class userNotFoundException(Exception):
 	pass
+
+class alreadyConnectedException(Exception):
+	pass
