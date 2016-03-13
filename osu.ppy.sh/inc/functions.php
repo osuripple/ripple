@@ -2176,6 +2176,10 @@
 				$newFriend = getUserOsuID($newFriend);
 			}
 
+			// Make sure we aren't adding us to our friends
+			if ($dude == $newFriend)
+				throw new Exception;
+
 			// Make sure users exist
 			if (!checkUserExists($dude, true) || !checkUserExists($newFriend, true))
 				throw new Exception;

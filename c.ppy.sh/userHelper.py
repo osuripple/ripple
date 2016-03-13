@@ -216,6 +216,10 @@ def addFriend(userID, friendID):
 	friendID -- new friend
 	"""
 
+	# Make sure we aren't adding us to our friends
+	if (userID == friendID):
+		return
+
 	# Get current friend list
 	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
 
