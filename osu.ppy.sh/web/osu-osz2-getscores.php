@@ -95,7 +95,10 @@
 
 								// We have scores and beatmap name isn't in the db yet, add it
 								// (we remove last 4 chars from file name aka .osu)
-								$GLOBALS["db"]->execute("INSERT INTO beatmaps_names (`id`, `beatmap_md5`, `beatmap_name`) VALUES (NULL, ?, ?)", array($_GET["c"], substr($_GET["f"], 0, strlen($_GET["f"]) - 4) ));
+								// Oops! Make sure the record doesn't already exit
+								$exists = $GLOBALS["db"]->fetch("SELECT id FROM beatmaps_names WHERE beatmap_md5 = ?", array($_GET["c"]));
+								if (!$exists)
+									$GLOBALS["db"]->execute("INSERT INTO beatmaps_names (`id`, `beatmap_md5`, `beatmap_name`) VALUES (NULL, ?, ?)", array($_GET["c"], substr($_GET["f"], 0, strlen($_GET["f"]) - 4) ));
 							//}
 						}
 					}
