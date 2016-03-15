@@ -20,9 +20,11 @@
 	// controller system v2
 	require_once($df . "/pages/Login.php");
 	require_once($df . "/pages/Leaderboard.php");
+	require_once($df . "/pages/PasswordFinishRecovery.php");
 	$pages = array(
 		new Login(),
 		new Leaderboard(),
+		new PasswordFinishRecovery(),
 	);
 
 	// Set timezone to UTC
@@ -148,7 +150,6 @@
 				case 16: return ('<title>Ripple - Read documentation</title>'); break;
 				case 17: return ('<title>Ripple - Changelog</title>'); break;
 				case 18: return ('<title>Ripple - Recover your password</title>'); break;
-				case 19: return ('<title>Ripple - Finish password recovery</title>'); break;
 				case 20: return ('<title>Ripple - Beta keys</title>'); break;
 				case 21: return ('<title>Ripple - About</title>'); break;
 				case 22: return ('<title>Ripple - Report a bug/Request a feature</title>'); break;
@@ -208,7 +209,7 @@
 				case 99:
 					if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]]))
 						$e = $_GET["e"];
-					elseif (strlen($_GET["e"]) > 12 && substr($_GET["e"], 0, 12) == "do_missing__") {
+					elseif (isset($_GET["e"]) && strlen($_GET["e"]) > 12 && substr($_GET["e"], 0, 12) == "do_missing__") {
 						$s = substr($_GET["e"], 12);
 						if (preg_match("/^[a-z0-9-]*$/i", $s) === 1) {
 							P::ExceptionMessage("Missing parameter while trying to do action: " . $s);
@@ -264,9 +265,6 @@
 
 				// Password recovery
 				case 18: P::PasswordRecovery(); break;
-
-				// Finish password recovery
-				case 19: P::PasswordFinishRecovery(); break;
 
 				// Beta keys page
 				case 20: P::BetaKeys(); break;
@@ -2268,4 +2266,29 @@
 		$r .= "\x0B".pack("c", strlen($str));	// won't do uleb128
 		$r .= $str;
 		return $r;
+	}
+	
+	/*
+	 * checkMustHave
+	 * Makes sure a request has the "Must Have"s of a page.
+	 * (Must Haves = $mh_GET, $mh_POST)
+	 */
+	function checkMustHave($page) {
+		if ($_SERVER['REQUEST_METHOD'] == "POST") {
+			if (isset($page->mh_POST) && count($page->mh_POST) > 0) {
+				foreach ($page->mh_POST as $el) {
+					if (empty($_POST[$el])) {
+						redirect("index.php?p=99&e=do_missing__" . $el);
+					}
+				}
+			}
+		} else {
+			if (isset($page->mh_GET) && count($page->mh_GET) > 0) {
+				foreach ($page->mh_GET as $el) {
+					if (empty($_GET[$el])) {
+						redirect("index.php?p=99&e=do_missing__" . $el);
+					}
+				}
+			}
+		}
 	}

@@ -16,13 +16,7 @@
 
 		foreach ($pages as $page) {
 			if ($action == $page::URL) {
-				if (isset($page->mh_POST) && count($page->mh_POST) > 0) {
-					foreach ($page->mh_POST as $el) {
-						if (empty($_POST[$el])) {
-							redirect("index.php?p=99&do_missing__" . $el);
-						}
-					}
-				}
+				checkMustHave($page);
 				$page->D();
 				return;
 			}
@@ -38,7 +32,6 @@
 			case "u": redirect("../ripple/index.php?u=".$_GET["data"]."&m=0"); break;
 			case "recoverPassword": D::RecoverPassword(); break;
 			case "saveUserSettings": D::saveUserSettings(); break;
-			case "passwordFinishRecovery": D::PasswordFinishRecovery(); break;
 			case "forgetEveryCookie": D::ForgetEveryCookie(); break;
 			case "saveUserpage": D::SaveUserpage(); break;
 			case "changeAvatar": D::ChangeAvatar(); break;

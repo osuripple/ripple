@@ -34,6 +34,13 @@
 				if (defined(get_class($page) . "::PageID")) {
 					$p = $page::PageID;
 				}
+				if (defined(get_class($page) . "::LoggedIn")) {
+					if ($page::LoggedIn) {
+						clir();
+					} else {
+						clir(TRUE, "index.php?p=1&e=1");
+					}
+				}
 				break;
 			}
 		}
@@ -151,6 +158,7 @@
 							printPage($p);
 						} else {
 							echo $status;
+							checkMustHave($model);
 							$model->P();
 						}
                         echo('

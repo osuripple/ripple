@@ -2419,37 +2419,6 @@ class P {
 		}
 	}
 
-
-	/*
-	 * PasswordFinishRecovery
-	 * Link to which the user is sent from the password recovery email.
-	 */
-	static function PasswordFinishRecovery() {
-		$exceptions = array("Nice troll.", "Please get your shit together and make a better password.", "barney is a dinosaur your password doesn't maaatch!", "D'ya know? your password is dumb. it's also one of the most used around the entire internet. yup.", "Don't even try.");
-		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
-		if (!isset($_GET["k"]) || !isset($_GET["user"])) {
-			P::ExceptionMessage("You should not be here.");
-			return;
-		}
-		$d = $GLOBALS["db"]->fetch("SELECT id FROM password_recovery WHERE k = ? AND u = ?;", array($_GET["k"], $_GET["user"]));
-		if ($d === false) {
-			P::ExceptionMessage("The user/key pair you provided in the URL is not valid. Which means either the link expired, it was already used, or it was never there in the first place. The latter is most likely to be the case. Again, you should not be here.");
-			return;
-		}
-		echo('<div id="narrow-content" style="width:500px"><h1><i class="fa fa-exclamation-circle"></i> Recover your password</h1>');
-		echo(sprintf('<p>Glad to have you here again, %s! To finish the password recovery, please type in a new password:</p>', $_GET["user"]));
-		echo('<form action="submit.php" method="POST">
-		<input name="action" value="passwordFinishRecovery" hidden>
-		<input name="k" value="' . $_GET["k"] . '" hidden>
-		<input name="user" value="' . $_GET["user"] . '" hidden>
-		<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" max-width="25%"></span></span><input type="password" name="p1" required class="form-control" placeholder="New password" aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
-		<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-lock" max-width="25%"></span></span><input type="password" name="p2" required class="form-control" placeholder="Repeat new password" aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
-		<button type="submit" class="btn btn-primary">Change password</button>
-		</form>
-		</div>');
-	}
-
-
 	/*
 	* Alerts
 	* Print the alerts for the logged in user.

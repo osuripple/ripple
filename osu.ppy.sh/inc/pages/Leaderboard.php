@@ -3,9 +3,9 @@ class Leaderboard {
 	const PageID = 13;
 	const URL = "leaderboard";
 	const Title = "Ripple - Leaderboard";
+	const LoggedIn = true;
 
 	public function P() {
-		clir();
 		// Leaderboard names (to bold the selected mode)
 		$modesText = array(
 			0 => "osu!standard",

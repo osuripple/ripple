@@ -3,6 +3,7 @@ class Login {
 	const PageID = 2;
 	const URL = "login";
 	const Title = "Ripple - Login";
+	const LoggedIn = false;
 
 	public $mh_POST = array(
 		"u",

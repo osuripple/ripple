@@ -209,52 +209,6 @@ class D {
 		}
 	}
 
-
-	/*
-	* PasswordFinishRecovery()
-	* Finishes the password recovery procedure.
-	*/
-	static function PasswordFinishRecovery() {
-		try {
-			if (empty($_POST["k"]) || empty($_POST["user"])) {
-				throw new Exception(0);
-			}
-			if (empty($_POST["p1"]) || empty($_POST["p2"])) {
-				throw new Exception(0);
-			}
-
-			$d = $GLOBALS["db"]->fetch("SELECT id FROM password_recovery WHERE k = ? AND u = ?;", array($_POST["k"], $_POST["user"]));
-
-			if ($d === false) {
-				throw new Exception(4);
-			}
-
-			// Validate password through our helper
-			$pres = PasswordHelper::ValidatePassword($_POST["p1"], $_POST["p2"]);
-			if ($pres !== -1) {
-				throw new Exception($pres);
-			}
-
-			// Calculate new password
-			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
-
-			// Change both passwords and salt
-			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newPassword, $_POST["user"]));
-			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_POST["user"]));
-
-			// Delete password reset key
-			$GLOBALS["db"]->fetch("DELETE FROM password_recovery WHERE id = ?;", array($d["id"]));
-
-			// Redirect to success page
-			redirect("index.php?p=2&s=done");
-		}
-		catch (Exception $e) {
-			redirect("index.php?p=19&e=0");
-		}
-	}
-
-
 	/*
 	* GenerateBetaKey
 	* Generate beta key(s) function
