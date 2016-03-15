@@ -423,6 +423,9 @@
 		// Logged in left elements
 		if (checkLoggedIn())
 		{
+			// Just an easter egg that you'll probably never notice, unless you do it on purpose.
+			$trollerino = mt_rand(1,100) == 1;
+			
 			echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
 			echo('<li><a href="http://bloodcat.com/osu"><i class="fa fa-music"></i>	Beatmaps</a></li>');
 			echo('<li class="dropdown">
@@ -432,8 +435,8 @@
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
 						<li class="divider"></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> Report a bug</a></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	Request a feature</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> ' . ($trollerino ? 'Request' : 'Report' ) . ' a bug</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	' . ($trollerino ? 'Report' : 'Request' ) . ' a feature</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="http://y.zxq.co/ngomne.zip"><i class="fa fa-server"></i>	Kwisk\'s Server switcher</a></li>
 						<li class="dropdown-submenu"><a href="https://mu.nyodev.xyz/upd.php?id=18"><i class="fa fa-server"></i>	Phwr\'s Server switcher</a></li>
