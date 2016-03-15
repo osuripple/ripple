@@ -32,6 +32,7 @@ class channel:
 		self.description = __description
 		self.publicRead = __publicRead
 		self.publicWrite = __publicWrite
+		self.connectedUsers = []
 
 
 	def userJoin(self, __userID):
@@ -41,9 +42,8 @@ class channel:
 		__userID -- user ID that joined the channel
 		"""
 
-		connectedUsers = self.connectedUsers
-		if (__userID not in connectedUsers):
-			connectedUsers.append(__userID)
+		if (__userID not in self.connectedUsers):
+			self.connectedUsers.append(__userID)
 
 
 	def userPart(self, __userID):

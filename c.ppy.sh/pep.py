@@ -527,6 +527,8 @@ def banchoServer():
 						# the server, so we accept logout packets sent at least 5 seconds after login
 						if (int(time.time()-userToken.loginTime) >= 5):
 							# TODO: Channel part at logout
+							# TODO: Stop spectating at logout
+							# TODO: Stop spectating at timeout
 							# Enqueue our disconnection to everyone else
 							glob.tokens.enqueueAll(serverPackets.userLogout(userID))
 
@@ -565,105 +567,105 @@ def banchoServer():
 		return responseHelper.HTMLResponse()
 
 
+if (__name__ == "__main__"):
+	# Server start
+	consoleHelper.printServerStartHeader(True);
 
-# Server start
-consoleHelper.printServerStartHeader(True);
+	# Read config.ini
+	consoleHelper.printNoNl("> Loading config file... ")
+	glob.conf = config.config("config.ini")
 
-# Read config.ini
-consoleHelper.printNoNl("> Loading config file... ")
-glob.conf = config.config("config.ini")
+	if (glob.conf.default == True):
+		# We have generated a default config.ini, quit server
+		consoleHelper.printWarning()
+		consoleHelper.printColored("[!] config.ini not found. A default one has been generated.", bcolors.YELLOW)
+		consoleHelper.printColored("[!] Please edit your config.ini and run the server again.", bcolors.YELLOW)
+		sys.exit()
 
-if (glob.conf.default == True):
-	# We have generated a default config.ini, quit server
-	consoleHelper.printWarning()
-	consoleHelper.printColored("[!] config.ini not found. A default one has been generated.", bcolors.YELLOW)
-	consoleHelper.printColored("[!] Please edit your config.ini and run the server again.", bcolors.YELLOW)
-	sys.exit()
-
-# If we haven't generated a default config.ini, check if it's valid
-if (glob.conf.checkConfig() == False):
-	consoleHelper.printError()
-	consoleHelper.printColored("[!] Invalid config.ini. Please configure it properly", bcolors.RED)
-	consoleHelper.printColored("[!] Delete your config.ini to generate a default one", bcolors.RED)
-	sys.exit()
-else:
-	consoleHelper.printDone()
-
-
-# Connect to db
-try:
-	consoleHelper.printNoNl("> Connecting to MySQL db... ")
-	glob.db = databaseHelper.db(glob.conf.config["db"]["host"], glob.conf.config["db"]["username"], glob.conf.config["db"]["password"], glob.conf.config["db"]["database"], int(glob.conf.config["db"]["pingtime"]))
-	consoleHelper.printDone()
-except:
-	# Exception while connecting to db
-	consoleHelper.printError()
-	consoleHelper.printColored("[!] Error while connection to database. Please check your config.ini and run the server again", bcolors.RED)
-	raise
-
-# Load bancho_settings
-try:
-	consoleHelper.printNoNl("> Loading bancho settings from DB... ")
-	glob.banchoConf = banchoConfig.banchoConfig()
-	consoleHelper.printDone()
-except:
-	consoleHelper.printError()
-	consoleHelper.printColored("[!] Error while loading bancho_settings. Please make sure the table in DB has all the required rows", bcolors.RED)
-	raise
-
-# Initialize chat channels
-consoleHelper.printNoNl("> Initializing chat channels... ")
-glob.channels.loadChannels()
-consoleHelper.printDone()
-
-# Start fokabot
-consoleHelper.printNoNl("> Connecting FokaBot... ")
-fokabot.connect()
-consoleHelper.printDone()
-
-# Initialize user timeout check loop
-try:
-	consoleHelper.printNoNl("> Initializing user timeout check loop... ")
-	glob.tokens.usersTimeoutCheckLoop(int(glob.conf.config["server"]["timeouttime"]), int(glob.conf.config["server"]["timeoutlooptime"]))
-	consoleHelper.printDone()
-except:
-	consoleHelper.printError()
-	consoleHelper.printColored("[!] Error while initializing user timeout check loop", bcolors.RED)
-	consoleHelper.printColored("[!] Make sure that 'timeouttime' and 'timeoutlooptime' in config.ini are numbers", bcolors.RED)
-	raise
-
-# Get server parameters from config.ini
-serverName = glob.conf.config["server"]["server"]
-serverHost = glob.conf.config["server"]["host"]
-serverPort = int(glob.conf.config["server"]["port"])
-serverOutputPackets = generalFunctions.stringToBool(glob.conf.config["server"]["outputpackets"])
-
-# Run server sanic way
-if (serverName == "tornado"):
-	# Tornado server
-	print("> Starting tornado...");
-	webServer = HTTPServer(WSGIContainer(app))
-	webServer.listen(serverPort)
-	IOLoop.instance().start()
-elif (serverName == "flask"):
-	# Flask server
-	# Get flask settings
-	flaskThreaded = generalFunctions.stringToBool(glob.conf.config["flask"]["threaded"])
-	flaskDebug = generalFunctions.stringToBool(glob.conf.config["flask"]["debug"])
-	flaskLoggerStatus = not generalFunctions.stringToBool(glob.conf.config["flask"]["logger"])
-
-	# Set flask debug mode and logger
-	app.debug = flaskDebug
-	flaskLogger.disabled = flaskLoggerStatus
-
-	# Console output
-	if (flaskDebug == False):
-		print("> Starting flask...");
+	# If we haven't generated a default config.ini, check if it's valid
+	if (glob.conf.checkConfig() == False):
+		consoleHelper.printError()
+		consoleHelper.printColored("[!] Invalid config.ini. Please configure it properly", bcolors.RED)
+		consoleHelper.printColored("[!] Delete your config.ini to generate a default one", bcolors.RED)
+		sys.exit()
 	else:
-		print("> Starting flask in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+		consoleHelper.printDone()
 
-	# Run flask server
-	app.run(host=serverHost, port=serverPort, threaded=flaskThreaded)
-else:
-	print(bcolors.RED+"[!] Unknown server. Please set the server key in config.ini to "+bcolors.ENDC+bcolors.YELLOW+"tornado"+bcolors.ENDC+bcolors.RED+" or "+bcolors.ENDC+bcolors.YELLOW+"flask"+bcolors.ENDC)
-	sys.exit()
+
+	# Connect to db
+	try:
+		consoleHelper.printNoNl("> Connecting to MySQL db... ")
+		glob.db = databaseHelper.db(glob.conf.config["db"]["host"], glob.conf.config["db"]["username"], glob.conf.config["db"]["password"], glob.conf.config["db"]["database"], int(glob.conf.config["db"]["pingtime"]))
+		consoleHelper.printDone()
+	except:
+		# Exception while connecting to db
+		consoleHelper.printError()
+		consoleHelper.printColored("[!] Error while connection to database. Please check your config.ini and run the server again", bcolors.RED)
+		raise
+
+	# Load bancho_settings
+	try:
+		consoleHelper.printNoNl("> Loading bancho settings from DB... ")
+		glob.banchoConf = banchoConfig.banchoConfig()
+		consoleHelper.printDone()
+	except:
+		consoleHelper.printError()
+		consoleHelper.printColored("[!] Error while loading bancho_settings. Please make sure the table in DB has all the required rows", bcolors.RED)
+		raise
+
+	# Initialize chat channels
+	consoleHelper.printNoNl("> Initializing chat channels... ")
+	glob.channels.loadChannels()
+	consoleHelper.printDone()
+
+	# Start fokabot
+	consoleHelper.printNoNl("> Connecting FokaBot... ")
+	fokabot.connect()
+	consoleHelper.printDone()
+
+	# Initialize user timeout check loop
+	try:
+		consoleHelper.printNoNl("> Initializing user timeout check loop... ")
+		glob.tokens.usersTimeoutCheckLoop(int(glob.conf.config["server"]["timeouttime"]), int(glob.conf.config["server"]["timeoutlooptime"]))
+		consoleHelper.printDone()
+	except:
+		consoleHelper.printError()
+		consoleHelper.printColored("[!] Error while initializing user timeout check loop", bcolors.RED)
+		consoleHelper.printColored("[!] Make sure that 'timeouttime' and 'timeoutlooptime' in config.ini are numbers", bcolors.RED)
+		raise
+
+	# Get server parameters from config.ini
+	serverName = glob.conf.config["server"]["server"]
+	serverHost = glob.conf.config["server"]["host"]
+	serverPort = int(glob.conf.config["server"]["port"])
+	serverOutputPackets = generalFunctions.stringToBool(glob.conf.config["server"]["outputpackets"])
+
+	# Run server sanic way
+	if (serverName == "tornado"):
+		# Tornado server
+		print("> Starting tornado...");
+		webServer = HTTPServer(WSGIContainer(app))
+		webServer.listen(serverPort)
+		IOLoop.instance().start()
+	elif (serverName == "flask"):
+		# Flask server
+		# Get flask settings
+		flaskThreaded = generalFunctions.stringToBool(glob.conf.config["flask"]["threaded"])
+		flaskDebug = generalFunctions.stringToBool(glob.conf.config["flask"]["debug"])
+		flaskLoggerStatus = not generalFunctions.stringToBool(glob.conf.config["flask"]["logger"])
+
+		# Set flask debug mode and logger
+		app.debug = flaskDebug
+		flaskLogger.disabled = flaskLoggerStatus
+
+		# Console output
+		if (flaskDebug == False):
+			print("> Starting flask...");
+		else:
+			print("> Starting flask in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+
+		# Run flask server
+		app.run(host=serverHost, port=serverPort, threaded=flaskThreaded)
+	else:
+		print(bcolors.RED+"[!] Unknown server. Please set the server key in config.ini to "+bcolors.ENDC+bcolors.YELLOW+"tornado"+bcolors.ENDC+bcolors.RED+" or "+bcolors.ENDC+bcolors.YELLOW+"flask"+bcolors.ENDC)
+		sys.exit()

@@ -41,7 +41,7 @@ def mainMenuIcon(icon):
 	return packetHelper.buildPacket(packetIDs.server_mainMenuIcon, [[icon, dataTypes.string]])
 
 def userSupporterGMT(supporter, GMT):
-	result = 1;
+	result = 1
 	if (supporter == True):
 		result += 4
 	if (GMT == True):
