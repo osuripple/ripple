@@ -164,7 +164,7 @@ class tokenList:
 				self.enqueueAll(serverPackets.userLogout(value.userID))
 
 				# Console output
-				consoleHelper.printColored("> {} has been disconnected (timeout)".format(value.username), bcolors.YELLOW)
+				consoleHelper.printColored("> {} have been disconnected (timeout)".format(value.username), bcolors.YELLOW)
 
 		# Delete timed out users from self.tokens
 		# i is token string (dictionary key)

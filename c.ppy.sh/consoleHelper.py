@@ -27,7 +27,7 @@ def printServerStartHeader(asciiArt):
 		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 		print(bcolors.ENDC)
 
-	print(bcolors.GREEN+"> Welcome to pep.py osu! Server v0.5\n> Made by the ripple team\n> Press CTRL+C to exit"+bcolors.ENDC+"\n")
+	print("{}{}\n{}\n{}{}\n".format(bcolors.GREEN, "> Welcome to pep.py osu! Server v0.5", "> Made by the ripple team", "> Press CTRL+C to exit", bcolors.ENDC))
 
 
 def printNoNl(string):
@@ -48,7 +48,7 @@ def printColored(string, color):
 	color -- see bcolors.py
 	"""
 
-	print(color+string+bcolors.ENDC)
+	print("{}{}{}".format(color, string, bcolors.ENDC))
 
 
 def printError():

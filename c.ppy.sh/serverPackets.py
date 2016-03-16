@@ -4,7 +4,7 @@ import dataTypes
 import gameModes
 import userHelper
 import glob
-import usernameColors
+import userRanks
 import consoleHelper
 import bcolors
 import packetIDs
@@ -96,11 +96,11 @@ def userPanel(userID):
 	# Only admins and normal users are currently supported
 	rank = userHelper.getUserRank(userID)
 	if (username == "FokaBot"):
-		usernameColor = usernameColors.mod
+		userRank = userRanks.mod
 	elif (rank == 4):
-		usernameColor = usernameColors.admin
+		userRank = userRanks.admin
 	else:
-		usernameColor = usernameColors.normal
+		userRank = userRanks.normal
 
 
 	return packetHelper.buildPacket(packetIDs.server_userPanel,
@@ -109,7 +109,7 @@ def userPanel(userID):
 		[username, dataTypes.string],
 		[timezone, dataTypes.byte],
 		[country, dataTypes.byte],
-		[usernameColor, dataTypes.byte],
+		[userRank, dataTypes.byte],
 		[longitude, dataTypes.ffloat],
 		[latitude, dataTypes.ffloat],
 		[gameRank, dataTypes.uInt32]
