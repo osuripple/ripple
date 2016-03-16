@@ -234,7 +234,7 @@ we are actually reverse engineering bancho successfully. kinda of.
 			$userColor = "\x06";
 
 		// Get game rank
-		$gameRank = Leaderboard::GetUserRank($uid, $modeForDB);
+		$gameRank = intval(Leaderboard::GetUserRank($uid, $modeForDB));
 
 		// Packet start
 		$output = "";

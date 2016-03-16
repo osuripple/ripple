@@ -1623,7 +1623,7 @@ class P {
 			}
 
 			// Calculate rank
-			$rank = Leaderboard::GetUserRank($u, $modeForDB);
+			$rank = intval(Leaderboard::GetUserRank($u, $modeForDB));
 			// Set rank char (trophy for top 3, # for everyone else)
 			if ($rank <= 3)
 			{

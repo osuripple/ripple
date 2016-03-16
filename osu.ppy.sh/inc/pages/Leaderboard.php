@@ -95,8 +95,17 @@ class Leaderboard {
 
 
 	static function GetUserRank($u, $mode) {
-		return current($GLOBALS["db"]->fetch("SELECT position FROM leaderboard_$mode WHERE user = ?;", array($u)));
+		$query = current($GLOBALS["db"]->fetch("SELECT position FROM leaderboard_$mode WHERE user = ?;", array($u)));
+
+		if (is_array($query)) {
+			$rank = (string)$query;
+		} else {
+			$rank = "Unknown";
+		}
+
+		return $rank;
 	}
+
 	static function BuildLeaderboard() {
 		// Declare stuff that will be used later on.
 		$modes = array("std", "taiko", "ctb", "mania");
