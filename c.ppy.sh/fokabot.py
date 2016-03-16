@@ -49,7 +49,7 @@ def fokabotResponse(fro, chan, message):
 				maxPoints = int(message[1])
 
 		points = random.randrange(0,maxPoints)
-		return fro+" rolls "+str(points)+" points!"
+		return "{} rolls {} points!".format(fro, str(points))
 	elif "!faq rules" in message:
 		return "Please make sure to check (Ripple's rules)[http://ripple.moe/?p=23]."
 	elif "!faq swearing" in message:
@@ -57,11 +57,11 @@ def fokabotResponse(fro, chan, message):
 	elif "!faq spam" in message:
 		return "Please don't spam"
 	elif "!faq offend" in message:
-		return "Please offend other players"
+		return "Please don't offend other players"
 	elif "!help" in message:
-		return "Click (here)[https://ripple.moe/index.php?p=16&id=4] for full FokaBot's command list"
+		return "Click (here)[https://ripple.moe/index.php?p=16&id=4] for FokaBot's full command list"
 	elif "!report" in message:
-		return "Report command is not here yet :("
+		return "Report command is not here, yet :("
 
 	# Admin commands
 	elif "!moderated" in message:
@@ -88,11 +88,11 @@ def fokabotResponse(fro, chan, message):
 
 			return "This channel is {} in moderated mode!".format("now" if enable else "no longer")
 		except exceptions.noAdminException:
-			consoleHelper.printColored("[!] "+fro+" has tried to put "+chan+" in moderated mode, but he is not an admin.", bcolors.RED)
+			consoleHelper.printColored("[!] {} tried to put {} in moderated mode, but they are not an admin.".format(fro, chan), bcolors.RED)
 			return False
 		except exceptions.moderatedPMException:
-			consoleHelper.printColored("[!] "+fro+" has tried to put a PM chat in moderated mode.", bcolors.RED)
-			return "Are you trying to put a private chat in moderated mode? Are you serious?!? You're fired."
+			consoleHelper.printColored("[!] {} tried to put a PM chat in moderated mode.".format(fro), bcolors.RED)
+			return "You are trying to put a private chat in moderated mode. Are you serious?!? You're fired."
 	elif "!system" in message:
 		# System commands
 		try:
@@ -116,16 +116,16 @@ def fokabotResponse(fro, chan, message):
 					# Final message
 					msg =  "=== PEP.PY STATS ===\n"
 					msg += "Running pep.py server\n"
-					msg += "Webserver: "+data["webServer"]+"\n"
+					msg += "Webserver: {}\n".format(data["webServer"])
 					msg += "\n"
 					msg += "=== BANCHO STATS ===\n"
-					msg += "Connected users: "+str(data["connectedUsers"])+"\n"
+					msg += "Connected users: {}\n".format(str(data["connectedUsers"]))
 					msg += "\n"
 					msg += "=== SYSTEM STATS ===\n"
-					msg += "CPU: "+str(data["cpuUsage"])+"%\n"
-					msg += "RAM: "+str(data["usedMemory"])+"GB/"+str(data["totalMemory"])+"GB\n"
+					msg += "CPU: {}%\n".format(str(data["cpuUsage"]))
+					msg += "RAM: {}GB/{}GB\n".format(str(data["usedMemory"]), str(data["totalMemory"]))
 					if (data["unix"] == True):
-						msg += "Load average: "+str(data["loadAverage"][0])+"/"+str(data["loadAverage"][1])+"/"+str(data["loadAverage"][2])+"\n"
+						msg += "Load average: {}/{}/{}\n".format(str(data["loadAverage"][0]), str(data["loadAverage"][1]), str(data["loadAverage"][2]))
 
 					return msg
 				elif (message[1] == "reload"):
@@ -168,7 +168,7 @@ def fokabotResponse(fro, chan, message):
 				raise exceptions.commandSyntaxException
 
 		except exceptions.noAdminException:
-			consoleHelper.printColored("[!] "+fro+" has tried to run a system command, but he is not an admin.", bcolors.RED)
+			consoleHelper.printColored("[!] {} tried to run a system command, but they are not an admin.".format(fro), bcolors.RED)
 			return False
 		except exceptions.commandSyntaxException:
 			consoleHelper.printColored("[!] Fokabot command syntax error", bcolors.RED)

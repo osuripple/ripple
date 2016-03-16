@@ -101,13 +101,13 @@ def banchoServer():
 
 		if (requestToken == None):
 			# We don't have a token, this is the first packet aka login
-			print("> Accepting connection from "+requestIP+"...")
+			print("> Accepting connection from {}...".format(requestIP))
 
 			# Split POST body so we can get username/password/hardware data
 			loginData = str(requestData)[2:-3].split("\\n")
 
 			# Process login
-			print("> Processing login request for "+loginData[0]+"...")
+			print("> Processing login request for {}...".format(loginData[0]))
 			try:
 				# If true, print error to console
 				err = False
@@ -135,7 +135,7 @@ def banchoServer():
 				responseTokenString = responseToken.token
 
 				# Print logged in message
-				consoleHelper.printColored("> "+loginData[0]+" logged in ("+responseToken.token+")", bcolors.GREEN)
+				consoleHelper.printColored("> {} logged in ({})".format(loginData[0], responseToken.token), bcolors.GREEN)
 
 				# Get silence end
 				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
@@ -227,7 +227,7 @@ def banchoServer():
 			finally:
 				# Print login failed message to console if needed
 				if (err == True):
-					consoleHelper.printColored("> "+loginData[0]+"'s login failed", bcolors.YELLOW)
+					consoleHelper.printColored("> {}'s login failed".format(loginData[0]), bcolors.YELLOW)
 		else:
 			try:
 				# This is not the first packet, send response based on client's request
@@ -258,8 +258,8 @@ def banchoServer():
 
 					# Console output if needed
 					if (serverOutputPackets == True and packetID != 4):
-						consoleHelper.printColored("Incoming packet ("+requestToken+")("+username+"):", bcolors.GREEN)
-						consoleHelper.printColored("Packet code: "+str(packetID)+"\nPacket length: "+str(dataLength)+"\nSingle packet data: "+str(packetData)+"\n", bcolors.YELLOW)
+						consoleHelper.printColored("Incoming packet ({})({}):".format(requestToken, username), bcolors.GREEN)
+						consoleHelper.printColored("Packet code: {}\nPacket length: {}\nSingle packet data: {}\n".format(str(packetID), str(dataLength), str(packetData)), bcolors.YELLOW)
 
 					# Packet switch
 					if (packetID == packetIDs.client_pong):
@@ -321,16 +321,16 @@ def banchoServer():
 							if (fokaMessage != False):
 								who.append(userID)
 								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), who, False)
-								consoleHelper.printColored("> FokaBot@"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)
+								consoleHelper.printColored("> FokaBot@{}: {}".format(packetData["to"], str(fokaMessage.encode("UTF-8"))), bcolors.PINK)
 
 							# Console output
-							consoleHelper.printColored("> "+username+"@"+packetData["to"]+": "+str(packetData["message"].encode("UTF-8")), bcolors.PINK)
+							consoleHelper.printColored("> {}@{}: {}").format(username, packetData["to"], str(packetData["message"].encode("UTF-8")), bcolors.PINK)
 						except exceptions.channelModeratedException:
-							consoleHelper.printColored("[!] "+username+" has attempted to send a message to a channel that is in moderated mode ("+packetData["to"]+")", bcolors.RED)
+							consoleHelper.printColored("[!] {} tried to send a message to a channel that is in moderated mode ({})".format(username, packetData["to"]), bcolors.RED)
 						except exceptions.channelUnknownException:
-							consoleHelper.printColored("[!] "+username+" has attempted to send a message to an unknown channel ("+packetData["to"]+")", bcolors.RED)
+							consoleHelper.printColored("[!] {} tried to send a message to an unknown channel ({})".format(username, packetData["to"]), bcolors.RED)
 						except exceptions.channelNoPermissionsException:
-							consoleHelper.printColored("[!] "+username+" has attempted to send a message to channel "+packetData["to"]+", but he has no write permissions", bcolors.RED)
+							consoleHelper.printColored("[!] {} tried to send a message to channel {}, but they have no write permissions".format(username, packetData["to"]), bcolors.RED)
 
 					elif (packetID == packetIDs.client_sendPrivateMessage):
 						try:
@@ -342,7 +342,7 @@ def banchoServer():
 								fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
 								if (fokaMessage != False):
 									userToken.enqueue(serverPackets.sendMessage("FokaBot", username, fokaMessage))
-									consoleHelper.printColored("> FokaBot>"+packetData["to"]+": "+str(fokaMessage.encode("UTF-8")), bcolors.PINK)
+									consoleHelper.printColored("> FokaBot>{}: {}".format(packetData["to"], str(fokaMessage.encode("UTF-8"))), bcolors.PINK)
 							else:
 								# Send packet message to target if it exists
 								token = glob.tokens.getTokenFromUsername(packetData["to"])
@@ -351,10 +351,10 @@ def banchoServer():
 								token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
 							# Console output
-							consoleHelper.printColored("> "+username+">"+packetData["to"]+": "+packetData["message"], bcolors.PINK)
+							consoleHelper.printColored("> {}>{}: {}".format(username, packetData["to"], packetData["message"]), bcolors.PINK)
 						except exceptions.tokenNotFoundException:
 							# Token not found, user disconnected
-							consoleHelper.printColored("[!] "+username+" has tried to send a message to "+packetData["to"]+", but its token couldn't be found", bcolors.RED)
+							consoleHelper.printColored("[!] {} tried to send a message to {}, but their token couldn't be found".format(username, packetdata["to"]), bcolors.RED)
 					elif (packetID == packetIDs.client_channelJoin):
 						try:
 							# Channel join packet
@@ -382,11 +382,11 @@ def banchoServer():
 							userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
 
 							# Console output
-							consoleHelper.printColored("> "+username+" has joined channel "+packetData["channel"], bcolors.GREEN)
+							consoleHelper.printColored("> {} joined channel {}".format(username, packetData["channel"]), bcolors.GREEN)
 						except exceptions.channelNoPermissionsException:
-							consoleHelper.printColored("[!] "+username+" has attempted to join channel "+packetData["channel"]+", but he has no read permissions", bcolors.RED)
+							consoleHelper.printColored("[!] {} attempted to join channel {}, but they have no read permissions".format(username, packetData["channel"]), bcolors.RED)
 						except exceptions.channelUnknownException:
-							consoleHelper.printColored("[!] "+username+" has attempted to join an unknown channel ("+packetData["channel"]+")", bcolors.RED)
+							consoleHelper.printColored("[!] {} attempted to join an unknown channel ({})".format(username, packetData["channel"]), bcolors.RED)
 					elif (packetID == packetIDs.client_channelPart):
 						# Channel part packet
 						packetData = clientPackets.channelPart(packetData)
@@ -397,7 +397,7 @@ def banchoServer():
 							glob.channels.channels[packetData["channel"]].userPart(userID)
 
 							# Console output
-							consoleHelper.printColored("> "+username+" has parted channel "+packetData["channel"], bcolors.YELLOW)
+							consoleHelper.printColored("> {} parted channel {}".format(username, packetData["channel"]), bcolors.YELLOW)
 					elif (packetID == packetIDs.client_changeAction):
 						# Change action packet
 						packetData = clientPackets.userActionChange(packetData)
@@ -414,7 +414,7 @@ def banchoServer():
 						glob.tokens.enqueueAll(serverPackets.userStats(userID))
 
 						# Console output
-						print("> "+username+" has changed action: "+str(userToken.actionID)+" ["+userToken.actionText+"]["+userToken.actionMd5+"]")
+						print("> {} changed action: {} [{}][{}]".format(username, str(userToken.actionID), userToken.actionText, userToken.actionMd5))
 					elif (packetID == packetIDs.client_startSpectating):
 						try:
 							# Start spectating packet
@@ -448,7 +448,7 @@ def banchoServer():
 								targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 							# Console output
-							consoleHelper.printColored("> "+username+" is spectating "+userHelper.getUserUsername(packetData["userID"]), bcolors.PINK)
+							consoleHelper.printColored("> {} are spectating {}".format(username, userHelper.getUserUsername(packetData["userID"])), bcolors.PINK)
 							consoleHelper.printColored("> {}'s spectators: {}".format(str(packetData["userID"]), str(targetToken.spectators)), bcolors.BLUE)
 						except exceptions.tokenNotFoundException:
 							# Stop spectating if token not found
@@ -470,7 +470,7 @@ def banchoServer():
 
 							# Console output
 							# TODO: Move messages in stop spectating
-							consoleHelper.printColored("> "+username+" is no longer spectating whoever he was spectating", bcolors.PINK)
+							consoleHelper.printColored("> {} are no longer spectating whoever they were spectating".format(username), bcolors.PINK)
 							consoleHelper.printColored("> {}'s spectators: {}".format(str(target), str(targetToken.spectators)), bcolors.BLUE)
 						except exceptions.tokenNotFoundException:
 							consoleHelper.printColored("[!] Spectator stop: token not found", bcolors.RED)
@@ -511,14 +511,14 @@ def banchoServer():
 						userHelper.addFriend(userID, packetData["friendID"])
 
 						# Console output
-						print("> "+username+" has added "+str(packetData["friendID"])+" to his friends")
+						print("> {} have added {} to their friends".format(username, str(packetData["friendID"])))
 					elif (packetID == packetIDs.client_friendRemove):
 						# Friend remove packet
 						packetData = clientPackets.addRemoveFriend(packetData)
 						userHelper.removeFriend(userID, packetData["friendID"])
 
 						# Console output
-						print("> "+username+" has removed "+str(packetData["friendID"])+" from his friends")
+						print("> {} have removed {} from their friends".format(username, str(packetData["friendID"])))
 					elif (packetID == packetIDs.client_logout):
 						# Logout packet, no parameters to read
 
@@ -535,7 +535,7 @@ def banchoServer():
 							# Delete token
 							glob.tokens.deleteToken(requestToken)
 
-							consoleHelper.printColored("> "+username+" has been disconnected (logout)", bcolors.YELLOW)
+							consoleHelper.printColored("> {} have been disconnected (logout)".format(username), bcolors.YELLOW)
 
 					# Set reponse data and tokenstring to right value and reset our queue
 
@@ -555,8 +555,8 @@ def banchoServer():
 				# Token not found. Disconnect that user
 				responseData = serverPackets.loginError()
 				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
-				consoleHelper.printColored("[!] Received packet from unknown token ("+requestToken+").", bcolors.RED)
-				consoleHelper.printColored("> "+requestToken+" has been disconnected (invalid token)", bcolors.YELLOW)
+				consoleHelper.printColored("[!] Received packet from unknown token ({}).".format(requestToken), bcolors.RED)
+				consoleHelper.printColored("> {} have been disconnected (invalid token)".format(requestToken), bcolors.YELLOW)
 
 		# Send server's response to client
 		# We don't use token object because we might not have a token (failed login)
