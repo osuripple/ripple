@@ -1,6 +1,6 @@
 """Bancho user ranks"""
 normal			= 0
-players			= 1
+player			= 1
 supporter		= 4
 peppy			= 8
 mod				= 6
