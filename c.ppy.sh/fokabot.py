@@ -1,5 +1,5 @@
 """FokaBot related functions"""
-
+# TODO: Easier fokabot command config
 import random
 import exceptions
 import consoleHelper
@@ -11,7 +11,6 @@ import actions
 import serverPackets
 
 import time
-import threading
 
 def connect():
 	"""Add FokaBot to connected users and send userpanel/stats packet to everyone"""
@@ -25,7 +24,7 @@ def connect():
 def disconnect():
 	"""Remove FokaBot from connected users"""
 
-	glob.tokens.deleteToken(getTokenFromUserID(999))
+	glob.tokens.deleteToken(glob.tokens.getTokenFromUserID(999))
 
 
 def fokabotResponse(fro, chan, message):
@@ -150,7 +149,7 @@ def fokabotResponse(fro, chan, message):
 						who = []
 
 						# Disconnect everyone but mod/admins
-						for key,value in glob.tokens.tokens.items():
+						for _, value in glob.tokens.tokens.items():
 							if (value.rank <= 2):
 								who.append(value.userID)
 

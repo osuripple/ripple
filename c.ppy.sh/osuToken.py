@@ -1,9 +1,7 @@
-import tokenList
 import uuid
 import actions
 import gameModes
 import userHelper
-import channelList
 import time
 
 class token:
@@ -65,6 +63,17 @@ class token:
 		self.username = userHelper.getUserUsername(self.userID)
 		self.rank = userHelper.getUserRank(self.userID)
 		self.loginTime = int(time.time())
+		self.pingTime = self.loginTime
+
+		# Default variables
+		self.spectators = []
+		self.spectating = 0
+		self.location = [0,0]
+		self.joinedChannels = []
+		self.actionID = actions.idle
+		self.actionText = ""
+		self.actionMods = 0
+		self.gameMode = gameModes.std
 
 		# Generate/set token
 		if (__token != None):

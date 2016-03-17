@@ -8,10 +8,7 @@ def stringToBool(s):
 	return -- True/False
 	"""
 
-	if (s == "True" or s== "true" or s == "1" or s == 1):
-		return True
-	else:
-		return False
+	return (s == "True" or s== "true" or s == "1" or s == 1)
 
 
 def hexString(s):

@@ -10,7 +10,7 @@ class config:
 	"""
 
 	config = configparser.ConfigParser()
-	fileName = "";		# config filename
+	fileName = ""		# config filename
 	default = True
 
 	# Check if config.ini exists and load/generate it

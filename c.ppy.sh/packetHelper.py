@@ -1,6 +1,4 @@
 import struct
-import bcolors
-import sys
 import dataTypes
 
 def uleb128Encode(num):
@@ -133,7 +131,7 @@ def packData(__data, __dataType):
 
 	return data
 
-
+# TODO: Wat dangerous
 def buildPacket(__packet, __packetData = []):
 	"""
 	Build a packet
@@ -199,8 +197,8 @@ def readPacketData(__stream, __structure = []):
 	data = {}
 
 	# Skip packet ID and packet length
-	end = 7;
-	start = 7;
+	end = 7
+	start = 7
 	for i in __structure:
 		start = end
 		unpack = True
@@ -213,7 +211,6 @@ def readPacketData(__stream, __structure = []):
 			end = start+length[0]+length[1]+1
 
 			# Read bytes
-			string = ""
 			data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
 		elif (i[1] == dataTypes.byte):
 			end = start+1

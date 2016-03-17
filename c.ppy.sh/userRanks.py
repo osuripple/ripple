@@ -1,4 +1,5 @@
 """Bancho user ranks"""
+# TODO: Uppercase, maybe?
 normal			= 0
 player			= 1
 supporter		= 4

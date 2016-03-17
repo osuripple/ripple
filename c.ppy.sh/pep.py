@@ -1,16 +1,9 @@
 """Hello, pep.py here, ex-owner of ripple and prime minister of Ripwot."""
 # TODO: Remove useless imports
 # TODO: Docs
-import struct
-import gzip
-import string
 import logging
 import sys
-import uuid
-import pymysql
-import os
 import time
-import threading
 import flask
 
 # Tornado server
@@ -22,25 +15,32 @@ from tornado.ioloop import IOLoop
 import bcolors
 import packetIDs
 import serverPackets
-import clientPackets
 import config
-import dataTypes
 import userHelper
-import osuToken
-import tokenList
 import exceptions
-import gameModes
 import locationHelper
 import glob
 import fokabot
 import countryHelper
 import banchoConfig
 
+import sendPublicMessageEvent
+import sendPrivateMessageEvent
+import channelJoinEvent
+import channelPartEvent
+import changeActionEvent
+import cantSpectateEvent
+import startSpectatingEvent
+import stopSpectatingEvent
+import spectateFramesEvent
+import friendAddEvent
+import friendRemoveEvent
+import logoutEvent
+
 # pep.py helpers
 import packetHelper
 import consoleHelper
 import databaseHelper
-import passwordHelper
 import responseHelper
 import generalFunctions
 import systemHelper
@@ -97,7 +97,7 @@ def banchoServer():
 		responseData = bytes()
 
 		# Server's response token string
-		responseTokenString = "ayy";
+		responseTokenString = "ayy"
 
 		if (requestToken == None):
 			# We don't have a token, this is the first packet aka login
@@ -241,11 +241,6 @@ def banchoServer():
 				# Token exists, get its object
 				userToken = glob.tokens.tokens[requestToken]
 
-				# Get userID and username from token
-				userID = userToken.userID
-				username = userToken.username
-				userRank = userToken.rank
-
 				# Keep reading packets until everything has been read
 				while pos < len(requestData):
 					# Get packet from stack starting from new packet
@@ -258,289 +253,39 @@ def banchoServer():
 
 					# Console output if needed
 					if (serverOutputPackets == True and packetID != 4):
-						consoleHelper.printColored("Incoming packet ({})({}):".format(requestToken, username), bcolors.GREEN)
+						consoleHelper.printColored("Incoming packet ({})({}):".format(requestToken, userToken.username), bcolors.GREEN)
 						consoleHelper.printColored("Packet code: {}\nPacket length: {}\nSingle packet data: {}\n".format(str(packetID), str(dataLength), str(packetData)), bcolors.YELLOW)
 
-					# Packet switch
-					if (packetID == packetIDs.client_pong):
-						# Ping packet, nothing to do
-						# New packets are automatically taken from the queue
-						pass
-					elif (packetID == packetIDs.client_sendPublicMessage):
-						try:
-							# Public chat packet
-							packetData = clientPackets.sendPublicMessage(packetData)
+					# Event handler
+					def handleEvent(ev):
+						def wrapper():
+							ev.handle(userToken, packetData)
+						return wrapper
 
-							# Receivers
-							who = []
+					eventHandler = {
+						packetIDs.client_sendPublicMessage: handleEvent(sendPublicMessageEvent),
+						packetIDs.client_sendPrivateMessage: handleEvent(sendPrivateMessageEvent),
+						packetIDs.client_channelJoin: handleEvent(channelJoinEvent),
+						packetIDs.client_channelPart: handleEvent(channelPartEvent),
+						packetIDs.client_changeAction: handleEvent(changeActionEvent),
+						packetIDs.client_startSpectating: handleEvent(startSpectatingEvent),
+						packetIDs.client_stopSpectating: handleEvent(stopSpectatingEvent),
+						packetIDs.client_cantSpectate: handleEvent(cantSpectateEvent),
+						packetIDs.client_spectateFrames: handleEvent(spectateFramesEvent),
+						packetIDs.client_friendAdd: handleEvent(friendAddEvent),
+						packetIDs.client_friendRemove: handleEvent(friendRemoveEvent),
+						packetIDs.client_logout: handleEvent(logoutEvent)
+					}
 
-							# Check #spectator
-							if (packetData["to"] != "#spectator"):
-								# Standard channel
-								# Make sure the channel exists
-								if (packetData["to"] not in glob.channels.channels):
-									raise exceptions.channelUnknownException
-
-								# Make sure the channel is not in moderated mode
-								if (glob.channels.channels[packetData["to"]].moderated == True and userRank < 2):
-									raise exceptions.channelModeratedException
-
-								# Make sure we have write permissions
-								if (glob.channels.channels[packetData["to"]].publicWrite == False and userRank < 2):
-									raise exceptions.channelNoPermissionsException
-
-								# Send this packet to everyone in that channel except us
-								who = glob.channels.channels[packetData["to"]].getConnectedUsers()[:]
-								if userID in who:
-									who.remove(userID)
-							else:
-								# Spectator channel
-								# Send this packet to every spectator and host
-								if (userToken.spectating == 0):
-									# We have sent to send a message to our #spectator channel
-									targetToken = userToken
-									who = targetToken.spectators[:]
-									# No need to remove us because we are the host so we are not in spectators list
-								else:
-									# We have sent a message to someone else's #spectator
-									targetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
-									who = targetToken.spectators[:]
-
-									# Remove us
-									if (userID in who):
-										who.remove(userID)
-
-									# Add host
-									who.append(targetToken.userID)
-
-							# Send packet to required users
-							glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
-
-							# Fokabot command check
-							fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
-							if (fokaMessage != False):
-								who.append(userID)
-								glob.tokens.multipleEnqueue(serverPackets.sendMessage("FokaBot", packetData["to"], fokaMessage), who, False)
-								consoleHelper.printColored("> FokaBot@{}: {}".format(packetData["to"], str(fokaMessage.encode("UTF-8"))), bcolors.PINK)
-
-							# Console output
-							consoleHelper.printColored("> {}@{}: {}").format(username, packetData["to"], str(packetData["message"].encode("UTF-8")), bcolors.PINK)
-						except exceptions.channelModeratedException:
-							consoleHelper.printColored("[!] {} tried to send a message to a channel that is in moderated mode ({})".format(username, packetData["to"]), bcolors.RED)
-						except exceptions.channelUnknownException:
-							consoleHelper.printColored("[!] {} tried to send a message to an unknown channel ({})".format(username, packetData["to"]), bcolors.RED)
-						except exceptions.channelNoPermissionsException:
-							consoleHelper.printColored("[!] {} tried to send a message to channel {}, but they have no write permissions".format(username, packetData["to"]), bcolors.RED)
-
-					elif (packetID == packetIDs.client_sendPrivateMessage):
-						try:
-							# Private message packet
-							packetData = clientPackets.sendPrivateMessage(packetData)
-
-							if (packetData["to"] == "FokaBot"):
-								# FokaBot command check
-								fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
-								if (fokaMessage != False):
-									userToken.enqueue(serverPackets.sendMessage("FokaBot", username, fokaMessage))
-									consoleHelper.printColored("> FokaBot>{}: {}".format(packetData["to"], str(fokaMessage.encode("UTF-8"))), bcolors.PINK)
-							else:
-								# Send packet message to target if it exists
-								token = glob.tokens.getTokenFromUsername(packetData["to"])
-								if (token == None):
-									raise exceptions.tokenNotFoundException()
-								token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
-
-							# Console output
-							consoleHelper.printColored("> {}>{}: {}".format(username, packetData["to"], packetData["message"]), bcolors.PINK)
-						except exceptions.tokenNotFoundException:
-							# Token not found, user disconnected
-							consoleHelper.printColored("[!] {} tried to send a message to {}, but their token couldn't be found".format(username, packetdata["to"]), bcolors.RED)
-					elif (packetID == packetIDs.client_channelJoin):
-						try:
-							# Channel join packet
-							packetData = clientPackets.channelJoin(packetData)
-
-							# Check spectator channel
-							# If it's spectator channel, skip checks and list stuff
-							if (packetData["channel"] != "#spectator"):
-								# Normal channel, do check stuff
-								# Make sure the channel exists
-								if (packetData["channel"] not in glob.channels.channels):
-									raise exceptions.channelUnknownException
-
-								# Check channel permissions
-								if ((glob.channels.channels[packetData["channel"]].publicWrite == False or glob.channels.channels[packetData["channel"]].moderated == True) and userRank < 2):
-									raise exceptions.channelNoPermissionsException
-
-								# Add our userID to users in that channel
-								glob.channels.channels[packetData["channel"]].userJoin(userID)
-
-								# Add the channel to our joined channel
-								userToken.joinChannel(packetData["channel"])
-
-							# Send channel joined
-							userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
-
-							# Console output
-							consoleHelper.printColored("> {} joined channel {}".format(username, packetData["channel"]), bcolors.GREEN)
-						except exceptions.channelNoPermissionsException:
-							consoleHelper.printColored("[!] {} attempted to join channel {}, but they have no read permissions".format(username, packetData["channel"]), bcolors.RED)
-						except exceptions.channelUnknownException:
-							consoleHelper.printColored("[!] {} attempted to join an unknown channel ({})".format(username, packetData["channel"]), bcolors.RED)
-					elif (packetID == packetIDs.client_channelPart):
-						# Channel part packet
-						packetData = clientPackets.channelPart(packetData)
-
-						# Remove us from joined users and joined channels
-						if packetData["channel"] in glob.channels.channels:
-							userToken.partChannel(packetData["channel"])
-							glob.channels.channels[packetData["channel"]].userPart(userID)
-
-							# Console output
-							consoleHelper.printColored("> {} parted channel {}".format(username, packetData["channel"]), bcolors.YELLOW)
-					elif (packetID == packetIDs.client_changeAction):
-						# Change action packet
-						packetData = clientPackets.userActionChange(packetData)
-
-						# Update our action id, text and md5
-						userToken.actionID = packetData["actionID"]
-						userToken.actionText = packetData["actionText"]
-						userToken.actionMd5 = packetData["actionMd5"]
-						userToken.actionMods = packetData["actionMods"]
-						userToken.gameMode = packetData["gameMode"]
-
-						# Enqueue our new user panel and stats to everyone
-						glob.tokens.enqueueAll(serverPackets.userPanel(userID))
-						glob.tokens.enqueueAll(serverPackets.userStats(userID))
-
-						# Console output
-						print("> {} changed action: {} [{}][{}]".format(username, str(userToken.actionID), userToken.actionText, userToken.actionMd5))
-					elif (packetID == packetIDs.client_startSpectating):
-						try:
-							# Start spectating packet
-							packetData = clientPackets.startSpectating(packetData)
-
-							# Stop spectating old user if needed
-							if (userToken.spectating != 0):
-								oldTargetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
-								oldTargetToken.enqueue(serverPackets.removeSpectator(userID))
-								userToken.stopSpectating()
-
-							# Start spectating new user
-							userToken.startSpectating(packetData["userID"])
-
-							# Get host token
-							targetToken = glob.tokens.getTokenFromUserID(packetData["userID"])
-							if (targetToken == None):
-								raise exceptions.tokenNotFoundException
-
-							# Add us to host's spectators
-							targetToken.addSpectator(userID)
-
-							# Send spectator join packet to host
-							targetToken.enqueue(serverPackets.addSpectator(userID))
-
-							# Join #spectator channel
-							userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
-
-							if (len(targetToken.spectators) == 1):
-								# First spectator, send #spectator join to host too
-								targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
-
-							# Console output
-							consoleHelper.printColored("> {} are spectating {}".format(username, userHelper.getUserUsername(packetData["userID"])), bcolors.PINK)
-							consoleHelper.printColored("> {}'s spectators: {}".format(str(packetData["userID"]), str(targetToken.spectators)), bcolors.BLUE)
-						except exceptions.tokenNotFoundException:
-							# Stop spectating if token not found
-							consoleHelper.printColored("[!] Spectator start: token not found", bcolors.RED)
-							userToken.stopSpectating()
-					elif (packetID == packetIDs.client_stopSpectating):
-						try:
-							# Stop spectating packet, has no parameters
-
-							# Remove our userID from host's spectators
-							target = userToken.spectating
-							targetToken = glob.tokens.getTokenFromUserID(target)
-							if (targetToken == None):
-								raise exceptions.tokenNotFoundException
-							targetToken.removeSpectator(userID)
-
-							# Send the spectator left packet to host
-							targetToken.enqueue(serverPackets.removeSpectator(userID))
-
-							# Console output
-							# TODO: Move messages in stop spectating
-							consoleHelper.printColored("> {} are no longer spectating whoever they were spectating".format(username), bcolors.PINK)
-							consoleHelper.printColored("> {}'s spectators: {}".format(str(target), str(targetToken.spectators)), bcolors.BLUE)
-						except exceptions.tokenNotFoundException:
-							consoleHelper.printColored("[!] Spectator stop: token not found", bcolors.RED)
-						finally:
-							# Set our spectating user to 0
-							userToken.stopSpectating()
-					elif (packetID == packetIDs.client_cantSpectate):
-						try:
-							# We don't have the beatmap, we can't spectate
-							target = userToken.spectating
-							targetToken = glob.tokens.getTokenFromUserID(target)
-
-							# Send the packet to host
-							targetToken.enqueue(serverPackets.noSongSpectator(userID))
-						except exceptions.tokenNotFoundException:
-							# Stop spectating if token not found
-							consoleHelper.printColored("[!] Spectator can't spectate: token not found", bcolors.RED)
-							userToken.stopSpectating()
-					elif (packetID == packetIDs.client_spectateFrames):
-						# Client spectate frames
-						# Send spectator frames to every spectator
-						consoleHelper.printColored("> {}'s spectators: {}".format(str(userID), str(userToken.spectators)), bcolors.BLUE)
-						for i in userToken.spectators:
-							if (i != userID):
-								# TODO: Check that spectators are spectating us
-								# Send to every spectator but us (host)
-								spectatorToken = glob.tokens.getTokenFromUserID(i)
-								if (spectatorToken != None):
-									# Token found, send frames
-									spectatorToken.enqueue(serverPackets.spectatorFrames(packetData[7:]))
-								else:
-									# Token not found, remove it
-									userToken.removeSpectator(i)
-									userToken.enqueue(serverPackets.removeSpectator(i))
-					elif (packetID == packetIDs.client_friendAdd):
-						# Friend add packet
-						packetData = clientPackets.addRemoveFriend(packetData)
-						userHelper.addFriend(userID, packetData["friendID"])
-
-						# Console output
-						print("> {} have added {} to their friends".format(username, str(packetData["friendID"])))
-					elif (packetID == packetIDs.client_friendRemove):
-						# Friend remove packet
-						packetData = clientPackets.addRemoveFriend(packetData)
-						userHelper.removeFriend(userID, packetData["friendID"])
-
-						# Console output
-						print("> {} have removed {} from their friends".format(username, str(packetData["friendID"])))
-					elif (packetID == packetIDs.client_logout):
-						# Logout packet, no parameters to read
-
-						# Big client meme here. If someone logs out and logs in right after,
-						# the old logout packet will still be in the queue and will be sent to
-						# the server, so we accept logout packets sent at least 5 seconds after login
-						if (int(time.time()-userToken.loginTime) >= 5):
-							# TODO: Channel part at logout
-							# TODO: Stop spectating at logout
-							# TODO: Stop spectating at timeout
-							# Enqueue our disconnection to everyone else
-							glob.tokens.enqueueAll(serverPackets.userLogout(userID))
-
-							# Delete token
-							glob.tokens.deleteToken(requestToken)
-
-							consoleHelper.printColored("> {} have been disconnected (logout)".format(username), bcolors.YELLOW)
-
-					# Set reponse data and tokenstring to right value and reset our queue
+					if packetID != 4:
+						if packetID in eventHandler:
+							eventHandler[packetID]()
+						else:
+							consoleHelper.printColored("[!] Unknown packet id from {} ({})".format(requestToken, packetID), bcolors.RED)
 
 					# Update pos so we can read the next stacked packet
-					pos += dataLength+7	# add packet ID bytes, unused byte and data length bytes
+					# +7 because we add packet ID bytes, unused byte and data length bytes
+					pos += dataLength+7
 				# WHILE END
 
 				# Token queue built, send it
@@ -569,7 +314,7 @@ def banchoServer():
 
 if (__name__ == "__main__"):
 	# Server start
-	consoleHelper.printServerStartHeader(True);
+	consoleHelper.printServerStartHeader(True)
 
 	# Read config.ini
 	consoleHelper.printNoNl("> Loading config file... ")
@@ -643,7 +388,7 @@ if (__name__ == "__main__"):
 	# Run server sanic way
 	if (serverName == "tornado"):
 		# Tornado server
-		print("> Starting tornado...");
+		print("> Starting tornado...")
 		webServer = HTTPServer(WSGIContainer(app))
 		webServer.listen(serverPort)
 		IOLoop.instance().start()
@@ -660,7 +405,7 @@ if (__name__ == "__main__"):
 
 		# Console output
 		if (flaskDebug == False):
-			print("> Starting flask...");
+			print("> Starting flask...")
 		else:
 			print("> Starting flask in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
 

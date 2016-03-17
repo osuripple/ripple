@@ -1,7 +1,5 @@
 import glob
 import generalFunctions
-import consoleHelper
-import bcolors
 
 class banchoConfig:
 	"""

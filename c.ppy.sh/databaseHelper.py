@@ -1,7 +1,6 @@
 import pymysql
 import bcolors
 import consoleHelper
-import sys
 import threading
 
 class db:

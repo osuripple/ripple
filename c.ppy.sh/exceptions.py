@@ -1,5 +1,5 @@
 """Bancho exceptions"""
-
+# TODO: Prints in exceptions
 class loginFailedException(Exception):
 	pass
 
