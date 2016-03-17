@@ -3,7 +3,6 @@
 # TODO: Docs
 import logging
 import sys
-import time
 import flask
 
 # Tornado server
@@ -16,12 +15,9 @@ import bcolors
 import packetIDs
 import serverPackets
 import config
-import userHelper
 import exceptions
-import locationHelper
 import glob
 import fokabot
-import countryHelper
 import banchoConfig
 
 import sendPublicMessageEvent
@@ -36,6 +32,7 @@ import spectateFramesEvent
 import friendAddEvent
 import friendRemoveEvent
 import logoutEvent
+import loginEvent
 
 # pep.py helpers
 import packetHelper
@@ -80,154 +77,17 @@ def ciTrigger():
 @app.route("/", methods=['GET', 'POST'])
 def banchoServer():
 	if (flask.request.method == 'POST'):
-		# Client's token
-		requestToken = flask.request.headers.get('osu-token')
-
-		# Client's request data
-		# We remove the first two and last three characters because they are
-		# some escape stuff that we don't need
+		# Client's token string and request data
+		requestTokenString = flask.request.headers.get('osu-token')
 		requestData = flask.request.data
 
-		# Client's IP
-		requestIP = flask.request.headers.get('X-Real-IP')
-		if (requestIP == None):
-			requestIP = flask.request.remote_addr
-
-		# Server's response data
+		# Server's token string and request data
+		responseTokenString = "ayy"
 		responseData = bytes()
 
-		# Server's response token string
-		responseTokenString = "ayy"
-
-		if (requestToken == None):
-			# We don't have a token, this is the first packet aka login
-			print("> Accepting connection from {}...".format(requestIP))
-
-			# Split POST body so we can get username/password/hardware data
-			loginData = str(requestData)[2:-3].split("\\n")
-
-			# Process login
-			print("> Processing login request for {}...".format(loginData[0]))
-			try:
-				# If true, print error to console
-				err = False
-
-				# Try to get the ID from username
-				userID = userHelper.getUserID(str(loginData[0]))
-
-				if (userID == False):
-					# Invalid username
-					raise exceptions.loginFailedException()
-				if (userHelper.checkLogin(userID, loginData[1]) == False):
-					# Invalid password
-					raise exceptions.loginFailedException()
-
-				# Make sure we are not banned
-				userAllowed = userHelper.getUserAllowed(userID)
-				if (userAllowed == 0):
-					# Banned
-					raise exceptions.loginBannedException()
-
-				# No login errors!
-				# Delete old tokens for that user and generate a new one
-				glob.tokens.deleteOldTokens(userID)
-				responseToken = glob.tokens.addToken(userID)
-				responseTokenString = responseToken.token
-
-				# Print logged in message
-				consoleHelper.printColored("> {} logged in ({})".format(loginData[0], responseToken.token), bcolors.GREEN)
-
-				# Get silence end
-				userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
-
-				# Get supporter/GMT
-				userRank = userHelper.getUserRank(userID)
-				userGMT = False
-				userSupporter = True
-				if (userRank >= 3):
-					userGMT = True
-
-				# Maintenance check
-				if (glob.banchoConf.config["banchoMaintenance"] == True):
-					if (userGMT == False):
-						# We are not mod/admin, delete token, send notification and logout
-						glob.tokens.deleteToken(responseTokenString)
-						raise exceptions.banchoMaintenanceException()
-					else:
-						# We are mod/admin, send warning notification and continue
-						responseToken.enqueue(serverPackets.notification("Bancho is in maintenance mode. Only mods/admins have full access to the server.\nType !system maintenance off in chat to turn off maintenance mode."))
-
-				# Send all needed login packets
-				responseToken.enqueue(serverPackets.silenceEndTime(userSilenceEnd))
-				responseToken.enqueue(serverPackets.userID(userID))
-				responseToken.enqueue(serverPackets.protocolVersion())
-				responseToken.enqueue(serverPackets.userSupporterGMT(userSupporter, userGMT))
-				responseToken.enqueue(serverPackets.userPanel(userID))
-				responseToken.enqueue(serverPackets.userStats(userID))
-
-				# Channel info end (before starting!?! wtf bancho?)
-				responseToken.enqueue(serverPackets.channelInfoEnd())
-
-				# TODO: Configurable default channels
-				# Default opened channels
-				glob.channels.channels["#osu"].userJoin(userID)
-				responseToken.joinChannel("#osu")
-				glob.channels.channels["#announce"].userJoin(userID)
-				responseToken.joinChannel("#announce")
-
-				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#osu"))
-				responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#announce"))
-
-				# Output channels info
-				for key, value in glob.channels.channels.items():
-					responseToken.enqueue(serverPackets.channelInfo(key))
-
-				responseToken.enqueue(serverPackets.friendList(userID))
-
-				# Send main menu icon and login notification if needed
-				if (glob.banchoConf.config["menuIcon"] != ""):
-					responseToken.enqueue(serverPackets.mainMenuIcon(glob.banchoConf.config["menuIcon"]))
-
-				if (glob.banchoConf.config["loginNotification"] != ""):
-					responseToken.enqueue(serverPackets.notification(glob.banchoConf.config["loginNotification"]))
-
-				# Get everyone else userpanel
-				# TODO: Better online users handling
-				for key, value in glob.tokens.tokens.items():
-					responseToken.enqueue(serverPackets.userPanel(value.userID))
-					responseToken.enqueue(serverPackets.userStats(value.userID))
-
-				# Send online users IDs array
-				responseToken.enqueue(serverPackets.onlineUsers())
-
-				# Send to everyone our userpanel and userStats (so they now we have logged in)
-				glob.tokens.enqueueAll(serverPackets.userPanel(userID))
-				glob.tokens.enqueueAll(serverPackets.userStats(userID))
-
-				# Set position and country
-				responseToken.setLocation(locationHelper.getLocation(requestIP))
-				responseToken.setCountry(countryHelper.getCountryID(locationHelper.getCountry(requestIP)))
-
-				# Set reponse data to right value and reset our queue
-				responseData = responseToken.queue
-				responseToken.resetQueue()
-			except exceptions.loginFailedException:
-				# Login failed error packet
-				# (we don't use enqueue because we don't have a token since login has failed)
-				err = True
-				responseData += serverPackets.loginFailed()
-			except exceptions.loginBannedException:
-				# Login banned error packet
-				err = True
-				responseData += serverPackets.loginBanned()
-			except exceptions.banchoMaintenanceException:
-				# Bancho is in maintenance mode
-				responseData += serverPackets.notification("Our bancho server is in maintenance mode. Please try to login again later.")
-				responseData += serverPackets.loginError()
-			finally:
-				# Print login failed message to console if needed
-				if (err == True):
-					consoleHelper.printColored("> {}'s login failed".format(loginData[0]), bcolors.YELLOW)
+		if (requestTokenString == None):
+			# No token, first request. Handle login.
+			responseTokenString, responseData = loginEvent.handle(flask.request)
 		else:
 			try:
 				# This is not the first packet, send response based on client's request
@@ -235,11 +95,11 @@ def banchoServer():
 				pos = 0
 
 				# Make sure the token exists
-				if (requestToken not in glob.tokens.tokens):
+				if (requestTokenString not in glob.tokens.tokens):
 					raise exceptions.tokenNotFoundException()
 
 				# Token exists, get its object
-				userToken = glob.tokens.tokens[requestToken]
+				userToken = glob.tokens.tokens[requestTokenString]
 
 				# Keep reading packets until everything has been read
 				while pos < len(requestData):
@@ -253,7 +113,7 @@ def banchoServer():
 
 					# Console output if needed
 					if (serverOutputPackets == True and packetID != 4):
-						consoleHelper.printColored("Incoming packet ({})({}):".format(requestToken, userToken.username), bcolors.GREEN)
+						consoleHelper.printColored("Incoming packet ({})({}):".format(requestTokenString, userToken.username), bcolors.GREEN)
 						consoleHelper.printColored("Packet code: {}\nPacket length: {}\nSingle packet data: {}\n".format(str(packetID), str(dataLength), str(packetData)), bcolors.YELLOW)
 
 					# Event handler
@@ -281,15 +141,13 @@ def banchoServer():
 						if packetID in eventHandler:
 							eventHandler[packetID]()
 						else:
-							consoleHelper.printColored("[!] Unknown packet id from {} ({})".format(requestToken, packetID), bcolors.RED)
+							consoleHelper.printColored("[!] Unknown packet id from {} ({})".format(requestTokenString, packetID), bcolors.RED)
 
 					# Update pos so we can read the next stacked packet
 					# +7 because we add packet ID bytes, unused byte and data length bytes
 					pos += dataLength+7
-				# WHILE END
 
 				# Token queue built, send it
-				# TODO: Move somewhere else
 				responseTokenString = userToken.token
 				responseData = userToken.queue
 				userToken.resetQueue()
@@ -300,15 +158,14 @@ def banchoServer():
 				# Token not found. Disconnect that user
 				responseData = serverPackets.loginError()
 				responseData += serverPackets.notification("Whoops! Something went wrong, please login again.")
-				consoleHelper.printColored("[!] Received packet from unknown token ({}).".format(requestToken), bcolors.RED)
-				consoleHelper.printColored("> {} have been disconnected (invalid token)".format(requestToken), bcolors.YELLOW)
+				consoleHelper.printColored("[!] Received packet from unknown token ({}).".format(requestTokenString), bcolors.RED)
+				consoleHelper.printColored("> {} have been disconnected (invalid token)".format(requestTokenString), bcolors.YELLOW)
 
 		# Send server's response to client
 		# We don't use token object because we might not have a token (failed login)
 		return responseHelper.generateResponse(responseTokenString, responseData)
 	else:
 		# Not a POST request, send html page
-		# TODO: Fix this crap
 		return responseHelper.HTMLResponse()
 
 
@@ -378,6 +235,10 @@ if (__name__ == "__main__"):
 		consoleHelper.printColored("[!] Error while initializing user timeout check loop", bcolors.RED)
 		consoleHelper.printColored("[!] Make sure that 'timeouttime' and 'timeoutlooptime' in config.ini are numbers", bcolors.RED)
 		raise
+
+	# Localize warning
+	if(generalFunctions.stringToBool(glob.conf.config["server"]["localizeusers"]) == False):
+		consoleHelper.printColored("[!] Warning! users localization is disabled!", bcolors.YELLOW)
 
 	# Get server parameters from config.ini
 	serverName = glob.conf.config["server"]["server"]
