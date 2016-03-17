@@ -38,3 +38,6 @@ class userNotFoundException(Exception):
 
 class alreadyConnectedException(Exception):
 	pass
+
+class stopSpectating(Exception):
+	pass

@@ -1,9 +1,7 @@
 import osuToken
 import time
 import threading
-import consoleHelper
-import bcolors
-import serverPackets
+import logoutEvent
 
 class tokenList:
 	"""
@@ -158,17 +156,10 @@ class tokenList:
 				# We can't delete it while iterating or items() throws an error
 				timedOutTokens.append(key)
 
-				# Send logout packet to everyone
-				# TODO: Move to event handler
-				self.enqueueAll(serverPackets.userLogout(value.userID))
-
-				# Console output
-				consoleHelper.printColored("> {} have been disconnected (timeout)".format(value.username), bcolors.YELLOW)
-
 		# Delete timed out users from self.tokens
 		# i is token string (dictionary key)
 		for i in timedOutTokens:
-			self.tokens.pop(i)
+			logoutEvent.handle(self.tokens[i], None)
 
 		# Schedule a new check (endless loop)
 		threading.Timer(__checkTime, self.usersTimeoutCheckLoop, [__timeoutTime, __checkTime]).start()
