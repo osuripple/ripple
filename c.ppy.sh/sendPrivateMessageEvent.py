@@ -32,7 +32,13 @@ def handle(userToken, packetData):
 			token = glob.tokens.getTokenFromUsername(packetData["to"])
 			if (token == None):
 				raise exceptions.tokenNotFoundException()
+
+			# Send message to target
 			token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
+
+			# Send away message to sender if needed
+			if (token.awayMessage != ""):
+				userToken.enqueue(serverPackets.sendMessage(packetData["to"], username, "This user is away: {}".format(token.awayMessage)))
 
 		# Console output
 		consoleHelper.printColored("> {}>{}: {}".format(username, packetData["to"], packetData["message"]), bcolors.PINK)

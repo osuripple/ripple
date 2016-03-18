@@ -33,6 +33,7 @@ import friendAddEvent
 import friendRemoveEvent
 import logoutEvent
 import loginEvent
+import setAwayMessageEvent
 
 # pep.py helpers
 import packetHelper
@@ -125,6 +126,7 @@ def banchoServer():
 					eventHandler = {
 						packetIDs.client_sendPublicMessage: handleEvent(sendPublicMessageEvent),
 						packetIDs.client_sendPrivateMessage: handleEvent(sendPrivateMessageEvent),
+						packetIDs.client_setAwayMessage: handleEvent(setAwayMessageEvent),
 						packetIDs.client_channelJoin: handleEvent(channelJoinEvent),
 						packetIDs.client_channelPart: handleEvent(channelPartEvent),
 						packetIDs.client_changeAction: handleEvent(changeActionEvent),

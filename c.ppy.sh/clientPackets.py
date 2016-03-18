@@ -34,6 +34,13 @@ def sendPrivateMessage(stream):
 		["unknown2",	dataTypes.uInt32]
 	])
 
+def setAwayMessage(stream):
+	return packetHelper.readPacketData(stream,
+	[
+		["unknown", 	dataTypes.string],
+		["awayMessage", dataTypes.string]
+	])
+
 def channelJoin(stream):
 	return packetHelper.readPacketData(stream,[["channel", 	dataTypes.string]])
 

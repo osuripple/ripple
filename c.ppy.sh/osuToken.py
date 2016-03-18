@@ -48,6 +48,8 @@ class token:
 	pingTime = 0
 	loginTime = 0
 
+	awayMessage = ""
+
 
 	def __init__(self, __userID, __token = None):
 		"""
@@ -74,6 +76,7 @@ class token:
 		self.actionText = ""
 		self.actionMods = 0
 		self.gameMode = gameModes.std
+		self.awayMessage = ""
 
 		# Generate/set token
 		if (__token != None):
@@ -190,3 +193,7 @@ class token:
 	def updatePingTime(self):
 		"""Update latest ping time"""
 		self.pingTime = int(time.time())
+
+	def setAwayMessage(self, __awayMessage):
+		"""Set a new away message"""
+		self.awayMessage = __awayMessage
