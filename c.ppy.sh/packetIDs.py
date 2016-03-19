@@ -1,5 +1,4 @@
 """Contain server and client packet IDs"""
-
 client_changeAction = 0
 client_sendPublicMessage = 1
 client_logout = 2
@@ -29,8 +28,8 @@ client_sendPrivateMessage = 25
 server_matchUpdate = 26
 server_matchNew = 27
 server_matchDisband = 28
-client_lobbyPart = 29
-client_lobbyJoin = 30
+client_partLobby = 29
+client_joinLobby = 30
 client_matchCreate = 31
 client_matchJoin = 32
 client_sOMETHING_lOBBY = 33

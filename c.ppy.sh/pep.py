@@ -34,6 +34,7 @@ import friendRemoveEvent
 import logoutEvent
 import loginEvent
 import setAwayMessageEvent
+import joinLobbyEvent
 
 # pep.py helpers
 import packetHelper
@@ -136,7 +137,8 @@ def banchoServer():
 						packetIDs.client_spectateFrames: handleEvent(spectateFramesEvent),
 						packetIDs.client_friendAdd: handleEvent(friendAddEvent),
 						packetIDs.client_friendRemove: handleEvent(friendRemoveEvent),
-						packetIDs.client_logout: handleEvent(logoutEvent)
+						packetIDs.client_logout: handleEvent(logoutEvent),
+						packetIDs.client_joinLobby: handleEvent(joinLobbyEvent)
 					}
 
 					if packetID != 4:
