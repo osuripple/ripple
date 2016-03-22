@@ -80,8 +80,8 @@
 		}
 		else
 		{
-			// We have failed/retried, save score (only if we want it) and increase playcount
-			saveScore($scoreDataArray, $_POST["x"], $SUBMIT["saveFailedScores"], true);
+			// We have failed/retried and increase only playcount
+			saveScore($scoreDataArray, $_POST["x"], false, true);
 
 			// Done
 			echo($SUBMIT["okOutput"]);
