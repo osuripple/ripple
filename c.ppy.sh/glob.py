@@ -3,6 +3,7 @@
 import tokenList
 import channelList
 import matchList
+import joinMatchEvent
 
 db = None
 conf = None

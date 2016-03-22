@@ -35,6 +35,11 @@ import logoutEvent
 import loginEvent
 import setAwayMessageEvent
 import joinLobbyEvent
+import createMatchEvent
+import partLobbyEvent
+import changeSlotEvent
+import joinMatchEvent
+import partMatchEvent
 
 # pep.py helpers
 import packetHelper
@@ -138,7 +143,12 @@ def banchoServer():
 						packetIDs.client_friendAdd: handleEvent(friendAddEvent),
 						packetIDs.client_friendRemove: handleEvent(friendRemoveEvent),
 						packetIDs.client_logout: handleEvent(logoutEvent),
-						packetIDs.client_joinLobby: handleEvent(joinLobbyEvent)
+						packetIDs.client_joinLobby: handleEvent(joinLobbyEvent),
+						packetIDs.client_partLobby: handleEvent(partLobbyEvent),
+						packetIDs.client_createMatch: handleEvent(createMatchEvent),
+						packetIDs.client_joinMatch: handleEvent(joinMatchEvent),
+						packetIDs.client_partMatch: handleEvent(partMatchEvent),
+						packetIDs.client_matchChangeSlot: handleEvent(changeSlotEvent)
 					}
 
 					if packetID != 4:

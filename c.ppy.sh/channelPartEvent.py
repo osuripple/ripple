@@ -8,19 +8,22 @@ import glob
 import clientPackets
 
 def handle(userToken, packetData):
+	# Channel part packet
+	packetData = clientPackets.channelPart(packetData)
+	partChannel(userToken, packetData["channel"])
+
+def partChannel(userToken, channelName):
 	# Get usertoken data
 	username = userToken.username
 	userID = userToken.userID
 
-	# Channel part packet
-	packetData = clientPackets.channelPart(packetData)
-
 	# Remove us from joined users and joined channels
-	if packetData["channel"] in glob.channels.channels:
-		userToken.partChannel(packetData["channel"])
+	if (channelName in glob.channels.channels):
+		userToken.partChannel(channelName)
 
-		# TODO: check if user is in channel
-		glob.channels.channels[packetData["channel"]].userPart(userID)
+		# Check if user is in channel
+		if (userID in glob.channels.channels[channelName].connectedUsers):
+			glob.channels.channels[channelName].userPart(userID)
 
 		# Console output
-		consoleHelper.printColored("> {} parted channel {}".format(username, packetData["channel"]), bcolors.YELLOW)
+		consoleHelper.printColored("> {} parted channel {}".format(username, channelName), bcolors.YELLOW)

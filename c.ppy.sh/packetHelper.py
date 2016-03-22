@@ -211,12 +211,19 @@ def readPacketData(__stream, __structure = []):
 			# String, don't unpack
 			unpack = False
 
-			# Read length and calculate end
-			length = uleb128Decode(__stream[start+1:])
-			end = start+length[0]+length[1]+1
+			# Check empty string
+			if (__stream[start] == 0):
+				# Empty string
+				data[i[0]] = ""
+				end = start+1
+			else:
+				# Non empty string
+				# Read length and calculate end
+				length = uleb128Decode(__stream[start+1:])
+				end = start+length[0]+length[1]+1
 
-			# Read bytes
-			data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
+				# Read bytes
+				data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
 		elif (i[1] == dataTypes.byte):
 			end = start+1
 		elif (i[1] == dataTypes.uInt16 or i[1] == dataTypes.sInt16):

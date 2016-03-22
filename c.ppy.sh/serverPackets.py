@@ -5,6 +5,8 @@ import userHelper
 import glob
 import userRanks
 import packetIDs
+import slotStatuses
+import matchModModes
 
 """ Login errors packets
 (userID packets derivates) """
@@ -174,111 +176,73 @@ def noSongSpectator(userID):
 
 
 """ Multiplayer Packets """
-def matchNew():
-	matchID = 1337
-	inProgress = False
-	matchType = 0
-	mods = 0
-	matchName = "Staccah staccah!"
-	matchPassword = ""
-	beatmapName = "Nice artist - Nice beatmap [Nice difficulty]"
-	beatmapID = 1337
-	beatmapMD5 = "9c2f924fb2f7004e7979ab2027ca1d65"
-	slotStatus = []
+def matchSettings(__matchID, update):
+	# Get match object from matchID
+	match = glob.matches.getMatchFromMatchID(__matchID)
+	# TODO: match == None check
+
+	# General match info
+	struct = [
+		[__matchID, dataTypes.uInt16],
+		[int(match.inProgress), dataTypes.byte],
+		[0, dataTypes.byte],
+		[match.mods, dataTypes.uInt32],
+		[match.matchName, dataTypes.string],
+		[match.matchPassword, dataTypes.string],
+		[match.beatmapName, dataTypes.string],
+		[match.beatmapID, dataTypes.uInt32],
+		[match.beatmapMD5, dataTypes.string],
+	]
+
+	# Slots status IDs, always 16 elements
+	for i in match.slotStatus:
+		struct.append([i, dataTypes.byte])
+
+	# Slot teams
+	for i in match.slotTeam:
+		struct.append([i, dataTypes.byte])
+
+	# Slot user ID. Write only if slot is occupied
 	for i in range(0,16):
-		slotStatus.append(0)
+		# Send user ID only if there is someone in this slow
+		if (match.slotStatus[i] != slotStatuses.free and match.slotStatus[i] != slotStatuses.locked and match.slotStatus[i] != slotStatuses.playingQuit):
+			struct.append([match.slotUserID[i], dataTypes.uInt32])
 
-	slotTeam = []
-	for i in range(0,16):
-		slotTeam.append(0)
-
-	slotUserID = []
-	for i in range(0,16):
-		slotUserID.append(-1)
-
-	hostUserID = 999
-	gameMode = 0
-	matchScoringType = 0
-	matchTeamType = 0
-	matchModMode = 0
-	seed = 50
-
-
-	data = packetHelper.buildPacket(packetIDs.server_matchNew,[
-		[matchID, dataTypes.uInt16],
-		[0, dataTypes.byte],
-		[matchType, dataTypes.byte],
-		[mods, dataTypes.uInt32],
-		[matchName, dataTypes.string],
-		["", dataTypes.string],
-		[beatmapName, dataTypes.string],
-		[beatmapID, dataTypes.uInt32],
-		[beatmapMD5, dataTypes.string],
-
-		# Slot status
-		[4, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-		[1, dataTypes.byte],
-
-		# Slot team
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-		[0, dataTypes.byte],
-
-		# Slot user ID
-		[hostUserID, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-		#[0, dataTypes.sInt32],
-
-		[999, dataTypes.uInt32],
-		[gameMode, dataTypes.byte],
-		[matchScoringType, dataTypes.byte],
-		[matchTeamType, dataTypes.byte],
-		[matchModMode, dataTypes.byte],
-
-		[seed, dataTypes.sInt32]
+	# Other match data
+	struct.extend([
+		[match.hostUserID, dataTypes.sInt32],
+		[match.gameMode, dataTypes.byte],
+		[match.matchScoringType, dataTypes.byte],
+		[match.matchTeamType, dataTypes.byte],
+		[match.matchModMode, dataTypes.byte],
 	])
+
+	# Slot mods if free mod is enabled
+	if (match.matchModMode == matchModModes.freeMod):
+		for i in match.slotMod:
+			struct.append([i, dataTypes.uInt32])
+
+	# Seed idk
+	struct.append([match.seed, dataTypes.uInt32])
+
+	# Set packet ID
+	if (update == True):
+		pid = packetIDs.server_updateMatch
+	else:
+		pid = packetIDs.server_newMatch
+
+	data = packetHelper.buildPacket(pid, struct)
 	return data
 
+def matchDispose(matchID):
+	return packetHelper.buildPacket(packetIDs.server_disposeMatch, [[matchID, dataTypes.uInt32]])
+
+def matchJoinSuccess():
+	# TODO: memes
+	return packetHelper.buildPacket(packetIDs.server_matchJoinSuccess)
+
+def matchJoinFail():
+	return packetHelper.buildPacket(packetIDs.server_matchJoinFail)
 
 """ Other packets """
 def notification(message):

@@ -27,6 +27,8 @@ def handle(userToken, _):
 		for i in userToken.joinedChannels:
 			glob.channels.channels[i].userPart(userID)
 
+		# TODO: Lobby left if joined
+
 		# Enqueue our disconnection to everyone else
 		glob.tokens.enqueueAll(serverPackets.userLogout(userID))
 
