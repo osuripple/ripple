@@ -1,10 +1,7 @@
 import osuToken
-import userHelper
 import time
 import threading
-import consoleHelper
-import bcolors
-import serverPackets
+import logoutEvent
 
 class tokenList:
 	"""
@@ -52,7 +49,7 @@ class tokenList:
 			return False
 
 		# Get userID associated to that token
-		return self.tokens[__token].userID;
+		return self.tokens[__token].userID
 
 
 	def getTokenFromUserID(self, __userID):
@@ -64,7 +61,7 @@ class tokenList:
 		"""
 
 		# Make sure the token exists
-		for key, value in self.tokens.items():
+		for _, value in self.tokens.items():
 			if (value.userID == __userID):
 				return value
 
@@ -84,7 +81,7 @@ class tokenList:
 		who  = __username.lower()
 
 		# Make sure the token exists
-		for key, value in self.tokens.items():
+		for _, value in self.tokens.items():
 			if (value.username.lower() == who):
 				return value
 
@@ -118,7 +115,7 @@ class tokenList:
 		__but -- if True, enqueue to everyone but users in __who array
 		"""
 
-		for key, value in self.tokens.items():
+		for _, value in self.tokens.items():
 			shouldEnqueue = False
 			if (value.userID in __who and not __but):
 				shouldEnqueue = True
@@ -137,7 +134,7 @@ class tokenList:
 		__packet -- packet bytes to enqueue
 		"""
 
-		for key, value in self.tokens.items():
+		for _, value in self.tokens.items():
 			value.enqueue(__packet)
 
 	def usersTimeoutCheckLoop(self, __timeoutTime = 100, __checkTime = 100):
@@ -159,17 +156,10 @@ class tokenList:
 				# We can't delete it while iterating or items() throws an error
 				timedOutTokens.append(key)
 
-				# Send logout packet to everyone
-				# TODO: Move to event handler
-				self.enqueueAll(serverPackets.userLogout(value.userID))
-
-				# Console output
-				consoleHelper.printColored("> {} have been disconnected (timeout)".format(value.username), bcolors.YELLOW)
-
 		# Delete timed out users from self.tokens
 		# i is token string (dictionary key)
 		for i in timedOutTokens:
-			self.tokens.pop(i)
+			logoutEvent.handle(self.tokens[i], None)
 
 		# Schedule a new check (endless loop)
 		threading.Timer(__checkTime, self.usersTimeoutCheckLoop, [__timeoutTime, __checkTime]).start()

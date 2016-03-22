@@ -1,6 +1,5 @@
 """Global objects and variables"""
 
-import databaseHelper
 import tokenList
 import channelList
 

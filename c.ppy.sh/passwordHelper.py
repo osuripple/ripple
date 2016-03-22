@@ -11,7 +11,4 @@ def checkPassword(password, salt, rightPassword):
 	return -- bool
 	"""
 
-	if (rightPassword == crypt.crypt(password, "$2y$"+str(base64.b64decode(salt)))):
-		return True
-	else:
-		return False
+	return (rightPassword == crypt.crypt(password, "$2y$"+str(base64.b64decode(salt))))

@@ -1,5 +1,5 @@
 """Bancho exceptions"""
-
+# TODO: Prints in exceptions
 class loginFailedException(Exception):
 	pass
 
@@ -37,4 +37,7 @@ class userNotFoundException(Exception):
 	pass
 
 class alreadyConnectedException(Exception):
+	pass
+
+class stopSpectating(Exception):
 	pass

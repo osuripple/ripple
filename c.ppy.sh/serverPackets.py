@@ -1,12 +1,9 @@
 """ Contains functions used to write specific server packets to byte streams """
 import packetHelper
 import dataTypes
-import gameModes
 import userHelper
 import glob
 import userRanks
-import consoleHelper
-import bcolors
 import packetIDs
 
 """ Login errors packets
@@ -66,13 +63,13 @@ def friendList(userID):
 def onlineUsers():
 	onlineUsersData = []
 
-	users = glob.tokens.tokens;
+	users = glob.tokens.tokens
 
 	# Users number
 	onlineUsersData.append([len(users), dataTypes.uInt16])
 
 	# Add all users user IDs to onlineUsersData
-	for key,value in users.items():
+	for _,value in users.items():
 		onlineUsersData.append([value.userID, dataTypes.sInt32])
 
 	return packetHelper.buildPacket(packetIDs.server_userPresenceBundle, onlineUsersData)

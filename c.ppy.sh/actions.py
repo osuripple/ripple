@@ -1,4 +1,5 @@
 """Contains user actions"""
+#TODO: Uppercase
 idle 		= 0
 afk 		= 1
 playing 	= 2

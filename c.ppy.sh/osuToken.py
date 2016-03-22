@@ -1,9 +1,7 @@
-import tokenList
 import uuid
 import actions
 import gameModes
 import userHelper
-import channelList
 import time
 
 class token:
@@ -50,6 +48,8 @@ class token:
 	pingTime = 0
 	loginTime = 0
 
+	awayMessage = ""
+
 
 	def __init__(self, __userID, __token = None):
 		"""
@@ -65,6 +65,18 @@ class token:
 		self.username = userHelper.getUserUsername(self.userID)
 		self.rank = userHelper.getUserRank(self.userID)
 		self.loginTime = int(time.time())
+		self.pingTime = self.loginTime
+
+		# Default variables
+		self.spectators = []
+		self.spectating = 0
+		self.location = [0,0]
+		self.joinedChannels = []
+		self.actionID = actions.idle
+		self.actionText = ""
+		self.actionMods = 0
+		self.gameMode = gameModes.std
+		self.awayMessage = ""
 
 		# Generate/set token
 		if (__token != None):
@@ -181,3 +193,7 @@ class token:
 	def updatePingTime(self):
 		"""Update latest ping time"""
 		self.pingTime = int(time.time())
+
+	def setAwayMessage(self, __awayMessage):
+		"""Set a new away message"""
+		self.awayMessage = __awayMessage

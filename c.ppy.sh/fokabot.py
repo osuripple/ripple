@@ -1,5 +1,5 @@
 """FokaBot related functions"""
-
+# TODO: Easier fokabot command config
 import random
 import exceptions
 import consoleHelper
@@ -9,9 +9,8 @@ import glob
 import systemHelper
 import actions
 import serverPackets
-
+import logoutEvent
 import time
-import threading
 
 def connect():
 	"""Add FokaBot to connected users and send userpanel/stats packet to everyone"""
@@ -25,7 +24,7 @@ def connect():
 def disconnect():
 	"""Remove FokaBot from connected users"""
 
-	glob.tokens.deleteToken(getTokenFromUserID(999))
+	glob.tokens.deleteToken(glob.tokens.getTokenFromUserID(999))
 
 
 def fokabotResponse(fro, chan, message):
@@ -150,7 +149,7 @@ def fokabotResponse(fro, chan, message):
 						who = []
 
 						# Disconnect everyone but mod/admins
-						for key,value in glob.tokens.tokens.items():
+						for _, value in glob.tokens.tokens.items():
 							if (value.rank <= 2):
 								who.append(value.userID)
 
@@ -206,7 +205,7 @@ def fokabotResponse(fro, chan, message):
 			message = message.lower().split(" ")
 			if (len(message) < 3):
 				raise exceptions.commandSyntaxException
-			target = message[1]
+			target = message[1].replace("_", " ")
 			scaryMessage = ' '.join(message[2:])
 
 			# Get target token and make sure is connected
@@ -237,7 +236,7 @@ def fokabotResponse(fro, chan, message):
 			message = message.lower().split(" ")
 			if (len(message) < 2):
 				raise exceptions.commandSyntaxException
-			target = message[1]
+			target = message[1].replace("_", " ")
 
 			# Get target token and make sure is connected
 			targetToken = glob.tokens.getTokenFromUsername(target)
@@ -248,6 +247,9 @@ def fokabotResponse(fro, chan, message):
 			consoleHelper.printColored("> {} has been disconnected. (kick)".format(target), bcolors.YELLOW)
 			targetToken.enqueue(serverPackets.notification("You have been kicked from the server. Please login again."))
 			targetToken.enqueue(serverPackets.loginFailed())
+
+			# Logout event
+			logoutEvent.handle(targetToken, None)
 
 			# Bot response
 			return "{} has been kicked from the server.".format(message[1])
@@ -267,7 +269,7 @@ def fokabotResponse(fro, chan, message):
 			message = message.lower().split(" ")
 			if (len(message) < 4):
 				raise exceptions.commandSyntaxException
-			target = message[1]
+			target = message[1].replace("_", " ")
 			amount = message[2]
 			unit = message[3]
 			reason = ' '.join(message[4:])
@@ -332,7 +334,7 @@ def fokabotResponse(fro, chan, message):
 			message = message.lower().split(" ")
 			if (len(message) < 2):
 				raise exceptions.commandSyntaxException
-			target = message[1]
+			target = message[1].replace("_", " ")
 
 			# Make sure the user exists
 			targetUserID = userHelper.getUserID(target)
@@ -371,5 +373,24 @@ def fokabotResponse(fro, chan, message):
 			return False
 		except exceptions.alreadyConnectedException:
 			return "Fokabot is already connected to Bancho"
+	elif "!alert" in message:
+		try:
+			# Admin check
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Syntax check
+			message = message.split(" ")
+			if (len(message) < 2):
+				raise exceptions.commandSyntaxException
+
+			# Send alert to everyone
+			glob.tokens.enqueueAll(serverPackets.notification(' '.join(message[1:])))
+
+			return False
+		except exceptions.noAdminException:
+			return False
+		except exceptions.commandSyntaxException:
+			return "Wrong syntax. !alert <message>"
 	else:
 		return False

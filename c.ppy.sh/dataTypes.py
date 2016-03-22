@@ -1,4 +1,5 @@
 """Bancho packets data types"""
+#TODO: Uppercase, maybe?
 byte 	= 0
 uInt16 	= 1
 sInt16 	= 2
