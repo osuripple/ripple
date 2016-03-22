@@ -1062,10 +1062,10 @@
 		$countMisses	= $scoreDataArray[8];
 		$score 			= $scoreDataArray[9];
 		$maxCombo		= $scoreDataArray[10];
-		$fullCombo		= $scoreDataArray[11];
+		$fullCombo		= $scoreDataArray[11] == 'True';
 		$rank			= $scoreDataArray[12];
 		$mods			= $scoreDataArray[13];
-		$passed			= $scoreDataArray[14];
+		$passed			= $scoreDataArray[14] == 'True';
 		$playMode		= $scoreDataArray[15];
 		$playDateTime	= $scoreDataArray[16];
 		$osuVersion		= $scoreDataArray[17];
