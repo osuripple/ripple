@@ -1,7 +1,7 @@
 from flask import Flask, send_file
 import os
 app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1;
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
 @app.route("/<int:osuid>")
 def serveAvatar(osuid):

@@ -95,10 +95,10 @@ class Leaderboard {
 
 
 	static function GetUserRank($u, $mode) {
-		$query = current($GLOBALS["db"]->fetch("SELECT position FROM leaderboard_$mode WHERE user = ?;", array($u)));
+		$query = $GLOBALS["db"]->fetch("SELECT position FROM leaderboard_$mode WHERE user = ?;", array($u));
 
 		if ($query !== FALSE) {
-			$rank = (string)$query;
+			$rank = (string)current($query);
 		} else {
 			$rank = "Unknown";
 		}

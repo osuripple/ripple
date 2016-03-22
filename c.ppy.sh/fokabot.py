@@ -236,7 +236,7 @@ def fokabotResponse(fro, chan, message):
 			message = message.lower().split(" ")
 			if (len(message) < 2):
 				raise exceptions.commandSyntaxException
-			target = message[1].repalce("_", " ")
+			target = message[1].replace("_", " ")
 
 			# Get target token and make sure is connected
 			targetToken = glob.tokens.getTokenFromUsername(target)
