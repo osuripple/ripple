@@ -10,39 +10,47 @@ import glob
 import exceptions
 
 def handle(userToken, packetData):
+	# Channel join packet
+	packetData = clientPackets.channelJoin(packetData)
+	joinChannel(userToken, packetData["channel"])
+
+def joinChannel(userToken, channelName):
+	'''
+	Join a channel
+
+	userToken -- user token object of user that joins the chanlle
+	channelName -- name of channel
+	'''
 	try:
 		# Get usertoken data
 		username = userToken.username
 		userID = userToken.userID
 		userRank = userToken.rank
 
-		# Channel join packet
-		packetData = clientPackets.channelJoin(packetData)
-
 		# Check spectator channel
 		# If it's spectator channel, skip checks and list stuff
-		if (packetData["channel"] != "#spectator"):
+		if (channelName != "#spectator"):
 			# Normal channel, do check stuff
 			# Make sure the channel exists
-			if (packetData["channel"] not in glob.channels.channels):
+			if (channelName not in glob.channels.channels):
 				raise exceptions.channelUnknownException
 
 			# Check channel permissions
-			if ((glob.channels.channels[packetData["channel"]].publicWrite == False or glob.channels.channels[packetData["channel"]].moderated == True) and userRank < 2):
+			if ((glob.channels.channels[channelName].publicWrite == False or glob.channels.channels[channelName].moderated == True) and userRank < 2):
 				raise exceptions.channelNoPermissionsException
 
 			# Add our userID to users in that channel
-			glob.channels.channels[packetData["channel"]].userJoin(userID)
+			glob.channels.channels[channelName].userJoin(userID)
 
 			# Add the channel to our joined channel
-			userToken.joinChannel(packetData["channel"])
+			userToken.joinChannel(channelName)
 
 		# Send channel joined
-		userToken.enqueue(serverPackets.channelJoinSuccess(userID, packetData["channel"]))
+		userToken.enqueue(serverPackets.channelJoinSuccess(userID, channelName))
 
 		# Console output
-		consoleHelper.printColored("> {} joined channel {}".format(username, packetData["channel"]), bcolors.GREEN)
+		consoleHelper.printColored("> {} joined channel {}".format(username, channelName), bcolors.GREEN)
 	except exceptions.channelNoPermissionsException:
-		consoleHelper.printColored("[!] {} attempted to join channel {}, but they have no read permissions".format(username, packetData["channel"]), bcolors.RED)
+		consoleHelper.printColored("[!] {} attempted to join channel {}, but they have no read permissions".format(username, channelName), bcolors.RED)
 	except exceptions.channelUnknownException:
-		consoleHelper.printColored("[!] {} attempted to join an unknown channel ({})".format(username, packetData["channel"]), bcolors.RED)
+		consoleHelper.printColored("[!] {} attempted to join an unknown channel ({})".format(username, channelName), bcolors.RED)

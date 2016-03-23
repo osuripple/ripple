@@ -8,6 +8,7 @@ import locationHelper
 import countryHelper
 import time
 import generalFunctions
+import channelJoinEvent
 
 def handle(flaskRequest):
 	# Data to return
@@ -85,15 +86,14 @@ def handle(flaskRequest):
 		# Channel info end (before starting!?! wtf bancho?)
 		responseToken.enqueue(serverPackets.channelInfoEnd())
 
-		# TODO: Configurable default channels
 		# Default opened channels
-		glob.channels.channels["#osu"].userJoin(userID)
-		responseToken.joinChannel("#osu")
-		glob.channels.channels["#announce"].userJoin(userID)
-		responseToken.joinChannel("#announce")
-
-		responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#osu"))
-		responseToken.enqueue(serverPackets.channelJoinSuccess(userID, "#announce"))
+		# TODO: Configurable default channels
+		channelJoinEvent.joinChannel(responseToken, "#osu")
+		channelJoinEvent.joinChannel(responseToken, "#announce")
+		if (userRank >= 3):
+			# Join admin chanenl if we are mod/admin
+			# TODO: Separate channels for mods and admins
+			channelJoinEvent.joinChannel(responseToken, "#admin")
 
 		# Output channels info
 		for key, value in glob.channels.channels.items():
