@@ -423,7 +423,7 @@
 		{
 			// Just an easter egg that you'll probably never notice, unless you do it on purpose.
 			$trollerino = mt_rand(1,100) == 1;
-			
+
 			echo('<li><a href="index.php?p=13"><i class="fa fa-trophy"></i>	Leaderboard</a></li>');
 			echo('<li><a href="http://bloodcat.com/osu"><i class="fa fa-music"></i>	Beatmaps</a></li>');
 			echo('<li class="dropdown">
@@ -1062,10 +1062,10 @@
 		$countMisses	= $scoreDataArray[8];
 		$score 			= $scoreDataArray[9];
 		$maxCombo		= $scoreDataArray[10];
-		$fullCombo		= $scoreDataArray[11];
+		$fullCombo		= $scoreDataArray[11] == 'True';
 		$rank			= $scoreDataArray[12];
 		$mods			= $scoreDataArray[13];
-		$passed			= $scoreDataArray[14];
+		$passed			= $scoreDataArray[14] == 'True';
 		$playMode		= $scoreDataArray[15];
 		$playDateTime	= $scoreDataArray[16];
 		$osuVersion		= $scoreDataArray[17];
@@ -1089,7 +1089,7 @@
 		{
 			// We've finished a song
 			// Get our best play for this beatmap
-			$topScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND username = ? AND play_mode = ? completed = 3", array($beatmapHash, $username, $playMode) );
+			$topScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND username = ? AND play_mode = ? AND completed = 3", array($beatmapHash, $username, $playMode) );
 			if ($topScore)
 			{
 				// We have a top score on this map, so it's not a first play.
@@ -2267,7 +2267,7 @@
 		$r .= $str;
 		return $r;
 	}
-	
+
 	/*
 	 * checkMustHave
 	 * Makes sure a request has the "Must Have"s of a page.
