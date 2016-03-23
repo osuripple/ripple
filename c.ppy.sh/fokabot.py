@@ -130,6 +130,17 @@ def fokabotResponse(fro, chan, message):
 				elif (message[1] == "reload"):
 					#Reload settings from bancho_settings
 					glob.banchoConf.loadSettings()
+
+					# Reload channels too
+					glob.channels.loadChannels()
+
+					# Send new channels and new bottom icon to everyone
+					glob.tokens.enqueueAll(serverPackets.channelInfoEnd())
+					for key, value in glob.channels.channels.items():
+						glob.tokens.enqueueAll(serverPackets.channelInfo(key))
+
+					glob.tokens.enqueueAll(serverPackets.mainMenuIcon(glob.banchoConf.config["menuIcon"]))
+
 					return "Bancho settings reloaded!"
 				elif (message[1] == "maintenance"):
 					# Turn on/off bancho maintenance
