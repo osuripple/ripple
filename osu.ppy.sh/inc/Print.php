@@ -2777,7 +2777,7 @@ class P {
 
 		// Get user friends
 		$ourID = getUserOsuID($_SESSION["username"]);
-		$friends = $GLOBALS["db"]->fetch("SELECT user2 FROM users_relationships WHERE user1 = ?", array($ourID));
+		$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($ourID));
 
 		// Title and header message
 		echo('<h1><i class="fa fa-star"></i>	Friendlist</h1>');
@@ -2792,14 +2792,12 @@ class P {
 			</thead>
 			<tbody>');
 
-			// Explode friendlist
-			$friendList = explode(",", $friendList);
 
 			// Loop through every friend and output its username and mutual status
-			foreach($friendList as $friend) {
-				$uname = getUserUsername($friend);
-				$mutualIcon = ($uname == "FokaBot" || getFriendship($friend, $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
-				echo('<tr><td><div align="center"><a href="index.php?u='.$friend.'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>');
+			foreach($friends as $friend) {
+				$uname = getUserUsername($friend["user2"]);
+				$mutualIcon = ($friend["user2"] == 999 || getFriendship($friend["user2"], $ourID, true) == 2) ? '<i class="fa fa-heart"></i>' : '';
+				echo('<tr><td><div align="center"><a href="index.php?u='.$friend["user2"].'">'.$uname.'</a></div></td><td><div align="center">'.$mutualIcon.'</div></td></tr>');
 			}
 
 			echo("</tbody></table>");
