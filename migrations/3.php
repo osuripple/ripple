@@ -19,4 +19,4 @@ foreach ($users as $u) {
 }
 echo "done.\n";
 
-//$GLOBALS["db"]->execute("ALTER TABLE users DROP COLUMN friends");
+$GLOBALS["db"]->execute("ALTER TABLE users DROP COLUMN friends");

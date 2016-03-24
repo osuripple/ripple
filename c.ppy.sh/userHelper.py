@@ -31,7 +31,7 @@ def checkLogin(userID, password):
 	password -- plain md5 password
 	return -- True or False
 	"""
-	return True
+
 	# Get password data
 	passwordData = glob.db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
 
