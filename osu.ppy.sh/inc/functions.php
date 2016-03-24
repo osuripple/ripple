@@ -1548,17 +1548,18 @@
 	{
 		// Get top 50 scores of this beatmap
 		if ($type == 3) {
+			$osuID = getUserOsuID($username);
+			
 			// Friends leaderboard
 			// Get friends
-			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE username = ?", array($user)));
-			$friends = explode(",", $friends);
+			$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($osuID));
 
 			// Score array
 			$pid = array();
 
 			// Get friend scores
 			foreach ($friends as $friend) {
-				$friendName = getUserUsername($friend);
+				$friendName = getUserUsername($friend["user2"]);
 				$friendScore = $GLOBALS["db"]->fetch("SELECT * FROM scores WHERE beatmap_md5 = ? AND completed = 3 AND play_mode = ? AND username = ? ORDER BY score DESC LIMIT 50", array($bmd5, $mode, $friendName));
 				if ($friendScore)
 					array_push($pid, $friendScore);
@@ -2109,7 +2110,8 @@
 	function getFriendship($u0, $u1, $id = false)
 	{
 		// Get id if needed
-		if (!$id) {
+		if (!$id)
+		{
 			$u0 = getUserOsuID($u0);
 			$u1 = getUserOsuID($u1);
 		}
@@ -2117,45 +2119,18 @@
 		// Make sure u0 and u1 exist
 		if (!checkUserExists($u0, true) || !checkUserExists($u1, true))
 			return 0;
-
-		// Friends array (will contain both u0 and u1 friends)
-		$friends = array();
-
-		// Get u0 friends
-		array_push($friends, current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($u0))));
-
-		// If u0 friendlist is empty, return 0 (no friendship)
-		if (empty($friends[0]))
-			return 0;
-
-		// If u0 friendlist is not empty, explode it
-		$friends[0] = explode(",", $friends[0]);
-		if (in_array($u1, $friends[0]))
+		
+		
+		// If user1 is friend of user2, check for mutual.
+		if ($GLOBALS["db"]->fetch("SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?", array($u0, $u1)) !== FALSE)
 		{
-			// We've found u1 in u0's friends. Check mutual
-
-			// Fokabot automutual
-			if ($u1 == 999)
+			if ($u1 == 999 || $GLOBALS["db"]->fetch("SELECT id FROM users_relationships WHERE user2 = ? AND user1 = ?", array($u0, $u1)) !== FALSE)
 				return 2;
-
-			// Get u1's friendlist
-			array_push($friends, current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($u1))));
-
-			// If u1 has no friends, no mutual
-			if (empty($friends[1]))
-				return 1;
-
-			// u1 is not forever alone. Explode his friends.
-			// rip now he is forever alone.
-			$friends[1] = explode(",", $friends[1]);
-
-			// If u0 is in u1's friendlist, mutual
-			// otherwise, no mutual
-			if (in_array($u0, $friends[1]))
-				return 2;
-			else
-				return 1;
+			return 1;
 		}
+		
+		// Otherwise, it's just no friendship.
+		return 0;
 	}
 
 
@@ -2184,21 +2159,15 @@
 			// Make sure users exist
 			if (!checkUserExists($dude, true) || !checkUserExists($newFriend, true))
 				throw new Exception;
-
-			// Get friend list, explode, add new friend, filter (remove useless commas) and implode
-			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($dude)));
-			$friends = explode(",", $friends);
-
-			// Make sure newFriend is not already in dude's friendlist
-			if (array_search($newFriend, $friends))
+			
+			// Check whether frienship already exists
+			if ($GLOBALS["db"]->fetch("SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?") !== FALSE) {
 				throw new Exception;
+			}
 
-			array_push($friends, $newFriend);
-			$friends = array_filter($friends);
-			$friends = implode(",", $friends);
+			// Add newFriend to friends			
+			$GLOBALS["db"]->execute("INSERT INTO users_relationships (user1, user2) VALUES (?, ?)", array($dude, $newFriend));
 
-			// Update friend list
-			$GLOBALS["db"]->execute("UPDATE users SET friends = ? WHERE osu_id = ?", array($friends, $dude));
 			return true;
 		} catch (Exception $e) {
 			return false;
@@ -2227,22 +2196,11 @@
 			// Make sure users exist
 			if (!checkUserExists($dude, true) || !checkUserExists($oldFriend, true))
 				throw new Exception;
+			
+			// Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
+			// if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯	
+			$GLOBALS["db"]->execute("DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?", array($dude, $oldFriend));
 
-			// Get friend list, explode, remove friend, filter (remove useless commas) and implode
-			$friends = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", array($dude)));
-			$friends = explode(",", $friends);
-			$pos = array_search($oldFriend, $friends);
-
-			// Make sure the oldFriend is in dude's friendlist
-			if ($pos === FALSE)
-				throw new Exception;
-
-			unset($friends[$pos]);
-			$friends = array_filter($friends);
-			$friends = implode(",", $friends);
-
-			// Update friend list
-			$GLOBALS["db"]->execute("UPDATE users SET friends = ? WHERE osu_id = ?", array($friends, $dude));
 			return true;
 		} catch (Exception $e) {
 			return false;

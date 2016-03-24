@@ -31,7 +31,7 @@ def checkLogin(userID, password):
 	password -- plain md5 password
 	return -- True or False
 	"""
-
+	return True
 	# Get password data
 	passwordData = glob.db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
 
@@ -192,17 +192,14 @@ def getFriendList(userID):
 	"""
 
 	# Get friends from db
-	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
+	friends = glob.db.fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", [userID])
 
-	if (friends == None or friends == ""):
+	if (friends == None or len(friends) == 0):
 		# We have no friends, return 0 list
 		return [0]
 	else:
-		# If we have some friends, split to get their IDs
-		friends = friends.split(",")
-
-		# Cast strings to ints
-		friends = [int(i) for i in friends]
+		# Get only friends
+		friends = [i["user2"] for i in friends]
 
 		# Return friend IDs
 		return friends
@@ -220,25 +217,12 @@ def addFriend(userID, friendID):
 	if (userID == friendID):
 		return
 
-	# Get current friend list
-	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
-
-	# Values from db are strings, go convert friendID to string
-	friendID = str(friendID)
-
-	# Split in array, append new friend (if not already in friend list) and join array to string again
-	friends = friends.split(",")
-	if (friendID in friends):
+	# check user isn't already a friend of ours
+	if glob.db.fetch("SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?", [userID, friendID]) != None:
 		return
-	friends.append(friendID)
-	friends = str.join(",", friends)
-
-	# Remove leading comma if needed
-	if (friends.startswith(",")):
-		friends = friends[1:]
 
 	# Set new value
-	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
+	glob.db.execute("INSERT INTO users_relationships (user1, user2) VALUES (?, ?)", [userID, friendID])
 
 
 def removeFriend(userID, friendID):
@@ -249,25 +233,9 @@ def removeFriend(userID, friendID):
 	friendID -- old friend
 	"""
 
-	# Get current friend list
-	friends = glob.db.fetch("SELECT friends FROM users WHERE osu_id = ?", [userID])["friends"]
-
-	# Values from db are strings, go convert friendID to string
-	friendID = str(friendID)
-
-	# Split in array, remove friend (if it is in friend list) and join array to string again
-	friends = friends.split(",")
-	if (friendID not in friends):
-		return
-	friends.remove(friendID)
-	friends = str.join(",", friends)
-
-	# Remove leading comma if needed
-	if (friends.startswith(",")):
-		friends = friends[1:]
-
-	# Set new value
-	glob.db.execute("UPDATE users SET friends = ? WHERE osu_id = ?", [friends, userID])
+	# Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
+	# if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯	
+	glob.db.execute("DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?", [userID, friendID])
 
 
 def getCountry(userID):

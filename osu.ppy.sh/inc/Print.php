@@ -2777,12 +2777,12 @@ class P {
 
 		// Get user friends
 		$ourID = getUserOsuID($_SESSION["username"]);
-		$friendList = current($GLOBALS["db"]->fetch("SELECT friends FROM users WHERE osu_id = ?", $ourID));
+		$friends = $GLOBALS["db"]->fetch("SELECT user2 FROM users_relationships WHERE user1 = ?", array($ourID));
 
 		// Title and header message
 		echo('<h1><i class="fa fa-star"></i>	Friendlist</h1>');
 
-		if ($friendList == '') {
+		if (count($friends) == 0) {
 			echo('<b>You don\'t have any friends.</b> You can add someone to your friendlist<br>by clicking the <b>"Add as friend"</b> on someones\'s profile.<br>You can add friends from the game client too.');
 		} else {
 			// Friendlist
