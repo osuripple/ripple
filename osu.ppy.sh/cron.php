@@ -173,8 +173,10 @@
 		$files = scandir("./replays_full");
 		foreach ($files as $file)
 		{
-			unlink("./replays_full/".$file);
-			echo("<b>".$file."</b> deleted!<br>\n");
+			if ($file != "." && $file != "..") {				
+				unlink("./replays_full/".$file);
+				echo("<b>".$file."</b> deleted!<br>\n");
+			}
 		}
 
 
