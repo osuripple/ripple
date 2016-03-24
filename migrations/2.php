@@ -7,7 +7,7 @@
 		if ($API_KEY == "API_KEY_HERE")
 		{
 			print("\033[31m!!!! IMPORTANT !!!!\r\nCouldn't fix FCs scores\r\nPlease open /migrations/2.php and set $API_KEY to your osu! api key\033[0m");
-			die();
+			throw new Exception();
 		}
 
 		// :(
@@ -65,6 +65,8 @@
 	}
 	catch (Exception $e)
 	{
-		echo("\n\nERROR WHILE FIXING FCs. Stopped on index: ".$cont."\nPlease run /migrate/2.php again.\n\n");
+		if ($e->getMessage() != "") {
+			echo("\n\nERROR WHILE FIXING FCs. Stopped on index: ".$cont."\nPlease run /migrate/2.php again.\n\n");
+		}
 	}
 ?>
