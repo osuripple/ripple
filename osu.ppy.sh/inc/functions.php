@@ -455,7 +455,7 @@
 		if (checkLoggedIn())
 		{
 			echo('<li class="dropdown">
-					<a data-toggle="dropdown"><img src="http://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="'.$URL["avatar"].'/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
@@ -1549,7 +1549,7 @@
 		// Get top 50 scores of this beatmap
 		if ($type == 3) {
 			$osuID = getUserOsuID($username);
-			
+
 			// Friends leaderboard
 			// Get friends
 			$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($osuID));
@@ -2119,8 +2119,8 @@
 		// Make sure u0 and u1 exist
 		if (!checkUserExists($u0, true) || !checkUserExists($u1, true))
 			return 0;
-		
-		
+
+
 		// If user1 is friend of user2, check for mutual.
 		if ($GLOBALS["db"]->fetch("SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?", array($u0, $u1)) !== FALSE)
 		{
@@ -2128,7 +2128,7 @@
 				return 2;
 			return 1;
 		}
-		
+
 		// Otherwise, it's just no friendship.
 		return 0;
 	}
@@ -2159,13 +2159,13 @@
 			// Make sure users exist
 			if (!checkUserExists($dude, true) || !checkUserExists($newFriend, true))
 				throw new Exception;
-			
+
 			// Check whether frienship already exists
 			if ($GLOBALS["db"]->fetch("SELECT id FROM users_relationships WHERE user1 = ? AND user2 = ?") !== FALSE) {
 				throw new Exception;
 			}
 
-			// Add newFriend to friends			
+			// Add newFriend to friends
 			$GLOBALS["db"]->execute("INSERT INTO users_relationships (user1, user2) VALUES (?, ?)", array($dude, $newFriend));
 
 			return true;
@@ -2196,9 +2196,9 @@
 			// Make sure users exist
 			if (!checkUserExists($dude, true) || !checkUserExists($oldFriend, true))
 				throw new Exception;
-			
+
 			// Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
-			// if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯	
+			// if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯
 			$GLOBALS["db"]->execute("DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?", array($dude, $oldFriend));
 
 			return true;

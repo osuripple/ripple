@@ -20,6 +20,12 @@
 	define('DATABASE_WHAT', "host");
 
 	/*
+	 * server urls, no slash
+	 */
+	$URL["avatar"] = "https://a.ripple.moe";
+	$URL["server"] = "https://ripple.moe";
+
+	/*
 	 * osu-submit-modular.php configuration
 	 */
 	$SUBMIT["AESKey"] 				= 'h89f2-890h2h89b34g-h80g134n90133';	// AES Encryption key for decrypt score data. Don't touch.
