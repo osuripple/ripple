@@ -189,21 +189,30 @@ def readPacketLength(__stream):
 	return unpackData(__stream[3:7], dataTypes.uInt32)
 
 
-def readPacketData(__stream, __structure = []):
+def readPacketData(__stream, __structure = [], __hasFirstBytes = True):
 	"""
 	Read packet data from __stream according to __structure
 
 	__stream -- data stream
 	__structure -- [[name, dataType], [name, dataType], ...]
+	__hasFirstBytes -- 	if True, __stream has packetID and length bytes.
+						if False, __stream has only packetData.
+						Optional. Default: True
 	return -- dictionary. key: name, value: read data
 	"""
 
 	# Read packet ID (first 2 bytes)
 	data = {}
 
-	# Skip packet ID and packet length
-	end = 7
-	start = 7
+	# Skip packet ID and packet length if needed
+	if (__hasFirstBytes == True):
+		end = 7
+		start = 7
+	else:
+		end = 0
+		start = 0
+
+	# Read packet
 	for i in __structure:
 		start = end
 		unpack = True

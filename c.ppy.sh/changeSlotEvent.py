@@ -12,11 +12,7 @@ def handle(userToken, packetData):
 	packetData = clientPackets.changeSlot(packetData)
 
 	# Get match
-	match = glob.matches.getMatchFromMatchID(userToken.matchID)
-	if (match != None):
-		# Change slot
-		match.userChangeSlot(userID, packetData["slotID"])
-		consoleHelper.printColored("> MPROOM{}: {} moved to slot {}".format(match.matchID, username, packetData["slotID"]), bcolors.BLUE)
+	match = glob.matches.matches[userToken.matchID]
 
-		# Update match
-		match.sendUpdate()
+	# Change slot
+	match.userChangeSlot(userID, packetData["slotID"])

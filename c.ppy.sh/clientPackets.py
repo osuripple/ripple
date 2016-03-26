@@ -1,6 +1,7 @@
 """ Contains functions used to read specific client packets from byte stream """
 import dataTypes
 import packetHelper
+import slotStatuses
 
 
 """ General packets """
@@ -58,12 +59,15 @@ def startSpectating(stream):
 
 
 """ MULTIPLAYER PACKETS """
-def createMatch(stream):
+def matchSettings(stream):
+	# Data to return, will be merged later
+	data = []
+
 	# Some settings
 	struct = [
-		["matchID", dataTypes.uInt16],	# always 0
-		["inProgress", dataTypes.byte], # always 0
-		["unknown", dataTypes.byte],	# always 0
+		["matchID", dataTypes.uInt16],
+		["inProgress", dataTypes.byte],
+		["unknown", dataTypes.byte],
 		["mods", dataTypes.uInt32],
 		["matchName", dataTypes.string],
 		["matchPassword", dataTypes.string],
@@ -72,30 +76,65 @@ def createMatch(stream):
 		["beatmapMD5", dataTypes.string]
 	]
 
-	# Slot statuses
+	# Slot statuses (not used)
 	for i in range(0,16):
 		struct.append(["slot{}Status".format(str(i)), dataTypes.byte])
 
-	# Slot teams
+	# Slot statuses (not used)
 	for i in range(0,16):
 		struct.append(["slot{}Team".format(str(i)), dataTypes.byte])
 
-	# No slot user IDs because we have just created a new match
+	# Read first part
+	data.append(packetHelper.readPacketData(stream, struct))
+
+	# Skip userIDs because fuck
+	start = 7+2+1+1+4+4+16+16+len(data[0]["matchName"])+len(data[0]["matchPassword"])+len(data[0]["beatmapMD5"])+len(data[0]["beatmapName"])
+	start += 1 if (data[0]["matchName"] == "") else 2
+	start += 1 if (data[0]["matchPassword"] == "") else 2
+	start += 1 if (data[0]["beatmapName"] == "") else 2
+	start += 1 if (data[0]["beatmapMD5"] == "") else 2
+	for i in range(0,16):
+		s = data[0]["slot{}Status".format(str(i))]
+		if (s != slotStatuses.free and s != slotStatuses.locked):
+			start += 4
+
 	# Other settings
-	struct.extend([
+	struct = [
 		["hostUserID", dataTypes.sInt32],
 		["gameMode", dataTypes.byte],
-		["scoringType", dataTypes.byte],	# always 0
-		["teamType", dataTypes.byte],		# always 0
-		["freeMods", dataTypes.byte],		# always 0
-		["seed", dataTypes.uInt32]
-	])
+		["scoringType", dataTypes.byte],
+		["teamType", dataTypes.byte],
+		["freeMods", dataTypes.byte],
+	]
 
-	# Return data
-	return packetHelper.readPacketData(stream, struct)
+	# Read last part
+	data.append(packetHelper.readPacketData(stream[start:], struct, False))
+
+	# Mods if freemod (not used)
+	#if (data[1]["freeMods"] == 1):
+
+	result = {}
+	for i in data:
+		result.update(i)
+	return result
+
+def createMatch(stream):
+	return matchSettings(stream)
+
+def changeMatchSettings(stream):
+	return matchSettings(stream)
 
 def changeSlot(stream):
 	return packetHelper.readPacketData(stream, [["slotID", dataTypes.uInt32]])
 
 def joinMatch(stream):
-	return packetHelper.readPacketData(stream, [["matchID", dataTypes.uInt32]])
+	return packetHelper.readPacketData(stream, [["matchID", dataTypes.uInt32], ["password", dataTypes.string]])
+
+def changeMods(stream):
+	return packetHelper.readPacketData(stream, [["mods", dataTypes.uInt32]])
+
+def lockSlot(stream):
+	return packetHelper.readPacketData(stream, [["slotID", dataTypes.uInt32]])
+
+def transferHost(stream):
+	return packetHelper.readPacketData(stream, [["slotID", dataTypes.uInt32]])

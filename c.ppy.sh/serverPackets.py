@@ -176,73 +176,72 @@ def noSongSpectator(userID):
 
 
 """ Multiplayer Packets """
-def matchSettings(__matchID, update):
-	# Get match object from matchID
-	match = glob.matches.getMatchFromMatchID(__matchID)
-	# TODO: match == None check
+def createMatch(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
 
-	# General match info
-	struct = [
-		[__matchID, dataTypes.uInt16],
-		[int(match.inProgress), dataTypes.byte],
-		[0, dataTypes.byte],
-		[match.mods, dataTypes.uInt32],
-		[match.matchName, dataTypes.string],
-		[match.matchPassword, dataTypes.string],
-		[match.beatmapName, dataTypes.string],
-		[match.beatmapID, dataTypes.uInt32],
-		[match.beatmapMD5, dataTypes.string],
-	]
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_newMatch, match.getMatchData())
 
-	# Slots status IDs, always 16 elements
-	for i in match.slotStatus:
-		struct.append([i, dataTypes.byte])
 
-	# Slot teams
-	for i in match.slotTeam:
-		struct.append([i, dataTypes.byte])
+def updateMatch(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
 
-	# Slot user ID. Write only if slot is occupied
-	for i in range(0,16):
-		# Send user ID only if there is someone in this slow
-		if (match.slotStatus[i] != slotStatuses.free and match.slotStatus[i] != slotStatuses.locked and match.slotStatus[i] != slotStatuses.playingQuit):
-			struct.append([match.slotUserID[i], dataTypes.uInt32])
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_updateMatch, match.getMatchData())
 
-	# Other match data
-	struct.extend([
-		[match.hostUserID, dataTypes.sInt32],
-		[match.gameMode, dataTypes.byte],
-		[match.matchScoringType, dataTypes.byte],
-		[match.matchTeamType, dataTypes.byte],
-		[match.matchModMode, dataTypes.byte],
-	])
 
-	# Slot mods if free mod is enabled
-	if (match.matchModMode == matchModModes.freeMod):
-		for i in match.slotMod:
-			struct.append([i, dataTypes.uInt32])
+def matchStart(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
 
-	# Seed idk
-	struct.append([match.seed, dataTypes.uInt32])
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_matchStart, match.getMatchData())
 
-	# Set packet ID
-	if (update == True):
-		pid = packetIDs.server_updateMatch
-	else:
-		pid = packetIDs.server_newMatch
 
-	data = packetHelper.buildPacket(pid, struct)
+def disposeMatch(matchID):
+	return packetHelper.buildPacket(packetIDs.server_disposeMatch, [[matchID, dataTypes.uInt16]])
+
+def matchJoinSuccess(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
+
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	data = packetHelper.buildPacket(packetIDs.server_matchJoinSuccess, match.getMatchData())
 	return data
-
-def matchDispose(matchID):
-	return packetHelper.buildPacket(packetIDs.server_disposeMatch, [[matchID, dataTypes.uInt32]])
-
-def matchJoinSuccess():
-	# TODO: memes
-	return packetHelper.buildPacket(packetIDs.server_matchJoinSuccess)
 
 def matchJoinFail():
 	return packetHelper.buildPacket(packetIDs.server_matchJoinFail)
+
+def changeMatchPassword(newPassword):
+	return packetHelper.buildPacket(packetIDs.server_matchChangePassword, [[newPassword, dataTypes.string]])
+
+def allPlayersLoaded():
+	return packetHelper.buildPacket(packetIDs.server_matchAllPlayersLoaded)
+
+def playerSkipped(userID):
+	return packetHelper.buildPacket(packetIDs.server_matchPlayerSkipped, [[userID, dataTypes.sInt32]])
+
+def allPlayersSkipped():
+	return packetHelper.buildPacket(packetIDs.server_matchSkip)
+
+def matchFrames(slotID, data):
+	return packetHelper.buildPacket(packetIDs.server_matchScoreUpdate, [[data[7:11], dataTypes.bbytes], [slotID, dataTypes.byte], [data[12:], dataTypes.bbytes]])
+
+def matchComplete():
+	return packetHelper.buildPacket(packetIDs.server_matchComplete)
+
+def playerFailed(slotID):
+	return packetHelper.buildPacket(packetIDs.server_matchPlayerFailed, [[slotID, dataTypes.uInt32]])
 
 """ Other packets """
 def notification(message):

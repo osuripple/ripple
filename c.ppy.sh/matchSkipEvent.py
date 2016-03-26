@@ -1,7 +1,7 @@
 import glob
 
-def handle(userToken, _):
-	# get data from usertoken
+def handle(userToken, packetData):
+	# Get userToken data
 	userID = userToken.userID
 
 	# Get match ID and match object
@@ -18,10 +18,5 @@ def handle(userToken, _):
 	# The match exists, get object
 	match = glob.matches.matches[matchID]
 
-	# Set slot to free
-	match.userLeft(userID)
-
-	# TODO: Give host to someone else if host quits
-
-	# Set usertoken match to -1
-	userToken.partMatch()
+	# Skip
+	match.playerSkip(userID)

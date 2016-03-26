@@ -3,34 +3,54 @@ import serverPackets
 import glob
 import consoleHelper
 import bcolors
+import exceptions
 
 def handle(userToken, packetData):
 	# read packet data
 	packetData = clientPackets.joinMatch(packetData)
 
 	# Get match from ID
-	match = glob.matches.getMatchFromMatchID(packetData["matchID"])
-	joinMatch(userToken, match)
+	joinMatch(userToken, packetData["matchID"], packetData["password"])
 
 
-def joinMatch(userToken, match):
-	# get usertoken data
-	username = userToken.username
-	userID = userToken.userID
-	print(str(match))
+def joinMatch(userToken, matchID, password):
+	try:
+		# TODO: leave other matches
 
-	# Make sure the match exists
-	if (match == None):
+		# get usertoken data
+		userID = userToken.userID
+
+		# Make sure the match exists
+		if (matchID not in glob.matches.matches):
+			raise exceptions.matchNotFoundException
+
+		# Match exists, get object
+		match = glob.matches.matches[matchID]
+
+		# Check password
+		# TODO: Admins can enter every match
+		if (match.matchPassword != ""):
+			if (match.matchPassword != password):
+				raise exceptions.matchWrongPasswordException
+
+		# Password is correct, join match
+		result = match.userJoin(userID)
+
+		# Check if we've joined the match successfully
+		if (result == False):
+			raise exceptions.matchJoinErrorException
+
+		# Match joined, set matchID for usertoken
+		userToken.joinMatch(matchID)
+
+		# Send packet
+		userToken.enqueue(serverPackets.matchJoinSuccess(matchID))
+	except exceptions.matchNotFoundException:
 		userToken.enqueue(serverPackets.matchJoinFail())
-		consoleHelper.printColored("[!] {} has tried to join a mp room, but it doesn't exist".format(username), bcolors.RED)
-		return
-
-	# Match exists, join it
-	match.userJoin(userID)
-	userToken.joinMatch(match.matchID)
-
-	# Send packet
-	userToken.enqueue(serverPackets.matchJoinSuccess())
-
-	# Console output
-	consoleHelper.printColored("> MPROOM{}: {} joined the room".format(match.matchID, username), bcolors.BLUE)
+		consoleHelper.printColored("[!] {} has tried to join a mp room, but it doesn't exist".format(userToken.username), bcolors.RED)
+	except exceptions.matchWrongPasswordException:
+		userToken.enqueue(serverPackets.matchJoinFail())
+		consoleHelper.printColored("[!] {} has tried to join a mp room, but he typed the wrong password".format(userToken.username), bcolors.RED)
+	except exceptions.matchJoinErrorException:
+		userToken.enqueue(serverPackets.matchJoinFail())
+		consoleHelper.printColored("[!] {} has tried to join a mp room, but an error has occured".format(userToken.username), bcolors.RED)

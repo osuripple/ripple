@@ -1,8 +1,9 @@
 import glob
+import clientPackets
 
-def handle(userToken, _):
-	# get data from usertoken
-	userID = userToken.userID
+def handle(userToken, packetData):
+	# Get packet data
+	packetData = clientPackets.transferHost(packetData)
 
 	# Get match ID and match object
 	matchID = userToken.matchID
@@ -15,13 +16,8 @@ def handle(userToken, _):
 	if (matchID not in glob.matches.matches):
 		return
 
-	# The match exists, get object
+	# Match exists, get object
 	match = glob.matches.matches[matchID]
 
-	# Set slot to free
-	match.userLeft(userID)
-
-	# TODO: Give host to someone else if host quits
-
-	# Set usertoken match to -1
-	userToken.partMatch()
+	# Transfer host
+	match.transferHost(packetData["slotID"])

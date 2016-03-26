@@ -2,9 +2,8 @@ import serverPackets
 import glob
 import consoleHelper
 import bcolors
-import packetIDs
 
-def handle(userToken, packetData):
+def handle(userToken, _):
 	# Get userToken data
 	username = userToken.username
 	userID = userToken.userID
@@ -13,8 +12,8 @@ def handle(userToken, packetData):
 	glob.matches.lobbyUserJoin(userID)
 
 	# Send matches data
-	for i in glob.matches.matches:
-		userToken.enqueue(serverPackets.matchSettings(i.matchID, False))
+	for key, _ in glob.matches.matches.items():
+		userToken.enqueue(serverPackets.createMatch(key))
 
 	# Console output
 	consoleHelper.printColored("> {} has joined multiplayer lobby".format(username), bcolors.BLUE)

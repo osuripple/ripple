@@ -79,7 +79,7 @@ class token:
 		self.actionMods = 0
 		self.gameMode = gameModes.std
 		self.awayMessage = ""
-		self.matchID = 0
+		self.matchID = -1
 
 		# Generate/set token
 		if (__token != None):

@@ -19,6 +19,7 @@ def partChannel(userToken, channelName):
 
 	# Remove us from joined users and joined channels
 	if (channelName in glob.channels.channels):
+		# TODO: Check that user is in channel
 		userToken.partChannel(channelName)
 
 		# Check if user is in channel

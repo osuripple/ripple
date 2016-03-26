@@ -40,6 +40,20 @@ import partLobbyEvent
 import changeSlotEvent
 import joinMatchEvent
 import partMatchEvent
+import changeMatchSettingsEvent
+import changeMatchPasswordEvent
+import changeMatchModsEvent
+import matchReadyEvent
+import matchLockEvent
+import matchStartEvent
+import matchPlayerLoadEvent
+import matchSkipEvent
+import matchFramesEvent
+import matchCompleteEvent
+import matchNoBeatmapEvent
+import matchHasBeatmapEvent
+import matchTransferHostEvent
+import matchFailedEvent
 
 # pep.py helpers
 import packetHelper
@@ -130,6 +144,8 @@ def banchoServer():
 						return wrapper
 
 					eventHandler = {
+						# TODO: Rename packets and events
+						# TODO: Host check for multi
 						packetIDs.client_sendPublicMessage: handleEvent(sendPublicMessageEvent),
 						packetIDs.client_sendPrivateMessage: handleEvent(sendPrivateMessageEvent),
 						packetIDs.client_setAwayMessage: handleEvent(setAwayMessageEvent),
@@ -148,7 +164,22 @@ def banchoServer():
 						packetIDs.client_createMatch: handleEvent(createMatchEvent),
 						packetIDs.client_joinMatch: handleEvent(joinMatchEvent),
 						packetIDs.client_partMatch: handleEvent(partMatchEvent),
-						packetIDs.client_matchChangeSlot: handleEvent(changeSlotEvent)
+						packetIDs.client_matchChangeSlot: handleEvent(changeSlotEvent),
+						packetIDs.client_matchChangeSettings: handleEvent(changeMatchSettingsEvent),
+						packetIDs.client_matchChangePassword: handleEvent(changeMatchPasswordEvent),
+						packetIDs.client_matchChangeMods: handleEvent(changeMatchModsEvent),
+						packetIDs.client_matchReady: handleEvent(matchReadyEvent),
+						packetIDs.client_matchNotReady: handleEvent(matchReadyEvent),
+						packetIDs.client_matchLock: handleEvent(matchLockEvent),
+						packetIDs.client_matchStart: handleEvent(matchStartEvent),
+						packetIDs.client_matchLoadComplete: handleEvent(matchPlayerLoadEvent),
+						packetIDs.client_matchSkipRequest: handleEvent(matchSkipEvent),
+						packetIDs.client_matchScoreUpdate: handleEvent(matchFramesEvent),
+						packetIDs.client_matchComplete: handleEvent(matchCompleteEvent),
+						packetIDs.client_matchNoBeatmap: handleEvent(matchNoBeatmapEvent),
+						packetIDs.client_matchHasBeatmap: handleEvent(matchHasBeatmapEvent),
+						packetIDs.client_matchTransferHost: handleEvent(matchTransferHostEvent),
+						packetIDs.client_matchFailed: handleEvent(matchFailedEvent)
 					}
 
 					if packetID != 4:

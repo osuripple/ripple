@@ -3,17 +3,17 @@ import glob
 import serverPackets
 
 class matchList:
-	matches = []
+	matches = {}
 	usersInLobby = []
 	lastID = 1
 
 	def __init__(self):
 		"""Initialize a matchList object"""
-		self.matches = []	# position 0 is bugged in client
+		self.matches = {}
 		self.usersInLobby = []
 		self.lastID = 1
 
-	def newMatch(self, __matchName, __matchPassword, __beatmapID, __beatmapName, __beatmapMD5, __gameMode, __seed):
+	def createMatch(self, __matchName, __matchPassword, __beatmapID, __beatmapName, __beatmapMD5, __gameMode, __hostUserID):
 		"""
 		Add a new match to matches list
 
@@ -23,32 +23,14 @@ class matchList:
 		__beatmapName -- beatmap name, string
 		__beatmapMD5 -- beatmap md5 hash, string
 		__gameMode -- game mode ID. See gameModes.py
-		__seed -- idk, int
-
-		__return -- match ID
+		__hostUserID -- user id of who created the match
+		return -- match ID
 		"""
 		# Add a new match to matches list
 		matchID = self.lastID
 		self.lastID+=1
-		self.matches.append(match.match(matchID, __matchName, __matchPassword, __beatmapID, __beatmapName, __beatmapMD5, __gameMode, __seed))
-		return self.matches[len(self.matches)-1]
-
-
-	def getMatchFromMatchID(self, __matchID):
-		"""
-		Get match object from its matchID
-
-		__matchID -- matchID int
-		return -- match object if found, None if not found
-		"""
-
-		# Loop though all matches
-		for i in self.matches:
-			if (i.matchID == __matchID):
-				return i
-
-		# No match found, return None
-		return None
+		self.matches[matchID] = match.match(matchID, __matchName, __matchPassword, __beatmapID, __beatmapName, __beatmapMD5, __gameMode, __hostUserID)
+		return matchID
 
 
 	def lobbyUserJoin(self, __userID):
@@ -80,18 +62,17 @@ class matchList:
 		Destroy match object with id = __matchID
 
 		__matchID -- ID of match to dispose
-		return -- True if success, False if error
 		"""
 
+		# Make sure the match exists
+		if (__matchID not in self.matches):
+			return
+
 		# Remove match object
-		for i in self.matches:
-			if (i.matchID == __matchID):
-				self.matches.remove(i)
+		self.matches.pop(__matchID)
 
 		# Send match dispose packet to everyone in lobby
 		for i in self.usersInLobby:
 			token = glob.tokens.getTokenFromUserID(i)
 			if (token != None):
-				token.enqueue(serverPackets.matchDispose(__matchID))
-
-		return False
+				token.enqueue(serverPackets.disposeMatch(__matchID))
