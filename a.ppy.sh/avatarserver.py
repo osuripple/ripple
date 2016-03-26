@@ -7,7 +7,7 @@ avatar_dir = "avatars" # no slash
 
 # create avatars directory if it does not exist
 if not os.path.exists(avatar_dir):
-    os.makedirs(avatar_dir)
+	os.makedirs(avatar_dir)
     
 @app.route("/<int:osuid>")
 def serveAvatar(osuid):
