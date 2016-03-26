@@ -138,3 +138,6 @@ def lockSlot(stream):
 
 def transferHost(stream):
 	return packetHelper.readPacketData(stream, [["slotID", dataTypes.uInt32]])
+
+def matchInvite(stream):
+	return packetHelper.readPacketData(stream, [["userID", dataTypes.uInt32]])

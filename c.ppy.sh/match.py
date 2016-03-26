@@ -1,9 +1,4 @@
-# TODO: Teams
-# TODO: Fix settings
-# TODO: Better join/part
-# TODO: User fail
-# TODO: Invite
-# TODO: Multiplayer chat
+# TODO: Enqueue all
 import gameModes
 import matchScoringTypes
 import matchTeamTypes
@@ -14,6 +9,7 @@ import consoleHelper
 import bcolors
 import serverPackets
 import dataTypes
+import matchTeams
 
 class match:
 	"""Multiplayer match object"""
@@ -126,7 +122,7 @@ class match:
 		newHost -- new host userID
 		"""
 		self.hostUserID = newHost
-
+		consoleHelper.printColored("> MPROOM{}: {} is now the host".format(self.matchID, newHost), bcolors.BLUE)
 
 	def setSlot(self, slotID, slotStatus = None, slotTeam = None, slotUserID = None, slotMods = None, slotLoaded = None, slotSkip = None, slotComplete = None):
 		"""
@@ -427,7 +423,7 @@ class match:
 			for i in range(0,16):
 				uid = self.slots[i]["userID"]
 				if (uid > -1):
-					self.hostUserID = uid
+					self.setHost(uid)
 
 		# Send updated match data
 		self.sendUpdate()
@@ -531,13 +527,11 @@ class match:
 			return
 
 		# Transfer host
-		self.hostUserID = uid
+		self.setHost(uid)
 
 		# Send updates
 		self.sendUpdate()
 
-		# Console output
-		consoleHelper.printColored("> MPROOM{}: {} is not the host".format(self.matchID, uid), bcolors.BLUE)
 
 	def playerFailed(self, userID):
 		"""
@@ -558,6 +552,32 @@ class match:
 				if (token != None):
 					token.enqueue(serverPackets.playerFailed(slotID))
 
+		# Console output
+		consoleHelper.printColored("> MPROOM{}: {} has failed!".format(self.matchID, userID), bcolors.BLUE)
+
+
+	def invite(self, fro, to):
+		"""
+		Fro invites to in this match.
+
+		fro -- sender userID
+		to -- receiver userID
+		"""
+
+		# Get tokens
+		froToken = glob.tokens.getTokenFromUserID(fro)
+		toToken = glob.tokens.getTokenFromUserID(to)
+		if (froToken == None or toToken == None):
+			return
+
+		# FokaBot is too busy
+		if (to == 999):
+			froToken.enqueue(serverPackets.sendMessage("FokaBot", froToken.username, "I would love to join your match, but I'm busy keeping ripple up and running. Sorry. Beep Boop."))
+
+		# Send message
+		message = "Come join my multiplayer match: \"[osump://{}/{} {}]\"".format(self.matchID, self.matchPassword.replace(" ", "_"), self.matchName)
+		toToken.enqueue(serverPackets.sendMessage(froToken.username, toToken.username, message))
+
 
 	def countUsers(self):
 		"""
@@ -572,6 +592,24 @@ class match:
 				c+=1
 
 		return c
+
+	def changeTeam(self, userID):
+		"""
+		Change userID's team
+
+		userID -- id of user
+		"""
+		# Make sure the user is in room
+		slotID = self.getUserSlotID(userID)
+		if (slotID == None):
+			return
+
+		# Update slot and send update
+		newTeam = matchTeams.blue if self.slots[slotID]["team"] == matchTeams.red else matchTeams.red
+		self.setSlot(slotID, None, newTeam)
+		self.sendUpdate()
+
+
 
 	def sendUpdate(self):
 		# Send to users in room

@@ -1,6 +1,4 @@
 """Hello, pep.py here, ex-owner of ripple and prime minister of Ripwot."""
-# TODO: Remove useless imports
-# TODO: Docs
 import logging
 import sys
 import flask
@@ -54,6 +52,8 @@ import matchNoBeatmapEvent
 import matchHasBeatmapEvent
 import matchTransferHostEvent
 import matchFailedEvent
+import matchInviteEvent
+import matchChangeTeamEvent
 
 # pep.py helpers
 import packetHelper
@@ -179,7 +179,9 @@ def banchoServer():
 						packetIDs.client_matchNoBeatmap: handleEvent(matchNoBeatmapEvent),
 						packetIDs.client_matchHasBeatmap: handleEvent(matchHasBeatmapEvent),
 						packetIDs.client_matchTransferHost: handleEvent(matchTransferHostEvent),
-						packetIDs.client_matchFailed: handleEvent(matchFailedEvent)
+						packetIDs.client_matchFailed: handleEvent(matchFailedEvent),
+						packetIDs.client_invite: handleEvent(matchInviteEvent),
+						packetIDs.client_matchChangeTeam: handleEvent(matchChangeTeamEvent)
 					}
 
 					if packetID != 4:

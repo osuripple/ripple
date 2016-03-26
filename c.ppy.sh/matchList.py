@@ -42,6 +42,7 @@ class matchList:
 
 		# Make sure the user is not already in mp lobby
 		if (__userID not in self.usersInLobby):
+			# We don't need to join #lobby, client will automatically send a packet for it
 			self.usersInLobby.append(__userID)
 
 
@@ -54,6 +55,7 @@ class matchList:
 
 		# Make sure the user is in mp lobby
 		if (__userID in self.usersInLobby):
+			# Part lobby and #lobby channel
 			self.usersInLobby.remove(__userID)
 
 

@@ -19,4 +19,4 @@ def handle(userToken, _):
 	match = glob.matches.matches[matchID]
 
 	# Fail user
-	match.userFailed(userID)
+	match.playerFailed(userID)

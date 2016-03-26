@@ -1,8 +1,7 @@
 import glob
-import serverPackets
 
 def handle(userToken, _):
-	# get data from usertoken
+	# Read token data
 	userID = userToken.userID
 
 	# Get match ID and match object
@@ -16,12 +15,8 @@ def handle(userToken, _):
 	if (matchID not in glob.matches.matches):
 		return
 
-	# The match exists, get object
+	# Get match object
 	match = glob.matches.matches[matchID]
 
-	# Set slot to free
-	match.userLeft(userID)
-
-	# Set usertoken match to -1
-	userToken.partMatch()
-	userToken.enqueue(serverPackets.channelKicked("#multiplayer"))
+	# Change team
+	match.changeTeam(userID)

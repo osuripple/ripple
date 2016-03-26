@@ -21,7 +21,7 @@ def handle(userToken, packetData):
 
 		# Check spectator channel
 		# If it's spectator channel, skip checks and list stuff
-		if (packetData["channel"] != "#spectator"):
+		if (packetData["channel"] != "#spectator" and packetData["channel"] != "#multiplayer"):
 			# Normal channel, do check stuff
 			# Make sure the channel exists
 			if (packetData["channel"] not in glob.channels.channels):

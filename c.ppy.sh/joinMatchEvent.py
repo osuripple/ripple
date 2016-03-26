@@ -16,9 +16,11 @@ def handle(userToken, packetData):
 def joinMatch(userToken, matchID, password):
 	try:
 		# TODO: leave other matches
+		# TODO: Stop spectating
 
 		# get usertoken data
 		userID = userToken.userID
+		username = userToken.username
 
 		# Make sure the match exists
 		if (matchID not in glob.matches.matches):
@@ -43,8 +45,10 @@ def joinMatch(userToken, matchID, password):
 		# Match joined, set matchID for usertoken
 		userToken.joinMatch(matchID)
 
-		# Send packet
+		# Send packets
 		userToken.enqueue(serverPackets.matchJoinSuccess(matchID))
+		userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#multiplayer"))
+		userToken.enqueue(serverPackets.sendMessage("FokaBot", "#multiplayer", "Hi {}, and welcome to ripple's multiplayer mode! This feature is still WIP and might have some issues. If you find any bugs, please report them (by clicking here)[https://ripple.moe/index.php?p=22].".format(username)))
 	except exceptions.matchNotFoundException:
 		userToken.enqueue(serverPackets.matchJoinFail())
 		consoleHelper.printColored("[!] {} has tried to join a mp room, but it doesn't exist".format(userToken.username), bcolors.RED)

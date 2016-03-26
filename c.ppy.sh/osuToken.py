@@ -147,8 +147,7 @@ class token:
 	def startSpectating(self, __userID):
 		"""Set the spectating user to __userID
 
-		userID -- target userID"""
-
+		__userID -- target userID"""
 		self.spectating = __userID
 
 

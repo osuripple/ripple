@@ -29,12 +29,13 @@ def handle(userToken, _):
 	# Change inProgress value
 	match.inProgress = True
 
-	# Set playing to ready players and set loaded to False
+	# Set playing to ready players and set load, skip and complete to False
 	for i in range(0,16):
 		if (match.slots[i]["status"] == slotStatuses.ready):
 			match.slots[i]["status"] = slotStatuses.playing
 			match.slots[i]["loaded"] = False
 			match.slots[i]["skip"] = False
+			match.slots[i]["complete"] = False
 
 	# Send match start packet
 	for i in range(0,16):

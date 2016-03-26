@@ -12,7 +12,7 @@ def handle(userToken, _):
 	glob.matches.lobbyUserPart(userID)
 
 	# Part lobby channel
-	channelPartEvent.partChannel(userToken, "#lobby")
+	channelPartEvent.partChannel(userToken, "#lobby", True)
 
 	# Console output
 	consoleHelper.printColored("> {} has left multiplayer lobby".format(username), bcolors.BLUE)

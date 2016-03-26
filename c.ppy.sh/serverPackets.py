@@ -160,6 +160,9 @@ def channelInfo(chan):
 def channelInfoEnd():
 	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd, [[0, dataTypes.uInt32]])
 
+def channelKicked(chan):
+	return packetHelper.buildPacket(packetIDs.server_channelKicked, [[chan, dataTypes.string]])
+
 
 """ Spectator packets """
 def addSpectator(userID):
