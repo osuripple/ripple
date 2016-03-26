@@ -224,6 +224,10 @@ class D {
 
 			// Set public value
 			$p = isset($_POST["p"]) ? 1 : 0;
+			if ($p == 1)
+				$desc = "*key*";
+			else
+				$desc = $_POST["d"];
 
 			// We store plain keys here to show them at the end
 			$plainKeys = "";
@@ -237,7 +241,7 @@ class D {
 					$key = generateKey();
 					$hash = md5($key);
 					if (!$GLOBALS["db"]->fetch("SELECT * FROM beta_keys WHERE key_md5 = ?", $hash)) {
-						$GLOBALS["db"]->execute("INSERT INTO beta_keys(key_md5, description, allowed, public) VALUES (?, ?, ?, ?);", array($hash, str_replace("*key*", $key, $_POST["d"]), 1, $p));
+						$GLOBALS["db"]->execute("INSERT INTO beta_keys(key_md5, description, allowed, public) VALUES (?, ?, ?, ?);", array($hash, str_replace("*key*", $key, $desc), 1, $p));
 						$d = true;
 						$plainKeys = $plainKeys."<br>".$key;
 					}

@@ -664,7 +664,7 @@ class P {
 		</div>
 		<p style="line-height: 15px"></p>
 		<input type="checkbox" name="p">Public (show on Beta Keys page)<br>
-		<b>If you want to add public keys, <u>set the description to *key*</u></b>
+		<b>If you add public keys, description will be ignored and replaced with *key*</b>
 		</form>
 		</p>
 		</div>
