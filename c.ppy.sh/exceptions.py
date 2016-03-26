@@ -41,3 +41,12 @@ class alreadyConnectedException(Exception):
 
 class stopSpectating(Exception):
 	pass
+
+class matchWrongPasswordException(Exception):
+	pass
+
+class matchNotFoundException(Exception):
+	pass
+
+class matchJoinErrorException(Exception):
+	pass

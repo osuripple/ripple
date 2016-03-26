@@ -29,7 +29,7 @@ def joinChannel(userToken, channelName):
 
 		# Check spectator channel
 		# If it's spectator channel, skip checks and list stuff
-		if (channelName != "#spectator"):
+		if (channelName != "#spectator" and channelName != "#multiplayer"):
 			# Normal channel, do check stuff
 			# Make sure the channel exists
 			if (channelName not in glob.channels.channels):

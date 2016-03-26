@@ -103,9 +103,14 @@ def packData(__data, __dataType):
 	elif (__dataType == dataTypes.string):
 		# String, do not use pack, do manually
 		pack = False
-		data += b"\x0B"
-		data += uleb128Encode(len(__data))
-		data += str.encode(__data, "latin_1")
+		if (len(__data) == 0):
+			# Empty string
+			data += b"\x00"
+		else:
+			# Non empty string
+			data += b"\x0B"
+			data += uleb128Encode(len(__data))
+			data += str.encode(__data, "latin_1")
 	elif (__dataType == dataTypes.uInt16):
 		packType = "<H"
 	elif (__dataType == dataTypes.sInt16):
@@ -184,21 +189,30 @@ def readPacketLength(__stream):
 	return unpackData(__stream[3:7], dataTypes.uInt32)
 
 
-def readPacketData(__stream, __structure = []):
+def readPacketData(__stream, __structure = [], __hasFirstBytes = True):
 	"""
 	Read packet data from __stream according to __structure
 
 	__stream -- data stream
 	__structure -- [[name, dataType], [name, dataType], ...]
+	__hasFirstBytes -- 	if True, __stream has packetID and length bytes.
+						if False, __stream has only packetData.
+						Optional. Default: True
 	return -- dictionary. key: name, value: read data
 	"""
 
 	# Read packet ID (first 2 bytes)
 	data = {}
 
-	# Skip packet ID and packet length
-	end = 7
-	start = 7
+	# Skip packet ID and packet length if needed
+	if (__hasFirstBytes == True):
+		end = 7
+		start = 7
+	else:
+		end = 0
+		start = 0
+
+	# Read packet
 	for i in __structure:
 		start = end
 		unpack = True
@@ -206,12 +220,19 @@ def readPacketData(__stream, __structure = []):
 			# String, don't unpack
 			unpack = False
 
-			# Read length and calculate end
-			length = uleb128Decode(__stream[start+1:])
-			end = start+length[0]+length[1]+1
+			# Check empty string
+			if (__stream[start] == 0):
+				# Empty string
+				data[i[0]] = ""
+				end = start+1
+			else:
+				# Non empty string
+				# Read length and calculate end
+				length = uleb128Decode(__stream[start+1:])
+				end = start+length[0]+length[1]+1
 
-			# Read bytes
-			data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
+				# Read bytes
+				data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
 		elif (i[1] == dataTypes.byte):
 			end = start+1
 		elif (i[1] == dataTypes.uInt16 or i[1] == dataTypes.sInt16):

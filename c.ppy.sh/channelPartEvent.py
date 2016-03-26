@@ -6,21 +6,31 @@ import consoleHelper
 import bcolors
 import glob
 import clientPackets
+import serverPackets
 
 def handle(userToken, packetData):
+	# Channel part packet
+	packetData = clientPackets.channelPart(packetData)
+	partChannel(userToken, packetData["channel"])
+
+def partChannel(userToken, channelName, kick = False):
 	# Get usertoken data
 	username = userToken.username
 	userID = userToken.userID
 
-	# Channel part packet
-	packetData = clientPackets.channelPart(packetData)
-
 	# Remove us from joined users and joined channels
-	if packetData["channel"] in glob.channels.channels:
-		userToken.partChannel(packetData["channel"])
+	if (channelName in glob.channels.channels):
+		# Check that user is in channel
+		if (channelName in userToken.joinedChannels):
+			userToken.partChannel(channelName)
 
-		# TODO: check if user is in channel
-		glob.channels.channels[packetData["channel"]].userPart(userID)
+		# Check if user is in channel
+		if (userID in glob.channels.channels[channelName].connectedUsers):
+			glob.channels.channels[channelName].userPart(userID)
+
+		# Force close tab if needed
+		if (kick == True):
+			userToken.enqueue(serverPackets.channelKicked(channelName))
 
 		# Console output
-		consoleHelper.printColored("> {} parted channel {}".format(username, packetData["channel"]), bcolors.YELLOW)
+		consoleHelper.printColored("> {} parted channel {}".format(username, channelName), bcolors.YELLOW)

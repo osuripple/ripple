@@ -8,8 +8,7 @@ def printServerStartHeader(asciiArt):
 	asciiArt -- if True, will print ascii art too"""
 
 	if (asciiArt == True):
-		print(bcolors.GREEN)
-		print("           _                 __")
+		print("{}           _                 __".format(bcolors.GREEN))
 		print("          (_)              /  /")
 		print("   ______ __ ____   ____  /  /____")
 		print("  /  ___/  /  _  \\/  _  \\/  /  _  \\")
@@ -24,8 +23,8 @@ def printServerStartHeader(asciiArt):
 		print("    phwr-->  _\\:D/_/o_o_o_|__     u wot m8")
 		print("             \\\"\"\"\"\"\"\"\"\"\"\"\"\"\"/")
 		print("              \\ . ..  .. . /")
-		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-		print(bcolors.ENDC)
+		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^{}".format(bcolors.ENDC))
+		print("{}MULTIPLAYER TEST VERSION. DO NOT USE IN PRODUCTION\n{}".format(bcolors.YELLOW, bcolors.ENDC))
 
 	print("{}{}\n{}\n{}{}\n".format(bcolors.GREEN, "> Welcome to pep.py osu! Server v0.5", "> Made by the ripple team", "> Press CTRL+C to exit", bcolors.ENDC))
 

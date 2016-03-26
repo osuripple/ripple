@@ -5,6 +5,8 @@ import userHelper
 import glob
 import userRanks
 import packetIDs
+import slotStatuses
+import matchModModes
 
 """ Login errors packets
 (userID packets derivates) """
@@ -158,6 +160,9 @@ def channelInfo(chan):
 def channelInfoEnd():
 	return packetHelper.buildPacket(packetIDs.server_channelInfoEnd, [[0, dataTypes.uInt32]])
 
+def channelKicked(chan):
+	return packetHelper.buildPacket(packetIDs.server_channelKicked, [[chan, dataTypes.string]])
+
 
 """ Spectator packets """
 def addSpectator(userID):
@@ -172,6 +177,74 @@ def spectatorFrames(data):
 def noSongSpectator(userID):
 	return packetHelper.buildPacket(packetIDs.server_spectatorCantSpectate, [[userID, dataTypes.sInt32]])
 
+
+""" Multiplayer Packets """
+def createMatch(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
+
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_newMatch, match.getMatchData())
+
+
+def updateMatch(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
+
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_updateMatch, match.getMatchData())
+
+
+def matchStart(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
+
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	return packetHelper.buildPacket(packetIDs.server_matchStart, match.getMatchData())
+
+
+def disposeMatch(matchID):
+	return packetHelper.buildPacket(packetIDs.server_disposeMatch, [[matchID, dataTypes.uInt16]])
+
+def matchJoinSuccess(matchID):
+	# Make sure the match exists
+	if (matchID not in glob.matches.matches):
+		return None
+
+	# Get match binary data and build packet
+	match = glob.matches.matches[matchID]
+	data = packetHelper.buildPacket(packetIDs.server_matchJoinSuccess, match.getMatchData())
+	return data
+
+def matchJoinFail():
+	return packetHelper.buildPacket(packetIDs.server_matchJoinFail)
+
+def changeMatchPassword(newPassword):
+	return packetHelper.buildPacket(packetIDs.server_matchChangePassword, [[newPassword, dataTypes.string]])
+
+def allPlayersLoaded():
+	return packetHelper.buildPacket(packetIDs.server_matchAllPlayersLoaded)
+
+def playerSkipped(userID):
+	return packetHelper.buildPacket(packetIDs.server_matchPlayerSkipped, [[userID, dataTypes.sInt32]])
+
+def allPlayersSkipped():
+	return packetHelper.buildPacket(packetIDs.server_matchSkip)
+
+def matchFrames(slotID, data):
+	return packetHelper.buildPacket(packetIDs.server_matchScoreUpdate, [[data[7:11], dataTypes.bbytes], [slotID, dataTypes.byte], [data[12:], dataTypes.bbytes]])
+
+def matchComplete():
+	return packetHelper.buildPacket(packetIDs.server_matchComplete)
+
+def playerFailed(slotID):
+	return packetHelper.buildPacket(packetIDs.server_matchPlayerFailed, [[slotID, dataTypes.uInt32]])
 
 """ Other packets """
 def notification(message):

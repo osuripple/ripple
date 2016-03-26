@@ -50,6 +50,8 @@ class token:
 
 	awayMessage = ""
 
+	matchID = -1
+
 
 	def __init__(self, __userID, __token = None):
 		"""
@@ -77,6 +79,7 @@ class token:
 		self.actionMods = 0
 		self.gameMode = gameModes.std
 		self.awayMessage = ""
+		self.matchID = -1
 
 		# Generate/set token
 		if (__token != None):
@@ -144,8 +147,7 @@ class token:
 	def startSpectating(self, __userID):
 		"""Set the spectating user to __userID
 
-		userID -- target userID"""
-
+		__userID -- target userID"""
 		self.spectating = __userID
 
 
@@ -197,3 +199,15 @@ class token:
 	def setAwayMessage(self, __awayMessage):
 		"""Set a new away message"""
 		self.awayMessage = __awayMessage
+
+	def joinMatch(self, __matchID):
+		"""
+		Set match to matchID
+
+		__matchID -- new match ID
+		"""
+		self.matchID = __matchID
+
+	def partMatch(self):
+		"""Set match to -1"""
+		self.matchID = -1
