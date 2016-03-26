@@ -40,7 +40,7 @@
 		move_uploaded_file($_FILES["ss"]["tmp_name"], "../ss/".$screenshotID.".jpg");
 
 		// Echo URL
-		echo($URL["server"].'/ss/'.$screenshotID.'.jpg');
+		echo('https://ripple.moe/ss/'.$screenshotID.'.jpg');
 	}
 	catch (Exception $e)
 	{

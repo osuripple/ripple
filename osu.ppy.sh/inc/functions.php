@@ -455,7 +455,7 @@
 		if (checkLoggedIn())
 		{
 			echo('<li class="dropdown">
-					<a data-toggle="dropdown"><img src="'.$URL["avatar"].'/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="https://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
