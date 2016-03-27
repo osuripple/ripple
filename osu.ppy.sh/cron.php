@@ -52,6 +52,16 @@
 		// Delete all password recovery older than 10 days.
 		echo('Pruning password recovery submissions older than 10 days...<br>\n');
 		$GLOBALS["db"]->execute("DELETE FROM password_recovery WHERE t < (NOW() - INTERVAL 10 DAY);");
+		
+		// recalculate the accuracy of every score
+		echo("Recalculating accuracy.");
+		$scores = $GLOBALS["db"]->fetchAll("SELECT * FROM scores");
+		foreach ($scores as $score) {
+			$acc = calculateAccuracy($score["count_300"], $score["count_100"], $score["count_50"], $score["count_geki"], $score["count_katu"], $score["count_miss"], $score["playmode"]);
+			$GLOBALS["db"]->execute("UPDATE scores SET accuracy = ? WHERE id = ?", array($acc, $score["id"]));
+			echo ".";
+		}
+		echo " done.\n";
 
 		// Get all users
 		$users = $GLOBALS["db"]->fetchAll("SELECT username FROM users WHERE allowed = 1");
@@ -182,7 +192,7 @@
 
 		// Replays cleared
 		echo("<b>Full replays cache cleaned!</b><br>\n");
-
+		
 
 		// Delete inactive accounts (not activated in osu!/no osu! id within 30 minutes after registration)
 		echo("<br>\n<b>Deleting inactive accounts...</b><br>\n");
