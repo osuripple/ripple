@@ -57,7 +57,7 @@
 		echo("Recalculating accuracy.");
 		$scores = $GLOBALS["db"]->fetchAll("SELECT * FROM scores");
 		foreach ($scores as $score) {
-			$acc = calculateAccuracy($score["count_300"], $score["count_100"], $score["count_50"], $score["count_geki"], $score["count_katu"], $score["count_miss"], $score["playmode"]);
+			$acc = calculateAccuracy($score["300_count"], $score["100_count"], $score["50_count"], $score["gekis_count"], $score["katus_count"], $score["misses_count"], $score["play_mode"]);
 			$GLOBALS["db"]->execute("UPDATE scores SET accuracy = ? WHERE id = ?", array($acc, $score["id"]));
 			echo ".";
 		}
