@@ -4,6 +4,7 @@
 *.log
 ci-system/cikey.txt
 ci-system/changelog.json
+ci-system/changelog.txt
 
 # server data
 osu.ppy.sh/inc/config.php

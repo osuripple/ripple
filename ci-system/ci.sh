@@ -35,4 +35,4 @@ php cron.php 2>&1 > /dev/null &
 # Update changelog.json
 # https://gist.github.com/textarcana/1306223
 cd ..
-git log --pretty=format:'{%n  "commit": "%H",%n  "author": "%an <%ae>",%n  "date": "%ad",%n  "message": "%f"%n},' $@ | perl -pe 'BEGIN{print "["}; END{print "]\n"}' | perl -pe 's/},]/}]/' > ci-system/changelog.json
+git log --pretty=format:'%H|%at|%an|%s' > ci-system/changelog.txt

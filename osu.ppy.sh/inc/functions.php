@@ -1812,27 +1812,30 @@
 	 ** CHANGELOG FUNCTIONS  **
 	 **************************/
 	function getChangelog() {
-		//global $GitLabConfig;
 		sessionCheck();
 		echo('<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>');
-		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are published to the master branch.<br>Hover a change to know when it was done.<br><br>');
-		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.json")) {
-			echo '<b>Unfortunately, the website owner did configure the changelog. Slap him off telling him to do it.</b>';
+		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are pushed to the website.<br>Hover a change to know when it was done.<br><br>');
+		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.txt")) {
+			echo '<b>Unfortunately, no changelog for this ripple instance is available. Slap him off telling him to do it.</b>';
 		}
 		else {
-			// We use only one page. For now. I'm tired. It's 23:46. Fuck everything.
-			//$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
-			$data = getChangelogPage();
+			$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
+			$data = getChangelogPage($_GET["page"]);
+			if ($data == false || count($data) == 0) {
+				echo "<b>You've reached the end of the universe.</b>";
+				echo "<br><br><a href='index.php?p=17&page=" . ($_GET["page"] - 1) . "'>&lt; Previous page</a>";
+				return;
+			}
 			echo("<table class='table table-striped table-hover'><thead><th style='width:10%'></th><th style='width:5%'></th><th style='width:75%'></th></thead><tbody>");
 			foreach ($data as $commit) {
 				echo sprintf("<tr class='%s'><td>%s</td><td><b>%s:</b></td><td><div title='%s'>%s</div></td></tr>", $commit['row'], $commit["labels"], $commit["username"], $commit["time"], $commit["content"]);
 			}
 			echo "</tbody></table><br><br>";
-			/*if ($_GET["page"] != 1) {
+			if ($_GET["page"] != 1) {
 				echo "<a href='index.php?p=17&page=" . ($_GET["page"] - 1) . "'>&lt; Previous page</a>";
 				echo " | ";
 			}
-			echo "<a href='index.php?p=17&page=" . ($_GET["page"] + 1) . "'>Next page &gt;</a>";*/
+			echo "<a href='index.php?p=17&page=" . ($_GET["page"] + 1) . "'>Next page &gt;</a>";
 		}
 	}
 
@@ -1846,35 +1849,55 @@
 		global $ChangelogConfig;
 
 		// Retrieve data from changelog.json
-		$data = json_decode(file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.json"), true);
+		$data = explode("\n", file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.txt"));
 		$ret = array();
+		
+		// Check there are enough commits for the current page.
+		$initoffset = ($p - 1) * 50;
+		if (count($data) < ($initoffset))
+			return false;
+		
+		// Get only the commits we're interested in.
+		$data = array_slice($data, $initoffset, 50);
 
+		// check whether user is admin
+		$useradmin = getUserRank($_SESSION["username"]) >= 4;
+		
 		// Get each commit
 		foreach ($data as $commit) {
-			$a = getUserRank($_SESSION["username"]) >= 4 ? true : false;
-			$b = false;
+			// Separate the various components of the commit
+			$commit = explode("|", $commit);
+			
+			// Silently ignore commits that don't have enough data
+			if (count($commit) < 4) 
+				continue;
+						
+			$valid = true;
 			$labels = "";
+
+			// Fix author name
+			$commit[2] = trim($commit[2]);
 
 			// Check forbidden commits
 			if (isset($ChangelogConfig["forbidden_commits"]))
 			{
 				foreach ($ChangelogConfig["forbidden_commits"] as $hash) {
-					if (strpos($commit["commit"], strtolower($hash)) !== false) {
-						$b = true;
+					if (strpos($commit[0], strtolower($hash)) !== false) {
+						$valid = false;
 						break;
 					}
 				}
 			}
 
 			// Only get first line of commit
-			$commit["message"] = str_replace('-', ' ', explode("\n", $commit["message"])[0]);
+			$message = implode("|", array_slice($commit, 3));
 
 			// Check forbidden words
 			if (isset($ChangelogConfig["forbidden_keywords"]) && !empty($ChangelogConfig["forbidden_keywords"]))
 			{
 				foreach ($ChangelogConfig["forbidden_keywords"] as $word) {
-					if (strpos(strtolower($commit["message"]), strtolower($word)) !== false) {
-						$b = true;
+					if (strpos(strtolower($message), strtolower($word)) !== false) {
+						$valid = false;
 						break;
 					}
 				}
@@ -1884,7 +1907,7 @@
 			if (isset($ChangelogConfig["labels"]))
 			{
 				// Hidden label if user is an admin and commit is hidden
-				if ($a && $b)
+				if ($useradmin && !$valid)
 				{
 					$row = "warning";
 					$labels .= "<span class='label label-default'>Hidden</span>	";
@@ -1901,28 +1924,30 @@
 					$keyword = $label[0];
 					$text = $label[1];
 					$color = $label[2];
-					if (strpos(strtolower($commit["message"]), strtolower($keyword)) !== false) {
+					if (strpos(strtolower($message), strtolower($keyword)) !== false) {
 						$labels .= "<span class='label label-".$color."'>".$text."</span>	";
 					}
 
 					// Remove label keyword from commit
-					$commit["message"] = str_ireplace($keyword, " ", $commit["message"]);
+					$message = str_ireplace($keyword, " ", $message);
 				}
+			} else {
+				$row = "default";
 			}
 
 			// If we should not output this commit, let's skip it.
-			if ($b && !$a)
+			if (!$valid && !$useradmin)
 				continue;
 
 			// Change names if needed
-			if (isset($ChangelogConfig["change_name"][$commit["author"]]))
-				$commit["author"] = $ChangelogConfig["change_name"][$commit["author"]];
+			if (isset($ChangelogConfig["change_name"][$commit[2]]))
+				$commit[2] = $ChangelogConfig["change_name"][2];
 
 			// Build return array
 			$ret[] = array(
-				"username" => $commit["author"],
-				"content" => htmlspecialchars($commit["message"]),
-				"time" => $commit["date"],
+				"username" => htmlspecialchars($commit[2]),
+				"content" => htmlspecialchars($commit[3]),
+				"time" => gmdate("Y-m-d\TH:i:s\Z", intval($commit[1])),
 				"labels" => $labels,
 				"row" => $row
 			);
