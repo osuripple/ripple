@@ -2275,3 +2275,14 @@
 			}
 		}
 	}
+
+	/*
+	 * accuracy
+	 * Convert accuracy to string, having 2 decimal digits.
+	 *
+	 * @param (float) accuracy
+	 * @return (string) accuracy, formatted into a string
+	 */
+	function accuracy($acc) {
+		return number_format(round($acc, 2), 2);
+	} 

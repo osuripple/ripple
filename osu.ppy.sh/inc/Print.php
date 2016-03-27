@@ -1729,7 +1729,7 @@ class P {
 			</tr>
 			<tr>
 			<td id="stats-name">Hit Accuracy</td>
-			<td id="stats-value"><b>' . (is_numeric($accuracy) ? round($accuracy, 2) : "0.00") . '%</b></td>
+			<td id="stats-value"><b>' . (is_numeric($accuracy) ? accuracy($accuracy) : "0.00") . '%</b></td>
 			</tr>
 			<tr>
 			<td id="stats-name">Total Hits</td>
@@ -1777,7 +1777,7 @@ class P {
 						// Beatmap name found, print beatmap name and score
 						echo('<tr>');
 						echo('<td class="warning"><p class="text-left">' . current($bn) . ' <b>'.getScoreMods($topPlays[$i]["mods"]).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($topPlays[$i]["time"])).'</small>' . '</b></p></td>');
-						echo('<td class="warning"><p class="text-right">' . round($topPlays[$i]["accuracy"], 2) . '%</p></td>');
+						echo('<td class="warning"><p class="text-right">' . accuracy($topPlays[$i]["accuracy"]) . '%</p></td>');
 						echo('<td class="warning"><p class="text-right"><b>' . number_format($topPlays[$i]["score"]) . '</b>	<a href="/web/osu-getreplay-full.php?c='.$topPlays[$i]["id"].'"><i class="fa fa-star"></i></a></p></td>');
 						echo('</tr>');
 					}
@@ -1801,7 +1801,7 @@ class P {
 						// Beatmap name found, print beatmap name and score
 						echo('<tr>');
 						echo('<td class="success"><p class="text-left">' . current($bn) . ' <b>'.getScoreMods($recentPlays[$i]["mods"]).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($recentPlays[$i]["time"])).'</small>' . '</p></td>');
-						echo('<td class="success"><p class="text-right">' . round($recentPlays[$i]["accuracy"], 2) . '%</p></td>');
+						echo('<td class="success"><p class="text-right">' . accuracy($recentPlays[$i]["accuracy"]) . '%</p></td>');
 						echo('<td class="success"><p class="text-right"><b>' . number_format($recentPlays[$i]["score"]) . '</b></p></td>');
 						echo('</tr>');
 					}
