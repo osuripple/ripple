@@ -82,7 +82,7 @@ class Leaderboard {
 				echo('<tr class="' . $tc . '">
 				<td><b>' . $rankSymbol . $r . '</b></td>
 				<td><a href="index.php?u=' . $lbUser["osu_id"] . '&m='.$m.'">' . $lbUser["username"] . '</a></td>
-				<td>' . (is_numeric($lbUser["avg_accuracy_" . $modeForDB]) ? round($lbUser["avg_accuracy_" . $modeForDB], 2) : "0.00") . '%</td>
+				<td>' . (is_numeric($lbUser["avg_accuracy_" . $modeForDB]) ? number_format(round($lbUser["avg_accuracy_" . $modeForDB], 2), 2) : "0.00") . '%</td>
 				<td>' . number_format($lbUser["playcount_" . $modeForDB]) . '<i> (lvl.'.$lbUser["level_" . $modeForDB].')</i></td>
 				<td>' . number_format($lbUser["ranked_score_" . $modeForDB]) . '</td>
 				</tr>');
