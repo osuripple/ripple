@@ -424,6 +424,7 @@ class match:
 				uid = self.slots[i]["userID"]
 				if (uid > -1):
 					self.setHost(uid)
+					break
 
 		# Send updated match data
 		self.sendUpdate()

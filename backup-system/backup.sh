@@ -1,6 +1,7 @@
 # Load settings
 BACKUP_DATABASE=$(awk -F "=" '/backup_database/ {print $2}' config.ini)
 BACKUP_REPLAYS=$(awk -F "=" '/backup_replays/ {print $2}' config.ini)
+BACKUP_AVATARS=$(awk -F "=" '/backup_avatars/ {print $2}' config.ini)
 
 DB_USERNAME=$(awk -F "=" '/db_username/ {print $2}' config.ini)
 DB_PASSWORD=$(awk -F "=" '/db_password/ {print $2}' config.ini)
@@ -8,6 +9,8 @@ DB_NAME=$(awk -F "=" '/db_name/ {print $2}' config.ini)
 
 BACKBLAZE_ENABLE=$(awk -F "=" '/backblaze_enable/ {print $2}' config.ini)
 BACKBLAZE_BUCKET_NAME=$(awk -F "=" '/backblaze_bucket_name/ {print $2}' config.ini)
+BACKBLAZE_ACCOUNT_ID=$(awk -F "=" '/backblaze_account_id/ {print $2}' config.ini)
+BACKBLAZE_APPLICATION_KEY=$(awk -F "=" '/backblaze_application_key/ {print $2}' config.ini)
 
 S3_ENABLE=$(awk -F "=" '/s3_enable/ {print $2}' config.ini)
 S3_BUCKET_NAME=$(awk -F "=" '/s3_bucket_name/ {print $2}' config.ini)
@@ -41,6 +44,13 @@ if [ $BACKUP_REPLAYS = true ]; then
 	cp ../../osu.ppy.sh/replays/* replays
 fi
 
+# Avatars backup
+if [ $BACKUP_AVATARS = true ]; then
+	echo "Copying avatars..."
+	mkdir avatars
+	cp ../../a.ppy.sh/avatars/* avatars
+fi
+
 # Done, let's tar this
 echo "Compressing backup..."
 tar -zcvf backup-$WHEN.tar.gz *
@@ -48,6 +58,7 @@ tar -zcvf backup-$WHEN.tar.gz *
 # Backup upload
 if [ $BACKBLAZE_ENABLE = true ]; then
 	# Upload backup to backblaze
+	b2 authorize_account $BACKBLAZE_ACCOUNT_ID $BACKBLAZE_APPLICATION_KEY
 	echo "Uploading backup archive to backblaze..."
 	b2 upload_file $BACKBLAZE_BUCKET_NAME backup-$WHEN.tar.gz backup-$WHEN.tar.gz
 fi
