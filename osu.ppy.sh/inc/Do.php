@@ -54,22 +54,26 @@ class D {
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
-			$GLOBALS["db"]->execute("INSERT INTO `users`(id, osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (NULL, 2, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
+			$GLOBALS["db"]->execute("INSERT INTO `users`(osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (2, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
+
+			// Get user ID
+			$uid = $GLOBALS["db"]->lastInsertId();
 
 			// Put some data into users_stats
-			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (NULL, 2, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", $_POST["u"]);
+			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", array($uid, $uid, $_POST["u"]));
 
 			// 1.5 -- Replace osu_id with id (we don't use osu! id anymore)
-			// Get db ai id
-			$id = current($GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $_POST["u"]));
 			// Set osu_id to id in users and users_stats
-			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ? WHERE username = ?", array($id, $_POST["u"]));
-			$GLOBALS["db"]->execute("UPDATE users_stats SET osu_id = ? WHERE username = ?", array($id, $_POST["u"]));
+			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ? WHERE id = ?", array($uid, $uid));
+
+			// Update leaderboard (insert new user) for each mode.
+			foreach (["std", "taiko", "ctb", "mania"] as $m) {
+				Leaderboard::Update($uid, 0, $m);
+			}
 
 			// Invalidate beta key
 			$GLOBALS["db"]->execute("UPDATE beta_keys SET allowed = 0 WHERE key_md5 = ?", md5($_POST["k"]));
-
-
+			
 			// All fine, done
 			redirect("index.php?p=3&s=lmao");
 		}
