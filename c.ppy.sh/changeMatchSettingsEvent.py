@@ -106,3 +106,4 @@ def handle(userToken, packetData):
 
 	# Console output
 	consoleHelper.printColored("> MPROOM{}: Updated room settings".format(match.matchID), bcolors.BLUE)
+	#consoleHelper.printColored("> MPROOM{}: DEBUG: Host is {}".format(match.matchID, match.hostUserID), bcolors.PINK)
