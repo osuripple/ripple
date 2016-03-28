@@ -643,3 +643,14 @@ class match:
 			return True
 
 		# We have teams, check if they are valid
+		firstTeam = -1
+		for i in range(0,16):
+			if (self.slots[i]["userID"] > -1 and (self.slots[i]["status"]&slotStatuses.noMap) == 0):
+				if (firstTeam == -1):
+					firstTeam = self.slots[i]["team"]
+				elif (firstTeam != self.slots[i]["teams"]):
+					consoleHelper.printColored("> MPROOM{}: Teams are valid".format(self.matchID), bcolors.BLUE)
+					return True
+
+		consoleHelper.printColored("> MPROOM{}: Invalid teams!".format(self.matchID), bcolors.RED)
+		return False
