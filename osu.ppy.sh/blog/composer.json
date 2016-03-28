@@ -1,0 +1,31 @@
+{
+	"name": "anchorcms/anchor-cms",
+	"description": "Anchor is a free, lightweight, faster-than-a-bullet, simple blogging system, made for art–directed posts.",
+	"type": "CMS",
+	"keywords": ["CMS", "anchor", "anchorcms"],
+	"license": "GPL-3.0",
+	"authors": [
+		{
+			"name": "Idiot",
+			"email": "iam@visualidiot.com"
+		},
+		{
+			"name": "Kieron",
+			"email": "rwarasaurus@gmail.com"
+		},
+		{
+			"name": "Craig",
+			"email": "childscraig17@gmail.com"
+		},
+		{
+			"name": "David",
+			"email": "me@daviddarnes.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3.6",
+		"ircmaxell/random-lib": "^1.1",
+		"ircmaxell/password-compat": "^1.0",
+		"indigophp/hash-compat": "^1.1"
+	}
+}
