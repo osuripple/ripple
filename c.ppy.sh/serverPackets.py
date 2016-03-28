@@ -246,6 +246,9 @@ def matchComplete():
 def playerFailed(slotID):
 	return packetHelper.buildPacket(packetIDs.server_matchPlayerFailed, [[slotID, dataTypes.uInt32]])
 
+def matchTransferHost():
+	return packetHelper.buildPacket(packetIDs.server_matchTransferHost)
+
 """ Other packets """
 def notification(message):
 	return packetHelper.buildPacket(packetIDs.server_notification, [[message, dataTypes.string]])

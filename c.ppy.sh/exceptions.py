@@ -50,3 +50,6 @@ class matchNotFoundException(Exception):
 
 class matchJoinErrorException(Exception):
 	pass
+
+class matchCreateError(Exception):
+	pass

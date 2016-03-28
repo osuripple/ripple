@@ -1,6 +1,7 @@
 import glob
 import clientPackets
 import matchModModes
+import mods
 
 def handle(userToken, packetData):
 	# Get token data
@@ -17,7 +18,23 @@ def handle(userToken, packetData):
 
 	# Set slot or match mods according to modType
 	if (match.matchModMode == matchModModes.freeMod):
-		# Freemod, set slot mods
+		# Freemod
+
+		# Host can set global DT/HT
+		if (userID == match.hostUserID):
+			# If host has selected DT/HT and Freemod is enabled, set DT/HT as match mod
+			if ((packetData["mods"]&mods.DoubleTime) > 1):
+				match.changeMatchMods(mods.DoubleTime)
+				# Nighcore
+				if ((packetData["mods"]&mods.Nightcore) > 1):
+					match.changeMatchMods(match.mods+mods.Nightcore)
+			elif ((packetData["mods"]&mods.HalfTime) > 1):
+				match.changeMatchMods(mods.HalfTime)
+			else:
+				# No DT/HT, set global mods to 0 (we are in freemod mode)
+				match.changeMatchMods(0)
+
+		# Set slot mods
 		slotID = match.getUserSlotID(userID)
 		if (slotID != None):
 			match.setSlotMods(slotID, packetData["mods"])

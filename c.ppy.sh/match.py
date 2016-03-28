@@ -117,11 +117,17 @@ class match:
 
 	def setHost(self, newHost):
 		"""
-		Set room host to newHost
+		Set room host to newHost and send him host packet
 
 		newHost -- new host userID
 		"""
 		self.hostUserID = newHost
+
+		# Send host packet to new host
+		token = glob.tokens.getTokenFromUserID(newHost)
+		if (token != None):
+			token.enqueue(serverPackets.matchTransferHost())
+
 		consoleHelper.printColored("> MPROOM{}: {} is now the host".format(self.matchID, newHost), bcolors.BLUE)
 
 	def setSlot(self, slotID, slotStatus = None, slotTeam = None, slotUserID = None, slotMods = None, slotLoaded = None, slotSkip = None, slotComplete = None):

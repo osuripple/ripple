@@ -87,9 +87,11 @@ def handle(userToken, packetData):
 	# Set/reset teams
 	if (match.matchTeamType == matchTeamTypes.teamVs or match.matchTeamType == matchTeamTypes.tagTeamVs):
 		# Set teams
+		c=0
 		for i in range(0,16):
 			if (match.slots[i]["team"] == matchTeams.noTeam):
-				match.slots[i]["team"] = matchTeams.red if i % 2 == 0 else matchTeams.blue
+				match.slots[i]["team"] = matchTeams.red if c % 2 == 0 else matchTeams.blue
+				c+=1
 	else:
 		# Reset teams
 		for i in range(0,16):
