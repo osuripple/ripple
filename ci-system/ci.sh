@@ -31,8 +31,16 @@ tmux send -t avatarserver 'ENTER'
 cd ..
 cd osu.ppy.sh
 php cron.php 2>&1 > /dev/null &
+cd ..
+
+# Run composer in various directories.
+originaldir=$(pwd)
+for i in 'osu.ppy.sh/blog'; do
+	cd $i
+	composer install
+	cd $originaldir
+done
 
 # Update changelog.json
 # https://gist.github.com/textarcana/1306223
-cd ..
 git log --pretty=format:'%H|%at|%an|%s' > ci-system/changelog.txt
