@@ -108,7 +108,7 @@ INSERT INTO `{{prefix}}meta` (`key`, `value`) VALUES
 ('posts_per_page',  '6');
 
 INSERT INTO `{{prefix}}pages` (`slug`, `name`, `title`, `content`, `status`, `redirect`, `show_in_menu`, `menu_order`) VALUES
-('posts', 'Posts', 'My posts and thoughts', 'Welcome!', 'published', '', '1', '0');
+('posts', 'Posts', 'Posts', 'Welcome!', 'published', '', '1', '0');
 
 INSERT INTO `{{prefix}}posts` (`title`, `slug`, `description`, `html`, `css`, `js`, `created`, `author`, `category`, `status`, `comments`) VALUES
 ('Hello World', 'hello-world', 'This is the first post.', 'Hello World!\r\n\r\nThis is the first post.', '', '', '{{now}}', '1', '1', 'published', '0');

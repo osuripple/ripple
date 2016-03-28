@@ -91,52 +91,12 @@ Route::post('admin/amnesia', array('before' => 'csrf', 'main' => function() {
 	Reset password
 */
 Route::get('admin/reset/(:any)', array('before' => 'guest', 'main' => function($key) {
-	$vars['messages'] = Notify::read();
-	$vars['token'] = Csrf::token();
-	$vars['key'] = ($token = Session::get('token'));
-
-	if($token != $key) {
-		Notify::error(__('users.recovery_expired'));
-
-		return Response::redirect('admin/login');
-	}
-
-	return View::create('users/reset', $vars)
+	return View::create('users/reset', [])
 		->partial('header', 'partials/header')
 		->partial('footer', 'partials/footer');
 }));
 
 Route::post('admin/reset/(:any)', array('before' => 'csrf', 'main' => function($key) {
-	$password = Input::get('pass');
-	$token = Session::get('token');
-	$user = Session::get('user');
-
-	if($token != $key) {
-		Notify::error(__('users.recovery_expired'));
-
-		return Response::redirect('admin/login');
-	}
-
-	$validator = new Validator(array('password' => $password));
-
-	$validator->check('password')
-		->is_max(6, __('users.password_too_short', 6));
-
-	if($errors = $validator->errors()) {
-		Input::flash();
-
-		Notify::error($errors);
-
-		return Response::redirect('admin/reset/' . $key);
-	}
-
-	User::update($user, array('password' => Hash::make($password)));
-
-	Session::erase('user');
-	Session::erase('token');
-
-	Notify::success(__('users.password_reset'));
-
 	return Response::redirect('admin/login');
 }));
 
