@@ -437,8 +437,7 @@
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> ' . ($trollerino ? 'Request' : 'Report' ) . ' a bug</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	' . ($trollerino ? 'Report' : 'Request' ) . ' a feature</a></li>
 						<li class="divider"></li>
-						<li class="dropdown-submenu"><a href="http://y.zxq.co/ngomne.zip"><i class="fa fa-server"></i>	Kwisk\'s Server switcher</a></li>
-						<li class="dropdown-submenu"><a href="https://mu.nyodev.xyz/upd.php?id=18"><i class="fa fa-server"></i>	Phwr\'s Server switcher</a></li>
+						<li class="dropdown-submenu"><a href="https://mu.nyodev.xyz/upd.php?id=18"><i class="fa fa-server"></i>	Ripple Server switcher</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="https://discord.gg/0rJcZruIsA6rXuIx"><i class="fa fa-comment"></i>	Discord</a></li>
@@ -1696,7 +1695,7 @@
 	}
 
 	function osuDateToUNIXTimestamp($date) {
-		// phwr loves memes
+		// nyo loves memes
 		if ($date != 0) {
 			$d = DateTime::createFromFormat("ymdHis", $date);
 			$d->add(new DateInterval('PT1H'));

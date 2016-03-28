@@ -73,7 +73,7 @@ class D {
 
 			// Invalidate beta key
 			$GLOBALS["db"]->execute("UPDATE beta_keys SET allowed = 0 WHERE key_md5 = ?", md5($_POST["k"]));
-			
+
 			// All fine, done
 			redirect("index.php?p=3&s=lmao");
 		}
@@ -444,7 +444,7 @@ class D {
 	{
 		if ($CRON["adminExec"])
 		{
-			// kwisk master linux shell pr0
+			// howl master linux shell pr0
 			exec(PHP_BIN_DIR . "/php " . dirname(__FILE__) . "/../cron.php 2>&1 > /dev/null &");
 		}
 		else

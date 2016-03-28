@@ -20,7 +20,7 @@ def printServerStartHeader(asciiArt):
 		print("                         o.o o . o")
 		print("                        oo...")
 		print("                    __[]__")
-		print("    phwr-->  _\\:D/_/o_o_o_|__     u wot m8")
+		print("    nyo -->  _\\:D/_/o_o_o_|__     u wot m8")
 		print("             \\\"\"\"\"\"\"\"\"\"\"\"\"\"\"/")
 		print("              \\ . ..  .. . /")
 		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^{}".format(bcolors.ENDC))

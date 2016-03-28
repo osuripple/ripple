@@ -2074,56 +2074,6 @@ class P {
 		');
 	}
 
-
-	/*
-	* UserCPPage
-	* Prints the user cp page. WIP.
-	*/
-	/*static function UserCPPage()
-	{
-		// Maintenance check
-		P::MaintenanceStuff();
-
-		// Global alert
-		P::GlobalAlert();
-
-		// Title and alerts
-		echo('<p align="center"><h1><i class="fa fa-user"></i>	User Panel</h1>');
-		P::Alerts();
-
-		$success = array(
-			"forgetDone" => "Done! Your \"Stay logged in\" tokens have been deleted from the database."
-		);
-		if (!empty($_GET["s"]) && isset($success[$_GET["s"]]))
-			P::SuccessMessage($success[$_GET["s"]]);
-
-		// Actual User CP
-		echo('<b>Welcome to Ripple!</b> You are logged in as '.$_SESSION["username"].'.<br></p>');
-
-		echo('<h3>User account</h3>');
-		// Set osu! id only if we have not set our osu! id yet
-		if (getUserOsuID($_SESSION["username"]) == 2) echo('<a href="index.php?p=12"><b>Set osu! id</b></a><br>');
-
-		// Edit/change actions stuff
-		// 1.5 -- Bolded most used stuff
-		echo('<a href="index.php?p=5"><b>Change avatar</b></a><br>');
-		echo('<a href="index.php?p=8"><b>Edit userpage</a>		<span class="label label-info">Beta</span></b><br>');
-		echo('<a href="index.php?p=6"><b>Change user settings</b></a><br>');
-		echo('<a href="index.php?p=7">Change password</a><br>');
-		echo('<a href="submit.php?action=forgetEveryCookie">Delete all "Stay logged in" tokens</a><br>');
-
-		// User page link only if we have set our osu id (because if we haven't set out osu! id yet, we aren't visible in the leaderboard and we don't have a user page)
-		if (getUserOsuID($_SESSION["username"]) != 0) echo('<a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><b>View user page</b></a><br>');
-
-		// Documentation stuff
-		echo('<br><h3>Ripple</h3>');
-		echo('<a href="index.php?p=14">Documentation</a><br>');
-		echo('<strike><a href="#"><b>Phwr\'s server switcher</b></a></strike><br>');
-		echo('<a href="http://y.zxq.co/ngomne.zip">Kwisk\'s server switcher</a><br>');
-		echo('<br><a href="http://mattermost.zxq.co/ripple">Get in touch with the team</a>');
-	}*/
-
-
 	/*
 	* ChangePasswordPage
 	* Prints the change password page.
@@ -2410,7 +2360,7 @@ class P {
 			echo('If you really want to fake that you\'ve lost your password, you should at the very least log out of ripple, you know.');
 		}
 		else {
-			echo('<p>Let\'s get some things straight. We can only help you if you DID put your actual email address when you signed up. If you didn\'t, you\'re fucked. Hope to know either kwisk or phwr well enough to tell them to change the password for you, otherwise your account is now dead.</p><br>
+			echo('<p>Let\'s get some things straight. We can only help you if you DID put your actual email address when you signed up. If you didn\'t, you\'re fucked. Hope to know either Nyo or Howl well enough to tell them to change the password for you, otherwise your account is now dead.</p><br>
 			<form action="submit.php" method="POST">
 			<input name="action" value="recoverPassword" hidden>
 			<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="fa fa-user" max-width="25%"></span></span><input type="text" name="username" required class="form-control" placeholder="Type your username." aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
