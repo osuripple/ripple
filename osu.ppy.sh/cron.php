@@ -23,7 +23,7 @@
 	if (in_array(php_sapi_name(), $CRON["sapi"]))
 	{
 		// If we run this from browser, check if we are admin
-		if ($CRON["sapi"] != "cli")
+		if (php_sapi_name() != "cli")
 		{
 			startSessionIfNotStarted();
 
