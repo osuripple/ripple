@@ -43,7 +43,7 @@
 	 * cron.php configuration
 	 */
 	$CRON["showSapi"] = false;												// If true, cron.php will show php_sapi_name, so you can set $CRON["sapi"] to the correct value
-	$CRON["sapi"] = "cli";													// php_sapi_name() required to run cron.php. Set to "cli" if cron.php is run from command line
+	$CRON["sapi"] = array("cli");											// php_sapi_name() required to run cron.php. Set to "cli" if cron.php is run from command line. You can specify multiple values.
 	$CRON["adminExec"] = false;												// If true, "Run cron.php" button will run cron.php from command line with exec. If false, the button will run cron.php from browser. Set to false if you are on a windows server
 
 	/*

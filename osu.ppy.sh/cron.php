@@ -20,7 +20,7 @@
 		die();
 	}
 
-	if (php_sapi_name() == $CRON["sapi"])
+	if (in_array(php_sapi_name(), $CRON["sapi"]))
 	{
 		// If we run this from browser, check if we are admin
 		if ($CRON["sapi"] != "cli")
@@ -52,16 +52,16 @@
 		// Delete all password recovery older than 10 days.
 		echo('Pruning password recovery submissions older than 10 days...<br>\n');
 		$GLOBALS["db"]->execute("DELETE FROM password_recovery WHERE t < (NOW() - INTERVAL 10 DAY);");
-		
+
 		// recalculate the accuracy of every score
-		echo("Recalculating accuracy.");
+		echo("<br>Recalculating accuracy.");
 		$scores = $GLOBALS["db"]->fetchAll("SELECT * FROM scores");
 		foreach ($scores as $score) {
 			$acc = calculateAccuracy($score["300_count"], $score["100_count"], $score["50_count"], $score["gekis_count"], $score["katus_count"], $score["misses_count"], $score["play_mode"]);
 			$GLOBALS["db"]->execute("UPDATE scores SET accuracy = ? WHERE id = ?", array($acc, $score["id"]));
 			echo ".";
 		}
-		echo " done.\n";
+		echo " done.<br>\n";
 
 		// Get all users
 		$users = $GLOBALS["db"]->fetchAll("SELECT username FROM users WHERE allowed = 1");
@@ -183,7 +183,7 @@
 		$files = scandir("./replays_full");
 		foreach ($files as $file)
 		{
-			if ($file != "." && $file != "..") {				
+			if ($file != "." && $file != "..") {
 				unlink("./replays_full/".$file);
 				echo("<b>".$file."</b> deleted!<br>\n");
 			}
@@ -192,7 +192,7 @@
 
 		// Replays cleared
 		echo("<b>Full replays cache cleaned!</b><br>\n");
-		
+
 
 		// Delete inactive accounts (not activated in osu!/no osu! id within 30 minutes after registration)
 		echo("<br>\n<b>Deleting inactive accounts...</b><br>\n");
