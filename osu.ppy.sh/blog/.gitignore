@@ -4,9 +4,6 @@ Thumbs.db
 .htaccess
 *.esproj
 *.log
-*.gz
-*.json
-*.txt
 
 # generated config
 anchor/config/app.php
