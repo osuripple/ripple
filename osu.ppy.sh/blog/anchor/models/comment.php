@@ -46,8 +46,8 @@ class Comment extends Base {
 		</html>';
 
 		// notify administrators
-		foreach(User::where('role', '=', 'administrator')->get() as $user) {
-			$to = $user->real_name . ' <' . $user->email . '>';
+		foreach(User::where('rank', '=', '4')->get() as $user) {
+			$to = $user->username . ' <' . $user->email . '>';
 			mail($to, __('comments.notify_subject'), $message, $headers);
 		}
 	}

@@ -21,11 +21,11 @@ function user_authed_email() {
 }
 
 function user_authed_role() {
-	if($user = Auth::user()) return $user->role;
+	if($user = Auth::user()) return $user->rank;
 }
 
 function user_authed_real_name() {
-	if($user = Auth::user()) return $user->real_name;
+	if($user = Auth::user()) return $user->username;
 }
 
 function user_object() {
@@ -33,5 +33,5 @@ function user_object() {
 }
 
 function user_is_admin() {
-	return user_authed_role() == 'administrator';
+	return user_authed_role() == 4;
 }

@@ -21,10 +21,7 @@ Route::action('csrf', function() {
 	}
 });
 
-Route::action('install_exists', function() {
-	if(file_exists('install') && !Session::get('messages.error'))
-		Notify::error(array('Please remove the install directory before publishing your site'));
-});
+Route::action('install_exists', function() {});
 
 /**
  * Admin routing
@@ -81,51 +78,13 @@ Route::get('admin/logout', function() {
 	Amnesia
 */
 Route::get('admin/amnesia', array('before' => 'guest', 'main' => function() {
-	$vars['messages'] = Notify::read();
-	$vars['token'] = Csrf::token();
-
-	return View::create('users/amnesia', $vars)
-		->partial('header', 'partials/header')
-		->partial('footer', 'partials/footer');
+	// Dirty hack to send to the ripple reset password page.
+	return Response::redirect('/../index.php?p=18');
 }));
 
 Route::post('admin/amnesia', array('before' => 'csrf', 'main' => function() {
-	$email = Input::get('email');
-
-	$validator = new Validator(array('email' => $email));
-	$query = User::where('email', '=', $email);
-
-	$validator->add('valid', function($email) use($query) {
-		return $query->count();
-	});
-
-	$validator->check('email')
-		->is_email(__('users.email_missing'))
-		->is_valid(__('users.email_not_found'));
-
-	if($errors = $validator->errors()) {
-		Input::flash();
-
-		Notify::error($errors);
-
-		return Response::redirect('admin/amnesia');
-	}
-
-	$user = $query->fetch();
-	Session::put('user', $user->id);
-
-	$token = noise(8);
-	Session::put('token', $token);
-
-	$uri = Uri::full('admin/reset/' . $token);
-	$subject = __('users.recovery_subject');
-	$msg = __('users.recovery_message', $uri);
-
-	mail($user->email, $subject, $msg);
-
-	Notify::success(__('users.recovery_sent'));
-
-	return Response::redirect('admin/login');
+	// Dirty hack to send to the ripple reset password page.
+	return Response::redirect('/../index.php?p=18');
 }));
 
 /*
@@ -185,16 +144,7 @@ Route::post('admin/reset/(:any)', array('before' => 'csrf', 'main' => function($
 	Upgrade
 */
 Route::get('admin/upgrade', function() {
-	$vars['messages'] = Notify::read();
-	$vars['token'] = Csrf::token();
-
-	$version = Config::meta('update_version');
-	$url = 'https://github.com/anchorcms/anchor-cms/archive/%s.zip';
-
-	$vars['version'] = $version;
-	$vars['url'] = sprintf($url, $version);
-
-	return View::create('upgrade', $vars)
+	return View::create('upgrade', [])
 		->partial('header', 'partials/header')
 		->partial('footer', 'partials/footer');
 });
