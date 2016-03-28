@@ -262,7 +262,7 @@ Route::get('complete', function() {
 
 	$settings = Session::get('install');
 	$vars['site_uri'] = $settings['metadata']['site_path'];
-	$vars['admin_uri'] = rtrim($settings['metadata']['site_path'], '/') . '/index.php/admin/login';
+	$vars['admin_uri'] = rtrim($settings['metadata']['site_path'], '/') . '/admin/login';
 	$vars['htaccess'] = Session::get('htaccess');
 
 	// scrub session now we are done

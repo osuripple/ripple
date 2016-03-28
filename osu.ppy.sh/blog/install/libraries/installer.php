@@ -107,7 +107,7 @@ class Installer {
 	private static function application($settings) {
 		$distro = Braces::compile(APP . 'storage/application.distro.php', array(
 			'url' => $settings['metadata']['site_path'],
-			'index' => (mod_rewrite() ? '' : 'index.php'),
+			'index' => '',
 			'key' => noise(),
 			'language' => $settings['i18n']['language'],
 			'timezone' => $settings['i18n']['timezone']
