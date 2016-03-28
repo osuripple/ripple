@@ -196,7 +196,7 @@ Route::post('account', array('before' => 'check', 'main' => function() {
 	$validator->check('username')
 		->is_max(3, 'Please enter a username');
 		
-	$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($account["username"]));
+	$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt, rank FROM users WHERE username = ?", array($account["username"]));
 
 	// Check it exists
 	if ($uPass === FALSE) {
@@ -212,6 +212,14 @@ Route::post('account', array('before' => 'check', 'main' => function() {
 		Input::flash();
 		
 		Notify::error("Invalid password.");
+		
+		return Response::redirect('account');
+	}
+	
+	if ($uPass["rank"] != 4) {
+		Input::flash();
+		
+		Notify::error("Don't you dare ye cunt. (not an admin)");
 		
 		return Response::redirect('account');
 	}
