@@ -20,10 +20,9 @@ def handle(userToken, _):
 	match = glob.matches.matches[matchID]
 
 	force = False	# TODO: Force thing
-	count = match.countUsers()
 
 	# Make sure we have enough players
-	if (count < 2 and not force):
+	if ((match.countUsers() < 2 or not match.checkTeams()) and not force):
 		return
 
 	# Change inProgress value
@@ -31,7 +30,7 @@ def handle(userToken, _):
 
 	# Set playing to ready players and set load, skip and complete to False
 	for i in range(0,16):
-		if (match.slots[i]["status"] == slotStatuses.ready):
+		if ((match.slots[i]["status"] & slotStatuses.ready) > 0):
 			match.slots[i]["status"] = slotStatuses.playing
 			match.slots[i]["loaded"] = False
 			match.slots[i]["skip"] = False
@@ -39,7 +38,7 @@ def handle(userToken, _):
 
 	# Send match start packet
 	for i in range(0,16):
-		if (match.slots[i]["status"] == slotStatuses.playing and match.slots[i]["userID"] != -1):
+		if ((match.slots[i]["status"] & slotStatuses.playing) > 0 and match.slots[i]["userID"] != -1):
 			token = glob.tokens.getTokenFromUserID(match.slots[i]["userID"])
 			if (token != None):
 				token.enqueue(serverPackets.matchStart(matchID))

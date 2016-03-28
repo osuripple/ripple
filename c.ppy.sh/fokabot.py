@@ -236,10 +236,29 @@ def fokabotResponse(fro, chan, message):
 			return "{} is not online".format(message[1])
 		except exceptions.commandSyntaxException:
 			return "Wrong syntax. !scare <target> <message>"
+	elif "!kickall" in message:
+		try:
+			# Check admin
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+				raise exceptions.noAdminException
+
+			# Kick everyone but mods/admins
+			toKick = []
+			for key, value in glob.tokens.tokens.items():
+				if (value.rank < 3):
+					toKick.append(key)
+
+			# Loop though users to kick (we can't change dictionary size while iterating)
+			for i in toKick:
+				if (i in glob.tokens.tokens):
+					glob.tokens.tokens[i].kick()
+
+			return "Whoops! Rip everyone."
+		except exceptions.noAdminException:
+			return False
 	elif "!kick" in message:
 		try:
 			# Admin check
-			# TODO: God this sucks
 			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
 				raise exceptions.noAdminException
 
@@ -254,13 +273,8 @@ def fokabotResponse(fro, chan, message):
 			if (targetToken == None):
 				raise exceptions.tokenNotFoundException
 
-			# Send packet to target
-			consoleHelper.printColored("> {} has been disconnected. (kick)".format(target), bcolors.YELLOW)
-			targetToken.enqueue(serverPackets.notification("You have been kicked from the server. Please login again."))
-			targetToken.enqueue(serverPackets.loginFailed())
-
-			# Logout event
-			logoutEvent.handle(targetToken, None)
+			# Kick user
+			targetToken.kick()
 
 			# Bot response
 			return "{} has been kicked from the server.".format(message[1])

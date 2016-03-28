@@ -631,3 +631,15 @@ class match:
 			token = glob.tokens.getTokenFromUserID(i)
 			if (token != None):
 				token.enqueue(serverPackets.updateMatch(self.matchID))
+
+	def checkTeams(self):
+		"""
+		Check if match teams are valid
+
+		return -- True if valid, False if invalid
+		"""
+		if (match.matchTeamType != matchTeamTypes.teamVs or matchTeamTypes != matchTeamTypes.tagTeamVs):
+			# Teams are always valid if we have no teams
+			return True
+
+		# We have teams, check if they are valid

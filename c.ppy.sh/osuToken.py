@@ -3,6 +3,10 @@ import actions
 import gameModes
 import userHelper
 import time
+import consoleHelper
+import bcolors
+import serverPackets
+import logoutEvent
 
 class token:
 	"""Osu Token object
@@ -211,3 +215,13 @@ class token:
 	def partMatch(self):
 		"""Set match to -1"""
 		self.matchID = -1
+
+	def kick(self):
+		"""Kick this user from the server"""
+		# Send packet to target
+		consoleHelper.printColored("> {} has been disconnected. (kick)".format(self.username), bcolors.YELLOW)
+		self.enqueue(serverPackets.notification("You have been kicked from the server. Please login again."))
+		self.enqueue(serverPackets.loginFailed())
+
+		# Logout event
+		logoutEvent.handle(self, None)

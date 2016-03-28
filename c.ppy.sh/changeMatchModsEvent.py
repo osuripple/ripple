@@ -23,12 +23,12 @@ def handle(userToken, packetData):
 		# Host can set global DT/HT
 		if (userID == match.hostUserID):
 			# If host has selected DT/HT and Freemod is enabled, set DT/HT as match mod
-			if ((packetData["mods"]&mods.DoubleTime) > 1):
+			if ((packetData["mods"] & mods.DoubleTime) > 0):
 				match.changeMatchMods(mods.DoubleTime)
 				# Nighcore
-				if ((packetData["mods"]&mods.Nightcore) > 1):
+				if ((packetData["mods"] & mods.Nightcore) > 0):
 					match.changeMatchMods(match.mods+mods.Nightcore)
-			elif ((packetData["mods"]&mods.HalfTime) > 1):
+			elif ((packetData["mods"] & mods.HalfTime) > 0):
 				match.changeMatchMods(mods.HalfTime)
 			else:
 				# No DT/HT, set global mods to 0 (we are in freemod mode)
