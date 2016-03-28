@@ -1851,27 +1851,27 @@
 		// Retrieve data from changelog.json
 		$data = explode("\n", file_get_contents(dirname(__FILE__)."/../../ci-system/changelog.txt"));
 		$ret = array();
-		
+
 		// Check there are enough commits for the current page.
 		$initoffset = ($p - 1) * 50;
 		if (count($data) < ($initoffset))
 			return false;
-		
+
 		// Get only the commits we're interested in.
 		$data = array_slice($data, $initoffset, 50);
 
 		// check whether user is admin
 		$useradmin = getUserRank($_SESSION["username"]) >= 4;
-		
+
 		// Get each commit
 		foreach ($data as $commit) {
 			// Separate the various components of the commit
 			$commit = explode("|", $commit);
-			
+
 			// Silently ignore commits that don't have enough data
-			if (count($commit) < 4) 
+			if (count($commit) < 4)
 				continue;
-						
+
 			$valid = true;
 			$labels = "";
 
@@ -1946,7 +1946,7 @@
 			// Build return array
 			$ret[] = array(
 				"username" => htmlspecialchars($commit[2]),
-				"content" => htmlspecialchars($commit[3]),
+				"content" => htmlspecialchars($message),
 				"time" => gmdate("Y-m-d\TH:i:s\Z", intval($commit[1])),
 				"labels" => $labels,
 				"row" => $row
@@ -2285,4 +2285,4 @@
 	 */
 	function accuracy($acc) {
 		return number_format(round($acc, 2), 2);
-	} 
+	}
