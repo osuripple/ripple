@@ -1,6 +1,7 @@
 """Some console related functions"""
 
 import bcolors
+import glob
 
 def printServerStartHeader(asciiArt):
 	"""Print server start header with optional ascii art
@@ -24,9 +25,11 @@ def printServerStartHeader(asciiArt):
 		print("             \\\"\"\"\"\"\"\"\"\"\"\"\"\"\"/")
 		print("              \\ . ..  .. . /")
 		print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^{}".format(bcolors.ENDC))
-		print("{}MULTIPLAYER TEST VERSION. DO NOT USE IN PRODUCTION\n{}".format(bcolors.YELLOW, bcolors.ENDC))
 
-	print("{}{}\n{}\n{}{}\n".format(bcolors.GREEN, "> Welcome to pep.py osu! Server v0.5", "> Made by the ripple team", "> Press CTRL+C to exit", bcolors.ENDC))
+	printColored("> Welcome to pep.py osu!bancho server v{}".format(glob.VERSION), bcolors.GREEN)
+	printColored("> Made by the ripple team", bcolors.GREEN)
+	printColored("> {}https://github.com/osuripple/ripple".format(bcolors.UNDERLINE), bcolors.GREEN)
+	printColored("> Press CTRL+C to exit\n",bcolors.GREEN)
 
 
 def printNoNl(string):
