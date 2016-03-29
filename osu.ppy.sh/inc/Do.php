@@ -31,6 +31,11 @@ class D {
 				throw new Exception(5);
 			}
 
+			// Make sure username is not forbidden
+			if (UsernameHelper::isUsernameForbidden($_POST["u"])) {
+				throw new Exception(9);
+			}
+
 			// Check if username is already in db
 			if ($GLOBALS["db"]->fetch("SELECT * FROM users WHERE username = ?", $_POST["u"])) {
 				throw new Exception(6);

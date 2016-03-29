@@ -2049,7 +2049,7 @@ class P {
 		echo('<br><div id="narrow-content"><h1><i class="fa fa-plus-circle"></i>	Sign up</h1>');
 
 		// Print Exception if set and valid
-		$exceptions = array("Nice troll.", "Please get your shit together and make a better password", "barney is a dinosaur your password doesn't maaatch!", "D'ya know? your password is dumb. it's also one of the most used around the entire internet. yup.", "The email isn't valid.", "Please write a username that respects osu!'s username criteria.", "That username was already found in the database! Perhaps someone stole it from you? Those bastards!", "That email was already found in the database!", "Invalid beta key.");
+		$exceptions = array("Nice troll.", "Please get your shit together and make a better password", "barney is a dinosaur your password doesn't maaatch!", "D'ya know? your password is dumb. it's also one of the most used around the entire internet. yup.", "The email isn't valid.", "Please write a username that respects osu!'s username criteria.", "That username was already found in the database! Perhaps someone stole it from you? Those bastards!", "That email was already found in the database!", "Invalid beta key.", "Username now allowed. Please choose another one.");
 		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
 
 		// Print Success if set
@@ -2058,7 +2058,7 @@ class P {
 		// Print default warning message if we have no exception/success
 		if (!isset($_GET["e"]) && !isset($_GET["s"]))
 		echo('<p>Please fill every field in order to sign up.<br>
-		<div class="alert alert-success" role="alert">Unlike in Ripple 1.0, you don\'t need an active osu! account to play on Ripple 1.5. You can create a new account, with completely different username and password. You can\'t blame us for stealing your passwords now :P</div>
+		<div class="alert alert-danger animated shake" role="alert"><b><i class="fa fa-gavel"></i>	Please read the <a href="index.php?p=23" target="_blank">rules</a> before creating an account.</b></div>
 		<a href="index.php?p=16&id=1" target="_blank">Need some help?</a></p>');
 
 		// Print register form

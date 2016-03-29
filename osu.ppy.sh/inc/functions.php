@@ -17,6 +17,7 @@
 
 	// Helpers
 	require_once($df . "/helpers/PasswordHelper.php");
+	require_once($df . "/helpers/UsernameHelper.php");
 
 	// controller system v2
 	require_once($df . "/pages/Login.php");
