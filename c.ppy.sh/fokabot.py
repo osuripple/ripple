@@ -69,7 +69,12 @@ def fokabotResponse(fro, chan, message):
 		return "You can find the latest Ripple news on the (blog)[https://ripple.moe/blog/]!"
 	elif "!faq changelog" in message:
 		return "Check the (changelog)[https://ripple.moe/index.php?p=17] !"
-	
+	elif "!ask" in message:
+		if (len(message.split(" ")) >= 2):
+			return random.choice(["Yes", "No", "Maybe"])
+		else:
+			return False
+
 
 	# Admin commands
 	elif "!moderated" in message:
@@ -192,7 +197,8 @@ def fokabotResponse(fro, chan, message):
 		except exceptions.commandSyntaxException:
 			consoleHelper.printColored("[!] Fokabot command syntax error", bcolors.RED)
 			return False
-	'''elif "!scareall" in message:
+	elif "!scareall" in message:
+		return False	# !scareall is currently disabled. Remove this line to activate it.
 		try:
 			# Admin check
 			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
@@ -216,6 +222,7 @@ def fokabotResponse(fro, chan, message):
 			# No respobnse
 			return False
 	elif "!scare" in message:
+		return False	# !scare is currently disabled. Remove this line to activate it.
 		try:
 			# Admin check
 			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
@@ -244,7 +251,7 @@ def fokabotResponse(fro, chan, message):
 		except exceptions.tokenNotFoundException:
 			return "{} is not online".format(message[1])
 		except exceptions.commandSyntaxException:
-			return "Wrong syntax. !scare <target> <message>"'''
+			return "Wrong syntax. !scare <target> <message>"
 	elif "!kickall" in message:
 		try:
 			# Check admin
