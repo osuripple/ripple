@@ -14,9 +14,10 @@
 	require_once($df . "/RememberCookieHandler.php");
 	require_once($df . "/PlayStyleEnum.php");
 	require_once($df . "/resize.php");
-	//require_once($df . "/bancho.php");
+
 	// Helpers
 	require_once($df . "/helpers/PasswordHelper.php");
+
 	// controller system v2
 	require_once($df . "/pages/Login.php");
 	require_once($df . "/pages/Leaderboard.php");
