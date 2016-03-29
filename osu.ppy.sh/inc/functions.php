@@ -413,10 +413,10 @@
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i>	Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
+						' . (file_exists(dirname(__FILE__) . "/../blog/anchor/config/db.php") ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
-						' . (file_exists(dirname(__FILE__) . "/../blog/anchor/config/db.php") ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
 					</ul>
 				</li>');
 		}
@@ -435,6 +435,7 @@
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i> Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
+						' . (file_exists(dirname(__FILE__) . "/../blog/anchor/config/db.php") ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> ' . ($trollerino ? 'Request' : 'Report' ) . ' a bug</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	' . ($trollerino ? 'Report' : 'Request' ) . ' a feature</a></li>
@@ -444,7 +445,6 @@
 						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="https://discord.gg/0rJcZruIsA6rXuIx"><i class="fa fa-comment"></i>	Discord</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
-						' . (file_exists(dirname(__FILE__) . "/../blog/anchor/config/db.php") ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
 					</ul>
 				</li>');
 			if (getUserRank($_SESSION["username"]) >= 4)
