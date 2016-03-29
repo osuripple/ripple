@@ -61,6 +61,15 @@ def fokabotResponse(fro, chan, message):
 		return "Click (here)[https://ripple.moe/index.php?p=16&id=4] for FokaBot's full command list"
 	elif "!report" in message:
 		return "Report command is not here, yet :("
+	elif "!faq github" in message:
+		return "(Ripple's Github page!)[https://github.com/osuripple/ripple]"
+	elif "!faq discord" in message:
+		return "(Join Ripple's Discord!)[https://discord.gg/0rJcZruIsA6rXuIx]"
+	elif "!faq blog" in message:
+		return "You can find the latest Ripple news on the (blog)[https://ripple.moe/blog/]!"
+	elif "!faq changelog" in message:
+		return "Check the (changelog)[https://ripple.moe/index.php?p=17] !"
+	
 
 	# Admin commands
 	elif "!moderated" in message:
