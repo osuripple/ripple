@@ -1627,7 +1627,7 @@
 		$actualDate = osuDateToUNIXTimestamp($scoreData["time"]);
 
 		// Check if this score has a replay
-		if (file_exists("../web/replays/replay_".$replayID.".osr")) $hasReplay = 1; else $hasReplay = 0;
+		if (file_exists("../replays/replay_".$replayID.".osr")) $hasReplay = 1; else $hasReplay = 0;
 
 		// Get osu! user id for avatar
 		$userID = getUserOsuID($playerName);
