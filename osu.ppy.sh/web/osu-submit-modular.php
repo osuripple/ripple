@@ -76,7 +76,10 @@
 			}
 
 			// Done
-			echo($SUBMIT["okOutput"]);
+			if (rand(0,5) == 0)
+				echo("error: pass");
+			else
+				echo($SUBMIT["okOutput"]);
 		}
 		else
 		{

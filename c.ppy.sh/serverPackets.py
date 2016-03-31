@@ -7,6 +7,7 @@ import userRanks
 import packetIDs
 import slotStatuses
 import matchModModes
+import random
 
 """ Login errors packets
 (userID packets derivates) """
