@@ -13,16 +13,7 @@ def handle(userToken, packetData):
 
 	# Update our action id, text and md5
 	userToken.actionID = packetData["actionID"]
-
-	# Another np bug fix for spectator
-	if (glob.memes == True):
-		if (userToken.actionID == actions.idle):
-			userToken.actionText = ""
-		else:
-			userToken.actionText = "Darude - Sandstorm"
-	else:
-		userToken.actionText = packetData["actionText"]
-
+	userToken.actionText = packetData["actionText"]
 	userToken.actionMd5 = packetData["actionMd5"]
 	userToken.actionMods = packetData["actionMods"]
 	userToken.gameMode = packetData["gameMode"]

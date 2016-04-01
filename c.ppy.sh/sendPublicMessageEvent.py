@@ -89,7 +89,7 @@ def handle(userToken, packetData):
 
 
 		# Send packet to required users
-		glob.tokens.multipleEnqueue(serverPackets.sendMessage(username + " Nadia", packetData["to"], packetData["message"]), who, False)
+		glob.tokens.multipleEnqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]), who, False)
 
 		# Fokabot command check
 		fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])

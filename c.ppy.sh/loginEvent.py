@@ -117,54 +117,7 @@ def handle(flaskRequest):
 
 		# Send online users IDs array
 		responseToken.enqueue(serverPackets.onlineUsers())
-
-		if (glob.memes == True):
-			npBugs = [
-				"Pensamento tipico de Nadia ammetano",
-				"O-oooooooooo AAAAE-A-A-I-A-U-JO-oooooooooooo AAE-O-A-A-U-U-A-E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA",
-				"RWC 2020",
-				"Fokabot is a duck",
-				"Dank memes",
-				"1337ms Ping",
-				"Iscriviti a Xenotoze",
-				"...e i maro'?",
-				"Superman dies",
-				"The brace is on fire",
-				"print_foot()",
-				"#FREEZEBARKEZ",
-				"Ripple devs are actually cats",
-				"Thank Mr Shaural",
-				"NEVER GIVE UP",
-				"T I E D  W I T H  U N I T E D",
-				"TATOE",
-				"This is gasoline and I set myself on fire",
-				"Everyone is cheating apparently",
-				"Kurwa mac",
-				"TATOE",
-				"This is not your drama landfill.",
-				"I like cheese",
-				"NYO IS NOT A CAT HE IS A DO(N)G",
-				"Datingu startuato"
-			]
-
-			# Np bug fix
-			for _ in range(0,3):
-				message = random.choice(npBugs)
-				for _ in range(0,5):
-					message += " {}".format(message)
-				responseToken.enqueue(serverPackets.notification(message))
-
-			# Np bug fix 2nd attempt
-			for _ in range(0,20):
-				message = random.choice(npBugs)
-				for _ in range(0,5):
-					message += " {}".format(message)
-				responseToken.enqueue(serverPackets.sendMessage("FokaBot", loginData[0], message))
-
-			# Np bug fix 3rd attempt
-			for _ in range(0,5):
-				responseToken.enqueue(serverPackets.sendMessage("FokaBot", loginData[0], "Your account is currently in meme mode. Please visit (ripple's website)[https://www.youtube.com/watch?v=Z0DO0XyS8Ko] for more information."))
-
+		
 		# Get location and country from ip.zxq.co or database
 		if (generalFunctions.stringToBool(glob.conf.config["server"]["localizeusers"])):
 			# Get location and country from IP

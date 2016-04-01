@@ -188,16 +188,6 @@ def fokabotResponse(fro, chan, message):
 
 					# Chat output
 					return msg
-				elif (message[1] == "meme" or message[1] == "memes"):
-					glob.memes = True
-					if (len(message) >= 2):
-						if (message[2] == "off"):
-							glob.memes = False
-
-					if (glob.memes == True):
-						return "LET THE MEMES KICK O-oooooooooo AAAAE-A-A-I-A-U-JO-oooooooooooo AAE-O-A-A-U-U-A-E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA"
-					else:
-						return "Rip memes"
 			else:
 				raise exceptions.commandSyntaxException
 
