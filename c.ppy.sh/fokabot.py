@@ -71,7 +71,7 @@ def fokabotResponse(fro, chan, message):
 		return "Check the (changelog)[https://ripple.moe/index.php?p=17] !"
 	elif "!ask" in message:
 		if (len(message.split(" ")) >= 2):
-			return random.choice(["Yes", "No", "Maybe"])
+			return "{}: {}".format(fro, random.choice(["Yes", "No", "Maybe"]))
 		else:
 			return False
 
