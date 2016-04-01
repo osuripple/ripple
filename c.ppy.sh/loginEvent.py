@@ -120,7 +120,7 @@ def handle(flaskRequest):
 
 		if (glob.memes == True):
 			npBugs = [
-				"Pensamento tipico de Youssef ammetano",
+				"Pensamento tipico de Nadia ammetano",
 				"O-oooooooooo AAAAE-A-A-I-A-U-JO-oooooooooooo AAE-O-A-A-U-U-A-E-eee-ee-eee AAAAE-A-E-I-E-A-JO-ooo-oo-oo-oo EEEEO-A-AAA-AAAA",
 				"RWC 2020",
 				"Fokabot is a duck",

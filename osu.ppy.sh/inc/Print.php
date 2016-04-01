@@ -1512,7 +1512,7 @@ class P {
 
 
 		// 1.5 -- Changed ripple in ripple 1.5
-		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "http://i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Je suis Youssef</h1>');
+		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "http://i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Je suis Nadia</h1>');
 
 		// Home alert
 		P::HomeAlert();
@@ -1583,7 +1583,7 @@ class P {
 			$country = $userData["country"];
 			$showCountry = $userData["show_country"];
 			//$usernameAka = $userData["username_aka"];
-			$usernameAka = "Youssef";
+			$usernameAka = "Nadia";
 			$level = $userData["level_" . $modeForDB]-1;
 			$latestActivity = current($GLOBALS["db"]->fetch("SELECT latest_activity FROM users WHERE username = ?", $username));
 			$silenceEndTime = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", $username));
@@ -1609,7 +1609,7 @@ class P {
 
 			// Get userpage
 			//$userpageContent = $userData["userpage_content"];+
-			$userpageContent = "[i][size=5]Je suis Youssef[/size][/i]";
+			$userpageContent = "[i][size=5]Je suis Nadia[/size][/i]";
 
 			// Friend button
 			if (!checkLoggedIn() || $u == getUserOsuID($_SESSION["username"])) {
