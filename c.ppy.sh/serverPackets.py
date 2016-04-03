@@ -96,11 +96,15 @@ def userPanel(userID):
 	# Only admins and normal users are currently supported
 	rank = userHelper.getUserRank(userID)
 	if (username == "FokaBot"):
-		userRank = userRanks.mod
+		userRank = userRanks.MOD
 	elif (rank == 4):
-		userRank = userRanks.admin
+		userRank = userRanks.ADMIN
+	elif (rank == 3):
+		userRank = userRank.MOD
+	elif (rank == 2):
+		userRank = userRanks.SUPPORTER
 	else:
-		userRank = userRanks.normal
+		userRank = userRanks.NORMAL
 
 
 	return packetHelper.buildPacket(packetIDs.server_userPanel,

@@ -1,9 +1,9 @@
 """Bancho user ranks"""
 # TODO: Uppercase, maybe?
-normal			= 0
-player			= 1
-supporter		= 4
-mod				= 6
-peppy			= 8
-admin			= 16
-tournamentstaff = 32
+NORMAL			= 0
+PLAYER			= 1
+SUPPORTER		= 4
+MOD				= 6
+PEPPY			= 8
+ADMIN			= 16
+TOURNAMENTSTAFF = 32
