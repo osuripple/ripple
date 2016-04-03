@@ -2,6 +2,7 @@
 import logging
 import sys
 import flask
+import datetime
 
 # Tornado server
 from tornado.wsgi import WSGIContainer
@@ -98,6 +99,12 @@ def ciTrigger():
 @app.route("/", methods=['GET', 'POST'])
 def banchoServer():
 	if (flask.request.method == 'POST'):
+
+		# Track time if needed
+		if (serverOutputRequestTime == True):
+			# Start time
+			st = datetime.datetime.now()
+
 		# Client's token string and request data
 		requestTokenString = flask.request.headers.get('osu-token')
 		requestData = flask.request.data
@@ -208,6 +215,14 @@ def banchoServer():
 				consoleHelper.printColored("[!] Received packet from unknown token ({}).".format(requestTokenString), bcolors.RED)
 				consoleHelper.printColored("> {} have been disconnected (invalid token)".format(requestTokenString), bcolors.YELLOW)
 
+		if (serverOutputRequestTime == True):
+			# End time
+			et = datetime.datetime.now()
+
+			# Total time:
+			tt = float((et.microsecond-st.microsecond)/1000)
+			consoleHelper.printColored("Request time: {}ms".format(tt), bcolors.PINK)
+
 		# Send server's response to client
 		# We don't use token object because we might not have a token (failed login)
 		return responseHelper.generateResponse(responseTokenString, responseData)
@@ -292,6 +307,7 @@ if (__name__ == "__main__"):
 	serverHost = glob.conf.config["server"]["host"]
 	serverPort = int(glob.conf.config["server"]["port"])
 	serverOutputPackets = generalFunctions.stringToBool(glob.conf.config["server"]["outputpackets"])
+	serverOutputRequestTime = generalFunctions.stringToBool(glob.conf.config["server"]["outputrequesttime"])
 
 	# Run server sanic way
 	if (serverName == "tornado"):

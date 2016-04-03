@@ -53,6 +53,7 @@ class config:
 			self.config.get("server","port")
 			self.config.get("server","localizeusers")
 			self.config.get("server","outputpackets")
+			self.config.get("server","outputrequesttime")
 			self.config.get("server","timeouttime")
 			self.config.get("server","timeoutlooptime")
 
@@ -89,8 +90,9 @@ class config:
 		self.config.set("server", "port", "5001")
 		self.config.set("server", "localizeusers", "1")
 		self.config.set("server", "outputpackets", "0")
-		self.config.set("server", "timeouttime", "100")
+		self.config.set("server", "outputrequesttime", "0")
 		self.config.set("server", "timeoutlooptime", "100")
+		self.config.set("server", "timeouttime", "100")
 
 		self.config.add_section("flask")
 		self.config.set("flask", "threaded", "1")
