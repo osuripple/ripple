@@ -118,9 +118,10 @@ def fokabotResponse(fro, chan, message):
 
 			# Get parameters
 			if (len(message) >= 2):
-				if (message[1] == "restart"):
-					msg = "We are performing some maintenance. Bancho will restart in 5 seconds. Thank you for your patience."
-					systemHelper.scheduleShutdown(5, True, msg)
+				if (message[1] == "restart" or message[1] == "shutdown"):
+					restart = message[1] == "restart"
+					msg = "We are performing some maintenance. Bancho will {} in 5 seconds. Thank you for your patience.".format("restart" if restart else "shutdown")
+					systemHelper.scheduleShutdown(5, restart, msg)
 					return msg
 				elif (message[1] == "status"):
 					# Print some server info
@@ -188,6 +189,9 @@ def fokabotResponse(fro, chan, message):
 
 					# Chat output
 					return msg
+				else:
+					# Command not found
+					return False
 			else:
 				raise exceptions.commandSyntaxException
 
