@@ -14,9 +14,10 @@ class UsernameHelper {
 		"sharingan33",
 		"andrea",
 		"cptnxn",
-		"- hakurei reimu-",
+		"reimu-desu",
 		"hvick225",
 		"_index",
+		"my aim sucks",
 		"kynan",
 		"rafis",
 		"sayonara-bye",
@@ -24,7 +25,29 @@ class UsernameHelper {
 		"wubwoofwolf",
 		"millhioref",
 		"tom94",
-		"tillerino"
+		"tillerino",
+		"clsw",
+		"spectator",
+		"exgon",
+		"axarious",
+		"angelsim",
+		"recia",
+		"nara",
+		"emperorpenguin83",
+		"bikko",
+		"xilver",
+		"vettel",
+		"kuu01",
+		"_yu68",
+		"tasuke912",
+		"dusk",
+		"ttobas"
+		"velperk",
+		"jakads",
+		"jhlee0133",
+		"abcdullah",
+		"yuko-",
+		"entozer"
 	);
 
 	static function isUsernameForbidden($username) {
