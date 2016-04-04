@@ -47,12 +47,10 @@ class PasswordFinishRecovery {
 			}
 
 			// Calculate new password
-			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
+			$newPassword = password_hash(md5($_POST["p1"]), PASSWORD_DEFAULT);
 
 			// Change both passwords and salt
-			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newPassword, $_POST["user"]));
-			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_POST["user"]));
+			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ?, salt = '', password_version = '2' WHERE username = ?", array($newPassword, $_POST["user"]));
 
 			// Delete password reset key
 			$GLOBALS["db"]->fetch("DELETE FROM password_recovery WHERE id = ?;", array($d["id"]));

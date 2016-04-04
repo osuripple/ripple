@@ -60,36 +60,25 @@ class Login {
 		$ret = array();
 		try
 		{
-			// 1.5 -- Make sure user exists (if user doen't exist php spams memes)
-			$uid = $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($_POST["u"]));
-			if (!$uid) {
+			if (!PasswordHelper::CheckPass($_POST["u"], $_POST["p"], false))
 				throw new Exception(1);
-			}
 
-			// Calculate password
-			$options = array('cost' => 9, 'salt' => base64_decode(current($GLOBALS["db"]->fetch("SELECT salt FROM users WHERE username = ?", $_POST["u"]))) );
-			$password = crypt(md5($_POST["p"]), "$2y$" . $options["salt"]);
-
-			// Check user/password
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ? AND password_md5 = ?", array($_POST["u"], $password)) ) {
-				throw new Exception(1);
-			}
-
+			$us = $GLOBALS["db"]->fetch("SELECT allowed, password_md5, username FROM users WHERE username = ?", array($_POST["u"]));
 			// Ban check
-			if ( current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE username = ?", array($_POST["u"])) ) === '0') {
+			if ( current($us["allowed"]) === '0') {
 				throw new Exception(2);
 			}
 
 			// Get username with right case
-			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", array(current($uid))));
+			$username = $us["username"];
 
 			// Everything ok, create session and do login stuff
 			session_start();
 			$_SESSION["username"] = $username;
-			$_SESSION["password"] = $password;
+			$_SESSION["password"] = $us["password_md5"];
 			$_SESSION["passwordChanged"] = false;
 
-			// Check if the user requested to be remember. If they did, initialize cookies.
+			// Check if the user requested to be remembered. If they did, initialise cookies.
 			if (isset($_POST["remember"]) && $_POST["remember"] === "yes") {
 				$m = new RememberCookieHandler();
 				$m->IssueNew($_SESSION["username"]);

@@ -52,19 +52,32 @@ class PasswordHelper {
 			$pass = md5($pass);
 		}
 
-		$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt FROM users WHERE username = ?", array($u));
+		$uPass = $GLOBALS["db"]->fetch("SELECT password_md5, salt, password_version FROM users WHERE username = ?", array($u));
 
 		// Check it exists
 		if ($uPass === FALSE) {
 			return false;
 		}
 
-		// Check the md5 password is valid
-		if ($uPass["password_md5"] != (crypt($pass, "$2y$" . base64_decode($uPass["salt"])))) {
-			return false;
+		// password version 2: password_hash() + password_verify() + md5()
+		if ($uPass["password_version"] == 2){
+			return password_verify($pass, $uPass["password_md5"]);
+			exit;
 		}
 
-		// Everything ok, return true
+		// password_version 1: crypt() + md5()
+		if ($uPass["password_version"] == 1) {
+			if ($uPass["password_md5"] != (crypt($pass, "$2y$" . base64_decode($uPass["salt"])))) {
+				return false;
+			}
+			
+			// password is good. convert it to new password
+			$newPass = password_hash($pass, PASSWORD_DEFAULT);
+			$GLOBALS["db"]->execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE username = ?", array($newPass, $u));
+			return true;
+		}
+		
+		// whatever
 		return true;
 	}
 }

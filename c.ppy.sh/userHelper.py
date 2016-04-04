@@ -33,14 +33,21 @@ def checkLogin(userID, password):
 	"""
 
 	# Get password data
-	passwordData = glob.db.fetch("SELECT password_md5, salt FROM users WHERE osu_id = ?", [userID])
+	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE osu_id = ?", [userID])
 
 	# Make sure the query returned something
 	if (passwordData == None):
 		return False
-
-	# Return password valid/invalid
-	return passwordHelper.checkPassword(password, passwordData["salt"], passwordData["password_md5"])
+	
+	
+	# Return valid/invalid based on the password version.
+	if passwordData["password_version"] == 2:
+		return passwordHelper.checkNewPassword(password, passwordData["password_md5"])
+	if passwordData["password_version"] == 1:
+		ok = passwordHelper.checkOldPassword(password, passwordData["salt"], passwordData["password_md5"])
+		if not ok: return False
+		newpass = passwordHelper.genBcrypt(password)
+		glob.db.execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE osu_id = ?", [newpass, userID])
 
 
 def userExists(userID):

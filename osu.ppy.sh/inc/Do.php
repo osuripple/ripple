@@ -51,15 +51,14 @@ class D {
 				throw new Exception(8, 1);
 			}
 
-			// password_hash options
-			$options = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-
 			// Create password
-			$md5Password = crypt(md5($_POST["p1"]), "$2y$" . $options["salt"]);
+			$md5Password = password_hash(md5($_POST["p1"]), PASSWORD_DEFAULT);
 
 			// Put some data into the db
 			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
-			$GLOBALS["db"]->execute("INSERT INTO `users`(osu_id, username, password_md5, salt, email, register_datetime, rank, allowed) VALUES (2, ?, ?, ?, ?, ?, 1, 1);", array($_POST["u"], $md5Password, base64_encode($options["salt"]), $_POST["e"], time(true)));
+			$GLOBALS["db"]->execute("INSERT INTO `users`(osu_id, username, password_md5, salt, email, register_datetime, rank, allowed, password_version) 
+			                                     VALUES (2,      ?,        ?,            '',    ?,     ?,                 1,   1,       2);", 
+			                                     array(          $_POST["u"],$md5Password,      $_POST["e"], time(true)));
 
 			// Get user ID
 			$uid = $GLOBALS["db"]->lastInsertId();
@@ -110,22 +109,15 @@ class D {
 				throw new Exception($pres);
 			}
 
-			// Calculate password
-			$oldOptions = array('cost' => 9, 'salt' => base64_decode(current($GLOBALS["db"]->fetch("SELECT salt FROM users WHERE username = ?", $_SESSION["username"]))) );
-			$oldPassword = crypt(md5($_POST["pold"]), "$2y$" . $oldOptions["salt"]);
-
-			// Check if the current password is the right one
-			if (current($GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $_SESSION["username"])) != $oldPassword) {
+			if (!PasswordHelper::CheckPass($_SESSION["username"], $_POST["pold"], false)) {
 				throw new Exception(4);
 			}
 
 			// Calculate new password
-			$newOptions = array('cost' => 9, 'salt' => base64_decode(base64_encode(mcrypt_create_iv(22, MCRYPT_DEV_URANDOM))));
-			$newPassword = crypt(md5($_POST["p1"]), "$2y$" . $newOptions["salt"]);
+			$newPassword = password_hash(md5($_POST["p1"]), PASSWORD_DEFAULT);
 
 			// Change both passwords and salt
-			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ? WHERE username = ?", array($newPassword, $_SESSION["username"]));
-			$GLOBALS["db"]->execute("UPDATE users SET salt = ? WHERE username = ?", array(base64_encode($newOptions["salt"]), $_SESSION["username"]));
+			$GLOBALS["db"]->execute("UPDATE users SET password_md5 = ?, password_version = 2, salt = '' WHERE username = ?", array($newPassword, $_SESSION["username"]));
 
 			// Set in session that we've changed our password otherwise sessionCheck() will kick us
 			$_SESSION["passwordChanged"] = true;
