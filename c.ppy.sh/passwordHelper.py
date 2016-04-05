@@ -33,4 +33,4 @@ def genBcrypt(password):
 	password -- the password to hash.
 	return -- bytestring
 	"""
-	return bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt())
+	return bcrypt.hashpw(password.encode("utf8"), bcrypt.gensalt(10, b'2a'))
