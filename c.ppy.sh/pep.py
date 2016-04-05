@@ -312,7 +312,7 @@ if (__name__ == "__main__"):
 	# Run server sanic way
 	if (serverName == "tornado"):
 		# Tornado server
-		print("> Starting tornado...")
+		consoleHelper.printColored("> Tornado listening for clients on 127.0.0.1:{}...".format(serverPort), bcolors.GREEN)
 		webServer = HTTPServer(WSGIContainer(app))
 		webServer.listen(serverPort)
 		IOLoop.instance().start()
@@ -329,9 +329,9 @@ if (__name__ == "__main__"):
 
 		# Console output
 		if (flaskDebug == False):
-			print("> Starting flask...")
+			consoleHelper.printColored("> Flask listening for clients on {}.{}...".format(serverHost, serverPort), bcolors.GREEN)
 		else:
-			print("> Starting flask in "+bcolors.YELLOW+"debug mode..."+bcolors.ENDC)
+			consoleHelper.printColored("> Flask "+bcolors.YELLOW+"(debug mode)"+bcolors.ENDC+" listening for clients on {}:{}...".format(serverHost, serverPort), bcolors.GREEN)
 
 		# Run flask server
 		app.run(host=serverHost, port=serverPort, threaded=flaskThreaded)
