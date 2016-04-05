@@ -19,7 +19,9 @@
 		if ($ini["backup_database"] == 1)
 			$type .= "Database, ";
 		if ($ini["backup_replays"] == 1)
-			$type .= "Replays";
+			$type .= "Replays, ";
+		if ($ini["backup_avatars"] == 1)
+			$type .= "Avatars";
 		$type = rtrim($type, ", ");
 
 		$who = explode(",", $ini["email_to"]);
