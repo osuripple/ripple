@@ -11,7 +11,6 @@ def checkOldPassword(password, salt, rightPassword):
 	rightPassword -- right password
 	return -- bool
 	"""
-	return True
 
 	return (rightPassword == crypt.crypt(password, "$2y$"+str(base64.b64decode(salt))))
 
