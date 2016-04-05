@@ -41,13 +41,25 @@ class UsernameHelper {
 		"_yu68",
 		"tasuke912",
 		"dusk",
-		"ttobas"
+		"ttobas",
 		"velperk",
 		"jakads",
 		"jhlee0133",
 		"abcdullah",
 		"yuko-",
-		"entozer"
+		"entozer",
+		"hdhr",
+		"ekoro",
+		"snowwhite",
+		"osuplayer111",
+		"musty",
+		"nero",
+		"elysion",
+		"ztrot",
+		"koreapenguin",
+		"fort",
+		"asphyxia",
+		"niko"
 	);
 
 	static function isUsernameForbidden($username) {
