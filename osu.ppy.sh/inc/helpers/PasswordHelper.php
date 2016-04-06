@@ -26,6 +26,17 @@ class PasswordHelper {
 		"azerty",
 		"trustno1",
 		"000000",
+                "dragon",
+                "passw0rd",
+                "flower",
+                "121212",
+                "hottie",
+                "welcome",
+                "login",
+                "solo",
+                "princess",
+                "1234567890",
+                "football",
 	);
 	static function ValidatePassword($pass, $pass2 = null) {
 		// Check password length
