@@ -36,7 +36,7 @@ def joinChannel(userToken, channelName):
 				raise exceptions.channelUnknownException
 
 			# Check channel permissions
-			if ((glob.channels.channels[channelName].publicWrite == False or glob.channels.channels[channelName].moderated == True) and userRank < 2):
+			if ((glob.channels.channels[channelName].publicWrite == False or glob.channels.channels[channelName].moderated == True) and userRank <= 2):
 				raise exceptions.channelNoPermissionsException
 
 			# Add our userID to users in that channel

@@ -75,11 +75,11 @@ def handle(userToken, packetData):
 				raise exceptions.channelUnknownException
 
 			# Make sure the channel is not in moderated mode
-			if (glob.channels.channels[packetData["to"]].moderated == True and userRank < 2):
+			if (glob.channels.channels[packetData["to"]].moderated == True and userRank <= 2):
 				raise exceptions.channelModeratedException
 
 			# Make sure we have write permissions
-			if (glob.channels.channels[packetData["to"]].publicWrite == False and userRank < 2):
+			if (glob.channels.channels[packetData["to"]].publicWrite == False and userRank <= 2):
 				raise exceptions.channelNoPermissionsException
 
 			# Send this packet to everyone in that channel except us

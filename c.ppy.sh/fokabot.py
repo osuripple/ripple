@@ -80,7 +80,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!moderated" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Make sure we are in a channel and not PM
@@ -110,7 +110,7 @@ def fokabotResponse(fro, chan, message):
 		# System commands
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Split message
@@ -205,7 +205,7 @@ def fokabotResponse(fro, chan, message):
 		return False	# !scareall is currently disabled. Remove this line to activate it.
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Get parameters
@@ -229,7 +229,7 @@ def fokabotResponse(fro, chan, message):
 		return False	# !scare is currently disabled. Remove this line to activate it.
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Get parameters
@@ -259,7 +259,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!kickall" in message:
 		try:
 			# Check admin
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Kick everyone but mods/admins
@@ -279,7 +279,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!kick" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Get parameters
@@ -307,7 +307,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!silence" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Get parameters
@@ -372,7 +372,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!removesilence" in message or "!resetsilence" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Get parameters
@@ -404,7 +404,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!fokabot reconnect" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Check if fokabot is already connected
@@ -421,7 +421,7 @@ def fokabotResponse(fro, chan, message):
 	elif "!alert" in message:
 		try:
 			# Admin check
-			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 1):
+			if (userHelper.getUserRank(userHelper.getUserID(fro)) <= 2):
 				raise exceptions.noAdminException
 
 			# Syntax check
