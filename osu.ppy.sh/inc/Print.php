@@ -422,8 +422,8 @@ class P {
 			<td><p class="text-center"><input type="text" name="bg" class="form-control" value="'.$userStatsData["user_style"].'" '.$readonly[1].'></td>
 			</tr>');
 			echo('<tr>
-			<td>Aka</td>
-			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.$userStatsData["username_aka"].'"></td>
+			<td>A.K.A</td>
+			<td><p class="text-center"><input type="text" name="aka" class="form-control" value="'.htmlspecialchars($userStatsData["username_aka"]).'"></td>
 			</tr>');
 			echo('<tr>
 			<td>Userpage<br><a onclick="censorUserpage();">(reset userpage)</a></td>
