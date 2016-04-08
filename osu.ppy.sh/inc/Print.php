@@ -2194,8 +2194,8 @@ class P {
 		</div>
 		<p style="line-height: 15px"></p>
 		<div class="input-group" style="width:100%">
-			<span class="input-group-addon" id="basic-addon3" style="width:40%">Aka</span>
-			<input type="text" name="aka" class="form-control" value="'.$data["username_aka"].'" placeholder="Alternative username (not for login)" aria-describedby="basic-addon3" spellcheck="false">
+			<span class="input-group-addon" id="basic-addon3" style="width:40%">A.K.A</span>
+			<input type="text" name="aka" class="form-control" value="'.htmlspecialchars($data["username_aka"]).'" placeholder="Alternative username (not for login)" aria-describedby="basic-addon3" spellcheck="false">
 		</div>
 		<p style="line-height: 15px"></p>
 		<h3>Playstyle</h3>
