@@ -1678,7 +1678,7 @@ class P {
 				echo('<img src="./images/flags/'.strtolower($country).'.png">	');
 			echo('<font color="'.$userData["user_color"].'" style="'.$userStyle.'">' . $username . '</font></b></font>	');
 			if ($usernameAka != "")
-				echo('<small><i>aka '.$usernameAka.'</i></small>');
+				echo('<small><i>A.K.A '.htmlspecialchars($usernameAka).'</i></small>');
 			echo('<br><a href="index.php?u='.$u.'&m=0">'.$modesText[0].'</a> | <a href="index.php?u='.$u.'&m=1">'.$modesText[1].'</a> | <a href="index.php?u='.$u.'&m=2">'.$modesText[2].'</a> | <a href="index.php?u='.$u.'&m=3">'.$modesText[3].'</a>');
 			if (getUserRank($_SESSION["username"]) >= 4) echo('<br><a href="index.php?p=103&id='.$u.'">Edit user</a> | <a onclick="sure(\'submit.php?action=banUnbanUser&id='.$u.'\')";>Ban user</a> | <a href="index.php?p=110&id='.$u.'">Edit badges</a></p>');
 			echo('<div id="rank"><font size=5><b> '.$rankSymbol.$rank.'</b></font></div>');
