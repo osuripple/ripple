@@ -29,7 +29,7 @@ class Auth {
 	public static function attempt($username, $password) {
 		if($user = User::where('username', '=', $username)->where('rank', '>', '2')->fetch()) {
 			// found a valid user now check the password
-			if(password_verify($password, $user->password_md5)) {
+			if(password_verify(md5($password), $user->password_md5)) {
 				// store user ID in the session
 				Session::put(static::$session, $user->id);
 
