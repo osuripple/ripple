@@ -8,7 +8,7 @@
  * @version 1.0
  */
 class RememberCookieHandler {
-	private $username;
+	private $ID;
 	/**
 	 * Check
 	 * Checks the user cookie if they have got valid cookies for auto-login.
@@ -35,7 +35,7 @@ class RememberCookieHandler {
 			$this->UnsetCookies();
 			return 0;
 		}
-		$this->username = $d["username"];
+		$this->ID = $d["useridid"];
 		if (hash("sha256", $_COOKIE["t"]) != $d["token_sha"]) {
 			// Alarm. Thief detected.
 			$this->SecureFromThieves();
@@ -59,7 +59,7 @@ class RememberCookieHandler {
 		$t = mt_rand(0, $randmax);
 		setcookie("s", $sid, time()+60*60*24*30*6, '/'); // Six months.
 		setcookie("t", $t, time()+60*60*24*30*6, '/');
-		$GLOBALS["db"]->execute("INSERT INTO remember(username, series_identifier, token_sha) VALUES (?, ?, ?);", array($u, $sid, hash("sha256", $t)));
+		$GLOBALS["db"]->execute("INSERT INTO remember(userid, series_identifier, token_sha) VALUES (?, ?, ?);", array(getUserID($u), $sid, hash("sha256", $t)));
 	}
 	/**
 	 * Destroy
@@ -76,8 +76,8 @@ class RememberCookieHandler {
 	 *
 	 * @param string $u The username.
 	 */
-	public function DestroyAll($u) {
-		$GLOBALS["db"]->execute("DELETE FROM remember WHERE username = ?", $u);
+	public function DestroyAll($u, $isAlreadyID = false) {
+		$GLOBALS["db"]->execute("DELETE FROM remember WHERE userid = ?", ($isAlreadyID ? $u : getUserID($u)));
 	}
 	/**
 	 * SecureFromThieves
@@ -85,9 +85,9 @@ class RememberCookieHandler {
 	 * This function also sends an email to the user, telling them about what happened and not to worry if they can't autologin next time.
 	 */
 	private function SecureFromThieves() {
-		$this->DestroyAll($this->username);
+		$this->DestroyAll($this->ID, true);
 		// tell the user they fucked up.
-    redirect("index.php?p=2&e=5");
+	    redirect("index.php?p=2&e=5");
 	}
 	/**
 	 * Login
@@ -95,13 +95,13 @@ class RememberCookieHandler {
 	 */
 	private function Login() {
 		// ban check
-		if(current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE username = ?", $this->username)) === '0') {
+		if(current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE id = ?", $this->ID)) === '0') {
 			$this->UnsetCookies();
 			redirect("index.php?p=2&e=2");
 		}
-		$password = $GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE username = ?", $this->username);
+		$password = $GLOBALS["db"]->fetch("SELECT password_md5 FROM users WHERE id = ?", $this->ID);
 		startSessionIfNotStarted();
-		$_SESSION["username"] = $this->username;
+		$_SESSION["username"] = getUserUsername($this->ID);
 		$_SESSION["password"] = $password["password_md5"];
 		$_SESSION["passwordChanged"] = false;
 

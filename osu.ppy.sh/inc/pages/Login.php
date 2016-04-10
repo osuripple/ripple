@@ -65,7 +65,7 @@ class Login {
 
 			$us = $GLOBALS["db"]->fetch("SELECT allowed, password_md5, username FROM users WHERE username = ?", array($_POST["u"]));
 			// Ban check
-			if ( current($us["allowed"]) === '0') {
+			if ( $us["allowed"] === '0') {
 				throw new Exception(2);
 			}
 
@@ -79,7 +79,7 @@ class Login {
 			$_SESSION["passwordChanged"] = false;
 
 			// Check if the user requested to be remembered. If they did, initialise cookies.
-			if (isset($_POST["remember"]) && $_POST["remember"] === "yes") {
+			if (isset($_POST["remember"]) && (bool)$_POST["remember"]) {
 				$m = new RememberCookieHandler();
 				$m->IssueNew($_SESSION["username"]);
 			}
