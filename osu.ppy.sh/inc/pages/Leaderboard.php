@@ -58,8 +58,8 @@ class Leaderboard {
 		// Print table rows
 		foreach ($leaderboard as $lbUser)
 		{
-			// Make sure that this user has a valid osu! (2 is default for not set) id and he's not banned
-			if ($lbUser["osu_id"] != "2" && $allowedUsers[$lbUser["username"]])
+			// Make sure that this user is not banned
+			if ($allowedUsers[$lbUser["username"]])
 			{
 				// Increment rank
 				$r++;
@@ -87,7 +87,7 @@ class Leaderboard {
 				else
 					$country = "xx";
 
-				echo('<td><img src="./images/flags/' . $country . '.png"/>	<a href="index.php?u=' . $lbUser["osu_id"] . '&m='.$m.'">' . $lbUser["username"] . '</a></td>
+				echo('<td><img src="./images/flags/' . $country . '.png"/>	<a href="index.php?u=' . $lbUser["id"] . '&m='.$m.'">' . $lbUser["username"] . '</a></td>
 				<td>' . (is_numeric($lbUser["avg_accuracy_" . $modeForDB]) ? accuracy($lbUser["avg_accuracy_" . $modeForDB]) : "0.00") . '%</td>
 				<td>' . number_format($lbUser["playcount_" . $modeForDB]) . '<i> (lvl.'.$lbUser["level_" . $modeForDB].')</i></td>
 				<td>' . number_format($lbUser["ranked_score_" . $modeForDB]) . '</td>

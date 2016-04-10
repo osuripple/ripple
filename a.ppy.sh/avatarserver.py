@@ -9,6 +9,7 @@ avatar_dir = "avatars" # no slash
 if not os.path.exists(avatar_dir):
 	os.makedirs(avatar_dir)
 
+
 @app.route("/status")
 def serverStatus():
 	return jsonify({
@@ -16,11 +17,11 @@ def serverStatus():
 		"status" : 1
 	})
 
-@app.route("/<int:osuid>")
-def serveAvatar(osuid):
+@app.route("/<int:id>")
+def serveAvatar(uid):
 	# Check if avatar exists
-	if os.path.isfile("{}/{}.png".format(avatar_dir, osuid)):
-		avatarid = osuid
+	if os.path.isfile("{}/{}.png".format(avatar_dir, uid)):
+		avatarid = uid
 	else:
 		avatarid = 0
 

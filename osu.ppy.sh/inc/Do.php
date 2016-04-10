@@ -55,20 +55,15 @@ class D {
 			$md5Password = password_hash(md5($_POST["p1"]), PASSWORD_DEFAULT);
 
 			// Put some data into the db
-			// 1.5 -- Accounts are already activated (allowed 1) since we don't use osu! ids anymore
-			$GLOBALS["db"]->execute("INSERT INTO `users`(osu_id, username, password_md5, salt, email, register_datetime, rank, allowed, password_version) 
-			                                     VALUES (2,      ?,        ?,            '',    ?,     ?,                 1,   1,       2);", 
-			                                     array(          $_POST["u"],$md5Password,      $_POST["e"], time(true)));
+			$GLOBALS["db"]->execute("INSERT INTO `users`(username, password_md5, salt, email, register_datetime, rank, allowed, password_version) 
+			                                     VALUES (?,        ?,            '',    ?,     ?,                 1,   1,       2);", 
+			                                     array(  $_POST["u"],$md5Password,      $_POST["e"], time(true)));
 
 			// Get user ID
 			$uid = $GLOBALS["db"]->lastInsertId();
 
 			// Put some data into users_stats
-			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, osu_id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", array($uid, $uid, $_POST["u"]));
-
-			// 1.5 -- Replace osu_id with id (we don't use osu! id anymore)
-			// Set osu_id to id in users and users_stats
-			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ? WHERE id = ?", array($uid, $uid));
+			$GLOBALS["db"]->execute("INSERT INTO `users_stats`(id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania) VALUES (?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);", array($uid, $_POST["u"]));
 
 			// Update leaderboard (insert new user) for each mode.
 			foreach (["std", "taiko", "ctb", "mania"] as $m) {
@@ -130,49 +125,6 @@ class D {
 		{
 			// Redirect to Exception page
 			redirect("index.php?p=7&e=".$e->getMessage());
-		}
-	}
-
-
-	/*
-	* SetOsuID
-	* Set osu! id function (for avatar on main osu! server)
-	*/
-	static function SetOsuID()
-	{
-		// We need to be logged in
-		sessionCheck();
-
-		try
-		{
-			// Check if everything is set
-			if (!isset($_POST["osuid"]) || empty($_POST["osuid"])) {
-				throw new Exception("Nice troll");
-			}
-
-			// Check if our osu id is 2 (aka not set)
-			if (current($GLOBALS["db"]->fetch("SELECT osu_id FROM users WHERE username = ?", $_SESSION["username"])) != 2) {
-				throw new Exception("Osu! id already set.");
-			}
-
-			// Check if we are not using an osu! id already used
-			if ($GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", $_POST["osuid"])) {
-				throw new Exception("Osu! id already taken! If someone has taken your osu! id, contact an admin.");
-			}
-
-			// Set our osu! id in users table
-			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ? WHERE username = ?", array($_POST["osuid"], $_SESSION["username"]));
-
-			// Set our osu! id in users_stats table
-			$GLOBALS["db"]->execute("UPDATE users_stats SET osu_id = ? WHERE username = ?", array($_POST["osuid"], $_SESSION["username"]));
-
-			// Redirect to success page
-			redirect("index.php?p=12&s=done");
-		}
-		catch (Exception $e)
-		{
-			// Redirect to exception page
-			redirect("index.php?p=12&e=".$e->getMessage());
 		}
 	}
 
@@ -461,8 +413,8 @@ class D {
 		try
 		{
 			// Check if everything is set (username color, username style, rank and allowed can be empty)
-			if (!isset($_POST["id"]) || !isset($_POST["oid"]) || !isset($_POST["u"]) || !isset($_POST["e"]) || !isset($_POST["up"]) || !isset($_POST["aka"]) || !isset($_POST["se"]) || !isset($_POST["sr"])
-			|| empty($_POST["id"]) || empty($_POST["oid"]) || empty($_POST["u"]) || empty($_POST["e"]) ) {
+			if (!isset($_POST["id"]) || !isset($_POST["u"]) || !isset($_POST["e"]) || !isset($_POST["up"]) || !isset($_POST["aka"]) || !isset($_POST["se"]) || !isset($_POST["sr"])
+			|| empty($_POST["id"]) || empty($_POST["u"]) || empty($_POST["e"]) ) {
 				throw new Exception("Nice troll");
 			}
 
@@ -486,8 +438,8 @@ class D {
 			// in order to silence him
 			//$oldse = current($GLOBALS["db"]->fetch("SELECT silence_end FROM users WHERE username = ?", array($_POST["u"])));
 
-			// Save new data (osu_id, email, silence end and silence reason)
-			$GLOBALS["db"]->execute("UPDATE users SET osu_id = ?, email = ?, silence_end = ?, silence_reason = ? WHERE id = ?", array($_POST["oid"], $_POST["e"], $_POST["se"], $_POST["sr"], $_POST["id"]));
+			// Save new data (email, silence end and silence reason)
+			$GLOBALS["db"]->execute("UPDATE users SET email = ?, silence_end = ?, silence_reason = ? WHERE id = ?", array($_POST["e"], $_POST["se"], $_POST["sr"], $_POST["id"]));
 
 			// Save new userpage
 			$GLOBALS["db"]->execute("UPDATE users_stats SET userpage_content = ? WHERE id = ?", array($_POST["up"], $_POST["id"]));
@@ -511,11 +463,7 @@ class D {
 			$bg = "";
 
 			// Set username style/color/aka
-			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE osu_id = ?", array($c, $bg, $_POST["aka"], $_POST["oid"]));
-
-			// Check if silence end has changed, if so we have to kick the user
-			//if ($_POST["se"] != $oldse)
-			//	kickUser($id);
+			$GLOBALS["db"]->execute("UPDATE users_stats SET user_color = ?, user_style = ?, username_aka = ? WHERE id = ?", array($c, $bg, $_POST["aka"], $_POST["id"]));
 
 			// Done, redirect to success page
 			redirect("index.php?p=102&s=User edited!");
@@ -639,8 +587,8 @@ class D {
 		try
 		{
 			// Check if everything is set
-			if (!isset($_POST["id"]) || !isset($_POST["oldu"]) || !isset($_POST["newu"]) || !isset($_POST["oldoid"]) || !isset($_POST["newoid"]) || !isset($_POST["ks"])
-			|| empty($_POST["id"]) || empty($_POST["oldu"]) || empty($_POST["newu"]) || empty($_POST["oldoid"]) || empty($_POST["newoid"])) {
+			if (!isset($_POST["id"]) || !isset($_POST["oldu"]) || !isset($_POST["newu"]) || !isset($_POST["ks"])
+			|| empty($_POST["id"]) || empty($_POST["oldu"]) || empty($_POST["newu"])) {
 				throw new Exception("Nice troll.");
 			}
 
@@ -650,8 +598,8 @@ class D {
 			}
 
 			// Change stuff
-			$GLOBALS["db"]->execute("UPDATE users SET username = ?, osu_id = ? WHERE id = ?", array($_POST["newu"], $_POST["newoid"], $_POST["id"]));
-			$GLOBALS["db"]->execute("UPDATE users_stats SET username = ?, osu_id = ? WHERE id = ?", array($_POST["newu"], $_POST["newoid"], $_POST["id"]));
+			$GLOBALS["db"]->execute("UPDATE users SET username = ? WHERE id = ?", array($_POST["newu"], $_POST["id"]));
+			$GLOBALS["db"]->execute("UPDATE users_stats SET username = ? WHERE id = ?", array($_POST["newu"], $_POST["id"]));
 
 			// Change username in scores if needed
 			if ($_POST["ks"] == 1)
@@ -1099,12 +1047,12 @@ class D {
 			}
 
 			// Resize
-			if(!smart_resize_image($_FILES["file"]["tmp_name"], null, 100, 100, false , dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png", false, false, 100)) {
+			if(!smart_resize_image($_FILES["file"]["tmp_name"], null, 100, 100, false , dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserID($_SESSION["username"]).".png", false, false, 100)) {
 				throw new Exception(4);
 			}
 
 			/* "Convert" to png
-			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserOsuID($_SESSION["username"]).".png")) {
+			if (!move_uploaded_file($_FILES["file"]["tmp_name"], dirname(dirname(dirname(__FILE__)))."/a.ppy.sh/avatars/".getUserID($_SESSION["username"]).".png")) {
 				throw new Exception(4);
 			}*/
 
@@ -1259,7 +1207,7 @@ class D {
 				throw new Exception(0);
 
 			// Get our user id
-			$uid = getUserOsuID($_SESSION["username"]);
+			$uid = getUserID($_SESSION["username"]);
 
 			// Add/remove friend
 			if (getFriendship($uid, $_GET["u"], true) == 0)

@@ -59,7 +59,6 @@
 		foreach ($scores as $score) {
 			$acc = calculateAccuracy($score["300_count"], $score["100_count"], $score["50_count"], $score["gekis_count"], $score["katus_count"], $score["misses_count"], $score["play_mode"]);
 			$GLOBALS["db"]->execute("UPDATE scores SET accuracy = ? WHERE id = ?", array($acc, $score["id"]));
-			echo ".";
 		}
 		echo " done.<br>\n";
 
@@ -192,31 +191,6 @@
 
 		// Replays cleared
 		echo("<b>Full replays cache cleaned!</b><br>\n");
-
-
-		// Delete inactive accounts (not activated in osu!/no osu! id within 30 minutes after registration)
-		echo("<br>\n<b>Deleting inactive accounts...</b><br>\n");
-		$n = 0;
-
-		// Get all inactive/with no osu id accounts
-		$garbage = $GLOBALS["db"]->fetchAll("SELECT * FROM users WHERE osu_id = 2 AND allowed = 2");
-
-		for ($i=0; $i < count($garbage); $i++) {
-			// Get 30 mins after the registration of this account
-			$registerDate = $garbage[$i]["register_datetime"];
-			$expirationDate = $registerDate+1800;
-
-			// Check if this account is expired
-			if (time(true) >= $expirationDate)
-			{
-				// Account expired, delete it
-				$GLOBALS["db"]->execute("DELETE FROM users WHERE id = ?", $garbage[$i]["id"]);
-				echo("Deleted <b>".$garbage[$i]["username"]."</b>'s account<br>\n");
-				$n++;
-			}
-		}
-
-		echo("<b>Deleted ".$n." inactive accounts!</b><br>\n");
 
 		echo("<br>\n<b>Building leaderboard...</b></br>\n");
 		Leaderboard::BuildLeaderboard();

@@ -12,14 +12,14 @@ def getUserID(username):
 	"""
 
 	# Get user ID from db
-	userID = glob.db.fetch("SELECT osu_id FROM users WHERE username = ?", [username])
+	userID = glob.db.fetch("SELECT id FROM users WHERE username = ?", [username])
 
 	# Make sure the query returned something
 	if (userID == None):
 		return False
 
 	# Return user ID
-	return userID["osu_id"]
+	return userID["id"]
 
 
 def checkLogin(userID, password):
@@ -33,7 +33,7 @@ def checkLogin(userID, password):
 	"""
 
 	# Get password data
-	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE osu_id = ?", [userID])
+	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE id = ?", [userID])
 
 	# Make sure the query returned something
 	if (passwordData == None):
@@ -47,7 +47,7 @@ def checkLogin(userID, password):
 		ok = passwordHelper.checkOldPassword(password, passwordData["salt"], passwordData["password_md5"])
 		if not ok: return False
 		newpass = passwordHelper.genBcrypt(password)
-		glob.db.execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE osu_id = ?", [newpass, userID])
+		glob.db.execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE id = ?", [newpass, userID])
 
 
 def userExists(userID):
@@ -58,7 +58,7 @@ def userExists(userID):
 	return -- bool
 	"""
 
-	result = glob.db.fetch("SELECT id FROM users WHERE osu_id = ?", [userID])
+	result = glob.db.fetch("SELECT id FROM users WHERE id = ?", [userID])
 	if (result == None):
 		return False
 	else:
@@ -73,7 +73,7 @@ def getUserAllowed(userID):
 	return -- allowed int
 	"""
 
-	return glob.db.fetch("SELECT allowed FROM users WHERE osu_id = ?", [userID])["allowed"]
+	return glob.db.fetch("SELECT allowed FROM users WHERE id = ?", [userID])["allowed"]
 
 
 def getUserRank(userID):
@@ -82,7 +82,7 @@ def getUserRank(userID):
 	If you want to get that rank, user getUserGameRank instead
 	"""
 
-	return glob.db.fetch("SELECT rank FROM users WHERE osu_id = ?", [userID])["rank"]
+	return glob.db.fetch("SELECT rank FROM users WHERE id = ?", [userID])["rank"]
 
 
 def getUserSilenceEnd(userID):
@@ -94,7 +94,7 @@ def getUserSilenceEnd(userID):
 	return -- UNIX time
 	"""
 
-	return glob.db.fetch("SELECT silence_end FROM users WHERE osu_id = ?", [userID])["silence_end"]
+	return glob.db.fetch("SELECT silence_end FROM users WHERE id = ?", [userID])["silence_end"]
 
 
 def silenceUser(userID, silenceEndTime, silenceReason):
@@ -107,7 +107,7 @@ def silenceUser(userID, silenceEndTime, silenceReason):
 	silenceReason -- Silence reason shown on website
 	"""
 
-	glob.db.execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE osu_id = ?", [silenceEndTime, silenceReason, userID])
+	glob.db.execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ?", [silenceEndTime, silenceReason, userID])
 
 def getUserRankedScore(userID, gameMode):
 	"""
@@ -119,7 +119,7 @@ def getUserRankedScore(userID, gameMode):
 	"""
 
 	modeForDB = gameModes.getGameModeForDB(gameMode)
-	return glob.db.fetch("SELECT ranked_score_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["ranked_score_"+modeForDB]
+	return glob.db.fetch("SELECT ranked_score_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["ranked_score_"+modeForDB]
 
 
 def getUserTotalScore(userID, gameMode):
@@ -132,7 +132,7 @@ def getUserTotalScore(userID, gameMode):
 	"""
 
 	modeForDB = gameModes.getGameModeForDB(gameMode)
-	return glob.db.fetch("SELECT total_score_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["total_score_"+modeForDB]
+	return glob.db.fetch("SELECT total_score_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["total_score_"+modeForDB]
 
 
 def getUserAccuracy(userID, gameMode):
@@ -145,7 +145,7 @@ def getUserAccuracy(userID, gameMode):
 	"""
 
 	modeForDB = gameModes.getGameModeForDB(gameMode)
-	return glob.db.fetch("SELECT avg_accuracy_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["avg_accuracy_"+modeForDB]
+	return glob.db.fetch("SELECT avg_accuracy_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["avg_accuracy_"+modeForDB]
 
 
 def getUserGameRank(userID, gameMode):
@@ -175,7 +175,7 @@ def getUserPlaycount(userID, gameMode):
 	"""
 
 	modeForDB = gameModes.getGameModeForDB(gameMode)
-	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE osu_id = ?", [userID])["playcount_"+modeForDB]
+	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["playcount_"+modeForDB]
 
 
 # TODO: Remove user user user user meme from function names
@@ -187,7 +187,7 @@ def getUserUsername(userID):
 	return -- username
 	"""
 
-	return glob.db.fetch("SELECT username FROM users WHERE osu_id = ?", [userID])["username"]
+	return glob.db.fetch("SELECT username FROM users WHERE id = ?", [userID])["username"]
 
 
 def getFriendList(userID):
@@ -255,4 +255,4 @@ def getCountry(userID):
 	return -- country code (two letters)
 	"""
 
-	return glob.db.fetch("SELECT country FROM users_stats WHERE osu_id = ?", [userID])["country"]
+	return glob.db.fetch("SELECT country FROM users_stats WHERE id = ?", [userID])["country"]
