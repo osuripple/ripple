@@ -14,8 +14,8 @@ foreach ($remUsers as $k => $v) {
 	);
 }
 
-$GLOBALS["db"]->execute("TRUNCATE TABLE remember");
-$GLOBALS["db"]->execute("ALTER TABLE remember CHANGE username userid INT(11) NOT NULL, ADD COLUMN id INT NOT NULL AUTO_INCREMENT FIRST, ADD PRIMARY KEY(id);");
+$GLOBALS["db"]->execute("DROP TABLE remember");
+$GLOBALS["db"]->execute("CREATE TABLE remember(id INT(11) NOT NULL AUTO_INCREMENT, userid INT(11) NOT NULL, series_identifier INT(11), token_sha VARCHAR(255), PRIMARY KEY(id));");
 
 foreach ($new as $u) {
 	print("Updating " . $u["id"] . "...");
