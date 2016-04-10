@@ -98,12 +98,12 @@
 		if ($p == 27)
 		{
 			global $ServerStatusConfig;
-			if ($ServerStatusConfig["enable"])
+			if ($ServerStatusConfig["netdata"]["enable"])
 			{
 				echo('
 						<!-- Netdata script -->
-						<script type="text/javascript">var netdataServer = "' . $ServerStatusConfig["netdata_server_url"] . '";</script>
-						<script type="text/javascript" src="' . $ServerStatusConfig["netdata_server_url"] . '/dashboard.js"></script>
+						<script type="text/javascript">var netdataServer = "' . $ServerStatusConfig["netdata"]["server_url"] . '";</script>
+						<script type="text/javascript" src="' . $ServerStatusConfig["netdata"]["server_url"] . '/dashboard.js"></script>
 				');
 			}
 		}
