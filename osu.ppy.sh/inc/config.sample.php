@@ -6,7 +6,7 @@
 	define('DATABASE_NAME', 'ripple');
 	define('DATABASE_USER', 'root');
 	define('DATABASE_PASS', 'password');
-	define('DATABASE_HOST', 'ripple');
+	define('DATABASE_HOST', 'localhost');
 	// Either host or unix_socket.
 	// This is really important. On most installations, it will just work
 	// by doing DATABASE_HOST as localhost and DATABASE_WHAT as "host".
@@ -73,5 +73,14 @@
 	// WebHook configuration. Refer to the wiki for more information.
 	$WebHookReport = "";
 	$KeyAkerino = "";
+
+	// Server status configuration
+	$ServerStatusConfig = array(
+		"enable" => false,									// Must be true if you want to enable server status page
+		"netdata_server_url" => "http://127.0.0.1:19999",	// Your netdata server URL
+		"bancho_url" => "http://127.0.0.1:5001",			// Bancho server URL
+		"avatars_url" => "http://127.0.0.1:5000",			// Avatar server URL
+		"beatmap_url" => "http://bcache.zxq.co"				// Beatmap mirror URL
+	);
 
 ?>

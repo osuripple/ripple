@@ -38,6 +38,7 @@ def scheduleShutdown(sendRestartTime, restart, message = ""):
 
 	# Schedule server restart packet
 	threading.Timer(sendRestartTime, glob.tokens.enqueueAll, [serverPackets.banchoRestart(50000)]).start()
+	glob.restarting = True
 
 	# Restart/shutdown
 	if (restart):

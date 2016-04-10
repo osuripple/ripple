@@ -9,7 +9,6 @@ import countryHelper
 import time
 import generalFunctions
 import channelJoinEvent
-import random
 
 def handle(flaskRequest):
 	# Data to return
@@ -66,6 +65,10 @@ def handle(flaskRequest):
 		if (userRank >= 3):
 			userGMT = True
 
+		# Server restarting check
+		if (glob.restarting == True):
+			raise exceptions.banchoRestartingException()
+
 		# Maintenance check
 		if (glob.banchoConf.config["banchoMaintenance"] == True):
 			if (userGMT == False):
@@ -98,7 +101,8 @@ def handle(flaskRequest):
 
 		# Output channels info
 		for key, value in glob.channels.channels.items():
-			responseToken.enqueue(serverPackets.channelInfo(key))
+			if (value.publicRead == True):
+				responseToken.enqueue(serverPackets.channelInfo(key))
 
 		responseToken.enqueue(serverPackets.friendList(userID))
 
@@ -117,7 +121,7 @@ def handle(flaskRequest):
 
 		# Send online users IDs array
 		responseToken.enqueue(serverPackets.onlineUsers())
-		
+
 		# Get location and country from ip.zxq.co or database
 		if (generalFunctions.stringToBool(glob.conf.config["server"]["localizeusers"])):
 			# Get location and country from IP
@@ -155,6 +159,10 @@ def handle(flaskRequest):
 	except exceptions.banchoMaintenanceException:
 		# Bancho is in maintenance mode
 		responseData += serverPackets.notification("Our bancho server is in maintenance mode. Please try to login again later.")
+		responseData += serverPackets.loginError()
+	except exceptions.banchoRestartingException:
+		# Bancho is restarting
+		responseData += serverPackets.notification("Bancho is restarting. Try again in a few minutes.")
 		responseData += serverPackets.loginError()
 	finally:
 		# Print login failed message to console if needed

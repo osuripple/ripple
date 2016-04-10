@@ -154,6 +154,12 @@ ul.nav li:hover > ul.dropdown-menu {
 	margin: 0 auto;
 }
 
+#wide-content{
+	width: 100%;
+	margin: 0 auto;
+}
+
+
 hr {
     border: 0;
     height: 0;
