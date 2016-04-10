@@ -35,7 +35,7 @@ class RememberCookieHandler {
 			$this->UnsetCookies();
 			return 0;
 		}
-		$this->ID = $d["useridid"];
+		$this->ID = $d["userid"];
 		if (hash("sha256", $_COOKIE["t"]) != $d["token_sha"]) {
 			// Alarm. Thief detected.
 			$this->SecureFromThieves();
