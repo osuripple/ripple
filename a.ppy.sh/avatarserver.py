@@ -17,7 +17,7 @@ def serverStatus():
 		"status" : 1
 	})
 
-@app.route("/<int:id>")
+@app.route("/<int:uid>")
 def serveAvatar(uid):
 	# Check if avatar exists
 	if os.path.isfile("{}/{}.png".format(avatar_dir, uid)):
