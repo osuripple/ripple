@@ -9,11 +9,11 @@ avatar_dir = "avatars" # no slash
 if not os.path.exists(avatar_dir):
 	os.makedirs(avatar_dir)
     
-@app.route("/<int:osuid>")
-def serveAvatar(osuid):
+@app.route("/<int:id>")
+def serveAvatar(id):
 	# Check if avatar exists
-	if os.path.isfile("{}/{}.png".format(avatar_dir, osuid)):
-		avatarid = osuid
+	if os.path.isfile("{}/{}.png".format(avatar_dir, id)):
+		avatarid = id
 	else:
 		avatarid = 0
 

@@ -146,7 +146,6 @@
 				case 6: return ('<title>Ripple - Edit user settings</title>'); break;
 				case 7: return ('<title>Ripple - Change password</title>'); break;
 				case 8: return ('<title>Ripple - Edit userpage</title>'); break;
-				case 12: return ('<title>Ripple - Change osu! id</title>'); break;
 				case 14: return ('<title>Ripple - Documentation files</title>'); break;
 				case 15: return ('<title>Ripple - Read documentation</title>'); break;
 				case 16: return ('<title>Ripple - Read documentation</title>'); break;
@@ -250,9 +249,6 @@
 				// Change password (protected)
 				case 7: sessionCheck(); P::ChangePasswordPage(); break;
 
-				// Change osu! id (protected)
-				case 12: sessionCheck(); P::SetOsuIDPage(); break;
-
 				// List documentation files
 				case 14: listDocumentationFiles(); break;
 
@@ -355,7 +351,7 @@
 			{
 				// Username passed, get user ID if it exists
 				if (checkUserExists($_GET["u"]))
-					$u = getUserOsuID($_GET["u"]);
+					$u = getUserID($_GET["u"]);
 				else
 					$u = 0;
 			}
@@ -458,9 +454,9 @@
 		if (checkLoggedIn())
 		{
 			echo('<li class="dropdown">
-					<a data-toggle="dropdown"><img src="https://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="https://a.ripple.moe/'.getUserID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li class="dropdown-submenu"><a href="index.php?u='.getUserOsuID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
+						<li class="dropdown-submenu"><a href="index.php?u='.getUserID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="index.php?p=5"><i class="fa fa-picture-o"></i> Change avatar</a></li>
@@ -972,46 +968,42 @@
 	 **	 	 GENERAL  OSU  FUNCTIONS   	   **
 	 ****************************************/
 
-	$cachedOsuID = false;
+	$cachedID = false;
 	/*
-	 * getUserOsuID
-	 * Get the osu! user ID of the $u user
+	 * getUserID
+	 * Get the user ID of the $u user
 	 *
 	 * @param (string) ($u) Username
-	 * @return (string) osu! id of $u
+	 * @return (string) user ID of $u
 	 */
-	function getUserOsuID($u)
+	function getUserID($u)
 	{
-		global $cachedOsuID;
-		if (isset($cachedOsuID[$u]))
-			return $cachedOsuID[$u];
-		$osuID = $GLOBALS["db"]->fetch("SELECT osu_id FROM users WHERE username = ?", $u);
-		if ($osuID)
+		global $cachedID;
+		if (isset($cachedID[$u]))
+			return $cachedID[$u];
+		$ID = $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", $u);
+		if ($ID)
 		{
-			// Osu! ID returned. If 2 (Default) return 0 (Not set).
-			if ($osuID != 2)
-				$cachedOsuID[$u] = current($osuID);
-			else
-				$cachedOsuID[$u] = 0;
+			$cachedID[$u] = current($ID);
 		}
 		else
 		{
-			// Osu! ID not set, maybe invlid player. Return 0.
-			$cachedOsuID[$u] = 0;
+			// ID not set, maybe invalid player. Return 0.
+			$cachedID[$u] = 0;
 		}
-		return $cachedOsuID[$u];
+		return $cachedID[$u];
 	}
 
 	/*
 	 * getUserUsername
-	 * Get the osu! username for $uid user
+	 * Get the username for $uid user
 	 *
-	 * @param (int) ($uid) osu!id
+	 * @param (int) ($uid) user ID
 	 * @return (string) username
 	 */
 	function getUserUsername($uid)
 	{
-		$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE osu_id = ?", $uid);
+		$username = $GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", $uid);
 		if ($username)
 			return current($username);
 		else
@@ -1135,7 +1127,7 @@
 				// Update leaderboard
 				// Ayy lmao, we don't know the score
 				$rankedscore = $GLOBALS["db"]->fetch("SELECT ranked_score_$playModeText FROM users_stats WHERE username = ?", array($username));
-				Leaderboard::Update(getUserOsuID($username), $rankedscore["ranked_score_$playModeText"], $playModeText);
+				Leaderboard::Update(getUserID($username), $rankedscore["ranked_score_$playModeText"], $playModeText);
 			}
 		}
 
@@ -1551,11 +1543,11 @@
 	{
 		// Get top 50 scores of this beatmap
 		if ($type == 3) {
-			$osuID = getUserOsuID($username);
+			$ID = getUserID($username);
 
 			// Friends leaderboard
 			// Get friends
-			$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($osuID));
+			$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($ID));
 
 			// Score array
 			$pid = array();
@@ -1629,8 +1621,8 @@
 		// Check if this score has a replay
 		if (file_exists("../replays/replay_".$replayID.".osr")) $hasReplay = 1; else $hasReplay = 0;
 
-		// Get osu! user id for avatar
-		$userID = getUserOsuID($playerName);
+		// Get user id for showing the avatar.
+		$userID = getUserID($playerName);
 
 		// Get rank
 		if ($r > -1)
@@ -2114,13 +2106,13 @@
 	 * checkUserExists
 	 * Check if given user exists
 	 *
-	 * @param (string) ($i) username/osuid
+	 * @param (string) ($i) username/id
 	 * @param (bool) ($id) if true, search by id. Default: false
 	 */
 	function checkUserExists($u, $id = false)
 	{
 		if ($id)
-			return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", array($u));
+			return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE id = ?", array($u));
 		else
 			return $GLOBALS["db"]->fetch("SELECT id FROM users WHERE username = ?", array($u));
 	}
@@ -2140,8 +2132,8 @@
 		// Get id if needed
 		if (!$id)
 		{
-			$u0 = getUserOsuID($u0);
-			$u1 = getUserOsuID($u1);
+			$u0 = getUserID($u0);
+			$u1 = getUserID($u1);
 		}
 
 		// Make sure u0 and u1 exist
@@ -2176,8 +2168,8 @@
 		try {
 			// Get id if needed
 			if (!$id) {
-				$dude = getUserOsuID($dude);
-				$newFriend = getUserOsuID($newFriend);
+				$dude = getUserID($dude);
+				$newFriend = getUserID($newFriend);
 			}
 
 			// Make sure we aren't adding us to our friends
@@ -2217,8 +2209,8 @@
 		try	{
 			// Get id if needed
 			if (!$id) {
-				$dude = getUserOsuID($dude);
-				$oldFriend = getUserOsuID($oldFriend);
+				$dude = getUserID($dude);
+				$oldFriend = getUserID($oldFriend);
 			}
 
 			// Make sure users exist

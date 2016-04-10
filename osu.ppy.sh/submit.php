@@ -28,7 +28,6 @@
 			case "register": D::Register(); break;
 			case "changePassword": D::ChangePassword(); break;
 			case "logout": D::Logout(); redirect("index.php"); break;
-			case "setOsuID": D::SetOsuID(); break;
 			case "u": redirect("../ripple/index.php?u=".$_GET["data"]."&m=0"); break;
 			case "recoverPassword": D::RecoverPassword(); break;
 			case "saveUserSettings": D::saveUserSettings(); break;

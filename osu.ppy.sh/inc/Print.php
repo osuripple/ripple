@@ -111,7 +111,7 @@ class P {
 	{
 		// Get admin dashboard data
 		$totalUsers = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM users"));
-		$pendingUsers = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM users WHERE allowed = 2 OR osu_id = 2"));
+		$pendingUsers = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM users WHERE allowed = 2"));
 		$bannedUsers = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM users WHERE allowed = 0"));
 		$modUsers = current($GLOBALS["db"]->fetch("SELECT COUNT(*) FROM users WHERE rank >= 3"));
 
@@ -148,7 +148,7 @@ class P {
 		// Users plays table
 		echo('<table class="table table-striped table-hover table-50-center">
 		<thead>
-		<tr><th class="text-center"><i class="fa fa-user"></i>	Users</th><th class="text-center">Osu! id</th><th class="text-center">Username</th><th class="text-center">Rank</th><th class="text-center">Allowed</th><th class="text-center">Actions</th></tr>
+		<tr><th class="text-center"><i class="fa fa-user"></i>	Users</th><th class="text-center">Username</th><th class="text-center">Rank</th><th class="text-center">Allowed</th><th class="text-center">Actions</th></tr>
 		</thead>
 		<tbody>');
 
@@ -160,13 +160,6 @@ class P {
 				case 0: $allowedColor = "danger"; $allowedText = "Banned"; break;
 				case 1: $allowedColor = "success"; $allowedText = "Ok"; break;
 				case 2: $allowedColor = "warning"; $allowedText = "Pending"; break;
-			}
-
-			// Label to check osu id
-			if ($user["osu_id"] == 2)
-			{
-				$allowedColor = "warning";
-				$allowedText = "osu!id?";
 			}
 
 			// Set rank label text/color
@@ -181,7 +174,6 @@ class P {
 			// Print row
 			echo('<tr>');
 			echo('<td class="success"><p class="text-center">' . $user["id"] . '</p></td>');
-			echo('<td class="success"><p class="text-center">' . $user["osu_id"] . '</p></td>');
 			echo('<td class="success"><p class="text-center"><b>' . $user["username"] . '</b></p></td>');
 			echo('<td class="success"><p class="text-center"><span class="label label-'.$rankColor.'">' . $rankText . '</span></p></td>');
 			echo('<td class="success"><p class="text-center"><span class="label label-'.$allowedColor.'">' . $allowedText . '</span></p></td>');
@@ -316,7 +308,7 @@ class P {
 		{
 			// Check if id is set
 			if (!isset($_GET["id"]) || empty($_GET["id"])) {
-				throw new Exception("Invalid osu! id");
+				throw new Exception("Invalid user ID!");
 			}
 
 			// Get user data
@@ -325,7 +317,7 @@ class P {
 
 			// Check if this user exists
 			if (!$userData || !$userStatsData) {
-				throw new Exception("That user doesn't exists");
+				throw new Exception("That user doesn't exist");
 			}
 
 			// Set readonly stuff
@@ -377,10 +369,6 @@ class P {
 			echo('<tr>
 			<td>ID</td>
 			<td><p class="text-center"><input type="number" name="id" class="form-control" value="'.$userData["id"].'" readonly></td>
-			</tr>');
-			echo('<tr>
-			<td>Osu! id</td>
-			<td><p class="text-center"><input type="text" name="oid" class="form-control" value="'.$userData["osu_id"].'" '.$readonly[0].'></td>
 			</tr>');
 			echo('<tr>
 			<td>Username</td>
@@ -467,11 +455,6 @@ class P {
 	{
 		try
 		{
-			// Check if id is set
-			if (!isset($_GET["id"]) || empty($_GET["id"])) {
-				throw new Exception("Invalid osu! id");
-			}
-
 			// Get user data
 			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users WHERE id = ?", $_GET["id"]);
 			$userStatsData = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE id = ?", $_GET["id"]);
@@ -514,14 +497,6 @@ class P {
 			echo('<tr class="success">
 			<td>New Username</td>
 			<td><p class="text-center"><input type="text" name="newu" class="form-control"></td>
-			</tr>');
-			echo('<tr>
-			<td>Old User ID</td>
-			<td><p class="text-center"><input type="number" name="oldoid" class="form-control" value="'.$userData["osu_id"].'" readonly></td>
-			</tr>');
-			echo('<tr class="success">
-			<td>New User ID</td>
-			<td><p class="text-center"><input type="number" name="newoid" class="form-control" value="'.$userData["osu_id"].'" ></td>
 			</tr>');
 			echo('<tr>
 			<td>Keep old scores<br>(with new username)</td>
@@ -820,7 +795,7 @@ class P {
 			</tr>');
 			echo('<tr>
 			<td><b>From</b></td>
-			<td><a href="index.php?u=' . getUserOsuID($reportData["from_username"]) . '">' . $reportData["from_username"] . '</a></td>
+			<td><a href="index.php?u=' . getUserID($reportData["from_username"]) . '">' . $reportData["from_username"] . '</a></td>
 			</tr>');
 			echo('<tr>
 			<td><b>Type</b></td>
@@ -1523,7 +1498,7 @@ class P {
 	* UserPage
 	* Print user page for $u user
 	*
-	* @param (int) ($u) Osu! ID of user.
+	* @param (int) ($u) ID of user.
 	* @param (int) ($m) Playmode.
 	*/
 	static function UserPage($u, $m = -1)
@@ -1537,14 +1512,14 @@ class P {
 		try
 		{
 			// Check if the user is in db
-			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE osu_id = ?", $u) || $u == 2)
+			if (!$GLOBALS["db"]->fetch("SELECT id FROM users WHERE id = ?", $u))
 				throw new Exception("User not found");
 
 			// globals
 			global $PlayStyleEnum;
 
 			// Check banned status
-			$allowed = current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE osu_id = ?", array($u)));
+			$allowed = current($GLOBALS["db"]->fetch("SELECT allowed FROM users WHERE id = ?", array($u)));
 
 			// Throw exception if user is banned/not activated
 			// print message if we are admin
@@ -1557,8 +1532,8 @@ class P {
 			}
 
 			// Get all user stats for all modes and username
-			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE osu_id = ?", $u);
-			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE osu_id = ?", $u));
+			$userData = $GLOBALS["db"]->fetch("SELECT * FROM users_stats WHERE id = ?", $u);
+			$username = current($GLOBALS["db"]->fetch("SELECT username FROM users WHERE id = ?", $u));
 
 			// Set default modes texts, selected is bolded below
 			$modesText = array(
@@ -1594,14 +1569,14 @@ class P {
 			if($silenceEndTime-time() > 0)
 				$userStyle = "text-decoration: line-through;";
 			else
-				$userStyle = current($GLOBALS["db"]->fetch("SELECT user_style FROM users_stats WHERE osu_id = ?", $u));
+				$userStyle = current($GLOBALS["db"]->fetch("SELECT user_style FROM users_stats WHERE id = ?", $u));
 
 			// Get top/recent plays for this mode
 			$topPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 10", array($username, $m));
 			$recentPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY time DESC LIMIT 10", array($username, $m));
 
 			// Get all allowed users on ripple
-			$allowedUsers = getAllowedUsers("osu_id");
+			$allowedUsers = getAllowedUsers("id");
 
 			// Bold selected mode text.
 			$modesText[$m] = "<b>" . $modesText[$m] . "</b>";
@@ -1610,7 +1585,7 @@ class P {
 			$userpageContent = $userData["userpage_content"];
 
 			// Friend button
-			if (!checkLoggedIn() || $u == getUserOsuID($_SESSION["username"])) {
+			if (!checkLoggedIn() || $u == getUserID($_SESSION["username"])) {
 				$friendButton = '';
 			} else {
 				$friendship = getFriendship($_SESSION["username"], $username);
@@ -2244,7 +2219,7 @@ class P {
 
 		// Print form
 		echo('
-		<b>Current avatar:</b><br><img src="https://a.ripple.moe/'.getUserOsuID($_SESSION["username"]).'" height="100" width="100"/>
+		<b>Current avatar:</b><br><img src="https://a.ripple.moe/'.getUserID($_SESSION["username"]).'" height="100" width="100"/>
 		<p style="line-height: 15px"></p>
 		<form action="submit.php" method="POST" enctype="multipart/form-data">
 		<input name="action" value="changeAvatar" hidden>
@@ -2294,45 +2269,10 @@ class P {
 		<p align="center"><textarea name="c" class="sceditor" style="width:700px; height:400px;">'.$userpageContent.'</textarea></p>
 		<p style="line-height: 15px"></p>
 		<button type="submit" class="btn btn-primary">Save userpage</button>
-		<a href="index.php?u='.getUserOsuID($_SESSION["username"]).'" class="btn btn-success">View userpage</a>
+		<a href="index.php?u='.getUserID($_SESSION["username"]).'" class="btn btn-success">View userpage</a>
 		</form>
 		');
 	}
-
-
-	/*
-	* SetOsuIDPage
-	* Prints the change osu id page.
-	*/
-	static function SetOsuIDPage()
-	{
-		// Maintenance check
-		P::MaintenanceStuff();
-
-		// Global alert
-		P::GlobalAlert();
-
-		echo('<div id="narrow-content"><h1>Set osu! id</h1>');
-
-		// Print Exception if set
-		if (isset($_GET["e"]) && !empty($_GET["e"])) P::ExceptionMessage($_GET["e"]);
-
-		// Print Success if set
-		if (isset($_GET["s"]) && $_GET["s"] == "done") P::SuccessMessage("osu! id set!");
-
-		// Print default message if we have no exception/success
-		if (!isset($_GET["e"]) && !isset($_GET["s"]))
-		echo('<p>Fill every field with the correct informations in order to set your osu! id. <a href="index.php?p=15&f=how-to-find-your-osu-id.md" target="_blank">Need some help?</a></p>');
-
-		// Print change password form
-		echo('<form action="submit.php" method="POST">
-		<input name="action" value="setOsuID" hidden>
-		<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="glyphicon glyphicon-tag" max-width="25%"></span></span><input type="number" name="osuid" required class="form-control" placeholder="Osu! ID" aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
-		<button type="submit" class="btn btn-primary">Set osu! id</button>
-		</form>
-		</div>');
-	}
-
 
 	/*
 	* PasswordRecovery - print the page to recover your password if you lost it.
@@ -2375,14 +2315,11 @@ class P {
 	*/
 	static function Alerts()
 	{
-		// Unset osu id alert
-		if (getUserOsuID($_SESSION["username"]) == 2) echo('<div class="alert alert-danger" role="alert"><b>You have to set your osu! id. <a href="index.php?p=12">Click here to set it.</b></a></b></div>');
-
 		// Account activation alert (not implemented yet)
 		if (getUserAllowed($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">To avoid using accounts that you don\'t own, you need to <b>confirm your ripple account</b>. To do so, simply <b>open your osu! client, login to ripple server and submit a score.</b> Every score is ok, even on unranked maps. <u><b>Remember that if you don\'t activate your Ripple account within 3 hours, it\'ll be deleted!</b></u></div>');
 
 		// Documentation alert to help new users
-		if (getUserOsuID($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">If you are having troubles while activating your account or connecting to Ripple, please check the Documentation section by clicking <a href="index.php?p=14">here</a>.</div>');
+		if (getUserID($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">If you are having troubles while activating your account or connecting to Ripple, please check the Documentation section by clicking <a href="index.php?p=14">here</a>.</div>');
 
 		// Country flag alert (only for not pending users)
 		if (getUserAllowed($_SESSION["username"]) != 2 && current($GLOBALS["db"]->fetch("SELECT country FROM users_stats WHERE username = ?", $_SESSION["username"])) == "XX") echo('<div class="alert alert-warning" role="alert"><b>You don\'t have a country flag.</b> Send a score (even a failed/retried one is fine) to get your country flag.</div>');
@@ -2726,7 +2663,7 @@ class P {
 		P::GlobalAlert();
 
 		// Get user friends
-		$ourID = getUserOsuID($_SESSION["username"]);
+		$ourID = getUserID($_SESSION["username"]);
 		$friends = $GLOBALS["db"]->fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", array($ourID));
 
 		// Title and header message
