@@ -81,6 +81,7 @@
 			"bancho_url" => "http://127.0.0.1:5001",	// Bancho URL
 			"avatars_url" => "http://127.0.0.1:5000",	// Avatar server URL
 			"beatmap_url" => "http://bcache.zxq.co",	// Beatmap mirror URL
+			"api_url" => "http://127.0.0.1/api",		// Ripple API URL
 		),
 
 		"netdata" => array(

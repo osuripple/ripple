@@ -2311,9 +2311,9 @@
 	{
 		switch($status)
 		{
-			case 1: return '<span class="label label-success">Online</span>'; break;
-			case -1: return '<span class="label label-warning">Restarting</span>'; break;
-			case 0: return '<span class="label label-danger">Offline</span>'; break;
-			default: return '<span class="label label-default">Unknown</span>'; break;
+			case 1: return '<span class="label label-success"><i class="fa fa-check"></i>	Online</span>'; break;
+			case -1: return '<span class="label label-warning"><i class="fa fa-exclamation"></i>	Restarting</span>'; break;
+			case 0: return '<span class="label label-danger"><i class="fa fa-close"></i>	Offline</span>'; break;
+			default: return '<span class="label label-default"><i class="fa fa-question"></i>	Unknown</span>'; break;
 		}
 	}
