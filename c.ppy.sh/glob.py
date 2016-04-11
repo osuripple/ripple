@@ -13,3 +13,4 @@ tokens = tokenList.tokenList()
 channels = channelList.channelList()
 matches = matchList.matchList()
 memes = True
+restarting = False

@@ -93,7 +93,19 @@ def ciTrigger():
 	consoleHelper.printColored("[!] Ci event triggered from {}".format(requestIP), bcolors.PINK)
 	systemHelper.scheduleShutdown(5, False, "A new Bancho update is available and the server will be restarted in 5 seconds. Thank you for your patience.")
 
-	return flask.jsonify({"response" : "1"})
+	return flask.jsonify({"response" : 1})
+
+
+@app.route("/api/server-status")
+def serverStatus():
+	# Server status api
+	# 1: Online
+	# -1: Restarting
+	return flask.jsonify({
+		"response" : 200,
+		"status" : -1 if glob.restarting == True else 1
+	})
+
 
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])

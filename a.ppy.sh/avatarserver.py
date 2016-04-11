@@ -1,4 +1,4 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, jsonify
 import os
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
@@ -8,12 +8,20 @@ avatar_dir = "avatars" # no slash
 # create avatars directory if it does not exist
 if not os.path.exists(avatar_dir):
 	os.makedirs(avatar_dir)
-    
-@app.route("/<int:id>")
-def serveAvatar(id):
+
+
+@app.route("/status")
+def serverStatus():
+	return jsonify({
+		"response" : 200,
+		"status" : 1
+	})
+
+@app.route("/<int:uid>")
+def serveAvatar(uid):
 	# Check if avatar exists
-	if os.path.isfile("{}/{}.png".format(avatar_dir, id)):
-		avatarid = id
+	if os.path.isfile("{}/{}.png".format(avatar_dir, uid)):
+		avatarid = uid
 	else:
 		avatarid = 0
 

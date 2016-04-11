@@ -23,10 +23,12 @@
 	require_once($df . "/pages/Login.php");
 	require_once($df . "/pages/Leaderboard.php");
 	require_once($df . "/pages/PasswordFinishRecovery.php");
+	require_once($df . "/pages/ServerStatus.php");
 	$pages = array(
 		new Login(),
 		new Leaderboard(),
 		new PasswordFinishRecovery(),
+		new ServerStatus()
 	);
 
 	// Set timezone to UTC
@@ -432,6 +434,7 @@
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
 						' . (file_exists(dirname(__FILE__) . "/../blog/anchor/config/db.php") ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
+						<li class="dropdown-submenu"><a href="index.php?p=27"><i class="fa fa-cogs"></i>	Server status</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> ' . ($trollerino ? 'Request' : 'Report' ) . ' a bug</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	' . ($trollerino ? 'Report' : 'Request' ) . ' a feature</a></li>
@@ -1811,7 +1814,7 @@
 		echo('<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>');
 		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are pushed to the website.<br>Hover a change to know when it was done.<br><br>');
 		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.txt")) {
-			echo '<b>Unfortunately, no changelog for this ripple instance is available. Slap him off telling him to do it.</b>';
+			echo '<b>Unfortunately, no changelog for this ripple instance is available. Slap the sysadmin off telling him to configure it.</b>';
 		}
 		else {
 			$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
@@ -2280,4 +2283,37 @@
 	 */
 	function accuracy($acc) {
 		return number_format(round($acc, 2), 2);
+	}
+
+
+	function checkServiceStatus($url) {
+		// 0: offline, 1: online, -1: restarting
+		try
+		{
+			// Bancho status
+			$result = @json_decode(@file_get_contents($url), true);
+
+			if (!isset($result))
+				throw new Exception;
+
+			if (!array_key_exists("status", $result))
+				throw new Exception;
+
+			return $result["status"];
+		}
+		catch (Exception $e)
+		{
+			return 0;
+		}
+	}
+
+	function serverStatusBadge($status)
+	{
+		switch($status)
+		{
+			case 1: return '<span class="label label-success"><i class="fa fa-check"></i>	Online</span>'; break;
+			case -1: return '<span class="label label-warning"><i class="fa fa-exclamation"></i>	Restarting</span>'; break;
+			case 0: return '<span class="label label-danger"><i class="fa fa-close"></i>	Offline</span>'; break;
+			default: return '<span class="label label-default"><i class="fa fa-question"></i>	Unknown</span>'; break;
+		}
 	}

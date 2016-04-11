@@ -53,3 +53,6 @@ class matchJoinErrorException(Exception):
 
 class matchCreateError(Exception):
 	pass
+
+class banchoRestartingException(Exception):
+	pass

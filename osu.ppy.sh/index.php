@@ -3,6 +3,7 @@
 	require_once("./inc/functions.php");
 
 	// Bancho/frontend loader
+	// TODO: Remove this
 	if ($_SERVER["HTTP_HOST"] == "c.ppy.sh" || $_SERVER["HTTP_HOST"] == "c1.ppy.sh")
 	{
 		// Do bancho stuff
@@ -92,6 +93,21 @@
 
     <!-- Dynamic title -->
     <?php echo $title; ?>
+
+	<?php
+		if ($p == 27)
+		{
+			global $ServerStatusConfig;
+			if ($ServerStatusConfig["netdata"]["enable"])
+			{
+				echo('
+						<!-- Netdata script -->
+						<script type="text/javascript">var netdataServer = "' . $ServerStatusConfig["netdata"]["server_url"] . '";</script>
+						<script type="text/javascript" src="' . $ServerStatusConfig["netdata"]["server_url"] . '/dashboard.js"></script>
+				');
+			}
+		}
+	?>
 
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
