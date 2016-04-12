@@ -1487,7 +1487,7 @@ class P {
 
 
 		// 1.5 -- Changed ripple in ripple 1.5
-		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "http://i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Welcome to ripple 1.5</h1>');
+		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "//i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Welcome to ripple 1.5</h1>');
 
 		// Home alert
 		P::HomeAlert();
