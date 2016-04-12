@@ -427,7 +427,7 @@ class P {
 			</tr>');
 			echo('<tr>
 			<td>Avatar</td>
-			<td><img src="https://a.ripple.moe/'.$_GET["id"].'" height="50" width="50"></img>	<a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET["id"].'\')">Reset avatar</a></td>
+			<td><img src="'.URL::Avatar().'/'.$_GET["id"].'" height="50" width="50"></img>	<a onclick="sure(\'submit.php?action=resetAvatar&id='.$_GET["id"].'\')">Reset avatar</a></td>
 			</tr>');
 			echo('</tbody></form>');
 			echo('</table>');
@@ -1647,7 +1647,7 @@ class P {
 			// 1.5 -- Add quick admin commands
 			echo('<div id="userpage-header">
 			<!-- Avatar, username and rank -->
-			<p><img id="user-avatar" src="https://a.ripple.moe/'.$u.'" height="100" width="100" /></p>
+			<p><img id="user-avatar" src="'.URL::Avatar().'/'.$u.'" height="100" width="100" /></p>
 			<p id="username"><font size=5><b>');
 			if ($country != "XX" && $showCountry == 1)
 				echo('<img src="./images/flags/'.strtolower($country).'.png">	');
@@ -2219,7 +2219,7 @@ class P {
 
 		// Print form
 		echo('
-		<b>Current avatar:</b><br><img src="https://a.ripple.moe/'.getUserID($_SESSION["username"]).'" height="100" width="100"/>
+		<b>Current avatar:</b><br><img src="'.URL::Avatar().'/'.getUserID($_SESSION["username"]).'" height="100" width="100"/>
 		<p style="line-height: 15px"></p>
 		<form action="submit.php" method="POST" enctype="multipart/form-data">
 		<input name="action" value="changeAvatar" hidden>

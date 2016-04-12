@@ -18,6 +18,7 @@
 	// Helpers
 	require_once($df . "/helpers/PasswordHelper.php");
 	require_once($df . "/helpers/UsernameHelper.php");
+	require_once($df . "/helpers/URL.php");
 
 	// controller system v2
 	require_once($df . "/pages/Login.php");
@@ -456,8 +457,9 @@
 		// Logged in right elements
 		if (checkLoggedIn())
 		{
+			global $URL;
 			echo('<li class="dropdown">
-					<a data-toggle="dropdown"><img src="https://a.ripple.moe/'.getUserID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="'.URL::Avatar().'/'.getUserID($_SESSION["username"]).'" height="22" width="22" />	<b>'.$_SESSION["username"].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?u='.getUserID($_SESSION["username"]).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
