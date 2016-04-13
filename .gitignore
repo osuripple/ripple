@@ -21,8 +21,14 @@ push-to-prod.bat
 migrations/latest.txt
 
 # pep.py config and python cache
+c.ppy.sh/runserver.bat
 c.ppy.sh/config.ini
 c.ppy.sh/__pycache__/*.*
+
+# lets config and python cache
+lets/runserver.bat
+lets/config.ini
+lets/__pycache__/*.*
 
 # backup system
 backup-system/config.ini
