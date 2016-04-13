@@ -2300,7 +2300,7 @@ class P {
 			echo('If you really want to fake that you\'ve lost your password, you should at the very least log out of ripple, you know.');
 		}
 		else {
-			echo('<p>Let\'s get some things straight. We can only help you if you DID put your actual email address when you signed up. If you didn\'t, you\'re fucked. Hope to know either Nyo or Howl well enough to tell them to change the password for you, otherwise your account is now dead.</p><br>
+			echo('<p>Let\'s get some things straight. We can only help you if you DID put your actual email address when you signed up. If you didn\'t, you\'re fucked. Hope to know the admins well enough to tell them to change the password for you, otherwise your account is now dead.</p><br>
 			<form action="submit.php" method="POST">
 			<input name="action" value="recoverPassword" hidden>
 			<div class="input-group"><span class="input-group-addon" id="basic-addon1"><span class="fa fa-user" max-width="25%"></span></span><input type="text" name="username" required class="form-control" placeholder="Type your username." aria-describedby="basic-addon1"></div><p style="line-height: 15px"></p>
