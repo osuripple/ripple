@@ -4,18 +4,18 @@
 	<h1><?php echo __('extend.variables'); ?></h1>
 
 	<nav>
-		<?php echo Html::link('admin/extend/variables/add', __('extend.create_variable'), array('class' => 'btn')); ?>
+		<?php echo Html::link('admin/extend/variables/add', __('extend.create_variable'), ['class' => 'btn']); ?>
 	</nav>
 </hgroup>
 
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<?php if(count($variables)): ?>
+	<?php if (count($variables)): ?>
 	<ul class="list">
-		<?php foreach($variables as $var): ?>
+		<?php foreach ($variables as $var): ?>
 		<li>
-			<a href="<?php echo Uri::to('admin/extend/variables/edit/' . $var->key); ?>">
+			<a href="<?php echo Uri::to('admin/extend/variables/edit/'.$var->key); ?>">
 				<strong><?php echo substr($var->key, strlen('custom_')); ?></strong>
 				<p><?php echo e($var->value); ?></p>
 			</a>

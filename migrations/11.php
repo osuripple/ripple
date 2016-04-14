@@ -1,4 +1,5 @@
 <?php
+
 // Content goes here...
 $q = <<<'ENDOFMYSQLQUERY'
 DROP TABLE beatmaps;
@@ -17,4 +18,4 @@ ALTER TABLE `beatmaps`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ENDOFMYSQLQUERY;
 
-$GLOBALS["db"]->execute($q);
+$GLOBALS['db']->execute($q);

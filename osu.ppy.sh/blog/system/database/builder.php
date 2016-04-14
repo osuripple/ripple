@@ -1,196 +1,213 @@
-<?php namespace System\Database;
+<?php
+
+namespace System\Database;
 
 /**
- * Nano
+ * Nano.
  *
  * Just another php framework
  *
- * @package		nano
  * @link		http://madebykieron.co.uk
+ *
  * @copyright	http://unlicense.org/
  */
+abstract class builder
+{
+    /**
+     * Wrap database tables and columns names.
+     *
+     * @param string|array
+     *
+     * @return string
+     */
+    public function wrap($column)
+    {
+        if (is_array($column)) {
+            $columns = [];
 
-abstract class Builder {
+            foreach ($column as $c) {
+                $columns[] = $this->wrap($c);
+            }
 
-	/**
-	 * Wrap database tables and columns names
-	 *
-	 * @param string|array
-	 * @return string
-	 */
-	public function wrap($column) {
-		if(is_array($column)) {
-			$columns = array();
+            return implode(', ', $columns);
+        }
 
-			foreach($column as $c) {
-				$columns[] = $this->wrap($c);
-			}
+        return $this->enclose($column);
+    }
 
-			return implode(', ', $columns);
-		}
+    /**
+     * Enclose value with database connector escape characters.
+     *
+     * @param string
+     *
+     * @return string
+     */
+    public function enclose($value)
+    {
+        $params = [];
+        $alias = '';
+        $alias_keyword = ' as ';
 
-		return $this->enclose($column);
-	}
+        if ($pos = strpos(strtolower($value), $alias_keyword)) {
+            $alias = substr($value, $pos + strlen($alias_keyword));
+            $value = substr($value, 0, $pos);
+        }
 
-	/**
-	 * Enclose value with database connector escape characters
-	 *
-	 * @param string
-	 * @return string
-	 */
-	public function enclose($value) {
-		$params = array();
-		$alias = '';
-		$alias_keyword = ' as ';
+        foreach (explode('.', $value) as $item) {
+            if ($item == '*') {
+                $params[] = $item;
+            } else {
+                // trim left if already escaped
+                $item = $this->connection->lwrap.ltrim($item, $this->connection->lwrap);
 
-		if($pos = strpos(strtolower($value), $alias_keyword)) {
-			$alias = substr($value, $pos + strlen($alias_keyword));
-			$value = substr($value, 0, $pos);
-		}
+                // trim right if already escaped
+                $item = rtrim($item, $this->connection->rwrap).$this->connection->rwrap;
 
-		foreach(explode('.', $value) as $item) {
-			if($item == '*') {
-				$params[] = $item;
-			}
-			else {
-				// trim left if already escaped
-				$item = $this->connection->lwrap . ltrim($item, $this->connection->lwrap);
+                $params[] = $item;
+            }
+        }
 
-				// trim right if already escaped
-				$item = rtrim($item, $this->connection->rwrap) . $this->connection->rwrap;
+        $value = implode('.', $params);
 
-				$params[] = $item;
-			}
-		}
+        if ($alias) {
+            $value .= ' AS '.$this->enclose($alias);
+        }
 
-		$value = implode('.', $params);
+        return $value;
+    }
 
-		if($alias) {
-			$value .= ' AS ' . $this->enclose($alias);
-		}
+    /**
+     * Build placeholders to replace with values in a query.
+     *
+     * @param int
+     *
+     * @return string
+     */
+    public function placeholders($length, $holder = '?')
+    {
+        $holders = [];
 
-		return $value;
-	}
+        for ($i = 0; $i < $length; $i++) {
+            $holders[] = $holder;
+        }
 
-	/**
-	 * Build placeholders to replace with values in a query
-	 *
-	 * @param int
-	 * @return string
-	 */
-	public function placeholders($length, $holder = '?') {
-		$holders = array();
+        return implode(', ', $holders);
+    }
 
-		for($i = 0; $i < $length; $i++) {
-			$holders[] = $holder;
-		}
+    /**
+     * Set a row offset on the query.
+     *
+     * @param int
+     *
+     * @return object
+     */
+    public function build()
+    {
+        $sql = '';
 
-		return implode(', ', $holders);
-	}
+        if (count($this->join)) {
+            $sql .= ' '.implode(' ', $this->join);
+        }
 
-	/**
-	 * Set a row offset on the query
-	 *
-	 * @param int
-	 * @return object
-	 */
-	public function build() {
-		$sql = '';
+        if (count($this->where)) {
+            $sql .= ' '.implode(' ', $this->where);
+        }
 
-		if(count($this->join)) {
-			$sql .= ' ' . implode(' ', $this->join);
-		}
+        if (count($this->groupby)) {
+            $sql .= ' GROUP BY '.implode(', ', $this->groupby);
+        }
 
-		if(count($this->where)) {
-			$sql .= ' ' . implode(' ', $this->where);
-		}
+        if (count($this->sortby)) {
+            $sql .= ' ORDER BY '.implode(', ', $this->sortby);
+        }
 
-		if(count($this->groupby)) {
-			$sql .= ' GROUP BY ' . implode(', ', $this->groupby);
-		}
+        if ($this->limit) {
+            $sql .= ' LIMIT '.$this->limit;
 
-		if(count($this->sortby)) {
-			$sql .= ' ORDER BY ' . implode(', ', $this->sortby);
-		}
+            if ($this->offset) {
+                $sql .= ' OFFSET '.$this->offset;
+            }
+        }
 
-		if($this->limit) {
-			$sql .= ' LIMIT ' . $this->limit;
+        return $sql;
+    }
 
-			if($this->offset) {
-				$sql .= ' OFFSET ' . $this->offset;
-			}
-		}
+    /**
+     * Build table insert.
+     *
+     * @param array
+     *
+     * @return string
+     */
+    public function build_insert($row)
+    {
+        $keys = array_keys($row);
+        $values = $this->placeholders(count($row));
+        $this->bind = array_values($row);
 
-		return $sql;
-	}
+        return 'INSERT INTO '.$this->wrap($this->table).' ('.$this->wrap($keys).') VALUES('.$values.')';
+    }
 
-	/**
-	 * Build table insert
-	 *
-	 * @param array
-	 * @return string
-	 */
-	public function build_insert($row) {
-		$keys = array_keys($row);
-		$values = $this->placeholders(count($row));
-		$this->bind = array_values($row);
+    /**
+     * Build table update.
+     *
+     * @param array
+     *
+     * @return string
+     */
+    public function build_update($row)
+    {
+        $placeholders = [];
+        $values = [];
 
-		return 'INSERT INTO ' . $this->wrap($this->table) . ' (' . $this->wrap($keys) . ') VALUES(' . $values . ')';
-	}
+        foreach ($row as $key => $value) {
+            $placeholders[] = $this->wrap($key).' = ?';
+            $values[] = $value;
+        }
 
-	/**
-	 * Build table update
-	 *
-	 * @param array
-	 * @return string
-	 */
-	public function build_update($row) {
-		$placeholders = array();
-		$values = array();
+        $update = implode(', ', $placeholders);
+        $this->bind = array_merge($values, $this->bind);
 
-		foreach($row as $key => $value) {
-			$placeholders[] = $this->wrap($key) . ' = ?';
-			$values[] = $value;
-		}
+        return 'UPDATE '.$this->wrap($this->table).' SET '.$update.$this->build();
+    }
 
-		$update = implode(', ', $placeholders);
-		$this->bind = array_merge($values, $this->bind);
+    /**
+     * Build the select columns of the query.
+     *
+     * @param array
+     *
+     * @return string
+     */
+    public function build_select($columns = null)
+    {
+        if (is_array($columns) and count($columns)) {
+            $columns = $this->wrap($columns);
+        } else {
+            $columns = '*';
+        }
 
-		return 'UPDATE ' . $this->wrap($this->table) . ' SET ' . $update . $this->build();
-	}
+        return 'SELECT '.$columns.' FROM '.$this->wrap($this->table).$this->build();
+    }
 
-	/**
-	 * Build the select columns of the query
-	 *
-	 * @param array
-	 * @return string
-	 */
-	public function build_select($columns = null) {
-		if(is_array($columns) and count($columns)) {
-			$columns = $this->wrap($columns);
-		}
-		else $columns = '*';
+    /**
+     * Build a delete query.
+     *
+     * @param array
+     *
+     * @return string
+     */
+    public function build_delete()
+    {
+        return 'DELETE FROM '.$this->wrap($this->table).$this->build();
+    }
 
-		return 'SELECT ' . $columns . ' FROM ' . $this->wrap($this->table) . $this->build();
-	}
-
-	/**
-	 * Build a delete query
-	 *
-	 * @param array
-	 * @return string
-	 */
-	public function build_delete() {
-		return 'DELETE FROM ' . $this->wrap($this->table) . $this->build();
-	}
-
-	/**
-	 * Build a select count query
-	 *
-	 * @return string
-	 */
-	public function build_select_count() {
-		return 'SELECT COUNT(*) FROM ' . $this->wrap($this->table) . $this->build();
-	}
-
+    /**
+     * Build a select count query.
+     *
+     * @return string
+     */
+    public function build_select_count()
+    {
+        return 'SELECT COUNT(*) FROM '.$this->wrap($this->table).$this->build();
+    }
 }

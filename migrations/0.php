@@ -354,4 +354,4 @@ ALTER TABLE `users_stats`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ENDOFMYSQLQUERY;
 
-$GLOBALS["db"]->execute($q);
+$GLOBALS['db']->execute($q);
