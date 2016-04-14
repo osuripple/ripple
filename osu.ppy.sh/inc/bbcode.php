@@ -110,8 +110,8 @@ class bbcode {
 									 '<img src="$1" alt="$1" />',
 									 '<img src="$1" alt="$2" />',
 									 '<div class="code">$2</div>',
-									 '<object type="application/x-shockwave-flash" style="width: 450px; height: 366px;" data="//www.youtube.com/v/$1"><param name="movie" value="//www.youtube.com/v/$1" /><param name="wmode" value="transparent" /></object>',
-									 '<object type="application/x-shockwave-flash" style="width: 450px; height: 366px;" data="//www.youtube.com/v/$1"><param name="movie" value="//www.youtube.com/v/$1" /><param name="wmode" value="transparent" /></object>'
+									 '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
+									 '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
 			);
 
 			$text = preg_replace($advanced_bbcode, $advanced_html,$text);
