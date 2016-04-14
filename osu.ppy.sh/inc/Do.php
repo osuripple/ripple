@@ -150,10 +150,10 @@ class D {
 			require_once dirname(__FILE__) . "/SimpleMailgun.php";
 			$mailer = new SimpleMailgun($MailgunConfig);
 			$mailer->Send(
-				"ripple <noreply@" . $MailgunConfig["domain"] . ">",
+				"Ripple <noreply@" . $MailgunConfig["domain"] . ">",
 				$user["email"],
-				"ripple password recovery instructions",
-				sprintf("Hey %s! Someone, which we really hope was you, requested a password reset for your account. In case it was you, please <a href='%s'>click here</a> to reset your password on ripple. Otherwise, silently ignore this email.", $username, "http://" . $_SERVER["HTTP_HOST"] . "/index.php?p=19&k=" . $key . "&user=" . $username)
+				"Ripple password recovery instructions",
+				sprintf("Hey %s! Someone, which we really hope was you, requested a password reset for your account. In case it was you, please <a href='%s'>click here</a> to reset your password on Ripple. Otherwise, silently ignore this email.", $username, "http://" . $_SERVER["HTTP_HOST"] . "/index.php?p=19&k=" . $key . "&user=" . $username)
 			);
 			redirect("index.php?p=18&s=sent");
 		}

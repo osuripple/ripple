@@ -285,10 +285,10 @@
 						{
 							case 0: c = "Thank you for your bug report! That bug is now on our tasklist, we\'ll fix it as soon as possible. The status will change to \'closed\' when the bug will be fixed."; break;
 							case 1: c = "Thank you for your bug report! That bugfix was already on our tasklist, we\'ll fix it as soon as possible."; break;
-							case 2: c = "That bug is now fixed, you have contributed to make ripple better! Thank you!"; break;
+							case 2: c = "That bug is now fixed, you have contributed to make Ripple better! Thank you!"; break;
 							case 3: c = "Thank you for your feature request! That feature is now on our tasklist and it\'ll be added as soon as possible. The status will change to \'closed\' when the feature will be added."; break;
 							case 4: c = "Thank you for your feature request! A similar feature was already on our tasklist, we\'ll add it as soon as possible."; break;
-							case 5: c = "Your feature has been added! You have contributed to make ripple better! Thank you!"; break;
+							case 5: c = "Your feature has been added! You have contributed to make Ripple better! Thank you!"; break;
 							case 6: c = "Please do not abuse our report system. If you keep sending fake/spam reports, your account will be banned."; break;
 						}
 						document.getElementsByName("r")[0].value = c;

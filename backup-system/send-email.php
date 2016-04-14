@@ -29,7 +29,7 @@
 		foreach ($who as $to) {
 			echo("Sending email to ".$to."...\n");
 			$mailer->Send(
-				"ripple <noreply@ripple.moe>",
+				"Ripple <noreply@" . $MailgunConfig["domain"] . ">",
 				$to,
 				"Ripple backup notification",
 				"Ripple data has been backed up!<br><br><b>Backup Type:</b> ".$type."<br><b>Backup size:</b> ".$argv[1]."<br><b>Backed up to:</b> ".$where."<br><br>Log in to your Backblaze/S3/OVH account to download the backup archive."

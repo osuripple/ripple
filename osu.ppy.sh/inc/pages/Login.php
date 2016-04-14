@@ -13,7 +13,7 @@ class Login {
 	public $error_messages = array(
 		"Nice troll.",
 		"Wrong username or password.",
-		"You are banned from ripple. Do not come back.",
+		"You are banned.",
 		"You are not logged in.",
 		"Session expired. Please login again.",
 		"Invalid auto-login cookie.",

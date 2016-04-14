@@ -5,7 +5,7 @@
  * Mailgun API library, not bloated version.
  * This library wants to do one thing: send messages.
  * Nothing else will be implemented.
- * @package ripple
+ * @package Ripple
  * @author kwisk <kwisk@airmail.cc>
  * @version 1.0
  */

@@ -3,7 +3,7 @@
  * RememberCookieHandler
  * A simple way to remember an user over time.
  *
- * @package ripple
+ * @package Ripple
  * @author kwisk <kwisk@airmail.cc>
  * @version 1.0
  */

@@ -16,7 +16,7 @@ class ServerStatus {
 			<div id="content-wide">
 				<div align="center">
 					<h1><i class="fa fa-cogs"></i> Server status</h1>
-					<b>Unfortunately, no server status for this ripple instance is available. Slap the sysadmin off telling him to configure it.</b>
+					<b>Unfortunately, no server status for this Ripple instance is available. Slap the sysadmin off telling him to configure it.</b>
 				</div>
 			</div>');
 		}

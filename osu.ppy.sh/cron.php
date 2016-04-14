@@ -67,7 +67,7 @@
 
 		for ($i=0; $i < count($users); $i++)
 		{
-			// Do this for every ripple user
+			// Do this for every Ripple user
 			// Get current username
 			$user = current($users[$i]);
 

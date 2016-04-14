@@ -1486,8 +1486,7 @@ class P {
 			P::ExceptionMessage($error[$_GET["e"]]);
 
 
-		// 1.5 -- Changed ripple in ripple 1.5
-		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "//i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Welcome to ripple 1.5</h1>');
+		echo('<p align="center"><br><image class="animated bounce" src="' . ( mt_rand(0, 100) == 1 ? "//i.imgur.com/CBKmTji.jpg" : "./images/logo-256.png" ) . '"></image><br></p><h1 class="animated bounceIn">Welcome to Ripple 1.5</h1>');
 
 		// Home alert
 		P::HomeAlert();
@@ -1575,7 +1574,7 @@ class P {
 			$topPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 10", array($username, $m));
 			$recentPlays = $GLOBALS["db"]->fetchAll("SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY time DESC LIMIT 10", array($username, $m));
 
-			// Get all allowed users on ripple
+			// Get all allowed users on Ripple
 			$allowedUsers = getAllowedUsers("id");
 
 			// Bold selected mode text.
@@ -2290,14 +2289,14 @@ class P {
 		$exceptions = array(
 			"Nice troll.",
 			"That user doesn't exist.",
-			"You are banned from ripple. Don't even attempt to come back."
+			"You are banned from Ripple. We won't let you come back in."
 		);
 		if (isset($_GET["e"]) && isset($exceptions[$_GET["e"]])) P::ExceptionMessage($exceptions[$_GET["e"]]);
 		if (isset($_GET["s"]))
-			P::SuccessMessage("You should have received an email containing instructions on how to recover your ripple account.");
+			P::SuccessMessage("You should have received an email containing instructions on how to recover your Ripple account.");
 		if (checkLoggedIn()) {
 			echo('What are you doing here? You\'re already logged in, you moron!<br>');
-			echo('If you really want to fake that you\'ve lost your password, you should at the very least log out of ripple, you know.');
+			echo('If you really want to fake that you\'ve lost your password, you should at the very least log out of Ripple, you know.');
 		}
 		else {
 			echo('<p>Let\'s get some things straight. We can only help you if you DID put your actual email address when you signed up. If you didn\'t, you\'re fucked. Hope to know the admins well enough to tell them to change the password for you, otherwise your account is now dead.</p><br>
@@ -2316,7 +2315,7 @@ class P {
 	static function Alerts()
 	{
 		// Account activation alert (not implemented yet)
-		if (getUserAllowed($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">To avoid using accounts that you don\'t own, you need to <b>confirm your ripple account</b>. To do so, simply <b>open your osu! client, login to ripple server and submit a score.</b> Every score is ok, even on unranked maps. <u><b>Remember that if you don\'t activate your Ripple account within 3 hours, it\'ll be deleted!</b></u></div>');
+		if (getUserAllowed($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">To avoid using accounts that you don\'t own, you need to <b>confirm your Ripple account</b>. To do so, simply <b>open your osu! client, login to ripple server and submit a score.</b> Every score is ok, even on unranked maps. <u><b>Remember that if you don\'t activate your Ripple account within 3 hours, it\'ll be deleted!</b></u></div>');
 
 		// Documentation alert to help new users
 		if (getUserID($_SESSION["username"]) == 2) echo('<div class="alert alert-warning" role="alert">If you are having troubles while activating your account or connecting to Ripple, please check the Documentation section by clicking <a href="index.php?p=14">here</a>.</div>');

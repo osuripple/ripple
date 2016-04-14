@@ -582,12 +582,12 @@
 
 	/*
 	* getAllowedUsers()
-	* Get an associative array, saying whether a user is banned or not on ripple.
+	* Get an associative array, saying whether a user is banned or not on Ripple.
 	*
 	* @returns (array) see above.
 	*/
 	function getAllowedUsers($by = "username") {
-		// get all the allowed users in ripple
+		// get all the allowed users in Ripple
 		$allowedUsersRaw = $GLOBALS["db"]->fetchAll("SELECT " . $by . ", allowed FROM users");
 		// Future array containing all the allowed users.
 		$allowedUsers = array();
@@ -725,7 +725,7 @@
 	 * updateSafeTitle
 	 * Updates the st cookie, if 1 title is "Google" instead
 	 * of Ripple - pagename, so Peppy doesn't know that
-	 * we are browsing ripple
+	 * we are browsing Ripple
 	 */
 	function updateSafeTitle()
 	{
@@ -1683,7 +1683,7 @@
 
 	function printBeatmapMaintenance()
 	{
-		echo("0|ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
+		echo("0|Ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
 		echo("0|maintenance mode|7|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
 		echo("0|check|6|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
 		echo("0|your server's website|5|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10));
@@ -1816,7 +1816,7 @@
 		echo('<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>');
 		echo('Welcome to the changelog page.<br>Here changes are posted real-time as they are pushed to the website.<br>Hover a change to know when it was done.<br><br>');
 		if (!file_exists(dirname(__FILE__)."/../../ci-system/changelog.txt")) {
-			echo '<b>Unfortunately, no changelog for this ripple instance is available. Slap the sysadmin off telling him to configure it.</b>';
+			echo '<b>Unfortunately, no changelog for this Ripple instance is available. Slap the sysadmin off telling him to configure it.</b>';
 		}
 		else {
 			$_GET["page"] = (isset($_GET["page"]) && $_GET["page"] > 0 ? intval($_GET["page"]) : 1);
