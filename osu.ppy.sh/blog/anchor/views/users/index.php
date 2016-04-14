@@ -8,7 +8,7 @@
 	<?php echo $messages; ?>
 
 	<ul class="list">
-		<?php foreach($users->results as $user): ?>
+		<?php foreach ($users->results as $user): ?>
 		<li>
 			<a href="#">
 				<strong><?php echo $user->username; ?></strong>

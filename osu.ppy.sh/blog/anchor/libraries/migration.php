@@ -1,40 +1,45 @@
 <?php
 
-abstract class Migration {
-	abstract public function up();
-	abstract public function down();
+abstract class migration
+{
+    abstract public function up();
 
-	public function has_table($table) {
-		$default = Config::db('default');
-		$db = Config::db('connections.' . $default . '.database');
+    abstract public function down();
 
-		$sql = 'SHOW TABLES FROM `' . $db . '`';
-		list($result, $statement) = DB::ask($sql);
-		$statement->setFetchMode(PDO::FETCH_NUM);
+    public function has_table($table)
+    {
+        $default = Config::db('default');
+        $db = Config::db('connections.'.$default.'.database');
 
-		$tables = array();
+        $sql = 'SHOW TABLES FROM `'.$db.'`';
+        list($result, $statement) = DB::ask($sql);
+        $statement->setFetchMode(PDO::FETCH_NUM);
 
-		foreach($statement->fetchAll() as $row) {
-			$tables[] = $row[0];
-		}
+        $tables = [];
 
-		return in_array($table, $tables);
-	}
+        foreach ($statement->fetchAll() as $row) {
+            $tables[] = $row[0];
+        }
 
-	public function has_table_column($table, $column) {
-		if($this->has_table($table)) {
-			$sql = 'SHOW COLUMNS FROM `' . $table . '`';
-			list($result, $statement) = DB::ask($sql);
-			$statement->setFetchMode(PDO::FETCH_OBJ);
+        return in_array($table, $tables);
+    }
 
-			$columns = array();
+    public function has_table_column($table, $column)
+    {
+        if ($this->has_table($table)) {
+            $sql = 'SHOW COLUMNS FROM `'.$table.'`';
+            list($result, $statement) = DB::ask($sql);
+            $statement->setFetchMode(PDO::FETCH_OBJ);
 
-			foreach($statement->fetchAll() as $row) {
-				$columns[] = $row->Field;
-			}
+            $columns = [];
 
-			return in_array($column, $columns);
-		}
-		else return false;
-	}
+            foreach ($statement->fetchAll() as $row) {
+                $columns[] = $row->Field;
+            }
+
+            return in_array($column, $columns);
+        } else {
+            return false;
+        }
+    }
 }

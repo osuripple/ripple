@@ -1,74 +1,79 @@
-<?php namespace System\Request;
+<?php
+
+namespace System\Request;
 
 /**
- * Nano
+ * Nano.
  *
  * Just another php framework
  *
- * @package		nano
  * @link		http://madebykieron.co.uk
+ *
  * @copyright	http://unlicense.org/
  */
+class server
+{
+    /**
+     * Array data from the SERVER global.
+     *
+     * @var array
+     */
+    private $data;
 
-class Server {
+    /**
+     * Server object constructor.
+     *
+     * @param array
+     */
+    public function __construct($array)
+    {
+        $this->data = $array;
+    }
 
-	/**
-	 * Array data from the SERVER global
-	 *
-	 * @var array
-	 */
-	private $data;
+    /**
+     * Get a server array item.
+     *
+     * @param string
+     */
+    public function get($key, $fallback = null)
+    {
+        if (array_key_exists($key, $this->data)) {
+            return $this->data[$key];
+        }
 
-	/**
-	 * Server object constructor
-	 *
-	 * @param array
-	 */
-	public function __construct($array) {
-		$this->data = $array;
-	}
+        return $fallback;
+    }
 
-	/**
-	 * Get a server array item
-	 *
-	 * @param string
-	 */
-	public function get($key, $fallback = null) {
-		if(array_key_exists($key, $this->data)) {
-			return $this->data[$key];
-		}
+    /**
+     * Set a server array item.
+     *
+     * @param string
+     * @param string
+     */
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+    }
 
-		return $fallback;
-	}
+    /**
+     * Check if a server array item exists.
+     *
+     * @param string
+     */
+    public function has($key)
+    {
+        return array_key_exists($key, $this->data);
+    }
 
-	/**
-	 * Set a server array item
-	 *
-	 * @param string
-	 * @param string
-	 */
-	public function set($key, $value) {
-		$this->data[$key] = $value;
-	}
-
-	/**
-	 * Check if a server array item exists
-	 *
-	 * @param string
-	 */
-	public function has($key) {
-		return array_key_exists($key, $this->data);
-	}
-
-	/**
-	 * Remove a server array item
-	 *
-	 * @param string
-	 */
-	public function erase($key) {
-		if($this->has($key)) {
-			unset($this->data[$key]);
-		}
-	}
-
+    /**
+     * Remove a server array item.
+     *
+     * @param string
+     */
+    public function erase($key)
+    {
+        if ($this->has($key)) {
+            unset($this->data[$key]);
+        }
+    }
 }
