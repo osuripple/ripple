@@ -14,6 +14,9 @@
 	require_once($df . "/RememberCookieHandler.php");
 	require_once($df . "/PlayStyleEnum.php");
 	require_once($df . "/resize.php");
+	
+	// Composer
+	require_once($df . "/../vendor/autoload.php");
 
 	// Helpers
 	require_once($df . "/helpers/PasswordHelper.php");

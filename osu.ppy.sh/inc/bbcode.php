@@ -118,7 +118,7 @@ class bbcode {
 		}
 
 		//before return convert line breaks to HTML
-		return bbcode::nl2br($text);
+		return self::purify(bbcode::nl2br($text));
 
 	}
 
@@ -141,6 +141,20 @@ class bbcode {
 	public static function nl2br($var)
 	{
 		return str_replace(array('\\r\\n','\r\\n','r\\n','\r\n', '\n', '\r'), '<br />', nl2br($var));
+	}
+	
+	/**
+	 *
+	 * Passes HTML to HTMLPurifier so that we don't have memes
+	 * @param string $var
+	 */
+	public static function purify($var) {
+		$config = HTMLPurifier_Config::createDefault();
+		$config->set('HTML.SafeIframe', true);
+		$config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%'); //allow YouTube and Vimeo
+		$purifier = new HTMLPurifier($config);
+		$clean_html = $purifier->purify($var);
+		return $clean_html;
 	}
 
 }

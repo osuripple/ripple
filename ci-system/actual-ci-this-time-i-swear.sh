@@ -36,9 +36,10 @@ cd ..
 
 # Run composer in various directories.
 originaldir=$(pwd)
-for i in 'osu.ppy.sh/blog'; do
+for i in 'osu.ppy.sh/blog' 'osu.ppy.sh'; do
 	cd $i
 	composer install
+	chmod -R 770 vendor
 	cd $originaldir
 done
 
