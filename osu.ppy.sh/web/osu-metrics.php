@@ -2,7 +2,7 @@
 /*
  * See http://blog.ppy.sh/post/125425126423/20150730 .
  * Called before anything else. Literally the first API call the sniffer perceived.
- * 
+ *
  * GET parameters:
  * u - The username
  * h - The password hash

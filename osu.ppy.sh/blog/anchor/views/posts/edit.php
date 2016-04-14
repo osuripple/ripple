@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 
-<form method="post" action="<?php echo Uri::to('admin/posts/edit/' . $article->id); ?>" enctype="multipart/form-data" novalidate>
+<form method="post" action="<?php echo Uri::to('admin/posts/edit/'.$article->id); ?>" enctype="multipart/form-data" novalidate>
 
 	<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -8,34 +8,34 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title', $article->title), array(
-				'placeholder' => __('posts.title'),
-				'autocomplete'=> 'off',
-				'autofocus' => 'true'
-			)); ?>
+			<?php echo Form::text('title', Input::previous('title', $article->title), [
+                'placeholder'  => __('posts.title'),
+                'autocomplete' => 'off',
+                'autofocus'    => 'true',
+            ]); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), array(
-					'type' => 'submit',
-					'class' => 'btn'
-				)); ?>
+				<?php echo Form::button(__('global.save'), [
+                    'type'  => 'submit',
+                    'class' => 'btn',
+                ]); ?>
 				
-				<?php echo Html::link('admin/posts' , __('global.cancel'), array(
-					'class' => 'btn cancel blue'
-				)); ?>
+				<?php echo Html::link('admin/posts', __('global.cancel'), [
+                    'class' => 'btn cancel blue',
+                ]); ?>
 
-				<?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), array(
-					'class' => 'btn delete red'
-				)); ?>
+				<?php echo Html::link('admin/posts/delete/'.$article->id, __('global.delete'), [
+                    'class' => 'btn delete red',
+                ]); ?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), array(
-				'placeholder' => __('posts.content_explain')
-			)); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), [
+                'placeholder' => __('posts.content_explain'),
+            ]); ?>
 
 			<?php echo $editor; ?>
 		</div>
@@ -45,7 +45,7 @@
 		<div class="wrap">
 			<p>
 				<label for="label-slug"><?php echo __('posts.slug'); ?>:</label>
-				<?php echo Form::text('slug', Input::previous('slug', $article->slug), array('id' => 'label-slug')); ?>
+				<?php echo Form::text('slug', Input::previous('slug', $article->slug), ['id' => 'label-slug']); ?>
 				<em><?php echo __('posts.slug_explain'); ?></em>
 			</p>
 			<p>
@@ -60,30 +60,30 @@
 			</p>
 			<p>
 				<label for="label-status"><?php echo __('posts.status'); ?>:</label>
-				<?php echo Form::select('status', $statuses, Input::previous('status', $article->status), array('id' => 'label-status')); ?>
+				<?php echo Form::select('status', $statuses, Input::previous('status', $article->status), ['id' => 'label-status']); ?>
 				<em><?php echo __('posts.status_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-category"><?php echo __('posts.category'); ?>:</label>
-				<?php echo Form::select('category', $categories, Input::previous('category', $article->category), array('id' => 'label-category')); ?>
+				<?php echo Form::select('category', $categories, Input::previous('category', $article->category), ['id' => 'label-category']); ?>
 				<em><?php echo __('posts.category_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-comments"><?php echo __('posts.allow_comments'); ?>:</label>
-				<?php echo Form::checkbox('comments', 1, Input::previous('comments', $article->comments) == 1, array('id' => 'label-comments')); ?>
+				<?php echo Form::checkbox('comments', 1, Input::previous('comments', $article->comments) == 1, ['id' => 'label-comments']); ?>
 				<em><?php echo __('posts.allow_comments_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-css"><?php echo __('posts.custom_css'); ?>:</label>
-				<?php echo Form::textarea('css', Input::previous('css', $article->css), array('id' => 'label-css')); ?>
+				<?php echo Form::textarea('css', Input::previous('css', $article->css), ['id' => 'label-css']); ?>
 				<em><?php echo __('posts.custom_css_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-js"><?php echo __('posts.custom_js'); ?>:</label>
-				<?php echo Form::textarea('js', Input::previous('js', $article->js), array('id' => 'label-js')); ?>
+				<?php echo Form::textarea('js', Input::previous('js', $article->js), ['id' => 'label-js']); ?>
 				<em><?php echo __('posts.custom_js_explain'); ?></em>
 			</p>
-			<?php foreach($fields as $field): ?>
+			<?php foreach ($fields as $field): ?>
 			<p>
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 				<?php echo Extend::html($field); ?>

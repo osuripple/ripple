@@ -18,33 +18,35 @@
 		<meta http-equiv="X-UA-Compatible" content="chrome=1">
 		<meta name="viewport" content="width=600">
 	</head>
-	<body class="<?php echo Auth::guest() ? 'login' : 'admin'; ?> <?php echo str_replace('_','-',Config::app('language')); ?>">
+	<body class="<?php echo Auth::guest() ? 'login' : 'admin'; ?> <?php echo str_replace('_', '-', Config::app('language')); ?>">
 
 		<header class="top">
 			<div class="wrap">
-				<?php if(Auth::user()): ?>
+				<?php if (Auth::user()): ?>
 				<nav>
 					<ul>
 						<li class="logo">
 							<a href="<?php echo Uri::to('admin/panel'); ?>">Anchor CMS</a>
 						</li>
 
-						<?php $menu = array('posts', 'comments', 'pages', 'categories', 'users', 'extend'); ?>
-						<?php foreach($menu as $url): ?>
-						<li <?php if(strpos(Uri::current(), $url) !== false) echo 'class="active"'; ?>>
-							<a href="<?php echo Uri::to('admin/' . $url); ?>">
-								<?php echo ucfirst(__($url . '.' . $url)); ?>
+						<?php $menu = ['posts', 'comments', 'pages', 'categories', 'users', 'extend']; ?>
+						<?php foreach ($menu as $url): ?>
+						<li <?php if (strpos(Uri::current(), $url) !== false) {
+    echo 'class="active"';
+} ?>>
+							<a href="<?php echo Uri::to('admin/'.$url); ?>">
+								<?php echo ucfirst(__($url.'.'.$url)); ?>
 							</a>
 						</li>
 						<?php endforeach; ?>
 					</ul>
 				</nav>
 
-				<?php echo Html::link('admin/logout', __('global.logout'), array('class' => 'btn')); ?>
+				<?php echo Html::link('admin/logout', __('global.logout'), ['class' => 'btn']); ?>
 
 				<?php $home = Registry::get('home_page'); ?>
 
-				<?php echo Html::link($home->slug, __('global.visit_your_site'), array('class' => 'btn', 'target' => '_blank')); ?>
+				<?php echo Html::link($home->slug, __('global.visit_your_site'), ['class' => 'btn', 'target' => '_blank']); ?>
 
 				<?php else: ?>
 				<aside class="logo">

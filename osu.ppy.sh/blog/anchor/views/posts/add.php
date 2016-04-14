@@ -8,31 +8,31 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title'), array(
-				'placeholder' => __('posts.title'),
-				'autocomplete'=> 'off',
-				'autofocus' => 'true'
-			)); ?>
+			<?php echo Form::text('title', Input::previous('title'), [
+                'placeholder'  => __('posts.title'),
+                'autocomplete' => 'off',
+                'autofocus'    => 'true',
+            ]); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), array(
-					'type' => 'submit',
-					'class' => 'btn',
-					'data-loading' => __('global.saving')
-				)); ?>
+				<?php echo Form::button(__('global.save'), [
+                    'type'         => 'submit',
+                    'class'        => 'btn',
+                    'data-loading' => __('global.saving'),
+                ]); ?>
 
-				<?php echo Html::link('admin/posts' , __('global.cancel'), array(
-					'class' => 'btn cancel blue'
-				)); ?>
+				<?php echo Html::link('admin/posts', __('global.cancel'), [
+                    'class' => 'btn cancel blue',
+                ]); ?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown'), array(
-				'placeholder' => __('posts.content_explain')
-			)); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown'), [
+                'placeholder' => __('posts.content_explain'),
+            ]); ?>
 
 			<?php echo $editor; ?>
 		</div>
@@ -42,40 +42,40 @@
 		<div class="wrap">
 			<p>
 				<label for="label-slug"><?php echo __('posts.slug'); ?>:</label>
-				<?php echo Form::text('slug', Input::previous('slug'), array('id' => 'label-slug')); ?>
+				<?php echo Form::text('slug', Input::previous('slug'), ['id' => 'label-slug']); ?>
 				<em><?php echo __('posts.slug_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-description"><?php echo __('posts.description'); ?>:</label>
-				<?php echo Form::textarea('description', Input::previous('description'), array('id' => 'label-description')); ?>
+				<?php echo Form::textarea('description', Input::previous('description'), ['id' => 'label-description']); ?>
 				<em><?php echo __('posts.description_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-status"><?php echo __('posts.status'); ?>:</label>
-				<?php echo Form::select('status', $statuses, Input::previous('status'), array('id' => 'label-status')); ?>
+				<?php echo Form::select('status', $statuses, Input::previous('status'), ['id' => 'label-status']); ?>
 				<em><?php echo __('posts.status_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-category"><?php echo __('posts.category'); ?>:</label>
-				<?php echo Form::select('category', $categories, Input::previous('category'), array('id' => 'label-category')); ?>
+				<?php echo Form::select('category', $categories, Input::previous('category'), ['id' => 'label-category']); ?>
 				<em><?php echo __('posts.category_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-comments"><?php echo __('posts.allow_comments'); ?>:</label>
-				<?php echo Form::checkbox('comments', 1, Input::previous('comments', 0) == 1, array('id' => 'label-comments')); ?>
+				<?php echo Form::checkbox('comments', 1, Input::previous('comments', 0) == 1, ['id' => 'label-comments']); ?>
 				<em><?php echo __('posts.allow_comments_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-css"><?php echo __('posts.custom_css'); ?>:</label>
-				<?php echo Form::textarea('css', Input::previous('css'), array('id' => 'label-css')); ?>
+				<?php echo Form::textarea('css', Input::previous('css'), ['id' => 'label-css']); ?>
 				<em><?php echo __('posts.custom_css_explain'); ?></em>
 			</p>
 			<p>
 				<label for="label-js"><?php echo __('posts.custom_js', 'Custom JS'); ?>:</label>
-				<?php echo Form::textarea('js', Input::previous('js'), array('id' => 'label-js')); ?>
+				<?php echo Form::textarea('js', Input::previous('js'), ['id' => 'label-js']); ?>
 				<em><?php echo __('posts.custom_js_explain'); ?></em>
 			</p>
-			<?php foreach($fields as $field): ?>
+			<?php foreach ($fields as $field): ?>
 			<p>
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 				<?php echo Extend::html($field); ?>
