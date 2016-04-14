@@ -97,8 +97,6 @@ class bbcode
                                      '#\[youtube]([0-9a-zA-Z]{1,11})\[/youtube]#Usi',
             ];
 
-		//before return convert line breaks to HTML
-		return self::purify(bbcode::nl2br($text));
             /**
              * This array contains the advanced static bbcode's html.
              *
@@ -124,7 +122,7 @@ class bbcode
         }
 
         //before return convert line breaks to HTML
-        return self::nl2br($text);
+        return self::purify(self::nl2br($text));
     }
 
 	/**
@@ -145,7 +143,7 @@ class bbcode
 	public static function purify($var) {
 		$config = HTMLPurifier_Config::createDefault();
 		$config->set('HTML.SafeIframe', true);
-		$config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/)%'); //allow YouTube and Vimeo
+		$config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/)%');
 		$purifier = new HTMLPurifier($config);
 		$clean_html = $purifier->purify($var);
 		return $clean_html;
