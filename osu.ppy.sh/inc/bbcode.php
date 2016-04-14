@@ -28,7 +28,7 @@ class bbcode
         //special chars
         $text = htmlspecialchars($text, ENT_QUOTES, $charset);
 
-        /**
+        /*
          * This array contains the main static bbcode.
          *
          * @var array
@@ -48,7 +48,7 @@ class bbcode
                                 ':peppy:', ':barney:', ':akerino:', ':foka:', ':kappy:', ':creepypeppy:', ':peppyfiero:', ':djpeppy:', ':kappa:',
         ];
 
-        /**
+        /*
          * This array contains the main static bbcode's html.
          *
          * @var array
@@ -76,7 +76,7 @@ class bbcode
 
         //advanced BBCODE
         if ($advanced) {
-            /**
+            /*
              * This array contains the advanced static bbcode.
              *
              * @var array
@@ -97,7 +97,7 @@ class bbcode
                                      '#\[youtube]([0-9a-zA-Z]{1,11})\[/youtube]#Usi',
             ];
 
-            /**
+            /*
              * This array contains the advanced static bbcode's html.
              *
              * @var array
@@ -125,29 +125,32 @@ class bbcode
         return self::purify(self::nl2br($text));
     }
 
-	/**
-	 *
-	 * Inserts HTML line breaks before all newlines in a string
-	 * @param string $var
-	 */
-	public static function nl2br($var)
-	{
-		return str_replace(array('\\r\\n','\r\\n','r\\n','\r\n', '\n', '\r'), '<br />', nl2br($var));
-	}
-	
-	/**
-	 *
-	 * Passes HTML to HTMLPurifier so that we don't have memes
-	 * @param string $var
-	 */
-	public static function purify($var) {
-		$config = HTMLPurifier_Config::createDefault();
-		$config->set('HTML.SafeIframe', true);
-		$config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/)%');
-		$purifier = new HTMLPurifier($config);
-		$clean_html = $purifier->purify($var);
-		return $clean_html;
-	}
+    /**
+     * Inserts HTML line breaks before all newlines in a string.
+     *
+     * @param string $var
+     */
+    public static function nl2br($var)
+    {
+        return str_replace(['\\r\\n', '\r\\n', 'r\\n', '\r\n', '\n', '\r'], '<br />', nl2br($var));
+    }
+
+    /**
+     * Passes HTML to HTMLPurifier so that we don't have memes.
+     *
+     * @param string $var
+     */
+    public static function purify($var)
+    {
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('HTML.SafeIframe', true);
+        $config->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/)%');
+        $purifier = new HTMLPurifier($config);
+        $clean_html = $purifier->purify($var);
+
+        return $clean_html;
+    }
+
     /**
      * removes bbcode from text.
      *
