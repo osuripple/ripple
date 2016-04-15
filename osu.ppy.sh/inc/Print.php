@@ -1746,7 +1746,8 @@ class P {
 				<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">Score</th></tr>');
 				for ($i=0; $i < count($topPlays); $i++) {
 					// Get beatmap name from md5 (beatmaps_names) for this play
-					$bn = $GLOBALS["db"]->fetch("SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?", $topPlays[$i]["beatmap_md5"]);
+					//$bn = $GLOBALS["db"]->fetch("SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?", $topPlays[$i]["beatmap_md5"]);
+					$bn = $GLOBALS["db"]->fetch("SELECT song_name FROM beatmaps WHERE beatmap_md5 = ?", $topPlays[$i]["beatmap_md5"]);
 
 					if ($bn) {
 						// Beatmap name found, print beatmap name and score

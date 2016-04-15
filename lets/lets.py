@@ -1,5 +1,6 @@
 # General imports
 import sys
+import os
 import glob
 from helpers import consoleHelper
 from helpers import databaseHelper
@@ -10,6 +11,7 @@ from constants import bcolors
 from handlers import getScoresHandler
 from handlers import submitModularHandler
 from handlers import banchoConnectHandler
+from handlers import getReplayHandler
 
 # Tornado
 import tornado.ioloop
@@ -19,7 +21,8 @@ def make_app():
 	return tornado.web.Application([
 		(r"/web/bancho_connect.php", banchoConnectHandler.handler),
 		(r"/web/osu-osz2-getscores.php", getScoresHandler.handler),
-		(r"/web/osu-submit-modular.php", submitModularHandler.handler)
+		(r"/web/osu-submit-modular.php", submitModularHandler.handler),
+		(r"/web/osu-getreplay.php", getReplayHandler.handler)
 	])
 
 if __name__ == "__main__":
@@ -55,6 +58,22 @@ if __name__ == "__main__":
 		consoleHelper.printError()
 		consoleHelper.printColored("[!] Error while connection to database. Please check your config.ini and run the server again", bcolors.RED)
 		raise
+
+	# Create data folder if needed
+	consoleHelper.printNoNl("> Checking folders... ")
+	paths = [".data", ".data/replays"]
+	for i in paths:
+		if not os.path.exists(i):
+			os.makedirs(i, 0o770)
+	consoleHelper.printDone()
+
+	# Enable PP if this is the officialTM ripple server
+	if os.path.isfile("ripp.py"):
+		glob.pp = True
+		import ripp
+		print("> Using {}ripp v{}{} as PP calculator.".format(bcolors.GREEN, ripp.VERSION, bcolors.ENDC))
+	else:
+		consoleHelper.printColored("[!] No PP calculator found. PP are disabled.", bcolors.YELLOW)
 
 	# Start the server
 	serverPort = int(glob.conf.config["server"]["port"])

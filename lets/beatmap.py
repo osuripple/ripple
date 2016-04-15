@@ -1,10 +1,8 @@
 from constants import rankedStatuses
-import score
 from helpers import osuapiHelper
 import glob
 import time
 from helpers import consoleHelper
-from constants import bcolors
 
 class beatmap:
 	def __init__(self, md5 = None, beatmapSetID = None):
@@ -21,6 +19,13 @@ class beatmap:
 		self.beatmapSetID = 0
 		self.offset = 0		# Won't implement
 		self.rating = 10.0 	# Won't implement
+
+		self.stars = 0.0
+		self.AR = 0.0
+		self.OD = 0.0
+		self.maxCombo = 0
+		self.hitLength = 0
+
 		if md5 != None and beatmapSetID != None:
 			self.setData(md5, beatmapSetID)
 
@@ -29,20 +34,24 @@ class beatmap:
 		Add current beatmap data in db if not in yet
 		"""
 		# Make sure the beatmap is not already in db
-		consoleHelper.printColored("Saving beatmap data in db...", bcolors.PINK)
 		bid = glob.db.fetch("SELECT id FROM beatmaps WHERE beatmap_md5 = ?", [self.fileMD5])
 		if (bid != None):
 			# This beatmap is already in db, remove old record
-			consoleHelper.printColored("Deleting old beatmap data", bcolors.PINK)
+			consoleHelper.printGetScoresMessage("Deleting old beatmap data")
 			glob.db.execute("DELETE FROM beatmaps WHERE id = ?", [bid["id"]])
 
 		# Add new beatmap data
-		consoleHelper.printColored("Saving new data...", bcolors.PINK)
-		glob.db.execute("INSERT INTO `beatmaps` (`id`, `beatmap_id`, `beatmapset_id`, `beatmap_md5`, `song_name`, `ranked`, `latest_update`) VALUES (NULL, ?, ?, ?, ?, ?, ?);", [
+		consoleHelper.printGetScoresMessage("Saving beatmap data in db...")
+		glob.db.execute("INSERT INTO `beatmaps` (`id`, `beatmap_id`, `beatmapset_id`, `beatmap_md5`, `song_name`, `ar`, `od`, `difficulty`, `max_combo`, `hit_length`, `ranked`, `latest_update`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", [
 			self.beatmapID,
 			self.beatmapSetID,
 			self.fileMD5,
 			self.songName,
+			self.AR,
+			self.OD,
+			self.stars,
+			self.maxCombo,
+			self.hitLength,
 			self.rankedStatus,
 			int(time.time())
 		])
@@ -55,26 +64,28 @@ class beatmap:
 		return -- True if set, False if not set
 		"""
 		# Get data from DB
-		consoleHelper.printColored("Trying to get beatmap data from db", bcolors.PINK)
 		data = glob.db.fetch("SELECT * FROM beatmaps WHERE beatmap_md5 = ?", [md5])
 
 		# Make sure the query returned something
 		if (data == None):
-			consoleHelper.printColored("No beatmap data in db", bcolors.PINK)
 			return False
 
 		# Make sure the beatmap data in db is not too old
 		if (time.time() > data["latest_update"]+86400):
-			consoleHelper.printColored("Beatmap db data is too old", bcolors.PINK)
 			return False
 
 		# Data in DB, set beatmap data
-		consoleHelper.printColored("Beatmap data is in db", bcolors.PINK)
+		consoleHelper.printGetScoresMessage("Got beatmap data from db")
 		self.songName = data["song_name"]
 		self.fileMD5 = md5
-		self.rankedStatus = data["ranked"]
-		self.beatmapID = data["beatmap_id"]
-		self.beatmapSetID = data["beatmapset_id"]
+		self.rankedStatus = int(data["ranked"])
+		self.beatmapID = int(data["beatmap_id"])
+		self.beatmapSetID = int(data["beatmapset_id"])
+		self.AR = float(data["ar"])
+		self.OD = float(data["od"])
+		self.stars = float(data["difficulty"])
+		self.maxCombo = int(data["max_combo"])
+		self.hitLength = int(data["hit_length"])
 		return True
 
 	def setDataFromOsuApi(self, md5, beatmapSetID):
@@ -85,7 +96,6 @@ class beatmap:
 		beatmapSetID -- beatmap set ID, used to check if a map is outdated
 		return -- True if set, False if not set
 		"""
-		consoleHelper.printColored("Trying to get beatmap data from osu!api", bcolors.PINK)
 		data = osuapiHelper.osuApiRequest("get_beatmaps", "h={}".format(md5))
 		if (data == None):
 			# Error while retreiving data from MD5, check with beatmap set ID
@@ -99,12 +109,17 @@ class beatmap:
 				return True
 
 		# We have data from osu!api, set beatmap data
-		consoleHelper.printColored("Got beatmap data from osu!api", bcolors.PINK)
-		self.songName = "{} - {}".format(data["artist"], data["title"])
+		consoleHelper.printGetScoresMessage("Got beatmap data from osu!api")
+		self.songName = "{} - {} [{}]".format(data["artist"], data["title"], data["version"])
 		self.fileMD5 = md5
-		self.rankedStatus = convertRankedStatus(data["approved"])
-		self.beatmapID = data["beatmap_id"]
-		self.beatmapSetID = data["beatmapset_id"]
+		self.rankedStatus = int(convertRankedStatus(data["approved"]))
+		self.beatmapID = int(data["beatmap_id"])
+		self.beatmapSetID = int(data["beatmapset_id"])
+		self.AR = float(data["diff_approach"])
+		self.OD = float(data["diff_overall"])
+		self.stars = float(data["difficultyrating"])
+		self.maxCombo = int(data["max_combo"])
+		self.hitLength = int(data["hit_length"])
 		return True
 
 	def setData(self, md5, beatmapSetID):

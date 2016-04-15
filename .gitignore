@@ -1,3 +1,6 @@
+# pycache
+**/__pycache__
+
 # ci stuff
 *.php~
 *.sql~
@@ -5,6 +8,7 @@
 ci-system/cikey.txt
 ci-system/changelog.json
 ci-system/changelog.txt
+migrations/latest.txt
 
 # server data
 osu.ppy.sh/inc/config.php
@@ -15,21 +19,20 @@ osu.ppy.sh/replays/*.osr
 osu.ppy.sh/replays_full/*.osr
 a.ppy.sh/avatars/*.*
 
-# other stuff
-osu.ppy.sh/adminer.php
-push-to-prod.bat
-migrations/latest.txt
-
-# pep.py config and python cache
+# pep.py config and WIP files
 c.ppy.sh/runserver.bat
 c.ppy.sh/config.ini
-c.ppy.sh/__pycache__/*.*
 
-# lets config and python cache
+# lets config, data, WIP files and pp formula
 lets/runserver.bat
 lets/config.ini
-lets/__pycache__/*.*
+lets/.data
+lets/ripp.py
 
 # backup system
 backup-system/config.ini
 backup-system/temp/*.*
+
+# other stuff
+osu.ppy.sh/adminer.php
+push-to-prod.bat

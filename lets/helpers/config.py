@@ -52,6 +52,9 @@ class config:
 
 			self.config.get("osuapi","apiurl")
 			self.config.get("osuapi","apikey")
+
+			self.config.get("discord","enable")
+			self.config.get("discord","boturl")
 			return True
 		except:
 			return False
@@ -78,6 +81,10 @@ class config:
 		self.config.add_section("osuapi")
 		self.config.set("osuapi", "apiurl", "https://osu.ppy.sh/api")
 		self.config.set("osuapi", "apikey", "YOUR_OSU_API_KEY_HERE")
+
+		self.config.add_section("discord")
+		self.config.set("discord", "enable", "False")
+		self.config.set("discord", "boturl", "")
 
 		# Write ini to file and close
 		self.config.write(f)

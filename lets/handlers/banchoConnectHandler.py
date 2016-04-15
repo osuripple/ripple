@@ -1,9 +1,9 @@
 import tornado.web
+from helpers import discordBotHelper
 
 class handler(tornado.web.RequestHandler):
 	"""
 	Handler for /web/bancho_connect.php
 	"""
 	def get(self):
-		print("someone is connecting...")
-		self.write("ysdii")
+		self.write("it")

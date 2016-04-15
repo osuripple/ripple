@@ -64,3 +64,18 @@ def printWarning():
 	"""Print error text FOR LOADING"""
 
 	printColored("Warning", bcolors.YELLOW)
+
+def printGetScoresMessage(message):
+	printColored("[get_scores] {}".format(message), bcolors.PINK)
+
+def printSubmitModularMessage(message):
+	printColored("[submit_modular] {}".format(message), bcolors.YELLOW)
+
+def printBanchoConnectMessage(message):
+	printColored("[bancho_connect] {}".format(message), bcolors.GREEN)
+
+def printGetReplayMessage(message):
+	printColored("[get_replay] {}".format(message), bcolors.GREEN)
+
+def printRippMessage(message):
+	printColored("[ripp] {}".format(message), bcolors.GREEN)
