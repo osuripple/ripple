@@ -69,6 +69,8 @@ def fokabotResponse(fro, chan, message):
 		return "You can find the latest Ripple news on the (blog)[https://ripple.moe/blog/]!"
 	elif "!faq changelog" in message:
 		return "Check the (changelog)[https://ripple.moe/index.php?p=17] !"
+	elif "!faq status" in message:
+		return "Check the server status (here!)[https://ripple.moe/index.php?p=27]"
 	elif "!ask" in message:
 		if (len(message.split(" ")) >= 2):
 			return "{}: {}".format(fro, random.choice(["Yes", "No", "Maybe"]))
