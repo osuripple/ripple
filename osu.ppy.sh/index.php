@@ -1,67 +1,65 @@
 <?php
-    // Get functions
-    require_once './inc/functions.php';
-
-    // Frontend stuff
-    // We're using ob_start to safely send headers while we're processing the script initially.
-    ob_start();
-
-    // CONTROLLER SYSTEM v2
-    $model = 'old';
-    if (isset($_GET['p'])) {
-        $found = false;
-        foreach ($pages as $page) {
-            if ($page::PageID == $_GET['p']) {
-                $found = true;
-                $model = $page;
-                $title = '<title>'.$page::Title.'</title>';
-                if (defined(get_class($page).'::PageID')) {
-                    $p = $page::PageID;
-                }
-                if (defined(get_class($page).'::LoggedIn')) {
-                    if ($page::LoggedIn) {
-                        clir();
-                    } else {
-                        clir(true, 'index.php?p=1&e=1');
-                    }
-                }
-                break;
+// Get functions
+require_once './inc/functions.php';
+// Frontend stuff
+// We're using ob_start to safely send headers while we're processing the script initially.
+ob_start();
+// CONTROLLER SYSTEM v2
+$model = 'old';
+if (isset($_GET['p'])) {
+    $found = false;
+    foreach ($pages as $page) {
+        if ($page::PageID == $_GET['p']) {
+            $found = true;
+            $model = $page;
+            $title = '<title>' . $page::Title . '</title>';
+            if (defined(get_class($page) . '::PageID')) {
+                $p = $page::PageID;
             }
-        }
-        if (!$found) {
-            if (isset($_GET['p']) && !empty($_GET['p'])) {
-                $p = $_GET['p'];
-            } else {
-                $p = 1;
+            if (defined(get_class($page) . '::LoggedIn')) {
+                if ($page::LoggedIn) {
+                    clir();
+                } else {
+                    clir(true, 'index.php?p=1&e=1');
+                }
             }
-            $title = setTitle($p);
+            break;
         }
-    } elseif (isset($_GET['u']) && !empty($_GET['u'])) {
-        $title = setTitle('u');
-        $p = 'u';
-    } elseif (isset($_GET['__PAGE__'])) {
-        $pages_split = explode('/', $_GET['__PAGE__']);
-        if (count($_GET['__PAGE__']) < 2) {
-            $title = '<title>Ripple</title>';
+    }
+    if (!$found) {
+        if (isset($_GET['p']) && !empty($_GET['p'])) {
+            $p = $_GET['p'];
+        } else {
             $p = 1;
         }
-        $found = false;
-        foreach ($pages as $page) {
-            if ($page::URL == $pages_split[1]) {
-                $found = true;
-                $model = $page;
-                $title = '<title>'.$page::Title.'</title>';
-                break;
-            }
+        $title = setTitle($p);
+    }
+} elseif (isset($_GET['u']) && !empty($_GET['u'])) {
+    $title = setTitle('u');
+    $p = 'u';
+} elseif (isset($_GET['__PAGE__'])) {
+    $pages_split = explode('/', $_GET['__PAGE__']);
+    if (count($_GET['__PAGE__']) < 2) {
+        $title = '<title>Ripple</title>';
+        $p = 1;
+    }
+    $found = false;
+    foreach ($pages as $page) {
+        if ($page::URL == $pages_split[1]) {
+            $found = true;
+            $model = $page;
+            $title = '<title>' . $page::Title . '</title>';
+            break;
         }
-        if (!$found) {
-            $p = 1;
-            $title = '<title>Ripple</title>';
-        }
-    } else {
+    }
+    if (!$found) {
         $p = 1;
         $title = '<title>Ripple</title>';
     }
+} else {
+    $p = 1;
+    $title = '<title>Ripple</title>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,17 +74,17 @@
     <?php echo $title; ?>
 
 	<?php
-        if ($p == 27) {
-            global $ServerStatusConfig;
-            if ($ServerStatusConfig['netdata']['enable']) {
-                echo '
+if ($p == 27) {
+    global $ServerStatusConfig;
+    if ($ServerStatusConfig['netdata']['enable']) {
+        echo '
 						<!-- Netdata script -->
-						<script type="text/javascript">var netdataServer = "'.$ServerStatusConfig['netdata']['server_url'].'";</script>
-						<script type="text/javascript" src="'.$ServerStatusConfig['netdata']['server_url'].'/dashboard.js"></script>
+						<script type="text/javascript">var netdataServer = "' . $ServerStatusConfig['netdata']['server_url'] . '";</script>
+						<script type="text/javascript" src="' . $ServerStatusConfig['netdata']['server_url'] . '/dashboard.js"></script>
 				';
-            }
-        }
-    ?>
+    }
+}
+?>
 
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -117,60 +115,60 @@
 
 <body>
     <?php
-    // Start session with user if we got a valid cookie.
-    startSessionIfNotStarted();
-    $c = new RememberCookieHandler();
-    if ($c->Check()) {
-        $c->Validate();
-    }
-    ?>
+// Start session with user if we got a valid cookie.
+startSessionIfNotStarted();
+$c = new RememberCookieHandler();
+if ($c->Check()) {
+    $c->Validate();
+}
+?>
     <!-- Navbar -->
     <?php printNavbar(); ?>
 
     <!-- Page content (< 100: Normal pages, >= 100: Admin CP pages) -->
     <?php
-    $status = '';
-    if ($model !== 'old') {
-        if (isset($_GET['s'])) {
-            if (isset($model->success_messages[$_GET['s']])) {
-                $status .= P::SuccessMessage($model->success_messages[$_GET['s']], true);
-            }
-        }
-        if (isset($_GET['e'])) {
-            if (isset($model->error_messages[$_GET['e']])) {
-                $status .= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
-            }
+$status = '';
+if ($model !== 'old') {
+    if (isset($_GET['s'])) {
+        if (isset($model->success_messages[$_GET['s']])) {
+            $status.= P::SuccessMessage($model->success_messages[$_GET['s']], true);
         }
     }
-    if ($p < 100) {
-        // Normal page, print normal layout (will fix this in next commit, dw)
-        echo '
+    if (isset($_GET['e'])) {
+        if (isset($model->error_messages[$_GET['e']])) {
+            $status.= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
+        }
+    }
+}
+if ($p < 100) {
+    // Normal page, print normal layout (will fix this in next commit, dw)
+    echo '
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div id="content">';
-        if ($model === 'old') {
-            printPage($p);
-        } else {
-            echo $status;
-            checkMustHave($model);
-            $model->P();
-        }
-        echo '
+    if ($model === 'old') {
+        printPage($p);
+    } else {
+        echo $status;
+        checkMustHave($model);
+        $model->P();
+    }
+    echo '
                     </div>
                 </div>
             </div>
         </div>';
+} else {
+    // Admin cp page, print admin cp layout
+    if ($model === 'old') {
+        printPage($p);
     } else {
-        // Admin cp page, print admin cp layout
-        if ($model === 'old') {
-            printPage($p);
-        } else {
-            echo $status;
-            $model->P();
-        }
+        echo $status;
+        $model->P();
     }
-    ?>
+}
+?>
 
     <!-- jQuery -->
     <script src="./js/jquery.js"></script>
@@ -209,9 +207,11 @@
 
     <!-- Custom JavaScript for this page here -->
     <?php
-        switch ($p) {
-            // Admin cp - beta keys
-            case 105: echo '
+switch ($p) {
+        // Admin cp - beta keys
+        
+    case 105:
+        echo '
             <script type="text/javascript">
             var text = "Digital Insanity";
 
@@ -234,10 +234,12 @@
                 $("#addBetaKeyModal").on("hidden.bs.modal", function () {
                     audio.pause();
                 });
-            </script>'; break;
-
-            // Admin cp - edit user
-            case 103: echo '
+            </script>';
+    break;
+        // Admin cp - edit user
+        
+    case 103:
+        echo '
                 <script type="text/javascript">
                     function censorUserpage()
                     {
@@ -250,9 +252,10 @@
                         document.getElementsByName("sr")[0].value = "";
                     }
                 </script>
-                '; break;
-
-            case 114: echo '
+                ';
+    break;
+    case 114:
+        echo '
 				<script type="text/javascript">
 					function quickReportResponse(i)
 					{
@@ -269,9 +272,10 @@
 						}
 						document.getElementsByName("r")[0].value = c;
 					}
-				</script>'; break;
-
-            case 22: echo '
+				</script>';
+    break;
+    case 22:
+        echo '
 				<script type="text/javascript">
 					function changeTitlePlaceholder()
 					{
@@ -286,9 +290,10 @@
 
 					// Update title when the page is loaded
 					window.onload = changeTitlePlaceholder;
-				</script>'; break;
-        }
-    ?>
+				</script>';
+    break;
+}
+?>
 </body>
 
 </html>

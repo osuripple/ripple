@@ -1,42 +1,26 @@
 <?php
-
-class items implements Iterator
-{
+class items implements Iterator {
     private $position = 0, $array = [];
-
-    public function __construct($items = [])
-    {
+    public function __construct($items = []) {
         $this->position = 0;
         $this->array = $items;
     }
-
-    public function rewind()
-    {
+    public function rewind() {
         $this->position = 0;
     }
-
-    public function current()
-    {
+    public function current() {
         return $this->array[$this->position];
     }
-
-    public function key()
-    {
+    public function key() {
         return $this->position;
     }
-
-    public function next()
-    {
+    public function next() {
         ++$this->position;
     }
-
-    public function valid()
-    {
+    public function valid() {
         return isset($this->array[$this->position]);
     }
-
-    public function length()
-    {
+    public function length() {
         return count($this->array);
     }
 }

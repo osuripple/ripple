@@ -1,7 +1,5 @@
 <?php
-
 namespace System\Database;
-
 /*
  * Nano
  *
@@ -10,27 +8,22 @@ namespace System\Database;
  * @package		nano
  * @link		http://madebykieron.co.uk
  * @copyright	http://unlicense.org/
- */
-
+*/
 use Exception;
 use System\Config;
-
-abstract class connector
-{
+abstract class connector {
     /**
      * Log of all queries.
      *
      * @var array
      */
     private $queries = [];
-
     /**
      * All connectors will implement a function to return the pdo instance.
      *
      * @param object PDO Object
      */
     abstract public function instance();
-
     /**
      * A simple database query wrapper.
      *
@@ -39,33 +32,28 @@ abstract class connector
      *
      * @return array
      */
-    public function ask($sql, $binds = [])
-    {
+    public function ask($sql, $binds = []) {
         try {
             if (Config::db('profiling')) {
                 $this->queries[] = compact('sql', 'binds');
             }
-
             $statement = $this->instance()->prepare($sql);
             $result = $statement->execute($binds);
-
             return [$result, $statement];
-        } catch (Exception $e) {
-            $error = 'Database Error: '.$e->getMessage().'</code></p><p><code>SQL: '.trim($sql);
+        }
+        catch(Exception $e) {
+            $error = 'Database Error: ' . $e->getMessage() . '</code></p><p><code>SQL: ' . trim($sql);
             throw new Exception($error, 0, $e);
         }
     }
-
     /**
      * Return the profile array.
      *
      * @return array
      */
-    public function profile()
-    {
+    public function profile() {
         return $this->queries;
     }
-
     /**
      * Magic method for calling methods on PDO instance.
      *
@@ -74,11 +62,9 @@ abstract class connector
      *
      * @return mixed
      */
-    public static function __callStatic($method, $arguments)
-    {
+    public static function __callStatic($method, $arguments) {
         return call_user_func_array([$this->instance(), $method], $arguments);
     }
-
     /**
      * showQuery method from issue #695 by apmuthu.
      *
@@ -87,26 +73,22 @@ abstract class connector
      * @param string
      * @param array
      */
-    public function showQuery($query, $params)
-    {
+    public function showQuery($query, $params) {
         $keys = [];
         $values = [];
-
         // build a regular expression for each parameter
         foreach ($params as $key => $value) {
             if (is_string($key)) {
-                $keys[] = '/:'.$key.'/';
+                $keys[] = '/:' . $key . '/';
             } else {
                 $keys[] = '/[?]/';
             }
-
             if (is_numeric($value)) {
                 $values[] = intval($value);
             } else {
-                $values[] = '"'.$value.'"';
+                $values[] = '"' . $value . '"';
             }
         }
-
         return preg_replace($keys, $values, $query, 1, $count);
     }
 }

@@ -20,7 +20,8 @@
 					</footer>
 				</article>
 			</li>
-			<?php $i = 0; while (posts()): ?>
+			<?php $i = 0;
+    while (posts()): ?>
 			<?php $bg = sprintf('background: hsl(215, 28%%, %d%%);', round(((++$i / posts_per_page()) * 20) + 20)); ?>
 			<li style="<?php echo $bg; ?>">
 				<article class="wrap">
@@ -29,7 +30,8 @@
 					</h2>
 				</article>
 			</li>
-			<?php endwhile; ?>
+			<?php
+    endwhile; ?>
 		</ul>
 
 		<?php if (has_pagination()): ?>
@@ -43,14 +45,17 @@
 				</div>
 			</div>
 		</nav>
-		<?php endif; ?>
+		<?php
+    endif; ?>
 
-	<?php else: ?>
+	<?php
+else: ?>
 		<div class="wrap">
 			<h1>No posts yet!</h1>
 			<p>Looks like you have some writing to do!</p>
 		</div>
-	<?php endif; ?>
+	<?php
+endif; ?>
 
 </section>
 

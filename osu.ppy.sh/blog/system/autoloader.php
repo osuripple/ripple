@@ -1,7 +1,5 @@
 <?php
-
 namespace System;
-
 /**
  * Nano.
  *
@@ -11,38 +9,32 @@ namespace System;
  *
  * @copyright	http://unlicense.org/
  */
-class autoloader
-{
+class autoloader {
     /**
      * Hold an array of directories to search.
      *
      * @var array
      */
     public static $directories = [];
-
     /**
      * Hold an array of class aliases.
      *
      * @var array
      */
     public static $aliases = [];
-
     /**
      * Append a path to the array of directories to search.
      *
      * @param string
      */
-    public static function directory($paths)
-    {
+    public static function directory($paths) {
         if (!is_array($paths)) {
             $paths = [$paths];
         }
-
         foreach ($paths as $path) {
-            static::$directories[] = rtrim($path, DS).DS;
+            static ::$directories[] = rtrim($path, DS) . DS;
         }
     }
-
     /**
      * Attempts to load a class.
      *
@@ -50,23 +42,19 @@ class autoloader
      *
      * @param string
      */
-    public static function load($class)
-    {
+    public static function load($class) {
         $file = str_replace(['\\', '_'], DS, ltrim($class, '\\'));
         $lower = strtolower($file);
-
-        if (array_key_exists(strtolower($class), array_change_key_case(static::$aliases))) {
-            return class_alias(static::$aliases[$class], $class);
+        if (array_key_exists(strtolower($class), array_change_key_case(static ::$aliases))) {
+            return class_alias(static ::$aliases[$class], $class);
         }
-
-        foreach (static::$directories as $directory) {
-            if (is_readable($path = $directory.$lower.EXT)) {
+        foreach (static ::$directories as $directory) {
+            if (is_readable($path = $directory . $lower . EXT)) {
                 return require $path;
-            } elseif (is_readable($path = $directory.$file.EXT)) {
+            } elseif (is_readable($path = $directory . $file . EXT)) {
                 return require $path;
             }
         }
-
         return false;
     }
 }

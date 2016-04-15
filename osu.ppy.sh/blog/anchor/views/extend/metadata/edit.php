@@ -34,8 +34,7 @@
 			</p>
 			<p>
 				<label for="label-posts_per_page"><?php echo __('metadata.posts_per_page'); ?>:</label>
-				<?php echo Form::input('range', 'posts_per_page', Input::previous('posts_per_page', $meta['posts_per_page']),
-                    ['min' => 1, 'max' => 15, 'id' => 'label-posts_per_page']); ?>
+				<?php echo Form::input('range', 'posts_per_page', Input::previous('posts_per_page', $meta['posts_per_page']), ['min' => 1, 'max' => 15, 'id' => 'label-posts_per_page']); ?>
 				<em><?php echo __('metadata.posts_per_page_explain'); ?></em>
 				<em class="visible" id="posts_per_page_number"><?php echo $meta['posts_per_page']; ?></em>
 			</p>
@@ -78,7 +77,8 @@
 					<option value="<?php echo $theme; ?>"<?php echo $selected; ?>>
 						<?php echo $about['name']; ?> by <?php echo $about['author']; ?>
 					</option>
-					<?php endforeach; ?>
+					<?php
+endforeach; ?>
 				</select>
 
 				<em><?php echo __('metadata.current_theme_explain', 'Your current theme.'); ?></em>

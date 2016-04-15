@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 
-<form method="post" action="<?php echo Uri::to('admin/posts/edit/'.$article->id); ?>" enctype="multipart/form-data" novalidate>
+<form method="post" action="<?php echo Uri::to('admin/posts/edit/' . $article->id); ?>" enctype="multipart/form-data" novalidate>
 
 	<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -8,34 +8,21 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title', $article->title), [
-                'placeholder'  => __('posts.title'),
-                'autocomplete' => 'off',
-                'autofocus'    => 'true',
-            ]); ?>
+			<?php echo Form::text('title', Input::previous('title', $article->title), ['placeholder' => __('posts.title'), 'autocomplete' => 'off', 'autofocus' => 'true', ]); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), [
-                    'type'  => 'submit',
-                    'class' => 'btn',
-                ]); ?>
+				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn', ]); ?>
 				
-				<?php echo Html::link('admin/posts', __('global.cancel'), [
-                    'class' => 'btn cancel blue',
-                ]); ?>
+				<?php echo Html::link('admin/posts', __('global.cancel'), ['class' => 'btn cancel blue', ]); ?>
 
-				<?php echo Html::link('admin/posts/delete/'.$article->id, __('global.delete'), [
-                    'class' => 'btn delete red',
-                ]); ?>
+				<?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), [
-                'placeholder' => __('posts.content_explain'),
-            ]); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), ['placeholder' => __('posts.content_explain'), ]); ?>
 
 			<?php echo $editor; ?>
 		</div>
@@ -88,7 +75,8 @@
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 				<?php echo Extend::html($field); ?>
 			</p>
-			<?php endforeach; ?>
+			<?php
+endforeach; ?>
 		</div>
 	</fieldset>
 </form>

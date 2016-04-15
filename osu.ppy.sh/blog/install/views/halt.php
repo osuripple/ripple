@@ -8,11 +8,14 @@
 		<ul>
 			<?php foreach ($errors as $error): ?>
 			<li><?php echo $error; ?></li>
-			<?php endforeach; ?>
+			<?php
+    endforeach; ?>
 		</ul>
-		<?php else: ?>
+		<?php
+else: ?>
 		<p><?php echo current($errors); ?></p>
-		<?php endif; ?>
+		<?php
+endif; ?>
 
 		<p class="options">
 			<a class="btn" href="<?php echo uri_to('start'); ?>">Let&apos;s try that again.</a>

@@ -14,4 +14,4 @@
  * Response:
  * "-3" if user doesn't have a last.fm account associated with their account
  * anything else if the client does, the client doesn't contain a check for the response
- */
+*/

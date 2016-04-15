@@ -32,13 +32,14 @@
 						<?php $menu = ['posts', 'comments', 'pages', 'categories', 'users', 'extend']; ?>
 						<?php foreach ($menu as $url): ?>
 						<li <?php if (strpos(Uri::current(), $url) !== false) {
-    echo 'class="active"';
-} ?>>
-							<a href="<?php echo Uri::to('admin/'.$url); ?>">
-								<?php echo ucfirst(__($url.'.'.$url)); ?>
+            echo 'class="active"';
+        } ?>>
+							<a href="<?php echo Uri::to('admin/' . $url); ?>">
+								<?php echo ucfirst(__($url . '.' . $url)); ?>
 							</a>
 						</li>
-						<?php endforeach; ?>
+						<?php
+    endforeach; ?>
 					</ul>
 				</nav>
 
@@ -48,10 +49,12 @@
 
 				<?php echo Html::link($home->slug, __('global.visit_your_site'), ['class' => 'btn', 'target' => '_blank']); ?>
 
-				<?php else: ?>
+				<?php
+else: ?>
 				<aside class="logo">
 					<a href="<?php echo Uri::to('admin/login'); ?>">Anchor CMS</a>
 				</aside>
-				<?php endif; ?>
+				<?php
+endif; ?>
 			</div>
 		</header>

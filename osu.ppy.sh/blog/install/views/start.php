@@ -22,7 +22,8 @@
 					<?php foreach ($languages as $lang): ?>
 					<?php $selected = in_array($lang, $prefered_languages) ? ' selected' : ''; ?>
 					<option<?php echo $selected; ?>><?php echo $lang; ?></option>
-					<?php endforeach; ?>
+					<?php
+endforeach; ?>
 				</select>
 			</p>
 
@@ -39,9 +40,10 @@
 						<?php echo $zone['label']; ?>
 					</option>
 					<?php if ($selected) {
-    $set = true;
-} ?>
-					<?php endforeach; ?>
+        $set = true;
+    } ?>
+					<?php
+endforeach; ?>
 				</select>
 			</p>
 		</fieldset>

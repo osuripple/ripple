@@ -8,31 +8,19 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title'), [
-                'placeholder'  => __('posts.title'),
-                'autocomplete' => 'off',
-                'autofocus'    => 'true',
-            ]); ?>
+			<?php echo Form::text('title', Input::previous('title'), ['placeholder' => __('posts.title'), 'autocomplete' => 'off', 'autofocus' => 'true', ]); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), [
-                    'type'         => 'submit',
-                    'class'        => 'btn',
-                    'data-loading' => __('global.saving'),
-                ]); ?>
+				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn', 'data-loading' => __('global.saving'), ]); ?>
 
-				<?php echo Html::link('admin/posts', __('global.cancel'), [
-                    'class' => 'btn cancel blue',
-                ]); ?>
+				<?php echo Html::link('admin/posts', __('global.cancel'), ['class' => 'btn cancel blue', ]); ?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown'), [
-                'placeholder' => __('posts.content_explain'),
-            ]); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown'), ['placeholder' => __('posts.content_explain'), ]); ?>
 
 			<?php echo $editor; ?>
 		</div>
@@ -80,7 +68,8 @@
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 				<?php echo Extend::html($field); ?>
 			</p>
-			<?php endforeach; ?>
+			<?php
+endforeach; ?>
 		</div>
 	</fieldset>
 </form>

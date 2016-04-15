@@ -9,4 +9,4 @@
  * info - A json containing the information specified in the post mentioned above.
  *
  * This call seems to not reply with anything. Therefore this file will do it, as we don't return anything back to the user.
- */
+*/

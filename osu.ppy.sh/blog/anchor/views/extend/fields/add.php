@@ -24,7 +24,8 @@
 					<?php foreach ($pagetypes as $pagetype): ?>
 					<?php $selected = (Input::previous('pagetype') == $pagetype->key) ? ' selected' : ''; ?>
 					<option value="<?php echo $pagetype->key; ?>" <?php echo $selected; ?>><?php echo $pagetype->value; ?></option>
-					<?php endforeach; ?>
+					<?php
+endforeach; ?>
 				</select>
 				<em><?php echo __('extend.pagetype_explain'); ?></em>
 			</p>
@@ -35,7 +36,8 @@
 					<?php foreach ($fields as $type): ?>
 					<?php $selected = (Input::previous('field') == $type) ? ' selected' : ''; ?>
 					<option<?php echo $selected; ?>><?php echo $type; ?></option>
-					<?php endforeach; ?>
+					<?php
+endforeach; ?>
 				</select>
 				<em><?php echo __('extend.field_explain'); ?></em>
 			</p>

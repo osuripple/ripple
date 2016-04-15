@@ -9,7 +9,8 @@
 	<textarea id="htaccess"><?php echo $htaccess; ?></textarea></p>
 
 	<script>document.getElementById('htaccess').select();</script>
-	<?php endif; ?>
+	<?php
+endif; ?>
 
 	<section class="options">
 		<a href="<?php echo $admin_uri; ?>" class="button">Visit your admin panel</a>
