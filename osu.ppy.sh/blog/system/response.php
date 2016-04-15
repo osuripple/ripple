@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,8 +12,10 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use System\Response\Status;
-class response {
-	/**
+
+class response
+{
+    /**
 	 * The final output.
 	 *
 	 * @var string
@@ -29,6 +33,7 @@ class response {
 	 * @var array
 	 */
 	public $headers = [];
+
 	/**
 	 * Create a new instance of the Response class for chaining.
 	 *
@@ -38,9 +43,11 @@ class response {
 	 *
 	 * @return object
 	 */
-	public static function create($output, $status = 200, $headers = []) {
-		return new static ($output, $status, $headers);
+	public static function create($output, $status = 200, $headers = [])
+	{
+	    return new static ($output, $status, $headers);
 	}
+
 	/**
 	 * Creates a response with a header to redirect.
 	 *
@@ -49,14 +56,17 @@ class response {
 	 *
 	 * @return object
 	 */
-	public static function redirect($uri, $status = 302) {
-		// Scrub all output buffer before we redirect.
+	public static function redirect($uri, $status = 302)
+	{
+	    // Scrub all output buffer before we redirect.
 		// @see http://www.mombu.com/php/php/t-output-buffering-and-zlib-compression-issue-3554315-last.html
 		while (ob_get_level() > 1) {
-			ob_end_clean();
+		    ob_end_clean();
 		}
-		return static ::create('', $status, ['Location' => Uri::to($uri) ]);
+
+	    return static ::create('', $status, ['Location' => Uri::to($uri)]);
 	}
+
 	/**
 	 * Creates a response with the output as error view from the app
 	 * along with the status code.
@@ -65,9 +75,11 @@ class response {
 	 *
 	 * @return object
 	 */
-	public static function error($status, $vars = []) {
-		return static ::create(View::create('error/' . $status, $vars)->render(), $status);
+	public static function error($status, $vars = [])
+	{
+	    return static ::create(View::create('error/'.$status, $vars)->render(), $status);
 	}
+
 	/**
 	 * Creates a response with the output as JSON.
 	 *
@@ -76,9 +88,11 @@ class response {
 	 *
 	 * @return object
 	 */
-	public static function json($output, $status = 200) {
-		return static ::create(json_encode($output), $status, ['content-type' => 'application/json; charset=' . Config::app('encoding', 'UTF-8') ]);
+	public static function json($output, $status = 200)
+	{
+	    return static ::create(json_encode($output), $status, ['content-type' => 'application/json; charset='.Config::app('encoding', 'UTF-8')]);
 	}
+
 	/**
 	 * Create a new instance of the Response class.
 	 *
@@ -86,37 +100,40 @@ class response {
 	 * @param int
 	 * @param array
 	 */
-	public function __construct($output, $status = 200, $headers = []) {
-		$this->status = $status;
-		$this->output = $output;
-		foreach ($headers as $name => $value) {
-			$this->headers[strtolower($name) ] = $value;
-		}
+	public function __construct($output, $status = 200, $headers = [])
+	{
+	    $this->status = $status;
+	    $this->output = $output;
+	    foreach ($headers as $name => $value) {
+	        $this->headers[strtolower($name)] = $value;
+	    }
 	}
+
 	/**
 	 * Sends the final headers cookies and output.
 	 */
-	public function send() {
-		// dont send headers for CLI
+	public function send()
+	{
+	    // dont send headers for CLI
 		if (!Request::cli()) {
-			// create a status header
+		    // create a status header
 			Status::create($this->status)->header();
 			// always make sure we send the content type
 			if (!array_key_exists('content-type', $this->headers)) {
-				$this->headers['content-type'] = 'text/html; charset=' . Config::app('encoding', 'UTF-8');
+			    $this->headers['content-type'] = 'text/html; charset='.Config::app('encoding', 'UTF-8');
 			}
 			// output headers
 			foreach ($this->headers as $name => $value) {
-				header($name . ': ' . $value);
+			    header($name.': '.$value);
 			}
 			// send any cookies we may have stored in the cookie class
 			foreach (Cookie::$bag as $cookie) {
-				call_user_func_array('setcookie', array_values($cookie));
+			    call_user_func_array('setcookie', array_values($cookie));
 			}
 		}
 		// output the final content
 		if ($this->output) {
-			echo $this->output;
+		    echo $this->output;
 		}
 	}
 }

@@ -16,9 +16,9 @@ endif; ?>
 	<?php echo $messages; ?>
 
 	<nav class="sidebar statuses">
-		<?php echo Html::link('admin/pages', '<span class="icon"></span> ' . __('global.all'), ['class' => ($status == 'all') ? 'active' : '', ]); ?>
+		<?php echo Html::link('admin/pages', '<span class="icon"></span> '.__('global.all'), ['class' => ($status == 'all') ? 'active' : '']); ?>
 		<?php foreach (['published', 'draft', 'archived'] as $type): ?>
-		<?php echo Html::link('admin/pages/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '', ]); ?>
+		<?php echo Html::link('admin/pages/status/'.$type, '<span class="icon"></span> '.__('global.'.$type), ['class' => ($status == $type) ? 'active' : '']); ?>
 		<?php
 endforeach; ?>
 	</nav>
@@ -29,13 +29,13 @@ endforeach; ?>
 		$display_pages = array_merge([$item], $item->children()); ?>
 			<?php foreach ($display_pages as $page): ?>
 			<li>
-				<a href="<?php echo Uri::to('admin/pages/edit/' . $page->data['id']); ?>">
+				<a href="<?php echo Uri::to('admin/pages/edit/'.$page->data['id']); ?>">
 					<div class="<?php echo $page->data['parent'] != 0 ? 'indent' : ''; ?>">
 						<strong><?php echo $page->data['name']; ?></strong>
 						<span>
 							<?php echo $page->data['slug']; ?>
-							<em class="status <?php echo $page->data['status']; ?>" title="<?php echo __('global.' . $page->data['status']); ?>">
-								<?php echo __('global.' . $page->data['status']); ?>
+							<em class="status <?php echo $page->data['status']; ?>" title="<?php echo __('global.'.$page->data['status']); ?>">
+								<?php echo __('global.'.$page->data['status']); ?>
 							</em>
 						</span>
 					</div>

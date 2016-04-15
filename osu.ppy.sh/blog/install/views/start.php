@@ -40,8 +40,8 @@ endforeach; ?>
 						<?php echo $zone['label']; ?>
 					</option>
 					<?php if ($selected) {
-		$set = true;
-	} ?>
+    $set = true;
+} ?>
 					<?php
 endforeach; ?>
 				</select>

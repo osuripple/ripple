@@ -1,5 +1,7 @@
 <?php
+
 namespace System\Database\Connectors;
+
 /*
  * Nano
  *
@@ -11,8 +13,10 @@ namespace System\Database\Connectors;
 */
 use PDO;
 use System\Database\Connector;
-class sqlite extends Connector {
-	/**
+
+class sqlite extends Connector
+{
+    /**
 	 * Holds the php pdo instance.
 	 *
 	 * @var object
@@ -30,23 +34,27 @@ class sqlite extends Connector {
 	 * @var string
 	 */
 	public $rwrap = ']';
+
 	/**
 	 * Create a new sqlite connector.
 	 *
 	 * @param array
 	 */
-	public function __construct($config) {
-		extract($config);
-		$dns = 'sqlite:' . $database;
-		$this->pdo = new PDO($dns);
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	public function __construct($config)
+	{
+	    extract($config);
+	    $dns = 'sqlite:'.$database;
+	    $this->pdo = new PDO($dns);
+	    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
+
 	/**
 	 * Return the pdo instance.
 	 *
 	 * @param object PDO Object
 	 */
-	public function instance() {
-		return $this->pdo;
+	public function instance()
+	{
+	    return $this->pdo;
 	}
 }

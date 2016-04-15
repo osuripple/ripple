@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,13 +12,16 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
-class database {
-	/**
+
+class database
+{
+    /**
 	 * The current database driver.
 	 *
 	 * @var array
 	 */
 	public static $connections = [];
+
 	/**
 	 * Create a new database conncetor from app config.
 	 *
@@ -24,15 +29,17 @@ class database {
 	 *
 	 * @return object Database connector
 	 */
-	public static function factory($config) {
-		switch ($config['driver']) {
+	public static function factory($config)
+	{
+	    switch ($config['driver']) {
 			case 'mysql':
 				return new Database\Connectors\Mysql($config);
 			case 'sqlite':
 				return new Database\Connectors\Sqlite($config);
 		}
-		throw new ErrorException('Unknown database driver');
+	    throw new ErrorException('Unknown database driver');
 	}
+
 	/**
 	 * Get a database connection by name r return the default.
 	 *
@@ -40,18 +47,20 @@ class database {
 	 *
 	 * @return object
 	 */
-	public static function connection($name = null) {
-		// use the default connection if none is specified
+	public static function connection($name = null)
+	{
+	    // use the default connection if none is specified
 		if (is_null($name)) {
-			$name = Config::db('default');
+		    $name = Config::db('default');
 		}
 		// if we have already connected just return the instance
 		if (isset(static ::$connections[$name])) {
-			return static ::$connections[$name];
+		    return static ::$connections[$name];
 		}
 		// connect and return
-		return static ::$connections[$name] = static ::factory(Config::db('connections.' . $name));
+		return static ::$connections[$name] = static ::factory(Config::db('connections.'.$name));
 	}
+
 	/**
 	 * Get a database connection profile.
 	 *
@@ -59,9 +68,11 @@ class database {
 	 *
 	 * @return array
 	 */
-	public static function profile($name = null) {
-		return static ::connection($name)->profile();
+	public static function profile($name = null)
+	{
+	    return static ::connection($name)->profile();
 	}
+
 	/**
 	 * Magic method for calling database driver methods on the default connection.
 	 *
@@ -70,7 +81,8 @@ class database {
 	 *
 	 * @return mixed
 	 */
-	public static function __callStatic($method, $arguments) {
-		return call_user_func_array([static ::connection(), $method], $arguments);
+	public static function __callStatic($method, $arguments)
+	{
+	    return call_user_func_array([static ::connection(), $method], $arguments);
 	}
 }

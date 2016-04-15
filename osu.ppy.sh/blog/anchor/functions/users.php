@@ -2,37 +2,45 @@
 /**
  *	Theme functions for logged in user.
  */
-function user_authed() {
-	return !Auth::guest();
+function user_authed()
+{
+    return !Auth::guest();
 }
-function user_authed_id() {
-	if ($user = Auth::user()) {
-		return $user->id;
-	}
+function user_authed_id()
+{
+    if ($user = Auth::user()) {
+        return $user->id;
+    }
 }
-function user_authed_name() {
-	if ($user = Auth::user()) {
-		return $user->username;
-	}
+function user_authed_name()
+{
+    if ($user = Auth::user()) {
+        return $user->username;
+    }
 }
-function user_authed_email() {
-	if ($user = Auth::user()) {
-		return $user->email;
-	}
+function user_authed_email()
+{
+    if ($user = Auth::user()) {
+        return $user->email;
+    }
 }
-function user_authed_role() {
-	if ($user = Auth::user()) {
-		return $user->rank;
-	}
+function user_authed_role()
+{
+    if ($user = Auth::user()) {
+        return $user->rank;
+    }
 }
-function user_authed_real_name() {
-	if ($user = Auth::user()) {
-		return $user->username;
-	}
+function user_authed_real_name()
+{
+    if ($user = Auth::user()) {
+        return $user->username;
+    }
 }
-function user_object() {
-	return Auth::user();
+function user_object()
+{
+    return Auth::user();
 }
-function user_is_admin() {
-	return user_authed_role() == 4;
+function user_is_admin()
+{
+    return user_authed_role() == 4;
 }

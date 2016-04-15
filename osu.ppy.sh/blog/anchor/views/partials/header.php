@@ -32,10 +32,10 @@
 						<?php $menu = ['posts', 'comments', 'pages', 'categories', 'users', 'extend']; ?>
 						<?php foreach ($menu as $url): ?>
 						<li <?php if (strpos(Uri::current(), $url) !== false) {
-			echo 'class="active"';
-		} ?>>
-							<a href="<?php echo Uri::to('admin/' . $url); ?>">
-								<?php echo ucfirst(__($url . '.' . $url)); ?>
+    echo 'class="active"';
+} ?>>
+							<a href="<?php echo Uri::to('admin/'.$url); ?>">
+								<?php echo ucfirst(__($url.'.'.$url)); ?>
 							</a>
 						</li>
 						<?php

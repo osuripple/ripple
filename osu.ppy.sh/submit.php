@@ -4,21 +4,22 @@
 */
 require_once './inc/functions.php';
 try {
-	// Find what the user wants to do (compatible with both GET/POST forms)
+    // Find what the user wants to do (compatible with both GET/POST forms)
 	if (isset($_POST['action']) && !empty($_POST['action'])) {
-		$action = $_POST['action'];
+	    $action = $_POST['action'];
 	} elseif (isset($_GET['action']) && !empty($_GET['action'])) {
-		$action = $_GET['action'];
+	    $action = $_GET['action'];
 	} else {
-		throw new Exception("Couldn't find action parameter");
+	    throw new Exception("Couldn't find action parameter");
 	}
-	foreach ($pages as $page) {
-		if ($action == $page::URL) {
-			checkMustHave($page);
-			$page->D();
-			return;
-		}
-	}
+    foreach ($pages as $page) {
+        if ($action == $page::URL) {
+            checkMustHave($page);
+            $page->D();
+
+            return;
+        }
+    }
 	// What shall we do?
 	switch ($action) {
 		case 'register':
@@ -32,7 +33,7 @@ try {
 			redirect('index.php');
 		break;
 		case 'u':
-			redirect('../ripple/index.php?u=' . $_GET['data'] . '&m=0');
+			redirect('../ripple/index.php?u='.$_GET['data'].'&m=0');
 		break;
 		case 'recoverPassword':
 			D::RecoverPassword();
@@ -59,7 +60,7 @@ try {
 			throw new Exception('Invalid action value');
 		break;
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
-			
+
 		case 'generateBetaKeys':
 			sessionCheckAdmin();
 			D::GenerateBetaKey();
@@ -149,8 +150,7 @@ try {
 			D::SaveEditReport();
 		break;
 	}
-}
-catch(Exception $e) {
-	// Redirect to Exception page
-	redirect('index.php?p=99&e=' . $e->getMessage());
+} catch (Exception $e) {
+    // Redirect to Exception page
+	redirect('index.php?p=99&e='.$e->getMessage());
 }
