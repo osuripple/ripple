@@ -21,7 +21,7 @@
 			</a>
 		</li>
 		<?php
-    endforeach; ?>
+	endforeach; ?>
 	</ul>
 	<?php
 else: ?>

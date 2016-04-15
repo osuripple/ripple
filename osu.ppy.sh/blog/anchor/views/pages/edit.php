@@ -19,7 +19,7 @@
 
 				<?php
 if ($deletable == true) {
-    echo Html::link('admin/pages/delete/' . $page->id, __('global.delete'), ['class' => 'btn delete red', ]);
+	echo Html::link('admin/pages/delete/' . $page->id, __('global.delete'), ['class' => 'btn delete red', ]);
 }
 ?>
 			</aside>
@@ -75,7 +75,7 @@ if ($deletable == true) {
 					<?php $selected = (Input::previous('pagetype') == $pagetype->key || $page->pagetype == $pagetype->key) ? ' selected="selected"' : ''; ?>
 					<option value="<?php echo $pagetype->key; ?>" <?php echo $selected; ?>><?php echo $pagetype->value; ?></option>
 					<?php
-    endforeach; ?>
+	endforeach; ?>
 				</select>
 				<em><?php echo __('pages.pagetype_explain'); ?></em>
 			</p>

@@ -21,7 +21,7 @@
 			</a>
 		</li>
 		<?php
-    endforeach; ?>
+	endforeach; ?>
 	</ul>
 
 	<aside class="paging"><?php echo $extend->links(); ?></aside>

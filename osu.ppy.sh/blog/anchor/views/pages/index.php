@@ -26,7 +26,7 @@ endforeach; ?>
 	<?php if ($pages->count): ?>
 	<ul class="main list">
 		<?php foreach ($pages->results as $item):
-        $display_pages = array_merge([$item], $item->children()); ?>
+		$display_pages = array_merge([$item], $item->children()); ?>
 			<?php foreach ($display_pages as $page): ?>
 			<li>
 				<a href="<?php echo Uri::to('admin/pages/edit/' . $page->data['id']); ?>">
@@ -42,9 +42,9 @@ endforeach; ?>
 				</a>
 			</li>
 			<?php
-        endforeach; ?>
+		endforeach; ?>
 		<?php
-    endforeach; ?>
+	endforeach; ?>
 	</ul>
 
 	<aside class="paging"><?php echo $pages->links(); ?></aside>

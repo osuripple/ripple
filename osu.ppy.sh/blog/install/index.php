@@ -20,7 +20,7 @@
                 \ /
 */
 if (file_exists(dirname(__FILE__) . '/../anchor/config/db.php')) {
-    die('lol. try again u scrub');
+	die('lol. try again u scrub');
 }
 define('DS', DIRECTORY_SEPARATOR);
 define('ENV', getenv('APP_ENV'));

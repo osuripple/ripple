@@ -54,7 +54,7 @@ endif; ?>
 						<b>Categories</b>
 						<ul>
 						<?php while (categories()):
-    if (category_count() > 0) {
+	if (category_count() > 0) {
 ?>
 							<li>
 								<a href="<?php echo category_url();
@@ -66,7 +66,7 @@ endif; ?>
 								</a>
 							</li>
 						<?php
-    }
+	}
 endwhile; ?>
 						</ul>
 					</aside>
@@ -79,14 +79,14 @@ endwhile; ?>
 				<nav id="main" role="navigation">
 					<ul>
 						<?php if (has_menu_items()):
-    while (menu_items()): ?>
+	while (menu_items()): ?>
 						<li <?php echo menu_active() ? 'class="active"' : ''; ?>>
 							<a href="<?php echo menu_url(); ?>" title="<?php echo menu_title(); ?>">
 								<?php echo menu_name(); ?>
 							</a>
 						</li>
 						<?php
-    endwhile;
+	endwhile;
 endif; ?>
 						<li class="tray">
 							<a href="#tray" class="linky"><img src="<?php echo theme_url('img/categories.png'); ?>" alt="Categories" title="View my posts by category"></a>

@@ -14,7 +14,7 @@
 			<span data-id="<?php echo $page->id; ?>"><?php echo $page->name; ?></span>
 		</li>
 		<?php
-    endforeach; ?>
+	endforeach; ?>
 	</ul>
 	<?php
 else: ?>

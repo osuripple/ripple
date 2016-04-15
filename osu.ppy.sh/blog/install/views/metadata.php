@@ -39,12 +39,12 @@
 					<?php foreach ($themes as $dir => $theme): ?>
 					<option value="<?php echo $dir; ?>"><?php echo $theme['name']; ?> by <?php echo $theme['author']; ?></option>
 					<?php
-    endforeach; ?>
+	endforeach; ?>
 				</select>
 			</p>
 			<?php
 else:
-    $theme = key($themes); ?>
+	$theme = key($themes); ?>
 			<input name="theme" type="hidden" value="<?php echo $theme; ?>">
 			<?php
 endif; ?>

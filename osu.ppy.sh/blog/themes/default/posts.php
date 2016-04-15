@@ -21,7 +21,7 @@
 				</article>
 			</li>
 			<?php $i = 0;
-    while (posts()): ?>
+	while (posts()): ?>
 			<?php $bg = sprintf('background: hsl(215, 28%%, %d%%);', round(((++$i / posts_per_page()) * 20) + 20)); ?>
 			<li style="<?php echo $bg; ?>">
 				<article class="wrap">
@@ -31,7 +31,7 @@
 				</article>
 			</li>
 			<?php
-    endwhile; ?>
+	endwhile; ?>
 		</ul>
 
 		<?php if (has_pagination()): ?>
@@ -46,7 +46,7 @@
 			</div>
 		</nav>
 		<?php
-    endif; ?>
+	endif; ?>
 
 	<?php
 else: ?>

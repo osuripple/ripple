@@ -9,7 +9,7 @@
 			<?php foreach ($errors as $error): ?>
 			<li><?php echo $error; ?></li>
 			<?php
-    endforeach; ?>
+	endforeach; ?>
 		</ul>
 		<?php
 else: ?>

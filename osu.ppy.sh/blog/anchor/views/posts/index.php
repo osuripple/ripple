@@ -51,7 +51,7 @@ endforeach; ?>
 			</a>
 		</li>
 		<?php
-    endforeach; ?>
+	endforeach; ?>
 	</ul>
 
 	<aside class="paging"><?php echo $posts->links(); ?></aside>

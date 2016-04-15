@@ -18,8 +18,8 @@ endif; ?> <?php echo article_custom_field('attribution'); ?></p>
 			<?php if (has_comments()): ?>
 			<ul class="commentlist">
 				<?php $i = 0;
-        while (comments()):
-            $i++; ?>
+		while (comments()):
+			$i++; ?>
 				<li class="comment" id="comment-<?php echo comment_id(); ?>">
 					<div class="wrap">
 						<h2><?php echo comment_name(); ?></h2>
@@ -33,10 +33,10 @@ endif; ?> <?php echo article_custom_field('attribution'); ?></p>
 					</div>
 				</li>
 				<?php
-        endwhile; ?>
+		endwhile; ?>
 			</ul>
 			<?php
-    endif; ?>
+	endif; ?>
 
 			<form id="comment" class="commentform wrap" method="post" action="<?php echo comment_form_url(); ?>#comment">
 				<?php echo comment_form_notifications(); ?>

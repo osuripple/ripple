@@ -70,7 +70,7 @@
 					<?php $selected = ($pagetype->key == 'all') ? ' selected="selected"' : ''; ?>
 					<option value="<?php echo $pagetype->key; ?>" <?php echo $selected; ?>><?php echo $pagetype->value; ?></option>
 					<?php
-    endforeach; ?>
+	endforeach; ?>
 				</select>
 				<em><?php echo __('pages.pagetype_explain'); ?></em>
 			</p>
@@ -84,7 +84,7 @@ endif; ?>
 					<?php echo Extend::html($field); ?>
 				</p>
 				<?php
-    endif; ?>
+	endif; ?>
 			<?php
 endforeach; ?>
 			</div>

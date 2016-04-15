@@ -1,14 +1,14 @@
 <?php
 class comment extends Base {
-    public static $table = 'comments';
-    public function notify() {
-        $uri = Uri::full('admin/comments/edit/' . $this->id);
-        $host = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST) ? : 'localhost';
-        $from = 'notifications@' . $host;
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers.= 'Content-type: text/html; charset=utf-8' . "\r\n";
-        $headers.= 'From: ' . $from . "\r\n";
-        $message = '<html>
+	public static $table = 'comments';
+	public function notify() {
+		$uri = Uri::full('admin/comments/edit/' . $this->id);
+		$host = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST) ? : 'localhost';
+		$from = 'notifications@' . $host;
+		$headers = 'MIME-Version: 1.0' . "\r\n";
+		$headers.= 'Content-type: text/html; charset=utf-8' . "\r\n";
+		$headers.= 'From: ' . $from . "\r\n";
+		$message = '<html>
 			<head>
 				<title>' . __('comments.notify_subject') . '</title>
 				<style>
@@ -39,41 +39,41 @@ class comment extends Base {
 				<p><a href="' . $uri . '">' . __('comments.view_comment') . '</a></p>
 			</body>
 		</html>';
-        // notify administrators
-        foreach (User::where('rank', '=', '4')->get() as $user) {
-            $to = $user->username . ' <' . $user->email . '>';
-            mail($to, __('comments.notify_subject'), $message, $headers);
-        }
-    }
-    public static function paginate($page = 1, $perpage = 10) {
-        $query = Query::table(static ::table());
-        $count = $query->count();
-        $results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('date', 'desc')->get();
-        return new Paginator($results, $count, $page, $perpage, Uri::to('admin/comments'));
-    }
-    public static function spam($comment) {
-        $parts = explode('@', $comment['email']);
-        $domain = array_pop($parts);
-        // check domain
-        $query = static ::where('email', 'like', '%' . $domain)->where('status', '=', 'spam');
-        if ($query->count()) {
-            // duplicate spam
-            return true;
-        }
-        // check keywords
-        $badwords = Config::get('meta.comment_moderation_keys');
-        if ($badwords) {
-            $words = explode(',', $badwords);
-            foreach ($words as $word) {
-                $word = preg_quote($word, '#');
-                $pattern = "#$word#i";
-                foreach ($comment as $part) {
-                    if (preg_match($pattern, $part)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+		// notify administrators
+		foreach (User::where('rank', '=', '4')->get() as $user) {
+			$to = $user->username . ' <' . $user->email . '>';
+			mail($to, __('comments.notify_subject'), $message, $headers);
+		}
+	}
+	public static function paginate($page = 1, $perpage = 10) {
+		$query = Query::table(static ::table());
+		$count = $query->count();
+		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('date', 'desc')->get();
+		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/comments'));
+	}
+	public static function spam($comment) {
+		$parts = explode('@', $comment['email']);
+		$domain = array_pop($parts);
+		// check domain
+		$query = static ::where('email', 'like', '%' . $domain)->where('status', '=', 'spam');
+		if ($query->count()) {
+			// duplicate spam
+			return true;
+		}
+		// check keywords
+		$badwords = Config::get('meta.comment_moderation_keys');
+		if ($badwords) {
+			$words = explode(',', $badwords);
+			foreach ($words as $word) {
+				$word = preg_quote($word, '#');
+				$pattern = "#$word#i";
+				foreach ($comment as $part) {
+					if (preg_match($pattern, $part)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

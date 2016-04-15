@@ -12,33 +12,33 @@
  * Check php version.
  */
 if (version_compare(PHP_VERSION, '5.3') < 0) {
-    echo 'We need PHP 5.3 or higher, you are running ' . PHP_VERSION;
-    exit;
+	echo 'We need PHP 5.3 or higher, you are running ' . PHP_VERSION;
+	exit;
 }
 /*
  * Register Globals Fix
 */
 if (ini_get('register_globals')) {
-    $sg = [$_REQUEST, $_SERVER, $_FILES];
-    if (isset($_SESSION)) {
-        array_unshift($sg, $_SESSION);
-    }
-    foreach ($sg as $global) {
-        foreach (array_keys($global) as $key) {
-            unset($ {
-                $key
-            });
-        }
-    }
+	$sg = [$_REQUEST, $_SERVER, $_FILES];
+	if (isset($_SESSION)) {
+		array_unshift($sg, $_SESSION);
+	}
+	foreach ($sg as $global) {
+		foreach (array_keys($global) as $key) {
+			unset($ {
+				$key
+			});
+		}
+	}
 }
 /*
  * Magic Quotes Fix
 */
 if (get_magic_quotes_gpc()) {
-    $gpc = [&$_GET, &$_POST, &$_COOKIE, &$_REQUEST];
-    array_walk_recursive($gpc, function (&$value) {
-        $value = stripslashes($value);
-    });
+	$gpc = [&$_GET, &$_POST, &$_COOKIE, &$_REQUEST];
+	array_walk_recursive($gpc, function (&$value) {
+		$value = stripslashes($value);
+	});
 }
 /**
  * Include base classes and functions.
