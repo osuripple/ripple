@@ -1,4 +1,5 @@
 <?php
+
 class Migration_create_categories_table extends Migration {
 	public function up() {
 		$table = Base::table('categories');
@@ -13,6 +14,7 @@ class Migration_create_categories_table extends Migration {
 			DB::query($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

@@ -17,9 +17,9 @@ endif; ?>
 	<nav class="sidebar">
 		<nav class="statuses">
 			<p>Statuses</p>
-			<?php echo Html::link('admin/posts', '<span class="icon"></span> ' . __('global.all'), ['class' => isset($status) ? ($status == 'all' ? 'active' : '') : '', ]); ?>
+			<?php echo Html::link('admin/posts', '<span class="icon"></span> ' . __('global.all'), ['class' => isset($status) ? ($status == 'all' ? 'active' : '') : '']); ?>
 			<?php foreach (['published', 'draft', 'archived'] as $type): ?>
-			<?php echo Html::link('admin/posts/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '', ]); ?>
+			<?php echo Html::link('admin/posts/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '']); ?>
 			<?php
 endforeach; ?>
 		</nav>
@@ -27,7 +27,7 @@ endforeach; ?>
 		<nav class="categories">
 			<p>Categories</p>
 			<?php foreach ($categories as $cat): ?>
-			<?php echo Html::link('admin/posts/category/' . $cat->slug, $cat->title, ['class' => (isset($category) and $category->id == $cat->id) ? 'active' : '', ]); ?>
+			<?php echo Html::link('admin/posts/category/' . $cat->slug, $cat->title, ['class' => (isset($category) and $category->id == $cat->id) ? 'active' : '']); ?>
 			<?php
 endforeach; ?>
 		</nav>

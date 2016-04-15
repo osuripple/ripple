@@ -1,4 +1,5 @@
 <?php
+
 return ['users' => 'Users', 'create_user' => 'Create a new user', 'add_user' => 'Add a new user', 'editing_user' => 'Editing %s&rsquo;s Profile', 'remembered' => 'I know my password', 'forgotten_password' => 'Forgotten your password?',
 // roles
 'administrator' => 'Admin', 'administrator_explain' => '', 'editor' => 'Editor', 'editor_explain' => '', 'user' => 'User', 'user_explain' => '',

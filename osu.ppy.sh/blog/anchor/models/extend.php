@@ -1,16 +1,20 @@
 <?php
+
 class extend extends Base {
 	public static $table = 'extend';
-	public static $types = ['post' => 'post', 'page' => 'page', 'category' => 'category', 'user' => 'user', ];
-	public static $field_types = ['text' => 'text', 'html' => 'html', 'image' => 'image', 'file' => 'file', ];
-	public static function field($type, $key, $id = - 1) {
+	public static $types = ['post' => 'post', 'page' => 'page', 'category' => 'category', 'user' => 'user'];
+	public static $field_types = ['text' => 'text', 'html' => 'html', 'image' => 'image', 'file' => 'file'];
+
+	public static function field($type, $key, $id = -1) {
 		$field = Query::table(static ::table())->where('type', '=', $type)->where('key', '=', $key)->fetch();
 		if ($field) {
 			$meta = Query::table(static ::table($type . '_meta'))->where($type, '=', $id)->where('extend', '=', $field->id)->fetch();
 			$field->value = Json::decode($meta ? $meta->data : '{}');
 		}
+
 		return $field;
 	}
+
 	public static function value($extend, $value = null) {
 		switch ($extend->field) {
 			case 'text':
@@ -31,9 +35,11 @@ class extend extends Base {
 				}
 			break;
 		}
+
 		return $value;
 	}
-	public static function fields($type, $id = - 1, $pagetype = null) {
+
+	public static function fields($type, $id = -1, $pagetype = null) {
 		if (is_null($pagetype)) {
 			$fields = Query::table(static ::table())->where('type', '=', $type)->get();
 		} else {
@@ -43,8 +49,10 @@ class extend extends Base {
 			$meta = Query::table(static ::table($type . '_meta'))->where($type, '=', $id)->where('extend', '=', $fields[$index]->id)->fetch();
 			$fields[$index]->value = Json::decode($meta ? $meta->data : '{}');
 		}
+
 		return $fields;
 	}
+
 	public static function html($item) {
 		switch ($item->field) {
 			case 'text':
@@ -60,14 +68,14 @@ class extend extends Base {
 				$value = isset($item->value->filename) ? $item->value->filename : '';
 				$html = '<span class="current-file">';
 				if ($value) {
-					$html.= '<a href="' . asset('content/' . $value) . '" target="_blank">' . $value . '</a>';
+					$html .= '<a href="' . asset('content/' . $value) . '" target="_blank">' . $value . '</a>';
 				}
-				$html.= '</span>
+				$html .= '</span>
 					<span class="file">
 					<input id="extend_' . $item->key . '" name="extend[' . $item->key . ']" type="file">
 					</span>';
 				if ($value) {
-					$html.= '</p><p>
+					$html .= '</p><p>
 					<label>' . __('global.delete') . ' ' . $item->label . ':</label>
 					<input type="checkbox" name="extend_remove[' . $item->key . ']" value="1">';
 				}
@@ -75,14 +83,18 @@ class extend extends Base {
 			default:
 				$html = '';
 		}
+
 		return $html;
 	}
+
 	public static function paginate($page = 1, $perpage = 10) {
 		$query = Query::table(static ::table());
 		$count = $query->count();
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->get();
+
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/extend/fields'));
 	}
+
 	/*
 				    Process field types
 	*/
@@ -96,13 +108,17 @@ class extend extends Base {
 				}
 			}
 		}
+
 		return $files;
 	}
+
 	public static function upload($file) {
 		$uploader = new Uploader(PATH . 'content', ['png', 'jpg', 'bmp', 'gif', 'pdf']);
 		$filepath = $uploader->upload($file);
+
 		return $filepath;
 	}
+
 	public static function process_image($extend) {
 		$file = Arr::get(static ::files(), $extend->key);
 		if ($file and $file['error'] === UPLOAD_ERR_OK) {
@@ -121,8 +137,10 @@ class extend extends Base {
 			$name = $filename;
 		}
 		$data = compact('name', 'filename');
+
 		return Json::encode($data);
 	}
+
 	private static function resizeImage($extend, $filepath) {
 		// resize image
 		if (isset($extend->attributes->size->width) and isset($extend->attributes->size->height)) {
@@ -136,24 +154,31 @@ class extend extends Base {
 			}
 		}
 	}
+
 	public static function process_file($extend) {
 		$file = Arr::get(static ::files(), $extend->key);
 		if ($file and $file['error'] === UPLOAD_ERR_OK) {
 			$name = basename($file['name']);
 			if ($filepath = static ::upload($file)) {
 				$filename = basename($filepath);
+
 				return Json::encode(compact('name', 'filename'));
 			}
 		}
 	}
+
 	public static function process_text($extend) {
 		$text = Input::get('extend.' . $extend->key);
+
 		return Json::encode(compact('text'));
 	}
+
 	public static function process_html($extend) {
 		$html = Input::get('extend.' . $extend->key);
+
 		return Json::encode(compact('html'));
 	}
+
 	/*
 				    Save
 	*/
@@ -170,7 +195,7 @@ class extend extends Base {
 				if ($query->count()) {
 					$query->update(['data' => $data]);
 				} else {
-					$query->insert(['extend' => $extend->id, $extend->type => $item, 'data' => $data, ]);
+					$query->insert(['extend' => $extend->id, $extend->type => $item, 'data' => $data]);
 				}
 			}
 			// remove data

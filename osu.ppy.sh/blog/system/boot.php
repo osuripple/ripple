@@ -56,7 +56,7 @@ spl_autoload_register(['System\\Autoloader', 'load']);
 System\Autoloader::directory(PATH);
 // map application aliases to autoloader so we dont
 // have to fully specify the class namespaces each time.
-System\Autoloader::$aliases = (array)System\Config::aliases();
+System\Autoloader::$aliases = (array) System\Config::aliases();
 /*
  * Error handling
 */

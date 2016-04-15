@@ -1,4 +1,5 @@
 <?php
+
 class paginator {
 	public $results = [];
 	public $count = 0;
@@ -8,6 +9,7 @@ class paginator {
 	public $last;
 	public $next;
 	public $prev;
+
 	public function __construct($results, $count, $page, $perpage, $url) {
 		$this->results = $results;
 		$this->count = $count;
@@ -19,6 +21,7 @@ class paginator {
 		$this->next = __('global.next');
 		$this->prev = __('global.previous');
 	}
+
 	public function prev_link($text = null, $default = '', $attrs = []) {
 		if (is_null($text)) {
 			$text = $this->next;
@@ -26,20 +29,26 @@ class paginator {
 		$pages = ceil($this->count / $this->perpage);
 		if ($this->page < $pages) {
 			$page = $this->page + 1;
+
 			return $this->link($text, array_merge(['href' => $this->url . '/' . $page], $attrs));
 		}
+
 		return $default;
 	}
+
 	public function next_link($text = null, $default = '', $attrs = []) {
 		if (is_null($text)) {
 			$text = $this->prev;
 		}
 		if ($this->page > 1) {
 			$page = $this->page - 1;
+
 			return $this->link($text, array_merge(['href' => $this->url . '/' . $page], $attrs));
 		}
+
 		return $default;
 	}
+
 	public function links() {
 		$html = '';
 		$pages = ceil($this->count / $this->perpage);
@@ -50,7 +59,7 @@ class paginator {
 				$html = '<a href="' . $this->url . '">' . $this->first . '</a>
 					<a href="' . $this->url . '/' . $page . '">' . $this->prev . '</a>';
 			}
-			for ($i = $this->page - $range;$i < $this->page + $range;$i++) {
+			for ($i = $this->page - $range; $i < $this->page + $range; $i++) {
 				if ($i < 0) {
 					continue;
 				}
@@ -59,27 +68,30 @@ class paginator {
 					break;
 				}
 				if ($page == $this->page) {
-					$html.= ' <strong>' . $page . '</strong> ';
+					$html .= ' <strong>' . $page . '</strong> ';
 				} else {
-					$html.= ' ' . $this->link($page, $this->url . '/' . $page) . ' ';
+					$html .= ' ' . $this->link($page, $this->url . '/' . $page) . ' ';
 				}
 			}
 			if ($this->page < $pages) {
 				$page = $this->page + 1;
-				$html.= $this->link($this->next, $this->url . '/' . $page) . $this->link($this->last, $this->url . '/' . $pages);
+				$html .= $this->link($this->next, $this->url . '/' . $page) . $this->link($this->last, $this->url . '/' . $pages);
 			}
 		}
+
 		return $html;
 	}
+
 	public function link($text, $attrs = []) {
 		$attr = '';
 		if (is_string($attrs)) {
 			$attr = 'href="' . $attrs . '"';
 		} else {
 			foreach ($attrs as $key => $val) {
-				$attr.= $key . '="' . $val . '" ';
+				$attr .= $key . '="' . $val . '" ';
 			}
 		}
+
 		return '<a ' . trim($attr) . '>' . $text . '</a>';
 	}
 }

@@ -16,6 +16,7 @@ function search_results() {
 		// move to next
 		$posts->next();
 	}
+
 	return $result;
 }
 function search_term() {
@@ -38,6 +39,7 @@ function search_next($text = 'Next', $default = '') {
 	if (($page - 1) < $pages) {
 		return '<a href="' . $url . '">' . $text . '</a>';
 	}
+
 	return $default;
 }
 function search_prev($text = 'Previous', $default = '') {
@@ -54,6 +56,7 @@ function search_prev($text = 'Previous', $default = '') {
 	if ($offset > 0) {
 		return '<a href="' . $url . '">' . $text . '</a>';
 	}
+
 	return $default;
 }
 function search_url() {

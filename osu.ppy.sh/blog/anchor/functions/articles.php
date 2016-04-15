@@ -63,6 +63,7 @@ function article_next_url($draft = false, $archive = false) {
  */
 function article_url() {
 	$page = Registry::get('posts_page');
+
 	return base_url($page->slug . '/' . article_slug());
 }
 /**
@@ -142,6 +143,7 @@ function article_status() {
 function article_category() {
 	if ($category = Registry::prop('article', 'category')) {
 		$categories = Registry::get('all_categories');
+
 		return $categories[$category]->title;
 	}
 }
@@ -154,6 +156,7 @@ function article_category() {
 function article_category_slug() {
 	if ($category = Registry::prop('article', 'category')) {
 		$categories = Registry::get('all_categories');
+
 		return $categories[$category]->slug;
 	}
 }
@@ -166,6 +169,7 @@ function article_category_slug() {
 function article_category_url() {
 	if ($category = Registry::prop('article', 'category')) {
 		$categories = Registry::get('all_categories');
+
 		return base_url('category/' . $categories[$category]->slug);
 	}
 }
@@ -222,6 +226,7 @@ function article_custom_field($key, $default = '') {
 	if ($extend = Extend::field('post', $key, $id)) {
 		return Extend::value($extend, $default);
 	}
+
 	return $default;
 }
 /**
@@ -233,6 +238,7 @@ function customised() {
 	if ($itm = Registry::get('article')) {
 		return $itm->js or $itm->css;
 	}
+
 	return false;
 }
 /**
@@ -278,6 +284,7 @@ function article_adjacent_url($side = 'next', $draft = false, $archived = false)
 	if ($query->count()) {
 		$article = $query->sort('created', $order)->fetch();
 		$page = Registry::get('posts_page');
+
 		return base_url($page->slug . '/' . $article->slug);
 	}
 }
@@ -300,6 +307,7 @@ function related_posts($n) {
 	endforeach;
 	shuffle($postarr);
 	$postarr = array_slice($postarr, 0, $n);
+
 	return $postarr;
 }
 /**
@@ -310,6 +318,7 @@ function related_posts($n) {
 function article_category_id() {
 	if ($category = Registry::prop('article', 'category')) {
 		$categories = Registry::get('all_categories');
+
 		return $categories[$category]->id;
 	}
 }

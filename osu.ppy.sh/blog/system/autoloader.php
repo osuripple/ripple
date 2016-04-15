@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -22,6 +24,7 @@ class autoloader {
 	 * @var array
 	 */
 	public static $aliases = [];
+
 	/**
 	 * Append a path to the array of directories to search.
 	 *
@@ -35,6 +38,7 @@ class autoloader {
 			static ::$directories[] = rtrim($path, DS) . DS;
 		}
 	}
+
 	/**
 	 * Attempts to load a class.
 	 *
@@ -55,6 +59,7 @@ class autoloader {
 				return require $path;
 			}
 		}
+
 		return false;
 	}
 }

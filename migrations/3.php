@@ -11,7 +11,7 @@ $users = $GLOBALS['db']->fetchAll('SELECT username, osu_id, friends FROM users')
 
 echo "Populating user_friendships...\n";
 foreach ($users as $u) {
-    echo '... for user '.$u['username']."\n";
+    echo '... for user ' . $u['username'] . "\n";
     $friends = explode(',', $u['friends']);
     foreach ($friends as $friend) {
         if ($friend != 0) {

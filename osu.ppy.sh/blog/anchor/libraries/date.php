@@ -1,4 +1,5 @@
 <?php
+
 class date {
 	/*
 	 * Format a date as per users timezone and format
@@ -10,13 +11,16 @@ class date {
 		}
 		$date = new DateTime($date, new DateTimeZone('GMT'));
 		$date->setTimezone(new DateTimeZone(Config::app('timezone')));
+
 		return $date->format($format);
 	}
+
 	/*
 	 * All database dates are stored as GMT
 	*/
 	public static function mysql($date) {
 		$date = new DateTime($date, new DateTimeZone('GMT'));
+
 		return $date->format('Y-m-d H:i:s');
 	}
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -22,6 +24,7 @@ class view {
 	 * @var array
 	 */
 	public $vars = [];
+
 	/**
 	 * Create a instance or the View class for chaining.
 	 *
@@ -33,6 +36,7 @@ class view {
 	public static function create($path, $vars = []) {
 		return new static ($path, $vars);
 	}
+
 	/**
 	 * Create a instance of a View class for chaining using a
 	 * method for the file name.
@@ -46,8 +50,10 @@ class view {
 	 */
 	public static function __callStatic($method, $arguments) {
 		$vars = count($arguments) ? current($arguments) : [];
+
 		return new static ($method, $vars);
 	}
+
 	/**
 	 * Create a instance or the View class.
 	 *
@@ -58,6 +64,7 @@ class view {
 		$this->path = APP . 'views/' . $path . EXT;
 		$this->vars = array_merge($this->vars, $vars);
 	}
+
 	/**
 	 * Render a partial view.
 	 *
@@ -65,8 +72,10 @@ class view {
 	 */
 	public function partial($name, $path, $vars = []) {
 		$this->vars[$name] = static ::create($path, $vars)->render();
+
 		return $this;
 	}
+
 	/**
 	 * Render the view.
 	 *
@@ -76,6 +85,7 @@ class view {
 		ob_start();
 		extract($this->vars);
 		require $this->path;
+
 		return ob_get_clean();
 	}
 }

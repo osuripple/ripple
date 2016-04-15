@@ -1,4 +1,5 @@
 <?php
+
 class base extends Record {
 	public static function table($name = null) {
 		if (is_null(static ::$prefix)) {
@@ -10,8 +11,10 @@ class base extends Record {
 		if (!is_null($name)) {
 			return static ::$prefix . $name;
 		}
+
 		return static ::$prefix . static ::$table;
 	}
+
 	public static function __callStatic($method, $arguments) {
 		$obj = Query::table(static ::table())->apply(get_called_class());
 		if (method_exists($obj, $method)) {

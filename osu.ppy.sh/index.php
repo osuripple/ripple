@@ -131,12 +131,12 @@ $status = '';
 if ($model !== 'old') {
 	if (isset($_GET['s'])) {
 		if (isset($model->success_messages[$_GET['s']])) {
-			$status.= P::SuccessMessage($model->success_messages[$_GET['s']], true);
+			$status .= P::SuccessMessage($model->success_messages[$_GET['s']], true);
 		}
 	}
 	if (isset($_GET['e'])) {
 		if (isset($model->error_messages[$_GET['e']])) {
-			$status.= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
+			$status .= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
 		}
 	}
 }
@@ -209,7 +209,7 @@ if ($p < 100) {
     <?php
 switch ($p) {
 		// Admin cp - beta keys
-		
+
 	case 105:
 		echo '
             <script type="text/javascript">
@@ -237,7 +237,7 @@ switch ($p) {
             </script>';
 	break;
 		// Admin cp - edit user
-		
+
 	case 103:
 		echo '
                 <script type="text/javascript">

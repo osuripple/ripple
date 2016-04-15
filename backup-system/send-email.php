@@ -1,7 +1,7 @@
 <?php
     if (PHP_SAPI == 'cli') {
-        require_once dirname(__FILE__).'/../osu.ppy.sh/inc/SimpleMailgun.php';
-        require_once dirname(__FILE__).'/../osu.ppy.sh/inc/config.php';
+        require_once dirname(__FILE__) . '/../osu.ppy.sh/inc/SimpleMailgun.php';
+        require_once dirname(__FILE__) . '/../osu.ppy.sh/inc/config.php';
         $mailer = new SimpleMailgun($MailgunConfig);
 
         $ini = parse_ini_file('config.ini');
@@ -32,12 +32,12 @@
         $who = explode(',', $ini['email_to']);
 
         foreach ($who as $to) {
-            echo 'Sending email to '.$to."...\n";
+            echo 'Sending email to ' . $to . "...\n";
             $mailer->Send(
-                'Ripple <noreply@'.$MailgunConfig['domain'].'>',
+                'Ripple <noreply@' . $MailgunConfig['domain'] . '>',
                 $to,
                 'Ripple backup notification',
-                'Ripple data has been backed up!<br><br><b>Backup Type:</b> '.$type.'<br><b>Backup size:</b> '.$argv[1].'<br><b>Backed up to:</b> '.$where.'<br><br>Log in to your Backblaze/S3/OVH account to download the backup archive.'
+                'Ripple data has been backed up!<br><br><b>Backup Type:</b> ' . $type . '<br><b>Backup size:</b> ' . $argv[1] . '<br><b>Backed up to:</b> ' . $where . '<br><br>Log in to your Backblaze/S3/OVH account to download the backup archive.'
             );
         }
     }

@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	/*
 				    List Vars
@@ -7,6 +8,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['pagetypes'] = Query::table(Base::table('pagetypes'))->sort('key')->get();
+
 		return View::create('extend/pagetypes/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
@@ -15,6 +17,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	Route::get('admin/extend/pagetypes/add', function () {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
+
 		return View::create('extend/pagetypes/add', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	Route::post('admin/extend/pagetypes/add', function () {
@@ -29,10 +32,12 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/extend/pagetypes/add');
 		}
 		Query::table(Base::table('pagetypes'))->insert($input);
 		Notify::success(__('extend.pagetype_created'));
+
 		return Response::redirect('admin/extend/pagetypes');
 	});
 	/*
@@ -42,6 +47,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['pagetype'] = Query::table(Base::table('pagetypes'))->where('key', '=', $key)->fetch();
+
 		return View::create('extend/pagetypes/edit', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	Route::post('admin/extend/pagetypes/edit/(:any)', function ($key) {
@@ -61,10 +67,12 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/extend/pagetypes/edit/' . $key);
 		}
 		Query::table(Base::table('pagetypes'))->where('key', '=', $key)->update($input);
 		Notify::success(__('extend.pagetype_updated'));
+
 		return Response::redirect('admin/extend/pagetypes');
 	});
 	/*
@@ -73,6 +81,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	Route::get('admin/extend/pagetypes/delete/(:any)', function ($key) {
 		Query::table(Base::table('pagetypes'))->where('key', '=', $key)->delete();
 		Notify::success(__('extend.pagetype_deleted'));
+
 		return Response::redirect('admin/extend/pagetypes');
 	});
 });

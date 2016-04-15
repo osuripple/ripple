@@ -1,13 +1,15 @@
 <?php
+
 class comment extends Base {
 	public static $table = 'comments';
+
 	public function notify() {
 		$uri = Uri::full('admin/comments/edit/' . $this->id);
-		$host = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST) ? : 'localhost';
+		$host = parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST) ?: 'localhost';
 		$from = 'notifications@' . $host;
 		$headers = 'MIME-Version: 1.0' . "\r\n";
-		$headers.= 'Content-type: text/html; charset=utf-8' . "\r\n";
-		$headers.= 'From: ' . $from . "\r\n";
+		$headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
+		$headers .= 'From: ' . $from . "\r\n";
 		$message = '<html>
 			<head>
 				<title>' . __('comments.notify_subject') . '</title>
@@ -45,12 +47,15 @@ class comment extends Base {
 			mail($to, __('comments.notify_subject'), $message, $headers);
 		}
 	}
+
 	public static function paginate($page = 1, $perpage = 10) {
 		$query = Query::table(static ::table());
 		$count = $query->count();
 		$results = $query->take($perpage)->skip(($page - 1) * $perpage)->sort('date', 'desc')->get();
+
 		return new Paginator($results, $count, $page, $perpage, Uri::to('admin/comments'));
 	}
+
 	public static function spam($comment) {
 		$parts = explode('@', $comment['email']);
 		$domain = array_pop($parts);
@@ -74,6 +79,7 @@ class comment extends Base {
 				}
 			}
 		}
+
 		return false;
 	}
 }

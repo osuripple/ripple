@@ -1,4 +1,5 @@
 <?php
+
 // We aren't calling the class Do because otherwise it would conflict with do { } while ();
 class D {
 	/*
@@ -13,7 +14,7 @@ class D {
 			}
 			// Validate password through our helper
 			$pres = PasswordHelper::ValidatePassword($_POST['p1'], $_POST['p2']);
-			if ($pres !== - 1) {
+			if ($pres !== -1) {
 				throw new Exception($pres);
 			}
 			// Check if email is valid
@@ -44,7 +45,7 @@ class D {
 			$md5Password = password_hash(md5($_POST['p1']), PASSWORD_DEFAULT);
 			// Put some data into the db
 			$GLOBALS['db']->execute("INSERT INTO `users`(username, password_md5, salt, email, register_datetime, rank, allowed, password_version) 
-			                                     VALUES (?,        ?,            '',    ?,     ?,                 1,   1,       2);", [$_POST['u'], $md5Password, $_POST['e'], time(true) ]);
+			                                     VALUES (?,        ?,            '',    ?,     ?,                 1,   1,       2);", [$_POST['u'], $md5Password, $_POST['e'], time(true)]);
 			// Get user ID
 			$uid = $GLOBALS['db']->lastInsertId();
 			// Put some data into users_stats
@@ -63,6 +64,7 @@ class D {
 			redirect('index.php?p=3&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * ChangePassword
 	 * Change password function
@@ -76,7 +78,7 @@ class D {
 				throw new Exception(0);
 			}
 			$pres = PasswordHelper::ValidatePassword($_POST['p1'], $_POST['p2']);
-			if ($pres !== - 1) {
+			if ($pres !== -1) {
 				throw new Exception($pres);
 			}
 			if (!PasswordHelper::CheckPass($_SESSION['username'], $_POST['pold'], false)) {
@@ -96,6 +98,7 @@ class D {
 			redirect('index.php?p=7&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * RecoverPassword()
 	 * Form submission for printPasswordRecovery.
@@ -126,6 +129,7 @@ class D {
 			redirect('index.php?p=18&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * GenerateBetaKey
 	 * Generate beta key(s) function
@@ -146,7 +150,7 @@ class D {
 			// We store plain keys here to show them at the end
 			$plainKeys = '';
 			// Generate all the keys
-			for ($i = 0;$i < $_POST['n'];$i++) {
+			for ($i = 0; $i < $_POST['n']; $i++) {
 				$d = false;
 				while ($d == false) {
 					$key = generateKey();
@@ -168,6 +172,7 @@ class D {
 			redirect('index.php?p=105&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AllowDisallowBetaKey
 	 * Allow/Disallow beta key function (ADMIN CP)
@@ -196,6 +201,7 @@ class D {
 			redirect('index.php?p=105&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * PublicPrivateBetaKey
 	 * Public/private beta key function (ADMIN CP)
@@ -224,6 +230,7 @@ class D {
 			redirect('index.php?p=105&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * RemoveBetaKey
 	 * Remove beta key function (ADMIN CP)
@@ -250,6 +257,7 @@ class D {
 			redirect('index.php?p=105&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveSystemSettings
 	 * Save system settings function (ADMIN CP)
@@ -296,6 +304,7 @@ class D {
 			redirect('index.php?p=101&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveBanchoSettings
 	 * Save bancho settings function (ADMIN CP)
@@ -360,6 +369,7 @@ class D {
 			redirect('index.php?p=111&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * RunCron
 	 * Runs cron.php from admin cp with exec/redirect
@@ -373,6 +383,7 @@ class D {
 			redirect('./cron.php');
 		}
 	}
+
 	/*
 	 * SaveEditUser
 	 * Save edit user function (ADMIN CP)
@@ -431,6 +442,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * BanUnbanUser
 	 * Ban/Unban user function (ADMIN CP)
@@ -465,6 +477,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * QuickEditUser
 	 * Redirects to the edit user page for the user with $_POST["u"] username
@@ -489,6 +502,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * QuickEditUserBadges
 	 * Redirects to the edit user badges page for the user with $_POST["u"] username
@@ -513,6 +527,7 @@ class D {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * ChangeIdentity
 	 * Change identity function (ADMIN CP)
@@ -542,6 +557,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveDocFile
 	 * Save doc file function (ADMIN CP)
@@ -566,6 +582,7 @@ class D {
 			redirect('index.php?p=106&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveBadge
 	 * Save badge function (ADMIN CP)
@@ -590,6 +607,7 @@ class D {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveUserBadges
 	 * Save user badges function (ADMIN CP)
@@ -616,6 +634,7 @@ class D {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * RemoveDocFile
 	 * Delete doc file function (ADMIN CP)
@@ -640,6 +659,7 @@ class D {
 			redirect('index.php?p=106&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * RemoveBadge
 	 * Remove badge function (ADMIN CP)
@@ -666,6 +686,7 @@ class D {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SilenceUser
 	 * Silence someone (ADMIN CP)
@@ -699,6 +720,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * KickUser
 	 * Kick someone from bancho (ADMIN CP)
@@ -725,6 +747,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * ResetAvatar
 	 * Reset soneone's avatar (ADMIN CP)
@@ -750,6 +773,7 @@ class D {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * Logout
 	 * Logout and return to home
@@ -771,6 +795,7 @@ class D {
 			redirect('index.php?p=2');
 		}
 	}
+
 	/*
 	 * ForgetEveryCookie
 	 * Allows the user to delete every field in the remember database table with their username, so that it is logged out of every computer they were logged in.
@@ -781,6 +806,7 @@ class D {
 		$rch->DestroyAll($_SESSION['username']);
 		redirect('index.php?p=1&s=forgetDone');
 	}
+
 	/*
 	 * saveUserSettings
 	 * Save user settings functions
@@ -805,7 +831,7 @@ class D {
 			foreach ($_POST as $key => $value) {
 				$i = str_replace('_', ' ', substr($key, 3));
 				if ($value == 1 && substr($key, 0, 3) == 'ps_' && isset($PlayStyleEnum[$i])) {
-					$pm+= $PlayStyleEnum[$i];
+					$pm += $PlayStyleEnum[$i];
 				}
 			}
 			// Update mode
@@ -824,6 +850,7 @@ class D {
 			redirect('index.php?p=6&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveUserpage
 	 * Save userpage functions
@@ -850,6 +877,7 @@ class D {
 			redirect('index.php?p=8&e=' . $e->getMessage() . $r);
 		}
 	}
+
 	/*
 	 * ChangeAvatar
 	 * Chhange avatar functions
@@ -891,6 +919,7 @@ class D {
 			redirect('index.php?p=5&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SendReport
 	 * Send report function
@@ -904,7 +933,7 @@ class D {
 				throw new Exception(0);
 			}
 			// Add report
-			$GLOBALS['db']->execute('INSERT INTO reports (id, name, from_username, content, type, open_time, update_time, status) VALUES (NULL, ?, ?, ?, ?, ?, ?, 1)', [$_POST['n'], $_SESSION['username'], $_POST['c'], $_POST['t'], time(), time() ]);
+			$GLOBALS['db']->execute('INSERT INTO reports (id, name, from_username, content, type, open_time, update_time, status) VALUES (NULL, ?, ?, ?, ?, ?, ?, 1)', [$_POST['n'], $_SESSION['username'], $_POST['c'], $_POST['t'], time(), time()]);
 			// Webhook stuff
 			global $WebHookReport;
 			global $KeyAkerino;
@@ -917,7 +946,7 @@ class D {
 					$type = 'feature';
 				break;
 			}
-			post_content_http($WebHookReport, ['key' => $KeyAkerino, 'title' => $_POST['n'], 'content' => $_POST['c'], 'id' => $GLOBALS['db']->lastInsertId(), 'type' => $type, 'username' => $_SESSION['username'], ]);
+			post_content_http($WebHookReport, ['key' => $KeyAkerino, 'title' => $_POST['n'], 'content' => $_POST['c'], 'id' => $GLOBALS['db']->lastInsertId(), 'type' => $type, 'username' => $_SESSION['username']]);
 			// Done, redirect to success page
 			redirect('index.php?p=22&s=ok');
 		}
@@ -926,6 +955,7 @@ class D {
 			redirect('index.php?p=22&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * OpenCloseReport
 	 * Open/Close a report (ADMIN CP)
@@ -956,6 +986,7 @@ class D {
 			redirect('index.php?p=113&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * SaveEditReport
 	 * Saves an edited report (ADMIN CP)
@@ -982,6 +1013,7 @@ class D {
 			redirect('index.php?p=113&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AddRemoveFriend
 	 * Add remove friends

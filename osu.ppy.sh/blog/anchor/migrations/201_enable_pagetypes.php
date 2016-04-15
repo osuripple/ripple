@@ -1,4 +1,5 @@
 <?php
+
 class Migration_enable_pagetypes extends Migration {
 	public function up() {
 		$table = Base::table('pagetypes');
@@ -8,7 +9,7 @@ class Migration_enable_pagetypes extends Migration {
 				`value` varchar(32) NOT NULL
 			) ENGINE=InnoDB';
 			DB::ask($sql);
-			Query::table($table)->insert(['key' => 'all', 'value' => 'All Pages', ]);
+			Query::table($table)->insert(['key' => 'all', 'value' => 'All Pages']);
 		}
 		$table2 = Base::table('extend');
 		if (!$this->has_table_column($table2, 'pagetype')) {
@@ -21,6 +22,7 @@ class Migration_enable_pagetypes extends Migration {
 			DB::ask($sql2);
 		}
 	}
+
 	public function down() {
 	}
 }

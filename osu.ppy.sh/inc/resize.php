@@ -113,11 +113,12 @@ function smart_resize_image($file, $string = null, $width = 0, $height = 0, $pro
 			imagejpeg($image_resized, $output, $quality);
 		break;
 		case IMAGETYPE_PNG:
-			$quality = 9 - (int)((0.9 * $quality) / 10.0);
+			$quality = 9 - (int) ((0.9 * $quality) / 10.0);
 			imagepng($image_resized, $output, $quality);
 		break;
 		default:
 			return false;
 	}
+
 	return true;
 }

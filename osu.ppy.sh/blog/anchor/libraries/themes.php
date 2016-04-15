@@ -1,4 +1,5 @@
 <?php
+
 class themes {
 	public static function all() {
 		$themes = [];
@@ -12,8 +13,10 @@ class themes {
 			}
 		}
 		ksort($themes);
+
 		return $themes;
 	}
+
 	public static function parse($theme) {
 		$file = PATH . 'themes/' . $theme . '/about.txt';
 		if (!is_readable($file)) {
@@ -41,8 +44,10 @@ class themes {
 			$value = implode('', $parts);
 			$about[$key] = trim($value);
 		}
+
 		return $about;
 	}
+
 	public static function templates($theme) {
 		$templates = [];
 		$fi = new FilesystemIterator(PATH . 'themes/' . $theme, FilesystemIterator::SKIP_DOTS);
@@ -53,6 +58,7 @@ class themes {
 				$templates[$base] = $base;
 			}
 		}
+
 		return $templates;
 	}
 }

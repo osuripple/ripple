@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,install_exists'], function () {
 	/*
 				    List Metadata
@@ -9,14 +10,15 @@ Route::collection(['before' => 'auth,install_exists'], function () {
 		$vars['meta'] = Config::get('meta');
 		$vars['pages'] = Page::dropdown();
 		$vars['themes'] = Themes::all();
+
 		return View::create('extend/metadata/edit', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
 				    Update Metadata
 	*/
 	Route::post('admin/extend/metadata', function () {
-		$input = Input::get(['sitename', 'description', 'home_page', 'posts_page', 'posts_per_page', 'auto_published_comments', 'theme', 'comment_notifications', 'comment_moderation_keys', 'show_all_posts', ]);
-		foreach ($input as $key => & $value) {
+		$input = Input::get(['sitename', 'description', 'home_page', 'posts_page', 'posts_per_page', 'auto_published_comments', 'theme', 'comment_notifications', 'comment_moderation_keys', 'show_all_posts']);
+		foreach ($input as $key => &$value) {
 			$value = eq($value);
 		}
 		$validator = new Validator($input);
@@ -26,6 +28,7 @@ Route::collection(['before' => 'auth,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/extend/metadata');
 		}
 		// convert double quotes so we dont break html
@@ -36,6 +39,7 @@ Route::collection(['before' => 'auth,install_exists'], function () {
 			Query::table(Base::table('meta'))->where('key', '=', $key)->update(['value' => $value]);
 		}
 		Notify::success(__('metadata.updated'));
+
 		return Response::redirect('admin/extend/metadata');
 	});
 });

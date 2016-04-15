@@ -1,4 +1,5 @@
 <?php
+
 class Migration_create_user_meta_table extends Migration {
 	public function up() {
 		$table = Base::table('user_meta');
@@ -20,6 +21,7 @@ class Migration_create_user_meta_table extends Migration {
 			DB::ask($sql2);
 		}
 	}
+
 	public function down() {
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,install_exists'], function () {
 	/*
 				    List Menu Items
@@ -6,6 +7,7 @@ Route::collection(['before' => 'auth,install_exists'], function () {
 	Route::get('admin/menu', function () {
 		$vars['messages'] = Notify::read();
 		$vars['pages'] = Page::where('show_in_menu', '=', 1)->sort('menu_order')->get();
+
 		return View::create('menu/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
@@ -16,6 +18,7 @@ Route::collection(['before' => 'auth,install_exists'], function () {
 		foreach ($sort as $index => $id) {
 			Page::where('id', '=', $id)->update(['menu_order' => $index]);
 		}
+
 		return Response::json(['result' => true]);
 	});
 });

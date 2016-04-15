@@ -1,6 +1,8 @@
 <?php
+
 class rss {
 	private $document, $channel;
+
 	private function element($name, $value = null, $attributes = []) {
 		$element = $this->document->createElement($name);
 		if (is_null($value) === false) {
@@ -10,8 +12,10 @@ class rss {
 		foreach ($attributes as $key => $val) {
 			$element->setAttribute($key, $val);
 		}
+
 		return $element;
 	}
+
 	public function __construct($name, $description, $url, $language) {
 		// create a dom xml object
 		$this->document = new DOMDocument('1.0', 'UTF-8');
@@ -41,9 +45,10 @@ class rss {
 		$copyright = $this->element('copyright', $name);
 		$this->channel->appendChild($copyright);
 		// atom self link
-		$atom = $this->element('atom:link', null, ['href' => $url, 'rel' => 'self', 'type' => 'application/rss+xml', ]);
+		$atom = $this->element('atom:link', null, ['href' => $url, 'rel' => 'self', 'type' => 'application/rss+xml']);
 		$this->channel->appendChild($atom);
 	}
+
 	public function item($title, $url, $description, $date) {
 		$item = $this->element('item');
 		$this->channel->appendChild($item);
@@ -60,6 +65,7 @@ class rss {
 		$date = $this->element('pubDate', date(DATE_RSS, strtotime($date)));
 		$item->appendChild($date);
 	}
+
 	public function output() {
 		// dump xml tree
 		return $this->document->saveXML();

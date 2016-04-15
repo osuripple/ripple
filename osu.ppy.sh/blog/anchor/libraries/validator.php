@@ -1,10 +1,13 @@
 <?php
+
 class validator {
 	private $payload = [], $key, $value, $errors = [], $methods = [];
+
 	public function __construct($payload) {
 		$this->payload = $payload;
 		$this->defaults();
 	}
+
 	private function defaults() {
 		$this->methods['null'] = function ($str) {
 			return is_null($str);
@@ -40,14 +43,18 @@ class validator {
 			return preg_match($pattern, $str);
 		};
 	}
+
 	public function check($key) {
 		$this->key = isset($this->payload[$key]) ? $key : null;
 		$this->value = isset($this->payload[$this->key]) ? $this->payload[$this->key] : null;
+
 		return $this;
 	}
+
 	public function add($method, $callback) {
 		$this->methods[$method] = $callback;
 	}
+
 	public function __call($method, $params) {
 		if (is_null($this->key)) {
 			return $this;
@@ -64,13 +71,15 @@ class validator {
 		}
 		$validator = $this->methods[$method];
 		$message = array_pop($params);
-		$result = (bool)call_user_func_array($validator, array_merge([$this->value], $params));
-		$result = (bool)($result ^ $reverse);
+		$result = (bool) call_user_func_array($validator, array_merge([$this->value], $params));
+		$result = (bool) ($result ^ $reverse);
 		if ($result === false) {
 			$this->errors[$this->key][] = $message;
 		}
+
 		return $this;
 	}
+
 	public function errors() {
 		return $this->errors;
 	}

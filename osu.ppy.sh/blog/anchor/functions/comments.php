@@ -11,6 +11,7 @@ function has_comments() {
 		$comments = new Items($comments);
 		Registry::set('comments', $comments);
 	}
+
 	return $comments->length();
 }
 function total_comments() {
@@ -18,6 +19,7 @@ function total_comments() {
 		return 0;
 	}
 	$comments = Registry::get('comments');
+
 	return $comments->length();
 }
 // loop comments
@@ -32,6 +34,7 @@ function comments() {
 		// move to next
 		$comments->next();
 	}
+
 	return $result;
 }
 // single comments

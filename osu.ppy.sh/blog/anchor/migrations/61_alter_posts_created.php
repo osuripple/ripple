@@ -1,4 +1,5 @@
 <?php
+
 class Migration_alter_posts_created extends Migration {
 	public function up() {
 		$table = Base::table('posts');
@@ -7,6 +8,7 @@ class Migration_alter_posts_created extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

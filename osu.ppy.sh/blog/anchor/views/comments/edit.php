@@ -43,7 +43,7 @@ echo $commented_post[0]->title; ?></h1>
 
 			<?php echo Html::link('admin/comments', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
-			<?php echo Html::link('admin/comments/delete/' . $comment->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
+			<?php echo Html::link('admin/comments/delete/' . $comment->id, __('global.delete'), ['class' => 'btn delete red']); ?>
 		</aside>
 	</form>
 </section>

@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,6 +12,7 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use System\Response\Status;
+
 class response {
 	/**
 	 * The final output.
@@ -29,6 +32,7 @@ class response {
 	 * @var array
 	 */
 	public $headers = [];
+
 	/**
 	 * Create a new instance of the Response class for chaining.
 	 *
@@ -41,6 +45,7 @@ class response {
 	public static function create($output, $status = 200, $headers = []) {
 		return new static ($output, $status, $headers);
 	}
+
 	/**
 	 * Creates a response with a header to redirect.
 	 *
@@ -55,8 +60,10 @@ class response {
 		while (ob_get_level() > 1) {
 			ob_end_clean();
 		}
-		return static ::create('', $status, ['Location' => Uri::to($uri) ]);
+
+		return static ::create('', $status, ['Location' => Uri::to($uri)]);
 	}
+
 	/**
 	 * Creates a response with the output as error view from the app
 	 * along with the status code.
@@ -68,6 +75,7 @@ class response {
 	public static function error($status, $vars = []) {
 		return static ::create(View::create('error/' . $status, $vars)->render(), $status);
 	}
+
 	/**
 	 * Creates a response with the output as JSON.
 	 *
@@ -77,8 +85,9 @@ class response {
 	 * @return object
 	 */
 	public static function json($output, $status = 200) {
-		return static ::create(json_encode($output), $status, ['content-type' => 'application/json; charset=' . Config::app('encoding', 'UTF-8') ]);
+		return static ::create(json_encode($output), $status, ['content-type' => 'application/json; charset=' . Config::app('encoding', 'UTF-8')]);
 	}
+
 	/**
 	 * Create a new instance of the Response class.
 	 *
@@ -90,9 +99,10 @@ class response {
 		$this->status = $status;
 		$this->output = $output;
 		foreach ($headers as $name => $value) {
-			$this->headers[strtolower($name) ] = $value;
+			$this->headers[strtolower($name)] = $value;
 		}
 	}
+
 	/**
 	 * Sends the final headers cookies and output.
 	 */

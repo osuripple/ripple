@@ -20,7 +20,7 @@ switch (constant('ENV')) {
 /*
  * Set autoload directories to include your app models and libraries
 */
-Autoloader::directory([APP . 'models', APP . 'libraries', ]);
+Autoloader::directory([APP . 'models', APP . 'libraries']);
 /**
  * Helpers.
  */

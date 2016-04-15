@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,6 +12,7 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
+
 class error {
 	/**
 	 * Exception handler.
@@ -58,6 +61,7 @@ class error {
 		}
 		exit(1);
 	}
+
 	/**
 	 * Error handler.
 	 *
@@ -75,6 +79,7 @@ class error {
 			static ::exception(new ErrorException($message, $code, 0, $file, $line));
 		}
 	}
+
 	/**
 	 * Shutdown handler.
 	 *
@@ -87,6 +92,7 @@ class error {
 			static ::exception(new ErrorException($message, $type, 0, $file, $line));
 		}
 	}
+
 	/**
 	 * Exception logger.
 	 *

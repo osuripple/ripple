@@ -1,7 +1,7 @@
 <?php
     // Fix full combo
     try {
-        require_once dirname(__FILE__).'/../osu.ppy.sh/inc/functions.php';
+        require_once dirname(__FILE__) . '/../osu.ppy.sh/inc/functions.php';
 
         echo "Fixing FC scores...\r\n";
 
@@ -53,7 +53,7 @@
                 // FC, update table row
                 $GLOBALS['db']->execute('UPDATE scores SET full_combo = 1 WHERE id = ?', [$score['id']]);
                 $fixed++;
-                echo "\033[32mFixed FC score ".$score['id']."\033[0m\r\n";
+                echo "\033[32mFixed FC score " . $score['id'] . "\033[0m\r\n";
             }
 
             // Wait some time so we don't abuse osu api
@@ -61,12 +61,12 @@
 
             // Calculate percentage and print it only if it changed
             $perc = number_format((100 * $cont) / $total, 2);
-            echo $perc.'% ('.$cont.'/'.$total.")\r\n";
+            echo $perc . '% (' . $cont . '/' . $total . ")\r\n";
         }
 
-        echo "\r\nDone. Fixed ".$fixed.' FC scores.';
+        echo "\r\nDone. Fixed " . $fixed . ' FC scores.';
     } catch (Exception $e) {
         if ($e->getMessage() != '') {
-            echo "\n\nERROR WHILE FIXING FCs. Stopped on index: ".$cont."\nPlease run /migrate/2.php again.\n\n";
+            echo "\n\nERROR WHILE FIXING FCs. Stopped on index: " . $cont . "\nPlease run /migrate/2.php again.\n\n";
         }
     }

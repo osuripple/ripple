@@ -1,5 +1,7 @@
 <?php
+
 namespace System\Database;
+
 /**
  * Nano.
  *
@@ -40,6 +42,7 @@ abstract class record {
 	 * @var array
 	 */
 	public static $primary = 'id';
+
 	/**
 	 * Find a record by primary key and return a new Record object.
 	 *
@@ -53,8 +56,10 @@ abstract class record {
 		if (isset(static ::$cache[$key])) {
 			return static ::$cache[$key];
 		}
+
 		return static ::$cache[$key] = static ::where(static ::$primary, '=', $id)->apply($class)->fetch();
 	}
+
 	/**
 	 * Create a new instance of the record class.
 	 *
@@ -63,6 +68,7 @@ abstract class record {
 	public function __construct($row = []) {
 		$this->data = $row;
 	}
+
 	/**
 	 * Commit the data array to the database.
 	 *
@@ -72,8 +78,10 @@ abstract class record {
 		if (isset($this->data[static ::$primary])) {
 			return static ::where(static ::$primary, '=', $this->data[static ::$primary])->update($this->data);
 		}
+
 		return static ::insert($this->data);
 	}
+
 	/**
 	 * Delete the record from the database.
 	 *
@@ -82,6 +90,7 @@ abstract class record {
 	public function delete() {
 		static ::where(static ::$primary, '=', $this->data[static ::$primary])->delete();
 	}
+
 	/**
 	 * Set the data array.
 	 *
@@ -90,6 +99,7 @@ abstract class record {
 	public function populate($row) {
 		$this->data = array_merge($this->data, (is_object($row) ? get_object_vars($row) : $row));
 	}
+
 	/**
 	 * Magic method for getting a item from the data array.
 	 *
@@ -102,6 +112,7 @@ abstract class record {
 			return $this->data[$key];
 		}
 	}
+
 	/**
 	 * Magic method for setting a item in the data array.
 	 *
@@ -111,6 +122,7 @@ abstract class record {
 	public function __set($key, $value) {
 		$this->data[$key] = $value;
 	}
+
 	/**
 	 * Create a new instance of the record class for chaining.
 	 *
@@ -121,6 +133,7 @@ abstract class record {
 	public static function create($row) {
 		return static ::find(static ::insert_get_id($row));
 	}
+
 	/**
 	 * Commit data array to database matching the primary key.
 	 *
@@ -132,6 +145,7 @@ abstract class record {
 	public static function update($id, $row) {
 		return static ::where(static ::$primary, '=', $id)->update($row);
 	}
+
 	/**
 	 * Magic method for calling other Query methods.
 	 *

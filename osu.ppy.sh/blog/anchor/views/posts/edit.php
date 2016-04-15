@@ -8,21 +8,21 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title', $article->title), ['placeholder' => __('posts.title'), 'autocomplete' => 'off', 'autofocus' => 'true', ]); ?>
+			<?php echo Form::text('title', Input::previous('title', $article->title), ['placeholder' => __('posts.title'), 'autocomplete' => 'off', 'autofocus' => 'true']); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn', ]); ?>
+				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn']); ?>
 				
-				<?php echo Html::link('admin/posts', __('global.cancel'), ['class' => 'btn cancel blue', ]); ?>
+				<?php echo Html::link('admin/posts', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
-				<?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
+				<?php echo Html::link('admin/posts/delete/' . $article->id, __('global.delete'), ['class' => 'btn delete red']); ?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), ['placeholder' => __('posts.content_explain'), ]); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown', $article->markdown), ['placeholder' => __('posts.content_explain')]); ?>
 
 			<?php echo $editor; ?>
 		</div>

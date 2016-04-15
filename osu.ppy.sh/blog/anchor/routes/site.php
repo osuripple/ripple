@@ -13,6 +13,7 @@ if ($home_page->id != $posts_page->id) {
 			return Response::redirect($home_page->redirect);
 		}
 		Registry::set('page', $home_page);
+
 		return new Template('page');
 	});
 }
@@ -41,6 +42,7 @@ Route::get($routes, function ($offset = 1) use ($posts_page) {
 	Registry::set('total_posts', $total);
 	Registry::set('page', $posts_page);
 	Registry::set('page_offset', $offset);
+
 	return new Template('posts');
 });
 /*
@@ -64,6 +66,7 @@ Route::get(['category/(:any)', 'category/(:any)/(:num)'], function ($slug = '', 
 	Registry::set('page', $posts_page);
 	Registry::set('page_offset', $offset);
 	Registry::set('post_category', $category);
+
 	return new Template('posts');
 });
 /*
@@ -73,6 +76,7 @@ Route::get('(:num)', function ($id) use ($posts_page) {
 	if (!$post = Post::id($id)) {
 		return Response::create(new Template('404'), 404);
 	}
+
 	return Response::redirect($posts_page->slug . '/' . $post->data['slug']);
 });
 /*
@@ -90,6 +94,7 @@ Route::get($posts_page->slug . '/(:any)', function ($slug) use ($posts_page) {
 			return Response::create(new Template('404'), 404);
 		}
 	}
+
 	return new Template('article');
 });
 /*
@@ -99,6 +104,7 @@ Route::get($posts_page->slug . '/(:any)/edit', function ($slug) use ($posts_page
 	if (!$post = Post::slug($slug) or Auth::guest()) {
 		return Response::create(new Template('404'), 404);
 	}
+
 	return Response::redirect('/admin/posts/edit/' . $post->id);
 });
 /*
@@ -108,6 +114,7 @@ Route::get('(:all)/edit', function ($slug) use ($posts_page) {
 	if (!$page = Page::slug($slug) or Auth::guest()) {
 		return Response::create(new Template('404'), 404);
 	}
+
 	return Response::redirect('/admin/pages/edit/' . $page->id);
 });
 /*
@@ -117,13 +124,14 @@ Route::post($posts_page->slug . '/(:any)', function ($slug) use ($posts_page) {
 	if (!$post = Post::slug($slug) or !$post->comments) {
 		return Response::create(new Template('404'), 404);
 	}
-	$input = filter_var_array(Input::get(['name', 'email', 'text']), ['name' => FILTER_SANITIZE_STRING, 'email' => FILTER_SANITIZE_EMAIL, 'text' => FILTER_SANITIZE_SPECIAL_CHARS, ]);
+	$input = filter_var_array(Input::get(['name', 'email', 'text']), ['name' => FILTER_SANITIZE_STRING, 'email' => FILTER_SANITIZE_EMAIL, 'text' => FILTER_SANITIZE_SPECIAL_CHARS]);
 	$validator = new Validator($input);
 	$validator->check('email')->is_email(__('comments.email_missing'));
 	$validator->check('text')->is_max(3, __('comments.text_missing'));
 	if ($errors = $validator->errors()) {
 		Input::flash();
 		Notify::error($errors);
+
 		return Response::redirect($posts_page->slug . '/' . $slug . '#comment');
 	}
 	$input['post'] = Post::slug($slug)->id;
@@ -141,6 +149,7 @@ Route::post($posts_page->slug . '/(:any)', function ($slug) use ($posts_page) {
 	if (!$spam and Config::meta('comment_notifications')) {
 		$comment->notify();
 	}
+
 	return Response::redirect($posts_page->slug . '/' . $slug . '#comment');
 });
 /*
@@ -154,13 +163,15 @@ Route::get(['rss', 'feeds/rss'], function () {
 		$rss->item($article->title, Uri::full(Registry::get('posts_page')->slug . '/' . $article->slug), $article->description, $article->created);
 	}
 	$xml = $rss->output();
+
 	return Response::create($xml, 200, ['content-type' => 'application/xml']);
 });
 /*
  * Json feed
 */
 Route::get('feeds/json', function () {
-	$json = Json::encode(['meta' => Config::get('meta'), 'posts' => Post::where('status', '=', 'published')->sort('created', 'desc')->take(25)->get(), ]);
+	$json = Json::encode(['meta' => Config::get('meta'), 'posts' => Post::where('status', '=', 'published')->sort('created', 'desc')->take(25)->get()]);
+
 	return Response::create($json, 200, ['content-type' => 'application/json']);
 });
 /*
@@ -198,6 +209,7 @@ Route::get(['search', 'search/(:any)', 'search/(:any)/(:any)', 'search/(:any)/(:
 	Registry::set('search_term', $term);
 	Registry::set('search_results', new Items($results));
 	Registry::set('total_posts', $total);
+
 	return new Template('search');
 });
 Route::post('search', function () {
@@ -209,6 +221,7 @@ Route::post('search', function () {
 	$whatSearch = $whatSearch === 'posts' ? 'posts' : $whatSearch === 'pages' ? 'pages' : 'all'; // clamp the choices
 	Session::put(slug($term), $term);
 	Session::put($whatSearch, $whatSearch);
+
 	return Response::redirect('search/' . $whatSearch . '/' . slug($term));
 });
 /*
@@ -227,5 +240,6 @@ Route::get('(:all)', function ($uri) {
 			return Response::create(new Template('404'), 404);
 		}
 	}
+
 	return new Template('page');
 });

@@ -1,4 +1,5 @@
 <?php
+
 class Migration_alter_session_date extends Migration {
 	public function up() {
 		$table = Base::table('sessions');
@@ -7,6 +8,7 @@ class Migration_alter_session_date extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

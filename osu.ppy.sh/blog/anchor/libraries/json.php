@@ -1,8 +1,10 @@
 <?php
+
 class json {
 	public static function encode($obj) {
 		return json_encode($obj);
 	}
+
 	public static function decode($json, $assoc = false) {
 		$result = json_decode($json, $assoc);
 		switch (json_last_error()) {
@@ -28,6 +30,7 @@ class json {
 		if ($error) {
 			throw new ErrorException('Json Error: ' . $error);
 		}
+
 		return $result;
 	}
 }

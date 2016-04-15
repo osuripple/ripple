@@ -1,4 +1,5 @@
 <?php
+
 class P {
 	/*
 	 * AdminDashboard
@@ -85,6 +86,7 @@ class P {
 		echo '</tbody>';
 		echo '</div>';
 	}
+
 	/*
 	 * AdminUsers
 	 * Prints the admin panel users page
@@ -289,6 +291,7 @@ class P {
 		</div>
 		</div>';
 	}
+
 	/*
 	 * AdminEditUser
 	 * Prints the admin panel edit user page
@@ -339,8 +342,8 @@ class P {
 			// Selected values stuff 2
 			$selected[1] = [0 => '', 1 => '', 2 => ''];
 			// Get selected stuff
-			$selected[0][current($GLOBALS['db']->fetch('SELECT rank FROM users WHERE id = ?', $_GET['id'])) ] = 'selected';
-			$selected[1][current($GLOBALS['db']->fetch('SELECT allowed FROM users WHERE id = ?', $_GET['id'])) ] = 'selected';
+			$selected[0][current($GLOBALS['db']->fetch('SELECT rank FROM users WHERE id = ?', $_GET['id']))] = 'selected';
+			$selected[1][current($GLOBALS['db']->fetch('SELECT allowed FROM users WHERE id = ?', $_GET['id']))] = 'selected';
 			echo '<p align="center"><font size=5><i class="fa fa-user"></i>	Edit user</font></p>';
 			echo '<table class="table table-striped table-hover table-50-center">';
 			echo '<tbody><form id="system-settings-form" action="submit.php" method="POST"><input name="action" value="saveEditUser" hidden>';
@@ -422,6 +425,7 @@ class P {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminChangeIdentity
 	 * Prints the admin panel change identity page
@@ -487,6 +491,7 @@ class P {
 			redirect('index.php?p=102&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminBetaKeys
 	 * Prints the admin panel beta keys page
@@ -517,7 +522,7 @@ class P {
 		<tr><th class="text-left"><i class="fa fa-gift"></i>	ID</th><th class="text-center">MD5</th><th class="text-center">Description</th><th class="text-center">Allowed</th><th class="text-center">Public</th><th class="text-center">Action</th></tr>
 		</thead>
 		<tbody>';
-		for ($i = 0;$i < count($betaKeys);$i++) {
+		for ($i = 0; $i < count($betaKeys); $i++) {
 			// Set allowed label color and text
 			if ($betaKeys[$i]['allowed'] == 0) {
 				$allowedColor = 'danger';
@@ -599,6 +604,7 @@ class P {
 		</div>
 		</div>';
 	}
+
 	/*
 	 * AdminReports
 	 * Prints the admin panel beta keys page
@@ -627,7 +633,7 @@ class P {
 		<tr><th class="text-left"><i class"fa fa-gift"></i>	ID</th><th class="text-center">Type</th><th class="text-center">Name</th><th class="text-center">From</th><th class="text-center">Opened on</th><th class="text-center">Updated on</th><th class="text-center">Status</th><th class="text-center">Action</th></tr>
 		</thead>
 		<tbody>';
-		for ($i = 0;$i < count($reports);$i++) {
+		for ($i = 0; $i < count($reports); $i++) {
 			// Set status label color and text
 			if ($reports[$i]['status'] == 1) {
 				$statusColor = 'success';
@@ -665,6 +671,7 @@ class P {
 		echo '</tbody></table>';
 		echo '</div>';
 	}
+
 	/*
 	 * AdminViewReport
 	 * Prints the admin panel view report page
@@ -760,6 +767,7 @@ class P {
 			redirect('index.php?p=113&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminSystemSettings
 	 * Prints the admin panel system settings page
@@ -852,6 +860,7 @@ class P {
 		</div></div>';
 		echo '</div>';
 	}
+
 	/*
 	 * AdminDocumentation
 	 * Prints the admin panel documentation files page
@@ -907,6 +916,7 @@ class P {
 		</div></div>';
 		echo '</div>';
 	}
+
 	/*
 	 * AdminBadges
 	 * Prints the admin panel badges page
@@ -980,6 +990,7 @@ class P {
 		</div>
 		</div>';
 	}
+
 	/*
 	 * AdminEditDocumentation
 	 * Prints the admin panel edit documentation file page
@@ -1045,6 +1056,7 @@ class P {
 			redirect('index.php?p=106&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminEditBadge
 	 * Prints the admin panel edit badge page
@@ -1096,6 +1108,7 @@ class P {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminEditUserBadges
 	 * Prints the admin panel edit user badges page
@@ -1171,6 +1184,7 @@ class P {
 			redirect('index.php?p=108&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * AdminBanchoSettings
 	 * Prints the admin panel bancho settings page
@@ -1273,6 +1287,7 @@ class P {
 		<div class="text-center"><button type="submit" class="btn btn-primary">Save settings</button></div></form>';
 		echo '</div>';
 	}
+
 	/*
 	 * AdminChatlog
 	 * Prints the admin chatlog page
@@ -1330,14 +1345,15 @@ class P {
 		echo '</p>';
 		echo '</div>';
 	}
+
 	/*
 	 * HomePage
 	 * Prints the homepage
 	*/
 	public static function HomePage() {
 		// Home success message
-		$success = ['forgetDone' => 'Done! Your "Stay logged in" tokens have been deleted from the database.', ];
-		$error = [1 => 'You are already logged in.', ];
+		$success = ['forgetDone' => 'Done! Your "Stay logged in" tokens have been deleted from the database.'];
+		$error = [1 => 'You are already logged in.'];
 		if (!empty($_GET['s']) && isset($success[$_GET['s']])) {
 			self::SuccessMessage($success[$_GET['s']]);
 		}
@@ -1348,6 +1364,7 @@ class P {
 		// Home alert
 		self::HomeAlert();
 	}
+
 	/*
 	 * UserPage
 	 * Print user page for $u user
@@ -1355,7 +1372,7 @@ class P {
 	 * @param (int) ($u) ID of user.
 	 * @param (int) ($m) Playmode.
 	*/
-	public static function UserPage($u, $m = - 1) {
+	public static function UserPage($u, $m = -1) {
 		// Maintenance check
 		self::MaintenanceStuff();
 		// Global alert
@@ -1382,7 +1399,7 @@ class P {
 			$userData = $GLOBALS['db']->fetch('SELECT * FROM users_stats WHERE id = ?', $u);
 			$username = current($GLOBALS['db']->fetch('SELECT username FROM users WHERE id = ?', $u));
 			// Set default modes texts, selected is bolded below
-			$modesText = [0 => 'osu!standard', 1 => 'Taiko', 2 => 'Catch the Beat', 3 => 'osu!mania', ];
+			$modesText = [0 => 'osu!standard', 1 => 'Taiko', 2 => 'Catch the Beat', 3 => 'osu!mania'];
 			// Get stats for selected mode
 			$m = ($m < 0 || $m > 3 ? $userData['favourite_mode'] : $m);
 			$modeForDB = getPlaymodeText($m);
@@ -1450,7 +1467,7 @@ class P {
 			}
 			// Get badges id and icon (max 6 badges)
 			$badgeID = explode(',', $userData['badges_shown']);
-			for ($i = 0;$i < count($badgeID);$i++) {
+			for ($i = 0; $i < count($badgeID); $i++) {
 				$badgeIcon[$i] = $GLOBALS['db']->fetch('SELECT icon FROM badges WHERE id = ?', $badgeID[$i]);
 				$badgeName[$i] = $GLOBALS['db']->fetch('SELECT name FROM badges WHERE id = ?', $badgeID[$i]);
 				if ($badgeIcon[$i]) {
@@ -1602,7 +1619,7 @@ class P {
 			if ($topPlays) {
 				echo '<table class="table">
 				<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">Score</th></tr>';
-				for ($i = 0;$i < count($topPlays);$i++) {
+				for ($i = 0; $i < count($topPlays); $i++) {
 					// Get beatmap name from md5 (beatmaps_names) for this play
 					$bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $topPlays[$i]['beatmap_md5']);
 					if ($bn) {
@@ -1622,7 +1639,7 @@ class P {
 			if ($recentPlays) {
 				echo '<table class="table">
 				<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays</th><th class="text-right">Accuracy</th><th class="text-right">Score</th></tr>';
-				for ($i = 0;$i < count($recentPlays);$i++) {
+				for ($i = 0; $i < count($recentPlays); $i++) {
 					// Get beatmap name from md5 (beatmaps_names) for this play
 					$bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $recentPlays[$i]['beatmap_md5']);
 					if ($bn) {
@@ -1646,6 +1663,7 @@ class P {
 			echo '<br><div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i>	<b>' . $e->getMessage() . '</b></div>';
 		}
 	}
+
 	/*
 	 * BetaKeys
 	 * Prints the beta keys page.
@@ -1687,6 +1705,7 @@ class P {
 			echo '<b>No beta keys available. Try again later.</b>';
 		}
 	}
+
 	/*
 	 * AboutPage
 	 * Prints the about page.
@@ -1698,6 +1717,7 @@ class P {
 		self::GlobalAlert();
 		echo file_get_contents('./html_static/about.html');
 	}
+
 	/*
 	 * RulesPage
 	 * Prints the rules page.
@@ -1709,6 +1729,7 @@ class P {
 		self::GlobalAlert();
 		echo file_get_contents('./html_static/rules.html');
 	}
+
 	/*
 	 * ChangelogPage
 	 * Prints the Changelog page.
@@ -1721,6 +1742,7 @@ class P {
 		// Changelog
 		getChangelog();
 	}
+
 	/*
 	 * ReportPage
 	 * Prints the Bug report/feature request page.
@@ -1777,6 +1799,7 @@ class P {
 		</form>';
 		echo '</div>';
 	}
+
 	/*
 	 * ExceptionMessage
 	 * Display an error alert with a custom message.
@@ -1790,6 +1813,7 @@ class P {
 		}
 		echo $p;
 	}
+
 	/*
 	 * SuccessMessage
 	 * Display a success alert with a custom message.
@@ -1803,6 +1827,7 @@ class P {
 		}
 		echo $p;
 	}
+
 	/*
 	 * LoggedInAlert
 	 * Display a message to the user that he's already logged in.
@@ -1811,6 +1836,7 @@ class P {
 	public static function LoggedInAlert() {
 		echo '<div class="alert alert-warning" role="alert">You are already logged in.</i></div>';
 	}
+
 	/*
 	 * RegisterPage
 	 * Prints the register page.
@@ -1854,6 +1880,7 @@ class P {
 		</form></div>
 		';
 	}
+
 	/*
 	 * ChangePasswordPage
 	 * Prints the change password page.
@@ -1887,6 +1914,7 @@ class P {
 		</form>
 		</div>';
 	}
+
 	/*
 	 * userSettingsPage
 	 * Prints the user settings page.
@@ -1924,6 +1952,7 @@ class P {
 			if ($index == $mode) {
 				return $r . ' selected';
 			}
+
 			return $r . '';
 		};
 		// Selected stuff
@@ -1992,6 +2021,7 @@ class P {
 		</form>
 		</div>';
 	}
+
 	/*
 	 * ChangeAvatarPage
 	 * Prints the change avatar page.
@@ -2031,6 +2061,7 @@ class P {
 		</form>
 		</div>';
 	}
+
 	/*
 	 * UserpageEditorPage
 	 * Prints the userpage editor page.
@@ -2068,6 +2099,7 @@ class P {
 		</form>
 		';
 	}
+
 	/*
 	 * PasswordRecovery - print the page to recover your password if you lost it.
 	*/
@@ -2078,7 +2110,7 @@ class P {
 		self::GlobalAlert();
 		echo '<div id="narrow-content" style="width:500px"><h1><i class="fa fa-exclamation-circle"></i> Recover your password</h1>';
 		// Print Exception if set and in array.
-		$exceptions = ['Nice troll.', "That user doesn't exist.", "You are banned from Ripple. We won't let you come back in.", ];
+		$exceptions = ['Nice troll.', "That user doesn't exist.", "You are banned from Ripple. We won't let you come back in."];
 		if (isset($_GET['e']) && isset($exceptions[$_GET['e']])) {
 			self::ExceptionMessage($exceptions[$_GET['e']]);
 		}
@@ -2097,6 +2129,7 @@ class P {
 			</form></div>';
 		}
 	}
+
 	/*
 	 * Alerts
 	 * Print the alerts for the logged in user.
@@ -2117,6 +2150,7 @@ class P {
 		// Other alerts (such as maintenance, ip change and stuff) will be added here
 
 	}
+
 	/*
 	 * MaintenanceAlert
 	 * Prints the maintenance alert and die if we are normal users
@@ -2141,6 +2175,7 @@ class P {
 			die();
 		}
 	}
+
 	/*
 	 * GameMaintenanceAlert
 	 * Prints the game maintenance alert
@@ -2163,6 +2198,7 @@ class P {
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-cog fa-spin"></i>	Ripple\'s score system is in <b>maintenance mode</b>. <u>Your scores won\'t be saved until maintenance ends.</u></b></p></div>';
 		}
 	}
+
 	/*
 	 * BanchoMaintenance
 	 * Prints the game maintenance alert
@@ -2185,6 +2221,7 @@ class P {
 			echo '<div class="alert alert-danger" role="alert"><p align="center"><i class="fa fa-server"></i>	Ripple\'s Bancho server is in maintenance mode. You can\'t play Ripple right now. Try again later.</p></div>';
 		}
 	}
+
 	/*
 	 * MaintenanceStuff
 	 * Prints website/game maintenance alerts
@@ -2203,6 +2240,7 @@ class P {
 			self::MaintenanceAlert();
 		}
 	}
+
 	/*
 	 * GlobalAlert
 	 * Prints the global alert (only if not empty)
@@ -2213,6 +2251,7 @@ class P {
 			echo '<div class="alert alert-warning" role="alert"><p align="center">' . $m . '</p></div>';
 		}
 	}
+
 	/*
 	 * HomeAlert
 	 * Prints the home alert (only if not empty)
@@ -2223,6 +2262,7 @@ class P {
 			echo '<div class="alert alert-warning" role="alert"><p align="center">' . $m . '</p></div>';
 		}
 	}
+
 	/*
 	 * MyReportsPage
 	 * Prints the user settings page.
@@ -2254,7 +2294,7 @@ class P {
 			<tr><th class="text-center">Type</th><th class="text-center">Name</th><th class="text-center">Opened on</th><th class="text-center">Updated on</th><th class="text-center">Status</th><th class="text-center">Action</th></tr>
 			</thead>
 			<tbody>';
-			for ($i = 0;$i < count($reports);$i++) {
+			for ($i = 0; $i < count($reports); $i++) {
 				// Set status label color and text
 				if ($reports[$i]['status'] == 1) {
 					$statusColor = 'success';
@@ -2289,6 +2329,7 @@ class P {
 			echo '</tbody></table>';
 		}
 	}
+
 	/*
 	 * MyReportViewPage
 	 * Prints the my report view page.
@@ -2369,6 +2410,7 @@ class P {
 			redirect('index.php?p=24&e=' . $e->getMessage());
 		}
 	}
+
 	/*
 	 * FriendlistPage
 	 * Prints the friendlist page.

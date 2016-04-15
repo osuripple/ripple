@@ -16,6 +16,7 @@ try {
 		if ($action == $page::URL) {
 			checkMustHave($page);
 			$page->D();
+
 			return;
 		}
 	}
@@ -59,7 +60,7 @@ try {
 			throw new Exception('Invalid action value');
 		break;
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
-			
+
 		case 'generateBetaKeys':
 			sessionCheckAdmin();
 			D::GenerateBetaKey();

@@ -1,4 +1,5 @@
 <?php
+
 class ServerStatus {
 	const PageID = 27;
 	const URL = 'status';
@@ -7,6 +8,7 @@ class ServerStatus {
 	public $error_messages = [];
 	public $mh_GET = [];
 	public $mh_POST = [];
+
 	public function P() {
 		global $ServerStatusConfig;
 		if (!$ServerStatusConfig['service_status']['enable'] && !$ServerStatusConfig['netdata']['enable']) {
