@@ -1875,7 +1875,6 @@ class P
         if ($betaKeys) {
             // Print table header
             echo "<table class='table table-hover'>
->>>>>>> 9e21e98220c89eb4f656c5c3f4b3759901fd63a0
 			<thead>
 			<tr>
 			<th><p class='text-center'>Beta key</p></th>

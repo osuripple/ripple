@@ -2,23 +2,6 @@
     // Get functions
     require_once './inc/functions.php';
 
-    // Bancho/frontend loader
-    // TODO: Remove this
-    if ($_SERVER['HTTP_HOST'] == 'c.ppy.sh' || $_SERVER['HTTP_HOST'] == 'c1.ppy.sh') {
-        // Do bancho stuff
-        require_once './inc/bancho.php';
-
-        // Run server stuff or output webpage
-        if ($_SERVER['HTTP_USER_AGENT'] == 'osu!') {
-            banchoServer();
-        } else {
-            banchoWeb();
-        }
-
-        // Don't process anything from the web frontend
-        die();
-    }
-
     // Frontend stuff
     // We're using ob_start to safely send headers while we're processing the script initially.
     ob_start();
