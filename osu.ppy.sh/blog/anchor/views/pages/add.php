@@ -8,14 +8,14 @@
 		<div class="wrap">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title'), ['placeholder' => __('pages.title'), 'autocomplete' => 'off', 'autofocus' => 'true', ]); ?>
+			<?php echo Form::text('title', Input::previous('title'), ['placeholder' => __('pages.title'), 'autocomplete' => 'off', 'autofocus' => 'true']); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn', ]); ?>
+				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn']); ?>
 				<a class="btn autosave-action autosave-label secondary" style="width: 154px;">Autosave: Off</a>
-				<?php echo Form::button(__('pages.redirect'), ['class' => 'btn secondary redirector', ]); ?>
+				<?php echo Form::button(__('pages.redirect'), ['class' => 'btn secondary redirector']); ?>
 
-				<?php echo Html::link('admin/pages', __('global.cancel'), ['class' => 'btn cancel blue', ]); ?>
+				<?php echo Html::link('admin/pages', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
 			</aside>
 		</div>
@@ -23,13 +23,13 @@
 
 	<fieldset class="redirect">
 		<div class="wrap">
-			<?php echo Form::text('redirect', Input::previous('redirect'), ['placeholder' => __('pages.redirect_url'), ]); ?>
+			<?php echo Form::text('redirect', Input::previous('redirect'), ['placeholder' => __('pages.redirect_url')]); ?>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown'), ['placeholder' => __('pages.content_explain'), ]); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown'), ['placeholder' => __('pages.content_explain')]); ?>
 
 			<?php echo $editor; ?>
 		</div>

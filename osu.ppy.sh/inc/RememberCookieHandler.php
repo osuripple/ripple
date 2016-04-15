@@ -9,6 +9,7 @@
  */
 class RememberCookieHandler {
 	private $ID;
+
 	/**
 	 * Check
 	 * Checks the user cookie if they have got valid cookies for auto-login.
@@ -22,6 +23,7 @@ class RememberCookieHandler {
 			return false;
 		}
 	}
+
 	/**
 	 * Validate
 	 * Checks if a remember cookie is ok, and logs in the user if it is.
@@ -33,20 +35,24 @@ class RememberCookieHandler {
 		if ($d === false) {
 			// There is no series_identifier for that $_COOKIE["s"], despite being given to the server on the request. Delete the cookies.
 			$this->UnsetCookies();
+
 			return 0;
 		}
 		$this->ID = $d['userid'];
 		if (hash('sha256', $_COOKIE['t']) != $d['token_sha']) {
 			// Alarm. Thief detected.
 			$this->SecureFromThieves();
+
 			return -1;
 		} else {
 			// Login the user.
 			$this->Login();
 			$this->UpdateExisting($_COOKIE['s']);
+
 			return 1;
 		}
 	}
+
 	/**
 	 * IssueNew
 	 * Issue new permanent cookie for auto-login.
@@ -58,8 +64,9 @@ class RememberCookieHandler {
 		$t = mt_rand(0, $randmax);
 		setcookie('s', $sid, time() + 60 * 60 * 24 * 30 * 6, '/'); // Six months.
 		setcookie('t', $t, time() + 60 * 60 * 24 * 30 * 6, '/');
-		$GLOBALS['db']->execute('INSERT INTO remember(userid, series_identifier, token_sha) VALUES (?, ?, ?);', [getUserID($u), $sid, hash('sha256', $t) ]);
+		$GLOBALS['db']->execute('INSERT INTO remember(userid, series_identifier, token_sha) VALUES (?, ?, ?);', [getUserID($u), $sid, hash('sha256', $t)]);
 	}
+
 	/**
 	 * Destroy
 	 * Destroys a particular sid and token in the database.
@@ -69,6 +76,7 @@ class RememberCookieHandler {
 	public function Destroy($sid) {
 		$GLOBALS['db']->execute('DELETE FROM remember WHERE series_identifier = ?', $sid);
 	}
+
 	/**
 	 * DestroyAll
 	 * Destroys all sids and token for the user in the database.
@@ -78,6 +86,7 @@ class RememberCookieHandler {
 	public function DestroyAll($u, $isAlreadyID = false) {
 		$GLOBALS['db']->execute('DELETE FROM remember WHERE userid = ?', ($isAlreadyID ? $u : getUserID($u)));
 	}
+
 	/**
 	 * SecureFromThieves
 	 * Deletes all authentication hashes in the database. The user's account is being thieved.
@@ -88,6 +97,7 @@ class RememberCookieHandler {
 		// tell the user they fucked up.
 		redirect('index.php?p=2&e=5');
 	}
+
 	/**
 	 * Login
 	 * Login into user's account, onto successful validation.
@@ -106,6 +116,7 @@ class RememberCookieHandler {
 		// Save latest activity
 		updateLatestActivity($_SESSION['username']);
 	}
+
 	/**
 	 * UnsetCookies
 	 * Unset the t and s cookies in the user's browser.
@@ -116,6 +127,7 @@ class RememberCookieHandler {
 		unset($_COOKIE['t']);
 		setcookie('t', '', time() - 3600, '/');
 	}
+
 	/**
 	 * UpdateExisting
 	 * Updates the existing cookie and the value in the database with a new token.

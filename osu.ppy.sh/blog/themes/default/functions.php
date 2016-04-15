@@ -11,6 +11,7 @@ function numeral($number, $hideIfOne = false) {
 	}
 	$test = abs($number) % 10;
 	$ext = ((abs($number) % 100 < 21 and abs($number) % 100 > 4) ? 'th' : (($test < 4) ? ($test < 3) ? ($test < 2) ? ($test < 1) ? 'th' : 'st' : 'nd' : 'rd' : 'th'));
+
 	return $number . $ext;
 }
 function count_words($str) {
@@ -31,11 +32,12 @@ function relative_time($date) {
 	if ($elapsed <= 1) {
 		return 'Just now';
 	}
-	$times = [31104000 => 'year', 2592000 => 'month', 604800 => 'week', 86400 => 'day', 3600 => 'hour', 60 => 'minute', 1 => 'second', ];
+	$times = [31104000 => 'year', 2592000 => 'month', 604800 => 'week', 86400 => 'day', 3600 => 'hour', 60 => 'minute', 1 => 'second'];
 	foreach ($times as $seconds => $title) {
 		$rounded = $elapsed / $seconds;
 		if ($rounded > 1) {
 			$rounded = round($rounded);
+
 			return $rounded . ' ' . pluralise($rounded, $title) . ' ago';
 		}
 	}

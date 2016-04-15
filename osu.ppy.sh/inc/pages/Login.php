@@ -1,12 +1,14 @@
 <?php
+
 class Login {
 	const PageID = 2;
 	const URL = 'login';
 	const Title = 'Ripple - Login';
 	const LoggedIn = false;
-	public $mh_POST = ['u', 'p', ];
-	public $error_messages = ['Nice troll.', 'Wrong username or password.', 'You are banned.', 'You are not logged in.', 'Session expired. Please login again.', 'Invalid auto-login cookie.', 'You are already logged in.', ];
-	public $success_messages = ["All right, sunshine! Your password is now changed. Why don't you login with your shiny new password, now?", ];
+	public $mh_POST = ['u', 'p'];
+	public $error_messages = ['Nice troll.', 'Wrong username or password.', 'You are banned.', 'You are not logged in.', 'Session expired. Please login again.', 'Invalid auto-login cookie.', 'You are already logged in.'];
+	public $success_messages = ["All right, sunshine! Your password is now changed. Why don't you login with your shiny new password, now?"];
+
 	public function P() {
 		clir(true, 'index.php?p=1&e=1');
 		echo '<br><div id="narrow-content"><h1><i class="fa fa-sign-in"></i>	Login</h1>';
@@ -27,6 +29,7 @@ class Login {
 		</form>
 		</div>';
 	}
+
 	public function D() {
 		$d = $this->DoGetData();
 		if (isset($d['success'])) {
@@ -35,9 +38,11 @@ class Login {
 			redirect('index.php?p=2&e=' . $d['error']);
 		}
 	}
+
 	public function PrintGetData() {
 		return [];
 	}
+
 	public function DoGetData() {
 		$ret = [];
 		try {
@@ -57,7 +62,7 @@ class Login {
 			$_SESSION['password'] = $us['password_md5'];
 			$_SESSION['passwordChanged'] = false;
 			// Check if the user requested to be remembered. If they did, initialise cookies.
-			if (isset($_POST['remember']) && (bool)$_POST['remember']) {
+			if (isset($_POST['remember']) && (bool) $_POST['remember']) {
 				$m = new RememberCookieHandler();
 				$m->IssueNew($_SESSION['username']);
 			}
@@ -70,6 +75,7 @@ class Login {
 		catch(Exception $e) {
 			$ret['error'] = $e->getMessage();
 		}
+
 		return $ret;
 	}
 }

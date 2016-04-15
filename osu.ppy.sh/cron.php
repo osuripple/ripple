@@ -51,7 +51,7 @@ if (in_array(php_sapi_name(), $CRON['sapi'])) {
 	echo " done.<br>\n";
 	// Get all users
 	$users = $GLOBALS['db']->fetchAll('SELECT username FROM users WHERE allowed = 1');
-	for ($i = 0;$i < count($users);$i++) {
+	for ($i = 0; $i < count($users); $i++) {
 		// Do this for every Ripple user
 		// Get current username
 		$user = current($users[$i]);
@@ -125,7 +125,7 @@ if (in_array(php_sapi_name(), $CRON['sapi'])) {
 	echo "<br>\n<b>Cleaning replays...</b><br>\n";
 	// Get all completed 0/1/2 scores
 	$notopScores = $GLOBALS['db']->fetchAll('SELECT id FROM scores WHERE completed != 3');
-	for ($i = 0;$i < count($notopScores);$i++) {
+	for ($i = 0; $i < count($notopScores); $i++) {
 		// Check if this useless replay exists and delete it
 		$f = './replays/replay_' . $notopScores[$i]['id'] . '.osr';
 		if (file_exists($f)) {

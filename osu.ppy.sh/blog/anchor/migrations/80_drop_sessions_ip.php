@@ -1,4 +1,5 @@
 <?php
+
 class Migration_drop_sessions_ip extends Migration {
 	public function up() {
 		$table = Base::table('sessions');
@@ -7,6 +8,7 @@ class Migration_drop_sessions_ip extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

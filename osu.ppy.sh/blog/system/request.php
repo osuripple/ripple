@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -18,6 +20,7 @@ class request {
 	public static function method() {
 		return Arr::get($_SERVER, 'REQUEST_METHOD');
 	}
+
 	/**
 	 * Get the server protocol.
 	 *
@@ -26,6 +29,7 @@ class request {
 	public static function protocol() {
 		return Arr::get($_SERVER, 'SERVER_PROTOCOL');
 	}
+
 	/**
 	 * Checks if the current request was sent
 	 * with a XMLHttpRequest header as sent by javascript.
@@ -35,6 +39,7 @@ class request {
 	public static function ajax() {
 		return strcasecmp(Arr::get($_SERVER, 'HTTP_X_REQUESTED_WITH'), 'XMLHttpRequest') === 0;
 	}
+
 	/**
 	 * Checks if the current request was sent
 	 * via the command line.

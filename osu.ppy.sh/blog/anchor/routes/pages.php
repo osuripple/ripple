@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	/*
 				    List Pages
@@ -12,12 +13,13 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['messages'] = Notify::read();
 		$vars['pages'] = $pagination;
 		$vars['status'] = 'all';
+
 		return View::create('pages/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
 				    List pages by status and paginate through them
 	*/
-	Route::get(['admin/pages/status/(:any)', 'admin/pages/status/(:any)/(:num)', ], function ($status, $page = 1) {
+	Route::get(['admin/pages/status/(:any)', 'admin/pages/status/(:any)/(:num)'], function ($status, $page = 1) {
 		$query = Page::where('status', '=', $status);
 		$perpage = Config::get('admin.posts_per_page');
 		$total = $query->count();
@@ -27,6 +29,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['messages'] = Notify::read();
 		$vars['pages'] = $pagination;
 		$vars['status'] = $status;
+
 		return View::create('pages/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
@@ -39,9 +42,10 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['page'] = Page::find($id);
 		$vars['pages'] = Page::dropdown(['exclude' => [$id], 'show_empty_option' => true]);
 		$vars['pagetypes'] = Query::table(Base::table('pagetypes'))->sort('key')->get();
-		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived'), ];
+		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived')];
 		// extended fields
 		$vars['fields'] = Extend::fields('page', $id, $vars['page']->pagetype);
+
 		return View::create('pages/edit', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer')->partial('editor', 'partials/editor');
 	});
 	Route::post('admin/pages/edit/(:num)', function ($id) {
@@ -54,7 +58,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$input['slug'] = slug($input['slug']);
 		// an array of items that we shouldn't encode - they're no XSS threat
 		$dont_encode = ['markdown'];
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			if (in_array($key, $dont_encode)) {
 				continue;
 			}
@@ -72,6 +76,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/pages/edit/' . $id);
 		}
 		if (empty($input['name'])) {
@@ -84,6 +89,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		Page::update($id, $input);
 		Extend::process('page', $id);
 		Notify::success(__('pages.updated'));
+
 		return Response::redirect('admin/pages/edit/' . $id);
 	});
 	/*
@@ -94,9 +100,10 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['token'] = Csrf::token();
 		$vars['pages'] = Page::dropdown(['exclude' => [], 'show_empty_option' => true]);
 		$vars['pagetypes'] = Query::table(Base::table('pagetypes'))->sort('key')->get();
-		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived'), ];
+		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived')];
 		// extended fields
 		$vars['fields'] = Extend::fields('page');
+
 		return View::create('pages/add', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer')->partial('editor', 'partials/editor');
 	});
 	Route::post('admin/pages/add', function () {
@@ -109,7 +116,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$input['slug'] = slug($input['slug']);
 		// an array of items that we shouldn't encode - they're no XSS threat
 		$dont_encode = ['markdown'];
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			if (in_array($key, $dont_encode)) {
 				continue;
 			}
@@ -127,6 +134,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/pages/add');
 		}
 		if (empty($input['name'])) {
@@ -137,6 +145,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$page = Page::create($input);
 		Extend::process('page', $page->id);
 		Notify::success(__('pages.created'));
+
 		return Response::redirect('admin/pages/edit/' . $page->id);
 	});
 	/*
@@ -150,6 +159,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		} else {
 			Notify::error('Unable to delete page, you must have at least 1 page.');
 		}
+
 		return Response::redirect('admin/pages');
 	});
 });

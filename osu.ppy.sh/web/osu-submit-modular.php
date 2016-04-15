@@ -39,11 +39,11 @@ try {
 		case 0:
 			throw new Exception('pass');
 		break; // We are banned, error: pass (we don't user error: ban to avoid sending fake data to bancho)
-			
+
 		case 2:
 			$GLOBALS['db']->execute('UPDATE users SET allowed = 1 WHERE username = ?', $username);
 		break; // We are not banned but our account still needs to be activated, activate it.
-			
+
 	}
 	// If we have completed a song, $_POST["x"] is not set (completed value in db is 2).
 	// If we have failed/retried, $_POST["x"] is 0/1 (completed value in db is 0/1).

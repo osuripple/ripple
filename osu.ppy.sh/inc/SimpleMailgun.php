@@ -18,7 +18,8 @@ class SimpleMailgun {
 	 *
 	 * @var string
 	 */
-	public $config = ['domain' => '', 'key' => '', ];
+	public $config = ['domain' => '', 'key' => ''];
+
 	/**
 	 * __construct - Method constructor for SimpleMailgun.
 	 *
@@ -29,6 +30,7 @@ class SimpleMailgun {
 			$this->config = $config;
 		}
 	}
+
 	/**
 	 * Send - Send a message through Mailgun.
 	 *
@@ -38,7 +40,7 @@ class SimpleMailgun {
 	 * @param string $content The email content.
 	 */
 	public function Send($from, $to, $subject, $content) {
-		$arr = ['from' => $from, 'to' => $to, 'subject' => $subject, 'html' => $content, ];
+		$arr = ['from' => $from, 'to' => $to, 'subject' => $subject, 'html' => $content];
 		$data = $this->CurlRequest('/messages', $arr);
 		if (!$data[0]) {
 			if ($data[1] == 'invalid key') {
@@ -46,6 +48,7 @@ class SimpleMailgun {
 			}
 		}
 	}
+
 	/**
 	 * CurlRequest - Make a POST request to the Mailgun API.
 	 *
@@ -74,7 +77,7 @@ class SimpleMailgun {
 		// Download the given URL, and return output
 		$output = curl_exec($ch);
 		if (curl_errno($ch)) {
-			return [false, curl_error($ch) ];
+			return [false, curl_error($ch)];
 		}
 		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 401) {
 			return [false, 'invalid key'];
@@ -84,6 +87,7 @@ class SimpleMailgun {
 		}
 		// Close the cURL resource, and free system resources
 		curl_close($ch);
+
 		return [true, $output];
 	}
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -16,6 +18,7 @@ class config {
 	 * @var array
 	 */
 	public static $array = [];
+
 	/**
 	 * Returns a value from the config array.
 	 *
@@ -38,8 +41,10 @@ class config {
 				static ::$array[$file] = require $path;
 			}
 		}
+
 		return Arr::get(static ::$array, $key, $fallback);
 	}
+
 	/**
 	 * Sets a value in the config array.
 	 *
@@ -49,6 +54,7 @@ class config {
 	public static function set($key, $value) {
 		Arr::set(static ::$array, $key, $value);
 	}
+
 	/**
 	 * Removes value in the config array.
 	 *
@@ -57,6 +63,7 @@ class config {
 	public static function erase($key) {
 		Arr::erase(static ::$array, $key);
 	}
+
 	/**
 	 * Returns a value from the config array using the
 	 * method call as the file reference.
@@ -70,9 +77,10 @@ class config {
 		$key = $method;
 		$fallback = null;
 		if (count($arguments)) {
-			$key.= '.' . array_shift($arguments);
+			$key .= '.' . array_shift($arguments);
 			$fallback = array_shift($arguments);
 		}
+
 		return static ::get($key, $fallback);
 	}
 }

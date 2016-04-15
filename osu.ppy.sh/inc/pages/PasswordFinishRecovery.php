@@ -1,4 +1,5 @@
 <?php
+
 class PasswordFinishRecovery {
 	const PageID = 19;
 	const URL = 'recovery/finish';
@@ -7,9 +8,11 @@ class PasswordFinishRecovery {
 	public $error_messages = ['Nice troll.', 'Please get your shit together and make a better password.', "barney is a dinosaur your password doesn't maaatch!", "D'ya know? your password is dumb. it's also one of the most used around the entire internet. yup.", "Don't even try."];
 	public $mh_GET = ['k', 'user'];
 	public $mh_POST = ['k', 'user', 'p1', 'p2'];
+
 	public function P() {
 		if (!$this->PrintGetData()) {
 			P::ExceptionMessage('The user/key pair you provided in the URL is not valid. Which means either the link expired, it was already used, or it was never there in the first place. The latter is most likely to be the case. Again, you should not be here.');
+
 			return;
 		}
 		echo '<div id="narrow-content" style="width:500px"><h1><i class="fa fa-exclamation-circle"></i> Recover your password</h1>';
@@ -24,12 +27,15 @@ class PasswordFinishRecovery {
 		</form>
 		</div>';
 	}
+
 	public function PrintGetData() {
 		return $GLOBALS['db']->fetch('SELECT id FROM password_recovery WHERE k = ? AND u = ?;', [$_GET['k'], $_GET['user']]) !== false;
 	}
+
 	public function D() {
 		redirect($this->DoGetdata());
 	}
+
 	public function DoGetdata() {
 		try {
 			$d = $GLOBALS['db']->fetch('SELECT id FROM password_recovery WHERE k = ? AND u = ?;', [$_POST['k'], $_POST['user']]);
@@ -38,7 +44,7 @@ class PasswordFinishRecovery {
 			}
 			// Validate password through our helper
 			$pres = PasswordHelper::ValidatePassword($_POST['p1'], $_POST['p2']);
-			if ($pres !== - 1) {
+			if ($pres !== -1) {
 				throw new Exception($pres);
 			}
 			// Calculate new password

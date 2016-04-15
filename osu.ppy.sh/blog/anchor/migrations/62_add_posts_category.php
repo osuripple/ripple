@@ -1,4 +1,5 @@
 <?php
+
 class Migration_add_posts_category extends Migration {
 	public function up() {
 		$table = Base::table('posts');
@@ -7,6 +8,7 @@ class Migration_add_posts_category extends Migration {
 			DB::query($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

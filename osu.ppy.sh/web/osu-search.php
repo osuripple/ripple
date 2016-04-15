@@ -23,7 +23,7 @@ try {
 	$bcPopular = false;
 	$bcP = 1;
 	// Modes
-	if ($_GET['m'] == - 1) {
+	if ($_GET['m'] == -1) {
 		$bcM = '0,1,2,3';
 	} // All
 	else {
@@ -34,28 +34,28 @@ try {
 	// ranked status ids for beatmap
 	switch ($_GET['r']) {
 			// Ranked/Ranked played (Ranked)
-			
+
 		case 0:
 		case 7:
 			$bcS = '1';
 		break;
 			// Qualified (Qualified)
-			
+
 		case 3:
 			$bcS = '3';
 		break;
 			// Pending/Help (Approved)
-			
+
 		case 2:
 			$bcS = '2';
 		break;
 			// Graveyard (Unranked)
-			
+
 		case 5:
 			$bcS = '0';
 		break;
 			// All
-			
+
 		case 4:
 			$bcS = '1,2,3,0';
 		break;
@@ -101,15 +101,15 @@ try {
 		$output = count($bcData);
 	}
 	// Separator
-	$output.= "\r\n";
+	$output .= "\r\n";
 	// Add to output beatmap info for each song
 	foreach ($bcData as $song) {
-		$output.= bloodcatDirectString($song) . "\r\n";
+		$output .= bloodcatDirectString($song) . "\r\n";
 	}
 	// Done, output everything
 	echo $output;
 	// bmapid.osz|Artist|Song name|mapper|ranked(1/0)|idk(prob star rating)|last update|bmap id again|topic id tho|has video(0/1)|0|0||Diff 1@mode,Diff 2@mode
-	
+
 }
 catch(Exception $e) {
 	echo $e->getMessage();

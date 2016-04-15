@@ -1,4 +1,5 @@
 <?php
+
 class Migration_add_category_meta extends Migration {
 	public function up() {
 		$table = Base::table('category_meta');
@@ -15,6 +16,7 @@ class Migration_add_category_meta extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

@@ -17,12 +17,12 @@ switch (constant('ENV')) {
 /*
  * Set autoload directories to include your app models and libraries
 */
-Autoloader::directory([APP . 'models', APP . 'libraries', PATH . 'anchor/libraries', ]);
+Autoloader::directory([APP . 'models', APP . 'libraries', PATH . 'anchor/libraries']);
 /*
  * Set the current uri from get
 */
 if ($route = Arr::get($_GET, 'route', '/')) {
-	Uri::$current = trim($route, '/') ? : '/';
+	Uri::$current = trim($route, '/') ?: '/';
 }
 /*
     Helper functions
@@ -40,9 +40,9 @@ function timezones() {
 		if ($minutes == 0) {
 			$offset_label = $gmt . '&nbsp;&nbsp;';
 		} elseif ($minutes == 0.5) {
-			$offset_label = (int)$gmt . '.30';
+			$offset_label = (int) $gmt . '.30';
 		} elseif ($minutes == 0.75) {
-			$offset_label = (int)$gmt . '.45';
+			$offset_label = (int) $gmt . '.45';
 		}
 		$sign = $offset > 0 ? '+' : '-';
 		if ($offset == 0) {
@@ -60,6 +60,7 @@ function timezones() {
 			$timezones[] = $zone;
 		}
 	}
+
 	return $timezones;
 }
 function current_timezone() {
@@ -74,6 +75,7 @@ function languages() {
 			$languages[] = $file->getBasename();
 		}
 	}
+
 	return $languages;
 }
 function prefered_languages() {
@@ -84,6 +86,7 @@ function prefered_languages() {
 			$preferences = $matches[1];
 		}
 	}
+
 	return array_map(function ($str) {
 		return str_replace('-', '_', $str);
 	}, $preferences);
@@ -98,6 +101,7 @@ function mod_rewrite() {
 	if (is_apache() and function_exists('apache_get_modules')) {
 		return in_array('mod_rewrite', apache_get_modules());
 	}
+
 	return getenv('HTTP_MOD_REWRITE') ? true : false;
 }
 /*

@@ -1,4 +1,5 @@
 <?php
+
 class Migration_drop_posts_custom_fields extends Migration {
 	public function up() {
 		$table = Base::table('post_meta');
@@ -7,6 +8,7 @@ class Migration_drop_posts_custom_fields extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

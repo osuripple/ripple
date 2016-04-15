@@ -16,9 +16,9 @@ endif; ?>
 	<?php echo $messages; ?>
 
 	<nav class="sidebar statuses">
-		<?php echo Html::link('admin/pages', '<span class="icon"></span> ' . __('global.all'), ['class' => ($status == 'all') ? 'active' : '', ]); ?>
+		<?php echo Html::link('admin/pages', '<span class="icon"></span> ' . __('global.all'), ['class' => ($status == 'all') ? 'active' : '']); ?>
 		<?php foreach (['published', 'draft', 'archived'] as $type): ?>
-		<?php echo Html::link('admin/pages/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '', ]); ?>
+		<?php echo Html::link('admin/pages/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '']); ?>
 		<?php
 endforeach; ?>
 	</nav>

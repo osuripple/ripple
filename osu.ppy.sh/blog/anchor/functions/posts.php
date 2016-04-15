@@ -17,6 +17,7 @@ function posts() {
 	else {
 		$posts->rewind();
 	}
+
 	return $result;
 }
 function posts_next($text = 'Next &rarr;', $default = '', $attrs = []) {
@@ -30,6 +31,7 @@ function posts_next($text = 'Next &rarr;', $default = '', $attrs = []) {
 		$url = base_url('category/' . $category->slug . '/');
 	}
 	$pagination = new Paginator([], $total, $offset, $per_page, $url);
+
 	return $pagination->next_link($text, $default, $attrs);
 }
 function posts_prev($text = '&larr; Previous', $default = '', $attrs = []) {
@@ -43,6 +45,7 @@ function posts_prev($text = '&larr; Previous', $default = '', $attrs = []) {
 		$url = base_url('category/' . $category->slug . '/');
 	}
 	$pagination = new Paginator([], $total, $offset, $per_page, $url);
+
 	return $pagination->prev_link($text, $default, $attrs);
 }
 function total_posts() {

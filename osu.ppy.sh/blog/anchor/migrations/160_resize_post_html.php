@@ -1,4 +1,5 @@
 <?php
+
 class Migration_resize_post_html extends Migration {
 	public function up() {
 		$table = Base::table('posts');
@@ -7,6 +8,7 @@ class Migration_resize_post_html extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 		$table = Base::table('posts');
 		if ($this->has_table_column($table, 'html')) {

@@ -8,6 +8,7 @@ function total_categories() {
 		$categories = new Items($categories);
 		Registry::set('categories', $categories);
 	}
+
 	return $categories->length();
 }
 // loop categories
@@ -26,6 +27,7 @@ function categories() {
 	if (!$result) {
 		$items->rewind();
 	}
+
 	return $result;
 }
 // single categories
@@ -52,5 +54,6 @@ function category_custom_field($key, $default = '') {
 	if ($extend = Extend::field('category', $key, $id)) {
 		return Extend::value($extend, $default);
 	}
+
 	return $default;
 }

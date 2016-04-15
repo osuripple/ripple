@@ -1,5 +1,7 @@
 <?php
+
 namespace System\Database;
+
 /**
  * Nano.
  *
@@ -23,10 +25,13 @@ abstract class builder {
 			foreach ($column as $c) {
 				$columns[] = $this->wrap($c);
 			}
+
 			return implode(', ', $columns);
 		}
+
 		return $this->enclose($column);
 	}
+
 	/**
 	 * Enclose value with database connector escape characters.
 	 *
@@ -55,10 +60,12 @@ abstract class builder {
 		}
 		$value = implode('.', $params);
 		if ($alias) {
-			$value.= ' AS ' . $this->enclose($alias);
+			$value .= ' AS ' . $this->enclose($alias);
 		}
+
 		return $value;
 	}
+
 	/**
 	 * Build placeholders to replace with values in a query.
 	 *
@@ -68,11 +75,13 @@ abstract class builder {
 	 */
 	public function placeholders($length, $holder = '?') {
 		$holders = [];
-		for ($i = 0;$i < $length;$i++) {
+		for ($i = 0; $i < $length; $i++) {
 			$holders[] = $holder;
 		}
+
 		return implode(', ', $holders);
 	}
+
 	/**
 	 * Set a row offset on the query.
 	 *
@@ -83,25 +92,27 @@ abstract class builder {
 	public function build() {
 		$sql = '';
 		if (count($this->join)) {
-			$sql.= ' ' . implode(' ', $this->join);
+			$sql .= ' ' . implode(' ', $this->join);
 		}
 		if (count($this->where)) {
-			$sql.= ' ' . implode(' ', $this->where);
+			$sql .= ' ' . implode(' ', $this->where);
 		}
 		if (count($this->groupby)) {
-			$sql.= ' GROUP BY ' . implode(', ', $this->groupby);
+			$sql .= ' GROUP BY ' . implode(', ', $this->groupby);
 		}
 		if (count($this->sortby)) {
-			$sql.= ' ORDER BY ' . implode(', ', $this->sortby);
+			$sql .= ' ORDER BY ' . implode(', ', $this->sortby);
 		}
 		if ($this->limit) {
-			$sql.= ' LIMIT ' . $this->limit;
+			$sql .= ' LIMIT ' . $this->limit;
 			if ($this->offset) {
-				$sql.= ' OFFSET ' . $this->offset;
+				$sql .= ' OFFSET ' . $this->offset;
 			}
 		}
+
 		return $sql;
 	}
+
 	/**
 	 * Build table insert.
 	 *
@@ -113,8 +124,10 @@ abstract class builder {
 		$keys = array_keys($row);
 		$values = $this->placeholders(count($row));
 		$this->bind = array_values($row);
+
 		return 'INSERT INTO ' . $this->wrap($this->table) . ' (' . $this->wrap($keys) . ') VALUES(' . $values . ')';
 	}
+
 	/**
 	 * Build table update.
 	 *
@@ -131,8 +144,10 @@ abstract class builder {
 		}
 		$update = implode(', ', $placeholders);
 		$this->bind = array_merge($values, $this->bind);
+
 		return 'UPDATE ' . $this->wrap($this->table) . ' SET ' . $update . $this->build();
 	}
+
 	/**
 	 * Build the select columns of the query.
 	 *
@@ -146,8 +161,10 @@ abstract class builder {
 		} else {
 			$columns = '*';
 		}
+
 		return 'SELECT ' . $columns . ' FROM ' . $this->wrap($this->table) . $this->build();
 	}
+
 	/**
 	 * Build a delete query.
 	 *
@@ -158,6 +175,7 @@ abstract class builder {
 	public function build_delete() {
 		return 'DELETE FROM ' . $this->wrap($this->table) . $this->build();
 	}
+
 	/**
 	 * Build a select count query.
 	 *

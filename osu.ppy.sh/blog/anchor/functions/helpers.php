@@ -11,6 +11,7 @@ function base_url($url = '') {
 function theme_url($file = '') {
 	$theme_folder = Config::meta('theme');
 	$base = 'themes' . '/' . $theme_folder . '/';
+
 	return asset($base . ltrim($file, '/'));
 }
 function theme_include($file) {
@@ -57,6 +58,7 @@ function body_class() {
 	if (is_page()) {
 		$classes[] = 'page';
 	}
+
 	return implode(' ', array_unique($classes));
 }
 // page type helpers

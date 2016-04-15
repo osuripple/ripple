@@ -1,12 +1,14 @@
 <?php
+
 class Leaderboard {
 	const PageID = 13;
 	const URL = 'leaderboard';
 	const Title = 'Ripple - Leaderboard';
 	const LoggedIn = true;
+
 	public function P() {
 		// Leaderboard names (to bold the selected mode)
-		$modesText = [0 => 'osu!standard', 1 => 'Taiko', 2 => 'Catch the Beat', 3 => 'osu!mania', ];
+		$modesText = [0 => 'osu!standard', 1 => 'Taiko', 2 => 'Catch the Beat', 3 => 'osu!mania'];
 		// Set $m value to 0 if not set
 		if (!isset($_GET['m']) || empty($_GET['m'])) {
 			$m = 0;
@@ -75,19 +77,22 @@ class Leaderboard {
 		// Close table
 		echo '</tbody></table>';
 	}
+
 	public static function GetUserRank($u, $mode) {
 		$query = $GLOBALS['db']->fetch("SELECT position FROM leaderboard_$mode WHERE user = ?;", [$u]);
 		if ($query !== false) {
-			$rank = (string)current($query);
+			$rank = (string) current($query);
 		} else {
 			$rank = 'Unknown';
 		}
+
 		return $rank;
 	}
+
 	public static function BuildLeaderboard() {
 		// Declare stuff that will be used later on.
 		$modes = ['std', 'taiko', 'ctb', 'mania'];
-		$data = ['std' => [], 'taiko' => [], 'ctb' => [], 'mania' => [], ];
+		$data = ['std' => [], 'taiko' => [], 'ctb' => [], 'mania' => []];
 		$allowedUsers = getAllowedUsers('id');
 		// Get all user's stats
 		$users = $GLOBALS['db']->fetchAll('SELECT id, ranked_score_std, ranked_score_taiko, ranked_score_ctb, ranked_score_mania FROM users_stats');
@@ -97,7 +102,7 @@ class Leaderboard {
 				continue;
 			}
 			foreach ($modes as $mode) {
-				$data[$mode][] = ['user' => $user['id'], 'score' => $user['ranked_score_' . $mode], ];
+				$data[$mode][] = ['user' => $user['id'], 'score' => $user['ranked_score_' . $mode]];
 			}
 		}
 		// We're doing the sorting for every mode.
@@ -118,6 +123,7 @@ class Leaderboard {
 			}
 		}
 	}
+
 	public static function Update($userID, $newScore, $mode) {
 		// Who are we?
 		$us = $GLOBALS['db']->fetch("SELECT * FROM leaderboard_$mode WHERE user=?", [$userID]);

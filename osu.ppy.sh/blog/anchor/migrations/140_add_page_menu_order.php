@@ -1,4 +1,5 @@
 <?php
+
 class Migration_add_page_menu_order extends Migration {
 	public function up() {
 		$table = Base::table('pages');
@@ -7,6 +8,7 @@ class Migration_add_page_menu_order extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

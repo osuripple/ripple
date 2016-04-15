@@ -41,7 +41,7 @@ endforeach; ?>
 
 			<?php echo Html::link('admin/categories', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
-			<?php echo Html::link('admin/categories/delete/' . $category->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
+			<?php echo Html::link('admin/categories/delete/' . $category->id, __('global.delete'), ['class' => 'btn delete red']); ?>
 		</aside>
 	</form>
 </section>

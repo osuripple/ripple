@@ -21,7 +21,7 @@
                 // Set bugged score as non-best score
                 $GLOBALS['db']->execute('UPDATE scores SET completed = 2 WHERE id = ?', [$buggedScore['id']]);
                 $fixed++;
-                echo 'Fixed top score '.$buggedScore['id']."\r\n";
+                echo 'Fixed top score ' . $buggedScore['id'] . "\r\n";
             }
         }
 
@@ -29,8 +29,8 @@
         $perc = floor((100 * $cont) / $total);
         if ($perc != $oldPerc) {
             $oldPerc = $perc;
-            echo $perc.'% ('.$cont.'/'.$total.")\r\n";
+            echo $perc . '% (' . $cont . '/' . $total . ")\r\n";
         }
     }
 
-    echo "\r\nDone. Fixed ".$fixed.' bugged scores.';
+    echo "\r\nDone. Fixed " . $fixed . ' bugged scores.';

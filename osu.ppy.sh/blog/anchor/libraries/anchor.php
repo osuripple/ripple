@@ -1,4 +1,5 @@
 <?php
+
 class anchor {
 	public static function setup() {
 		// check installation and show intro
@@ -19,12 +20,14 @@ class anchor {
 		// populate registry with globals
 		static ::register();
 	}
+
 	public static function installation() {
 		if (!is_installed()) {
 			echo View::create('intro')->render();
 			exit(0);
 		}
 	}
+
 	public static function meta() {
 		$table = Base::table('meta');
 		// load database metadata
@@ -33,6 +36,7 @@ class anchor {
 		}
 		Config::set('meta', $meta);
 	}
+
 	public static function functions() {
 		if (!is_admin()) {
 			$fi = new FilesystemIterator(APP . 'functions', FilesystemIterator::SKIP_DOTS);
@@ -48,6 +52,7 @@ class anchor {
 			}
 		}
 	}
+
 	public static function register() {
 		// register home page
 		Registry::set('home_page', Page::home());
@@ -66,6 +71,7 @@ class anchor {
 			Registry::set('total_menu_items', $pages->length());
 		}
 	}
+
 	public static function migrations() {
 		$current = Config::meta('current_migration');
 		$migrate_to = Config::migrations('current');
@@ -73,7 +79,7 @@ class anchor {
 		$table = Base::table('meta');
 		if (is_null($current)) {
 			$number = $migrations->up($migrate_to);
-			Query::table($table)->insert(['key' => 'current_migration', 'value' => $number, ]);
+			Query::table($table)->insert(['key' => 'current_migration', 'value' => $number]);
 		} elseif ($current < $migrate_to) {
 			$number = $migrations->up($migrate_to);
 			Query::table($table)->where('key', '=', 'current_migration')->update(['value' => $number]);
