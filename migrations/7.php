@@ -1,5 +1,5 @@
 <?php
-
+echo "Creating api tokens table...\n";
 $GLOBALS['db']->execute('CREATE TABLE `tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` varchar(31) NOT NULL,

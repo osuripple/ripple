@@ -33,4 +33,4 @@
         }
     }
 
-    echo "\r\nDone. Fixed ".$fixed.' bugged scores.';
+    echo "\r\nDone. Fixed ".$fixed." bugged scores.";

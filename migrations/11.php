@@ -1,6 +1,6 @@
 <?php
 
-// Content goes here...
+echo "Updating beatmaps table for LETS...\n";
 $q = <<<'ENDOFMYSQLQUERY'
 DROP TABLE beatmaps;
 CREATE TABLE `beatmaps` (

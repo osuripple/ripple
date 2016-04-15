@@ -1,10 +1,19 @@
 <?php
     // Fix full combo
     try {
+        require_once(dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php");
+
+        echo("Fixing FC scores...\r\n");
+
         $API_KEY = 'API_KEY_HERE';
+        $count = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM scores WHERE misses_count = 0");
+        if (current($count) == 0) {
+            echo("There aren't 0 misses score on the server. No action needed.");
+            throw new Exception();
+        }
 
         if ($API_KEY == 'API_KEY_HERE') {
-            echo "\033[31m!!!! IMPORTANT !!!!\r\nCouldn't fix FCs scores\r\nPlease open /migrations/2.php and set $API_KEY to your osu! api key\033[0m";
+            echo "\033[31m!!!! IMPORTANT !!!!\r\nCouldn't fix FCs scores\r\nPlease open /migrations/2.php and set $API_KEY to your osu! api key\r\nThen enter in migrations folder and run 'php 2.php'.\033[0m";
             throw new Exception();
         }
 
