@@ -1,6 +1,6 @@
 <?php echo $header; ?>
 
-<form method="post" action="<?php echo Uri::to('admin/pages/edit/'.$page->id); ?>" enctype="multipart/form-data" novalidate>
+<form method="post" action="<?php echo Uri::to('admin/pages/edit/' . $page->id); ?>" enctype="multipart/form-data" novalidate>
 
 	<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -8,50 +8,33 @@
 		<div class="wrap page">
 			<?php echo $messages; ?>
 
-			<?php echo Form::text('title', Input::previous('title', $page->title), [
-                'placeholder'  => __('pages.title'),
-                'autocomplete' => 'off',
-                'autofocus'    => 'true',
-            ]); ?>
+			<?php echo Form::text('title', Input::previous('title', $page->title), ['placeholder' => __('pages.title'), 'autocomplete' => 'off', 'autofocus' => 'true', ]); ?>
 
 			<aside class="buttons">
-				<?php echo Form::button(__('global.save'), [
-                    'type'  => 'submit',
-                    'class' => 'btn',
-                ]); ?>
+				<?php echo Form::button(__('global.save'), ['type' => 'submit', 'class' => 'btn', ]); ?>
 				<a class="btn autosave-action autosave-label secondary" style="width: 154px;">Autosave: Off</a>
-				<?php echo Form::button(__('pages.redirect'), [
-                    'class' => 'btn secondary redirector',
-                ]); ?>
+				<?php echo Form::button(__('pages.redirect'), ['class' => 'btn secondary redirector', ]); ?>
 
-				<?php echo Html::link('admin/pages', __('global.cancel'), [
-                    'class' => 'btn cancel blue',
-                ]); ?>
+				<?php echo Html::link('admin/pages', __('global.cancel'), ['class' => 'btn cancel blue', ]); ?>
 
 				<?php
-                if ($deletable == true) {
-                    echo Html::link('admin/pages/delete/'.$page->id, __('global.delete'), [
-                        'class' => 'btn delete red',
-                    ]);
-                }
-                ?>
+if ($deletable == true) {
+	echo Html::link('admin/pages/delete/' . $page->id, __('global.delete'), ['class' => 'btn delete red', ]);
+}
+?>
 			</aside>
 		</div>
 	</fieldset>
 
 	<fieldset class="redirect <?php echo ($page->redirect) ? 'show' : ''; ?>">
 		<div class="wrap">
-			<?php echo Form::text('redirect', Input::previous('redirect', $page->redirect), [
-                'placeholder' => __('pages.redirect_url'),
-            ]); ?>
+			<?php echo Form::text('redirect', Input::previous('redirect', $page->redirect), ['placeholder' => __('pages.redirect_url'), ]); ?>
 		</div>
 	</fieldset>
 
 	<fieldset class="main">
 		<div class="wrap">
-			<?php echo Form::textarea('markdown', Input::previous('markdown', $page->markdown), [
-                'placeholder' => __('pages.content_explain'),
-            ]); ?>
+			<?php echo Form::textarea('markdown', Input::previous('markdown', $page->markdown), ['placeholder' => __('pages.content_explain'), ]); ?>
 
 			<?php echo $editor; ?>
 		</div>
@@ -91,18 +74,21 @@
 					<?php foreach ($pagetypes as $pagetype): ?>
 					<?php $selected = (Input::previous('pagetype') == $pagetype->key || $page->pagetype == $pagetype->key) ? ' selected="selected"' : ''; ?>
 					<option value="<?php echo $pagetype->key; ?>" <?php echo $selected; ?>><?php echo $pagetype->value; ?></option>
-					<?php endforeach; ?>
+					<?php
+	endforeach; ?>
 				</select>
 				<em><?php echo __('pages.pagetype_explain'); ?></em>
 			</p>
-			<?php endif; ?>
+			<?php
+endif; ?>
 			<div id="extended-fields">
 			<?php foreach ($fields as $field): ?>
 				<p>
 					<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 					<?php echo Extend::html($field); ?>
 				</p>
-			<?php endforeach; ?>
+			<?php
+endforeach; ?>
 			</div>
 		</div>
 	</fieldset>

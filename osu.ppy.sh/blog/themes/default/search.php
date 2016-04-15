@@ -4,7 +4,9 @@
 
 <?php if (has_search_results()): ?>
 	<ul class="items">
-		<?php $i = 0; while (search_results()): $i++; ?>
+		<?php $i = 0;
+	while (search_results()):
+		$i++; ?>
 		<li style="background: hsl(215,28%,<?php echo round((($i / posts_per_page()) * 20) + 20); ?>%);">
 			<article class="wrap">
 				<h2>
@@ -12,7 +14,8 @@
 				</h2>
 			</article>
 		</li>
-		<?php endwhile; ?>
+		<?php
+	endwhile; ?>
 	</ul>
 
 	<?php if (has_search_pagination()): ?>
@@ -22,10 +25,13 @@
 			<?php echo search_next(); ?>
 		</div>
 	</nav>
-	<?php endif; ?>
+	<?php
+	endif; ?>
 
-<?php else: ?>
+<?php
+else: ?>
 	<p class="wrap">Unfortunately, there's no results for &ldquo;<?php echo search_term(); ?>&rdquo;. Did you spell everything correctly?</p>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <?php theme_include('footer'); ?>

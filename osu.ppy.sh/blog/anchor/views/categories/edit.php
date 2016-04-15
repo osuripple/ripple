@@ -7,7 +7,7 @@
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<form method="post" action="<?php echo Uri::to('admin/categories/edit/'.$category->id); ?>" novalidate>
+	<form method="post" action="<?php echo Uri::to('admin/categories/edit/' . $category->id); ?>" novalidate>
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -32,7 +32,8 @@
 				<label for="extend_<?php echo $field->key; ?>"><?php echo $field->label; ?>:</label>
 				<?php echo Extend::html($field); ?>
 			</p>
-			<?php endforeach; ?>
+			<?php
+endforeach; ?>
 		</fieldset>
 
 		<aside class="buttons">
@@ -40,9 +41,7 @@
 
 			<?php echo Html::link('admin/categories', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
-			<?php echo Html::link('admin/categories/delete/'.$category->id, __('global.delete'), [
-                'class' => 'btn delete red',
-            ]); ?>
+			<?php echo Html::link('admin/categories/delete/' . $category->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
 		</aside>
 	</form>
 </section>

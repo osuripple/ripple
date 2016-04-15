@@ -37,7 +37,8 @@
 
     		<!--  Custom Javascript -->
     		<script><?php echo article_js(); ?></script>
-		<?php endif; ?>
+		<?php
+endif; ?>
 	</head>
 	<body class="<?php echo body_class(); ?>">
 		<div class="main-wrap">
@@ -53,19 +54,20 @@
 						<b>Categories</b>
 						<ul>
 						<?php while (categories()):
-                                if (category_count() > 0) {
-                                    ?>
+	if (category_count() > 0) {
+?>
 							<li>
 								<a href="<?php echo category_url();
-                                    ?>" title="<?php echo category_description();
-                                    ?>">
+?>" title="<?php echo category_description();
+?>">
 									<?php echo category_title();
-                                    ?> <span><?php echo category_count();
-                                    ?></span>
+?> <span><?php echo category_count();
+?></span>
 								</a>
 							</li>
-						<?php 
-                                } endwhile; ?>
+						<?php
+	}
+endwhile; ?>
 						</ul>
 					</aside>
 				</div>
@@ -77,14 +79,15 @@
 				<nav id="main" role="navigation">
 					<ul>
 						<?php if (has_menu_items()):
-                            while (menu_items()): ?>
+	while (menu_items()): ?>
 						<li <?php echo menu_active() ? 'class="active"' : ''; ?>>
 							<a href="<?php echo menu_url(); ?>" title="<?php echo menu_title(); ?>">
 								<?php echo menu_name(); ?>
 							</a>
 						</li>
-						<?php endwhile;
-                            endif; ?>
+						<?php
+	endwhile;
+endif; ?>
 						<li class="tray">
 							<a href="#tray" class="linky"><img src="<?php echo theme_url('img/categories.png'); ?>" alt="Categories" title="View my posts by category"></a>
 						</li>

@@ -22,8 +22,7 @@
 				<label for="site_description">Site Description</label>
 				<i>A little bit about you or your blog.</i>
 
-				<textarea id="site_description" name="site_description"><?php echo Input::previous('site_description',
-                    'It\'s not just any blog. It\'s THE! Ripple blog.'); ?></textarea>
+				<textarea id="site_description" name="site_description"><?php echo Input::previous('site_description', 'It\'s not just any blog. It\'s THE! Ripple blog.'); ?></textarea>
 			</p>
 
 			<p>
@@ -39,12 +38,16 @@
 				<select id="theme" name="theme">
 					<?php foreach ($themes as $dir => $theme): ?>
 					<option value="<?php echo $dir; ?>"><?php echo $theme['name']; ?> by <?php echo $theme['author']; ?></option>
-					<?php endforeach; ?>
+					<?php
+	endforeach; ?>
 				</select>
 			</p>
-			<?php else: $theme = key($themes); ?>
+			<?php
+else:
+	$theme = key($themes); ?>
 			<input name="theme" type="hidden" value="<?php echo $theme; ?>">
-			<?php endif; ?>
+			<?php
+endif; ?>
 
 			<p>
 				<label for="rewrite">Clean Urls</label>
@@ -55,19 +58,22 @@
 				<div class="more">Looks like you are running apache with <code>mod_rewrite</code> enabled.<br>
 				The installer will create the htaccess for you.</div>
 
-			<?php elseif (is_apache()): ?>
+			<?php
+elseif (is_apache()): ?>
 
 				<div class="more">Looks like you are running apache, but <code>mod_rewrite</code> is not enabled.</div>
 
 				<div class="more"><input id="rewrite" name="rewrite" type="checkbox" value="1">
 				Create the htaccess file for me anyway.</div>
 
-			<?php elseif (is_cgi()): ?>
+			<?php
+elseif (is_cgi()): ?>
 
 				<div class="more">Looks like you are running <code>PHP</code> as a fastcgi process.<br>
 				You will have to setup your own url rewriting.</div>
 
-			<?php endif; ?>
+			<?php
+endif; ?>
 			</p>
 		</fieldset>
 

@@ -26,7 +26,8 @@
 					<option value="<?php echo $code; ?>" <?php echo $selected; ?>>
 						<?php echo $code; ?>
 					</option>
-					<?php endforeach; ?>
+					<?php
+endforeach; ?>
 				</select>
 
 				<i>Change if <b>utf8_general_ci</b> doesn’t work.</i>

@@ -7,7 +7,8 @@
 	<nav>
 		<?php echo Html::link('admin/posts/add', __('posts.create_post'), ['class' => 'btn']); ?>
 	</nav>
-	<?php endif; ?>
+	<?php
+endif; ?>
 </hgroup>
 
 <section class="wrap">
@@ -16,23 +17,19 @@
 	<nav class="sidebar">
 		<nav class="statuses">
 			<p>Statuses</p>
-			<?php echo Html::link('admin/posts', '<span class="icon"></span> '.__('global.all'), [
-                'class' => isset($status) ? ($status == 'all' ? 'active' : '') : '',
-            ]); ?>
+			<?php echo Html::link('admin/posts', '<span class="icon"></span> ' . __('global.all'), ['class' => isset($status) ? ($status == 'all' ? 'active' : '') : '', ]); ?>
 			<?php foreach (['published', 'draft', 'archived'] as $type): ?>
-			<?php echo Html::link('admin/posts/status/'.$type, '<span class="icon"></span> '.__('global.'.$type), [
-                'class' => ($status == $type) ? 'active' : '',
-            ]); ?>
-			<?php endforeach; ?>
+			<?php echo Html::link('admin/posts/status/' . $type, '<span class="icon"></span> ' . __('global.' . $type), ['class' => ($status == $type) ? 'active' : '', ]); ?>
+			<?php
+endforeach; ?>
 		</nav>
 		<br>
 		<nav class="categories">
 			<p>Categories</p>
 			<?php foreach ($categories as $cat): ?>
-			<?php echo Html::link('admin/posts/category/'.$cat->slug, $cat->title, [
-                'class' => (isset($category) and $category->id == $cat->id) ? 'active' : '',
-            ]); ?>
-			<?php endforeach; ?>
+			<?php echo Html::link('admin/posts/category/' . $cat->slug, $cat->title, ['class' => (isset($category) and $category->id == $cat->id) ? 'active' : '', ]); ?>
+			<?php
+endforeach; ?>
 		</nav>
 	</nav>
 
@@ -40,25 +37,27 @@
 	<ul class="main list">
 		<?php foreach ($posts->results as $article): ?>
 		<li>
-			<a href="<?php echo Uri::to('admin/posts/edit/'.$article->id); ?>">
+			<a href="<?php echo Uri::to('admin/posts/edit/' . $article->id); ?>">
 				<strong><?php echo $article->title; ?></strong>
 				<span>
 					<time><?php echo Date::format($article->created); ?></time>
 
-					<em class="status <?php echo $article->status; ?>" title="<?php echo __('global.'.$article->status); ?>">
-						<?php echo __('global.'.$article->status); ?>
+					<em class="status <?php echo $article->status; ?>" title="<?php echo __('global.' . $article->status); ?>">
+						<?php echo __('global.' . $article->status); ?>
 					</em>
 				</span>
 
 				<p><?php echo strip_tags($article->description); ?></p>
 			</a>
 		</li>
-		<?php endforeach; ?>
+		<?php
+	endforeach; ?>
 	</ul>
 
 	<aside class="paging"><?php echo $posts->links(); ?></aside>
 
-	<?php else: ?>
+	<?php
+else: ?>
 
 	<p class="empty posts">
 		<span class="icon"></span>
@@ -66,7 +65,8 @@
 		<?php echo Html::link('admin/posts/add', __('posts.create_post'), ['class' => 'btn']); ?>
 	</p>
 
-	<?php endif; ?>
+	<?php
+endif; ?>
 </section>
 
 <?php echo $footer; ?>

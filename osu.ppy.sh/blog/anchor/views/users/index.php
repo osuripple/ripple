@@ -16,7 +16,8 @@
 				<em class="highlight"><?php echo rank_to_str($user->rank); ?></em>
 			</a>
 		</li>
-		<?php endforeach; ?>
+		<?php
+endforeach; ?>
 	</ul>
 
 	<aside class="paging"><?php echo $users->links(); ?></aside>

@@ -7,7 +7,7 @@
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<form method="post" action="<?php echo Uri::to('admin/extend/pagetypes/edit/'.$pagetype->key); ?>" novalidate>
+	<form method="post" action="<?php echo Uri::to('admin/extend/pagetypes/edit/' . $pagetype->key); ?>" novalidate>
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -31,9 +31,9 @@
 			<?php echo Html::link('admin/extend/pagetypes', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
 			<?php if ($pagetype->key != 'all'): ?>
-			<?php echo Html::link('admin/extend/pagetypes/delete/'.$pagetype->key,
-                __('global.delete'), ['class' => 'btn delete red']); ?>
-			<?php endif; ?>
+			<?php echo Html::link('admin/extend/pagetypes/delete/' . $pagetype->key, __('global.delete'), ['class' => 'btn delete red']); ?>
+			<?php
+endif; ?>
 		</aside>
 	</form>
 </section>

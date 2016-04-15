@@ -1,7 +1,5 @@
 <?php
-
 namespace System;
-
 /**
  * Nano.
  *
@@ -11,90 +9,73 @@ namespace System;
  *
  * @copyright	http://unlicense.org/
  */
-class view
-{
-    /**
-     * The current path to view file.
-     *
-     * @var string
-     */
-    public $path;
-
-    /**
-     * Array of view variables.
-     *
-     * @var array
-     */
-    public $vars = [];
-
-    /**
-     * Create a instance or the View class for chaining.
-     *
-     * @param string
-     * @param array
-     *
-     * @return object
-     */
-    public static function create($path, $vars = [])
-    {
-        return new static($path, $vars);
-    }
-
-    /**
-     * Create a instance of a View class for chaining using a
-     * method for the file name.
-     *
-     * @example View::home(array('title' => 'Home'));
-     *
-     * @param string
-     * @param array
-     *
-     * @return object
-     */
-    public static function __callStatic($method, $arguments)
-    {
-        $vars = count($arguments) ? current($arguments) : [];
-
-        return new static($method, $vars);
-    }
-
-    /**
-     * Create a instance or the View class.
-     *
-     * @param string
-     * @param array
-     */
-    public function __construct($path, $vars = [])
-    {
-        $this->path = APP.'views/'.$path.EXT;
-        $this->vars = array_merge($this->vars, $vars);
-    }
-
-    /**
-     * Render a partial view.
-     *
-     * @return string
-     */
-    public function partial($name, $path, $vars = [])
-    {
-        $this->vars[$name] = static::create($path, $vars)->render();
-
-        return $this;
-    }
-
-    /**
-     * Render the view.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        ob_start();
-
-        extract($this->vars);
-
-        require $this->path;
-
-        return ob_get_clean();
-    }
+class view {
+	/**
+	 * The current path to view file.
+	 *
+	 * @var string
+	 */
+	public $path;
+	/**
+	 * Array of view variables.
+	 *
+	 * @var array
+	 */
+	public $vars = [];
+	/**
+	 * Create a instance or the View class for chaining.
+	 *
+	 * @param string
+	 * @param array
+	 *
+	 * @return object
+	 */
+	public static function create($path, $vars = []) {
+		return new static ($path, $vars);
+	}
+	/**
+	 * Create a instance of a View class for chaining using a
+	 * method for the file name.
+	 *
+	 * @example View::home(array('title' => 'Home'));
+	 *
+	 * @param string
+	 * @param array
+	 *
+	 * @return object
+	 */
+	public static function __callStatic($method, $arguments) {
+		$vars = count($arguments) ? current($arguments) : [];
+		return new static ($method, $vars);
+	}
+	/**
+	 * Create a instance or the View class.
+	 *
+	 * @param string
+	 * @param array
+	 */
+	public function __construct($path, $vars = []) {
+		$this->path = APP . 'views/' . $path . EXT;
+		$this->vars = array_merge($this->vars, $vars);
+	}
+	/**
+	 * Render a partial view.
+	 *
+	 * @return string
+	 */
+	public function partial($name, $path, $vars = []) {
+		$this->vars[$name] = static ::create($path, $vars)->render();
+		return $this;
+	}
+	/**
+	 * Render the view.
+	 *
+	 * @return string
+	 */
+	public function render() {
+		ob_start();
+		extract($this->vars);
+		require $this->path;
+		return ob_get_clean();
+	}
 }

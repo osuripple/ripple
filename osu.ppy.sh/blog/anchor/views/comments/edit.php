@@ -1,13 +1,14 @@
 <?php echo $header; ?>
 
 <hgroup class="wrap">
-	<h1><?php echo __('comments.editing_comment'); ?> &rarr; <?php $commented_post = Post::where('id', '=', $comment->post)->get(); echo $commented_post[0]->title; ?></h1>
+	<h1><?php echo __('comments.editing_comment'); ?> &rarr; <?php $commented_post = Post::where('id', '=', $comment->post)->get();
+echo $commented_post[0]->title; ?></h1>
 </hgroup>
 
 <section class="wrap">
 	<?php echo $messages; ?>
 
-	<form method="post" action="<?php echo Uri::to('admin/comments/edit/'.$comment->id); ?>" novalidate>
+	<form method="post" action="<?php echo Uri::to('admin/comments/edit/' . $comment->id); ?>" novalidate>
 
 		<input name="token" type="hidden" value="<?php echo $token; ?>">
 
@@ -42,9 +43,7 @@
 
 			<?php echo Html::link('admin/comments', __('global.cancel'), ['class' => 'btn cancel blue']); ?>
 
-			<?php echo Html::link('admin/comments/delete/'.$comment->id, __('global.delete'), [
-                'class' => 'btn delete red',
-            ]); ?>
+			<?php echo Html::link('admin/comments/delete/' . $comment->id, __('global.delete'), ['class' => 'btn delete red', ]); ?>
 		</aside>
 	</form>
 </section>

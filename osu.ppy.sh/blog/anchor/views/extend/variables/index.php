@@ -15,18 +15,21 @@
 	<ul class="list">
 		<?php foreach ($variables as $var): ?>
 		<li>
-			<a href="<?php echo Uri::to('admin/extend/variables/edit/'.$var->key); ?>">
+			<a href="<?php echo Uri::to('admin/extend/variables/edit/' . $var->key); ?>">
 				<strong><?php echo substr($var->key, strlen('custom_')); ?></strong>
 				<p><?php echo e($var->value); ?></p>
 			</a>
 		</li>
-		<?php endforeach; ?>
+		<?php
+	endforeach; ?>
 	</ul>
-	<?php else: ?>
+	<?php
+else: ?>
 	<p class="empty">
 		<span class="icon"></span> <?php echo __('extend.novars_desc'); ?>
 	</p>
-	<?php endif; ?>
+	<?php
+endif; ?>
 </section>
 
 <?php echo $footer; ?>

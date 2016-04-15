@@ -13,14 +13,17 @@
 		<li class="item" draggable="true">
 			<span data-id="<?php echo $page->id; ?>"><?php echo $page->name; ?></span>
 		</li>
-		<?php endforeach; ?>
+		<?php
+	endforeach; ?>
 	</ul>
-	<?php else: ?>
+	<?php
+else: ?>
 	<p class="empty">
 		<span class="icon"></span>
 		No menu items yet.
 	</p>
-	<?php endif; ?>
+	<?php
+endif; ?>
 </section>
 
 <script src="<?php echo asset('anchor/views/assets/js/sortable.js'); ?>"></script>
