@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -9,8 +11,9 @@ namespace System;
  *
  * @copyright	http://unlicense.org/
  */
-class view {
-	/**
+class view
+{
+    /**
 	 * The current path to view file.
 	 *
 	 * @var string
@@ -22,6 +25,7 @@ class view {
 	 * @var array
 	 */
 	public $vars = [];
+
 	/**
 	 * Create a instance or the View class for chaining.
 	 *
@@ -30,9 +34,11 @@ class view {
 	 *
 	 * @return object
 	 */
-	public static function create($path, $vars = []) {
-		return new static ($path, $vars);
+	public static function create($path, $vars = [])
+	{
+	    return new static ($path, $vars);
 	}
+
 	/**
 	 * Create a instance of a View class for chaining using a
 	 * method for the file name.
@@ -44,38 +50,48 @@ class view {
 	 *
 	 * @return object
 	 */
-	public static function __callStatic($method, $arguments) {
-		$vars = count($arguments) ? current($arguments) : [];
-		return new static ($method, $vars);
+	public static function __callStatic($method, $arguments)
+	{
+	    $vars = count($arguments) ? current($arguments) : [];
+
+	    return new static ($method, $vars);
 	}
+
 	/**
 	 * Create a instance or the View class.
 	 *
 	 * @param string
 	 * @param array
 	 */
-	public function __construct($path, $vars = []) {
-		$this->path = APP . 'views/' . $path . EXT;
-		$this->vars = array_merge($this->vars, $vars);
+	public function __construct($path, $vars = [])
+	{
+	    $this->path = APP.'views/'.$path.EXT;
+	    $this->vars = array_merge($this->vars, $vars);
 	}
+
 	/**
 	 * Render a partial view.
 	 *
 	 * @return string
 	 */
-	public function partial($name, $path, $vars = []) {
-		$this->vars[$name] = static ::create($path, $vars)->render();
-		return $this;
+	public function partial($name, $path, $vars = [])
+	{
+	    $this->vars[$name] = static ::create($path, $vars)->render();
+
+	    return $this;
 	}
+
 	/**
 	 * Render the view.
 	 *
 	 * @return string
 	 */
-	public function render() {
-		ob_start();
-		extract($this->vars);
-		require $this->path;
-		return ob_get_clean();
+	public function render()
+	{
+	    ob_start();
+	    extract($this->vars);
+	    require $this->path;
+
+	    return ob_get_clean();
 	}
 }

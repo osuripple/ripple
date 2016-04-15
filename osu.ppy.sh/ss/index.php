@@ -3,7 +3,7 @@
  * Exception stuff for screenshot upload
 */
 if (isset($_GET['s']) && !empty($_GET['s'])) {
-	switch ($_GET['s']) {
+    switch ($_GET['s']) {
 		case 1:
 			echo 'Internal error. Contanct a system administrator.';
 		break;

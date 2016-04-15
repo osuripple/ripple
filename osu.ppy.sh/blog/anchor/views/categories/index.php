@@ -14,7 +14,7 @@
 	<ul class="list">
 		<?php foreach ($categories->results as $category): ?>
 		<li>
-			<a href="<?php echo Uri::to('admin/categories/edit/' . $category->id); ?>">
+			<a href="<?php echo Uri::to('admin/categories/edit/'.$category->id); ?>">
 				<strong><?php echo $category->title; ?></strong>
 
 				<span><?php echo $category->slug; ?></span>

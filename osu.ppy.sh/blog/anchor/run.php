@@ -20,45 +20,44 @@ switch (constant('ENV')) {
 /*
  * Set autoload directories to include your app models and libraries
 */
-Autoloader::directory([APP . 'models', APP . 'libraries', ]);
+Autoloader::directory([APP.'models', APP.'libraries']);
 /**
  * Helpers.
  */
-require APP . 'helpers' . EXT;
+require APP.'helpers'.EXT;
 /*
  * Anchor setup
 */
 try {
-	Anchor::setup();
-}
-catch(Exception $e) {
-	if (ini_get('display_errors') != '1') {
-		echo '<h1>Something went wrong, please notify the owner of the site</h1>';
-	} else {
-		Error::exception($e);
-	}
-	Error::log($e);
-	die();
+    Anchor::setup();
+} catch (Exception $e) {
+    if (ini_get('display_errors') != '1') {
+        echo '<h1>Something went wrong, please notify the owner of the site</h1>';
+    } else {
+        Error::exception($e);
+    }
+    Error::log($e);
+    die();
 }
 /*
  * Import defined routes
 */
 if (is_admin()) {
-	// Set posts per page for admin
+    // Set posts per page for admin
 	Config::set('admin.posts_per_page', 6);
-	require APP . 'routes/admin' . EXT;
-	require APP . 'routes/categories' . EXT;
-	require APP . 'routes/comments' . EXT;
-	require APP . 'routes/fields' . EXT;
-	require APP . 'routes/menu' . EXT;
-	require APP . 'routes/metadata' . EXT;
-	require APP . 'routes/pages' . EXT;
-	require APP . 'routes/panel' . EXT;
-	require APP . 'routes/plugins' . EXT;
-	require APP . 'routes/posts' . EXT;
-	require APP . 'routes/users' . EXT;
-	require APP . 'routes/variables' . EXT;
-	require APP . 'routes/pagetypes' . EXT;
+    require APP.'routes/admin'.EXT;
+    require APP.'routes/categories'.EXT;
+    require APP.'routes/comments'.EXT;
+    require APP.'routes/fields'.EXT;
+    require APP.'routes/menu'.EXT;
+    require APP.'routes/metadata'.EXT;
+    require APP.'routes/pages'.EXT;
+    require APP.'routes/panel'.EXT;
+    require APP.'routes/plugins'.EXT;
+    require APP.'routes/posts'.EXT;
+    require APP.'routes/users'.EXT;
+    require APP.'routes/variables'.EXT;
+    require APP.'routes/pagetypes'.EXT;
 } else {
-	require APP . 'routes/site' . EXT;
+    require APP.'routes/site'.EXT;
 }

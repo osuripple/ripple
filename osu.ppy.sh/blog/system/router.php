@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,8 +12,10 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
-class router {
-	/**
+
+class router
+{
+    /**
 	 * The current URI.
 	 *
 	 * @var str
@@ -29,7 +33,7 @@ class router {
 	 *
 	 * @var array
 	 */
-	public static $patterns = [':any' => '[^/]+', ':num' => '[0-9]+', ':all' => '.*', ];
+	public static $patterns = [':any' => '[^/]+', ':num' => '[0-9]+', ':all' => '.*'];
 	/**
 	 * The defined routes set by the app.
 	 *
@@ -42,20 +46,25 @@ class router {
 	 * @var array
 	 */
 	public static $actions = [];
+
 	/**
 	 * Create a new instance of the Router class for chaining.
 	 *
 	 * @return object
 	 */
-	public static function create() {
-		if (Request::cli()) {
-			// get cli arguments
+	public static function create()
+	{
+	    if (Request::cli()) {
+	        // get cli arguments
 			$args = Arr::get($_SERVER, 'argv', []);
-			$uri = implode('/', array_slice($args, 1));
-			return new static ('cli', trim($uri, '/') ? : '/');
-		}
-		return new static (Request::method(), Uri::current());
+	        $uri = implode('/', array_slice($args, 1));
+
+	        return new static ('cli', trim($uri, '/') ?: '/');
+	    }
+
+	    return new static (Request::method(), Uri::current());
 	}
+
 	/**
 	 * Create a new instance of the Router class and import
 	 * app routes from a folder or a single routes.php file.
@@ -63,62 +72,70 @@ class router {
 	 * @param string
 	 * @param string
 	 */
-	public function __construct($method, $uri) {
-		$this->uri = $uri;
-		$this->method = strtoupper($method);
+	public function __construct($method, $uri)
+	{
+	    $this->uri = $uri;
+	    $this->method = strtoupper($method);
 	}
+
 	/**
 	 * Gets array of request method routes.
 	 *
 	 * @return array
 	 */
-	public function routes() {
-		$routes = [];
-		if (array_key_exists($this->method, static ::$routes)) {
-			$routes = array_merge($routes, static ::$routes[$this->method]);
-		}
-		if (array_key_exists('ANY', static ::$routes)) {
-			$routes = array_merge($routes, static ::$routes['ANY']);
-		}
-		return $routes;
+	public function routes()
+	{
+	    $routes = [];
+	    if (array_key_exists($this->method, static ::$routes)) {
+	        $routes = array_merge($routes, static ::$routes[$this->method]);
+	    }
+	    if (array_key_exists('ANY', static ::$routes)) {
+	        $routes = array_merge($routes, static ::$routes['ANY']);
+	    }
+
+	    return $routes;
 	}
+
 	/**
 	 * Try and match the request method and uri with defined routes.
 	 *
 	 * @return object Return a instance of a Route
 	 */
-	public function match() {
-		$routes = $this->routes();
+	public function match()
+	{
+	    $routes = $this->routes();
 		// try a simple match
 		if (array_key_exists($this->uri, $routes)) {
-			return new Route($routes[$this->uri]);
+		    return new Route($routes[$this->uri]);
 		}
 		// search for patterns
 		$searches = array_keys(static ::$patterns);
-		$replaces = array_values(static ::$patterns);
-		foreach ($routes as $pattern => $action) {
-			// replace wildcards
+	    $replaces = array_values(static ::$patterns);
+	    foreach ($routes as $pattern => $action) {
+	        // replace wildcards
 			if (strpos($pattern, ':') !== false) {
-				$pattern = str_replace($searches, $replaces, $pattern);
+			    $pattern = str_replace($searches, $replaces, $pattern);
 			}
 			// slice array of matches. $matches[0] will contain the text that
 			// matched the full pattern, $matches[1] will have the text that
 			// matched the first captured parenthesized subpattern, and so on.
-			if (preg_match('#^' . $pattern . '$#', $this->uri, $matched)) {
-				return new Route($action, array_slice($matched, 1));
+			if (preg_match('#^'.$pattern.'$#', $this->uri, $matched)) {
+			    return new Route($action, array_slice($matched, 1));
 			}
-		}
-		if (isset(static ::$routes['ERROR']['404'])) {
-			return new Route(static ::$routes['ERROR']['404']);
-		}
-		throw new ErrorException('No routes matched');
+	    }
+	    if (isset(static ::$routes['ERROR']['404'])) {
+	        return new Route(static ::$routes['ERROR']['404']);
+	    }
+	    throw new ErrorException('No routes matched');
 	}
+
 	/**
 	 * Match the request with a route and run it.
 	 *
 	 * @return object Response instance
 	 */
-	public function dispatch() {
-		return $this->match()->run();
+	public function dispatch()
+	{
+	    return $this->match()->run();
 	}
 }

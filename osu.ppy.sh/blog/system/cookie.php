@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -9,13 +11,15 @@ namespace System;
  *
  * @copyright	http://unlicense.org/
  */
-class cookie {
-	/**
+class cookie
+{
+    /**
 	 * Array of cookie to be written by the response class.
 	 *
 	 * @var array
 	 */
 	public static $bag = [];
+
 	/**
 	 * Adds a cookie to the bag to be written.
 	 *
@@ -26,12 +30,14 @@ class cookie {
 	 * @param string
 	 * @param bool
 	 */
-	public static function write($name, $value, $expiration = 0, $path = '/', $domain = null, $secure = false, $HttpOnly = true) {
-		if ($expiration !== 0) {
-			$expiration = time() + $expiration;
-		}
-		static ::$bag[$name] = compact('name', 'value', 'expiration', 'path', 'domain', 'secure', 'HttpOnly');
+	public static function write($name, $value, $expiration = 0, $path = '/', $domain = null, $secure = false, $HttpOnly = true)
+	{
+	    if ($expiration !== 0) {
+	        $expiration = time() + $expiration;
+	    }
+	    static ::$bag[$name] = compact('name', 'value', 'expiration', 'path', 'domain', 'secure', 'HttpOnly');
 	}
+
 	/**
 	 * Reads a cookie name from the globals cookies or the class cookie bag.
 	 *
@@ -40,12 +46,15 @@ class cookie {
 	 *
 	 * @return mixed
 	 */
-	public static function read($name, $fallback = null) {
-		if (array_key_exists($name, static ::$bag)) {
-			return static ::$bag[$name]['value'];
-		}
-		return array_key_exists($name, $_COOKIE) ? $_COOKIE[$name] : $fallback;
+	public static function read($name, $fallback = null)
+	{
+	    if (array_key_exists($name, static ::$bag)) {
+	        return static ::$bag[$name]['value'];
+	    }
+
+	    return array_key_exists($name, $_COOKIE) ? $_COOKIE[$name] : $fallback;
 	}
+
 	/**
 	 * Remove a cookie from the bag.
 	 *
@@ -54,7 +63,8 @@ class cookie {
 	 * @param string
 	 * @param bool
 	 */
-	public static function erase($name, $path = '/', $domain = null, $secure = false) {
-		static ::write($name, null, -2000, $path, $domain, $secure);
+	public static function erase($name, $path = '/', $domain = null, $secure = false)
+	{
+	    static ::write($name, null, -2000, $path, $domain, $secure);
 	}
 }

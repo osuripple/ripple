@@ -55,17 +55,18 @@ endif; ?>
 						<ul>
 						<?php while (categories()):
 	if (category_count() > 0) {
-?>
+	    ?>
 							<li>
 								<a href="<?php echo category_url();
-?>" title="<?php echo category_description();
-?>">
+	    ?>" title="<?php echo category_description();
+	    ?>">
 									<?php echo category_title();
-?> <span><?php echo category_count();
-?></span>
+	    ?> <span><?php echo category_count();
+	    ?></span>
 								</a>
 							</li>
 						<?php
+
 	}
 endwhile; ?>
 						</ul>

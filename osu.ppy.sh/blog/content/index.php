@@ -1,1 +1,3 @@
-<?php // Nothing to see here move along.
+<?php
+
+// Nothing to see here move along.

@@ -11,15 +11,15 @@
 /**
  * Composer.
  */
-require PATH . 'vendor/autoload' . EXT;
+require PATH.'vendor/autoload'.EXT;
 /**
  * Boot the environment.
  */
-require SYS . 'boot' . EXT;
+require SYS.'boot'.EXT;
 /**
  * Boot the application.
  */
-require APP . 'run' . EXT;
+require APP.'run'.EXT;
 /*
  * Set input
 */
