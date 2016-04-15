@@ -1,8 +1,5 @@
 <?php
     echo "Updating scores table for PP...\n";
-    $q = <<<'ENDOFMYSQLQUERY'
-    ALTER TABLE `scores` ADD `pp` FLOAT NULL DEFAULT '0' AFTER `accuracy`;
-    ENDOFMYSQLQUERY;
-
+    $q = "ALTER TABLE `scores` ADD `pp` FLOAT NULL DEFAULT '0' AFTER `accuracy`;";
     $GLOBALS['db']->execute($q);
  ?>
