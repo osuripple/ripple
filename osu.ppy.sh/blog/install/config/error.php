@@ -1,6 +1,6 @@
 <?php
 
-return array(
-	'report' => true,
-	'logger' => function($exception) {}
-);
+return [
+    'report' => true,
+    'logger' => function ($exception) {},
+];

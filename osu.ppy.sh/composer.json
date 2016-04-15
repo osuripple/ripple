@@ -1,0 +1,7 @@
+{
+    "name": "osuripple/ripple",
+    "require": {
+        "ezyang/htmlpurifier": "^4.7"
+    },
+    "license": "MIT"
+}

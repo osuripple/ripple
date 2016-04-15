@@ -21,7 +21,7 @@ CREATE TABLE `bancho_channels` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `bancho_channels` (`id`, `name`, `description`, `public_read`, `public_write`, `status`) VALUES
-(1, '#osu', 'Main ripple channel', 1, 1, 1),
+(1, '#osu', 'Main Ripple channel', 1, 1, 1),
 (2, '#announce', 'Announce channel', 1, 0, 1),
 (3, '#admin', 'Admin only channel', 0, 0, 1),
 (4, '#italian', 'Italian community channel', 1, 1, 1),
@@ -354,4 +354,4 @@ ALTER TABLE `users_stats`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 ENDOFMYSQLQUERY;
 
-$GLOBALS["db"]->execute($q);
+$GLOBALS['db']->execute($q);

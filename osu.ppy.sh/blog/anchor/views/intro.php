@@ -56,7 +56,7 @@
 		<div>
 			<img src="<?php echo $base; ?>/anchor/views/assets/img/logo.png" alt="Anchor logo">
 			<h1><?php echo __('global.welcome_to_anchor_lets_go'); ?></h1>
-			<a href="<?php echo $base . '/install/index.php'; ?>"><?php echo __('global.run_the_installer'); ?></a>
+			<a href="<?php echo $base.'/install/index.php'; ?>"><?php echo __('global.run_the_installer'); ?></a>
 		</div>
 
 		<script>

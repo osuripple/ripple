@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # pycache
 **/__pycache__
+=======
+# composer
+vendor
+>>>>>>> 9e21e98220c89eb4f656c5c3f4b3759901fd63a0
 
 # ci stuff
 *.php~

@@ -1,144 +1,144 @@
 <?php
 
-Route::collection(array('before' => 'auth,csrf,install_exists'), function() {
+Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 
-	/*
-		List Categories
-	*/
-	Route::get(array('admin/categories', 'admin/categories/(:num)'), function($page = 1) {
-		$vars['messages'] = Notify::read();
-		$vars['categories'] = Category::paginate($page, Config::get('admin.posts_per_page'));
+    /*
+        List Categories
+    */
+    Route::get(['admin/categories', 'admin/categories/(:num)'], function ($page = 1) {
+        $vars['messages'] = Notify::read();
+        $vars['categories'] = Category::paginate($page, Config::get('admin.posts_per_page'));
 
-		return View::create('categories/index', $vars)
-			->partial('header', 'partials/header')
-			->partial('footer', 'partials/footer');
-	});
+        return View::create('categories/index', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 
-	/*
-		Edit Category
-	*/
-	Route::get('admin/categories/edit/(:num)', function($id) {
-		$vars['messages'] = Notify::read();
-		$vars['token'] = Csrf::token();
-		$vars['category'] = Category::find($id);
+    /*
+        Edit Category
+    */
+    Route::get('admin/categories/edit/(:num)', function ($id) {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
+        $vars['category'] = Category::find($id);
 
-		// extended fields
-		$vars['fields'] = Extend::fields('category', $id);
+        // extended fields
+        $vars['fields'] = Extend::fields('category', $id);
 
-		return View::create('categories/edit', $vars)
-			->partial('header', 'partials/header')
-			->partial('footer', 'partials/footer');
-	});
+        return View::create('categories/edit', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 
-	Route::post('admin/categories/edit/(:num)', function($id) {
-		$input = Input::get(array('title', 'slug', 'description'));
-		
-		foreach($input as $key => &$value) {
-			$value = eq($value);
-		}
-		
-		$validator = new Validator($input);
+    Route::post('admin/categories/edit/(:num)', function ($id) {
+        $input = Input::get(['title', 'slug', 'description']);
 
-		$validator->check('title')
-			->is_max(3, __('categories.title_missing'));
+        foreach ($input as $key => &$value) {
+            $value = eq($value);
+        }
 
-		if($errors = $validator->errors()) {
-			Input::flash();
+        $validator = new Validator($input);
 
-			Notify::error($errors);
+        $validator->check('title')
+            ->is_max(3, __('categories.title_missing'));
 
-			return Response::redirect('admin/categories/edit/' . $id);
-		}
+        if ($errors = $validator->errors()) {
+            Input::flash();
 
-		if(empty($input['slug'])) {
-			$input['slug'] = $input['title'];
-		}
+            Notify::error($errors);
 
-		$input['slug'] = slug($input['slug']);
+            return Response::redirect('admin/categories/edit/'.$id);
+        }
 
-		Category::update($id, $input);
-		Extend::process('category', $id);
+        if (empty($input['slug'])) {
+            $input['slug'] = $input['title'];
+        }
 
-		Notify::success(__('categories.updated'));
+        $input['slug'] = slug($input['slug']);
 
-		return Response::redirect('admin/categories/edit/' . $id);
-	});
+        Category::update($id, $input);
+        Extend::process('category', $id);
 
-	/*
-		Add Category
-	*/
-	Route::get('admin/categories/add', function() {
-		$vars['messages'] = Notify::read();
-		$vars['token'] = Csrf::token();
+        Notify::success(__('categories.updated'));
 
-		// extended fields
-		$vars['fields'] = Extend::fields('category');
+        return Response::redirect('admin/categories/edit/'.$id);
+    });
 
-		return View::create('categories/add', $vars)
-			->partial('header', 'partials/header')
-			->partial('footer', 'partials/footer');
-	});
+    /*
+        Add Category
+    */
+    Route::get('admin/categories/add', function () {
+        $vars['messages'] = Notify::read();
+        $vars['token'] = Csrf::token();
 
-	Route::post('admin/categories/add', function() {
-		$input = Input::get(array('title', 'slug', 'description'));
-		
-		foreach($input as $key => &$value) {
-			$value = eq($value);
-		}
-		
-		$validator = new Validator($input);
+        // extended fields
+        $vars['fields'] = Extend::fields('category');
 
-		$validator->check('title')
-			->is_max(3, __('categories.title_missing'));
+        return View::create('categories/add', $vars)
+            ->partial('header', 'partials/header')
+            ->partial('footer', 'partials/footer');
+    });
 
-		if($errors = $validator->errors()) {
-			Input::flash();
+    Route::post('admin/categories/add', function () {
+        $input = Input::get(['title', 'slug', 'description']);
 
-			Notify::error($errors);
+        foreach ($input as $key => &$value) {
+            $value = eq($value);
+        }
 
-			return Response::redirect('admin/categories/add');
-		}
+        $validator = new Validator($input);
 
-		if(empty($input['slug'])) {
-			$input['slug'] = $input['title'];
-		}
+        $validator->check('title')
+            ->is_max(3, __('categories.title_missing'));
 
-		$input['slug'] = slug($input['slug']);
+        if ($errors = $validator->errors()) {
+            Input::flash();
 
-		$category = Category::create($input);
-		Extend::process('category', $category->id);
+            Notify::error($errors);
 
-		Notify::success(__('categories.created'));
+            return Response::redirect('admin/categories/add');
+        }
 
-		return Response::redirect('admin/categories');
-	});
+        if (empty($input['slug'])) {
+            $input['slug'] = $input['title'];
+        }
 
-	/*
-		Delete Category
-	*/
-	Route::get('admin/categories/delete/(:num)', function($id) {
-		$total = Category::count();
+        $input['slug'] = slug($input['slug']);
 
-		if($total == 1) {
-			Notify::error(__('categories.delete_error'));
+        $category = Category::create($input);
+        Extend::process('category', $category->id);
 
-			return Response::redirect('admin/categories/edit/' . $id);
-		}
+        Notify::success(__('categories.created'));
 
-		// move posts
-		$category = Category::where('id', '<>', $id)->fetch();
+        return Response::redirect('admin/categories');
+    });
 
-		// delete selected
-		Category::find($id)->delete();
+    /*
+        Delete Category
+    */
+    Route::get('admin/categories/delete/(:num)', function ($id) {
+        $total = Category::count();
 
-		// update posts
-		Post::where('category', '=', $id)->update(array(
-			'category' => $category->id
-		));
+        if ($total == 1) {
+            Notify::error(__('categories.delete_error'));
 
-		Notify::success(__('categories.deleted'));
+            return Response::redirect('admin/categories/edit/'.$id);
+        }
 
-		return Response::redirect('admin/categories');
-	});
+        // move posts
+        $category = Category::where('id', '<>', $id)->fetch();
+
+        // delete selected
+        Category::find($id)->delete();
+
+        // update posts
+        Post::where('category', '=', $id)->update([
+            'category' => $category->id,
+        ]);
+
+        Notify::success(__('categories.deleted'));
+
+        return Response::redirect('admin/categories');
+    });
 
 });
