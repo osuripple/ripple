@@ -1,14 +1,14 @@
 <?php
     // Fix full combo
     try {
-        require_once(dirname(__FILE__) . "/../osu.ppy.sh/inc/functions.php");
+        require_once dirname(__FILE__).'/../osu.ppy.sh/inc/functions.php';
 
-        echo("Fixing FC scores...\r\n");
+        echo "Fixing FC scores...\r\n";
 
         $API_KEY = 'API_KEY_HERE';
-        $count = $GLOBALS["db"]->fetch("SELECT COUNT(*) FROM scores WHERE misses_count = 0");
+        $count = $GLOBALS['db']->fetch('SELECT COUNT(*) FROM scores WHERE misses_count = 0');
         if (current($count) == 0) {
-            echo("There aren't 0 misses score on the server. No action needed.");
+            echo "There aren't 0 misses score on the server. No action needed.";
             throw new Exception();
         }
 

@@ -1,5 +1,6 @@
 <?php
-echo("Building database structure...");
+
+echo 'Building database structure...';
 $q = <<<'ENDOFMYSQLQUERY'
 CREATE TABLE `badges` (
   `id` int(11) NOT NULL,
