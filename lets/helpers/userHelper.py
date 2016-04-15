@@ -2,6 +2,8 @@ from lets import glob
 from helpers import scoreHelper
 from helpers import consoleHelper
 from constants import bcolors
+from helpers import passwordHelper
+import time
 
 def getUserID(username):
 	"""
@@ -41,6 +43,32 @@ def userExists(userID):
 	userID -- user id to check
 	"""
 	return True if glob.db.fetch("SELECT id FROM users WHERE id = ?", [userID]) != None else False
+
+
+def checkLogin(userID, password):
+	"""
+	Check userID's login with specified password
+
+	userID -- user id
+	password -- plain md5 password
+	return -- True or False
+	"""
+
+	# Get password data
+	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE id = ?", [userID])
+
+	# Make sure the query returned something
+	if (passwordData == None):
+		return False
+
+	# Return valid/invalid based on the password version.
+	if passwordData["password_version"] == 2:
+		return passwordHelper.checkNewPassword(password, passwordData["password_md5"])
+	if passwordData["password_version"] == 1:
+		ok = passwordHelper.checkOldPassword(password, passwordData["salt"], passwordData["password_md5"])
+		if not ok: return False
+		newpass = passwordHelper.genBcrypt(password)
+		glob.db.execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE id = ?", [newpass, userID])
 
 
 def getRequiredScoreForLevel(level):
@@ -149,14 +177,13 @@ def updateAccuracy(userID, gameMode):
 
 
 
-def updateStats(userID, __score, pp):
+def updateStats(userID, __score):
 	"""
 	Update stats (playcount, total score, ranked score, level bla bla)
 	with data relative to a score object
 
 	userID --
 	__score -- score object
-	pp -- pp to add
 	"""
 
 	# Make sure the user exists
@@ -182,7 +209,7 @@ def updateStats(userID, __score, pp):
 		updateAccuracy(userID, __score.gameMode)
 
 		# Update pp
-		updatePP(userID, pp, __score.gameMode)
+		updatePP(userID, __score.pp, __score.gameMode)
 
 		# TODO: Update leaderboard
 
@@ -199,5 +226,25 @@ def updatePP(userID, pp, gameMode):
 		consoleHelper.printColored("[!] User {} doesn't exist.".format(userID), bcolors.RED)
 		return
 
+	# TODO: weighted pp
 	mode = scoreHelper.readableGameMode(gameMode)
 	glob.db.execute("UPDATE users_stats SET pp_{m}=pp_{m}+? WHERE id = ?".format(m = mode), [pp, userID])
+
+def getUserAllowed(userID):
+	"""
+	Get allowed status for userID
+
+	db -- database connection
+	userID -- user ID
+	return -- allowed int
+	"""
+
+	return glob.db.fetch("SELECT allowed FROM users WHERE id = ?", [userID])["allowed"]
+
+def updateLatestActivity(userID):
+	"""
+	Update userID's latest activity to current UNIX time
+
+	userID --
+	"""
+	glob.db.execute("UPDATE users SET latest_activity = ? WHERE id = ?", [int(time.time()), userID])

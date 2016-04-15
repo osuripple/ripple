@@ -1,6 +1,11 @@
 from lets import glob
 from helpers import userHelper
 from helpers import scoreHelper
+from helpers import consoleHelper
+import beatmap
+import os
+if os.path.isfile("ripp.py"):
+	import ripp
 
 class score:
 	def __init__(self, scoreID = None, rank = None):
@@ -34,6 +39,8 @@ class score:
 		self.completed = 0
 
 		self.accuracy = 0.00
+
+		self.pp = 0.00
 
 		self.rankedScoreIncrease = 0
 
@@ -129,6 +136,9 @@ class score:
 			self.calculateAccuracy()
 			#osuVersion = scoreData[17]
 
+			# Set completed status
+			self.setCompletedStatus()
+
 
 	def getData(self):
 		"""Return score row relative to this score for getscores"""
@@ -149,9 +159,9 @@ class score:
 			self.rank,
 			self.date)
 
-	def saveScoreInDB(self):
+	def setCompletedStatus(self):
 		"""
-		Save this score in DB (if passed and mods are valid)
+		Set this score completed status and rankedScoreIncrease
 		"""
 		if self.passed == True and scoreHelper.isRankable(self.mods):
 			# Get right "completed" value
@@ -169,9 +179,30 @@ class score:
 					self.completed = 2
 					self.rankedScoreIncrease = 0
 
-			# Add this score
-			query = "INSERT INTO scores (id, beatmap_md5, username, score, max_combo, full_combo, mods, 300_count, 100_count, 50_count, katus_count, gekis_count, misses_count, time, play_mode, completed, accuracy) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-			glob.db.execute(query, [self.fileMd5, self.playerName, self.score, self.maxCombo, 1 if self.fullCombo == True else 0, self.mods, self.c300, self.c100, self.c50, self.cKatu, self.cGeki, self.cMiss, self.playDateTime, self.gameMode, self.completed, self.accuracy*100])
+	def saveScoreInDB(self):
+		"""
+		Save this score in DB (if passed and mods are valid)
+		"""
+		# Add this score
+		query = "INSERT INTO scores (id, beatmap_md5, username, score, max_combo, full_combo, mods, 300_count, 100_count, 50_count, katus_count, gekis_count, misses_count, time, play_mode, completed, accuracy, pp) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+		glob.db.execute(query, [self.fileMd5, self.playerName, self.score, self.maxCombo, 1 if self.fullCombo == True else 0, self.mods, self.c300, self.c100, self.c50, self.cKatu, self.cGeki, self.cMiss, self.playDateTime, self.gameMode, self.completed, self.accuracy*100, self.pp])
 
-			# Get score id
-			self.scoreID = glob.db.connection.insert_id()
+		# Get score id
+		self.scoreID = glob.db.connection.insert_id()
+
+	def calculatePP(self):
+		"""
+		Calculate this score's pp value
+		"""
+		consoleHelper.printRippMessage("Calculating PP. w00t p00t...")
+
+		# Create beatmap object
+		b = beatmap.beatmap(self.fileMd5, 0)
+
+		# Create an instance of the magic pp calculator and calculate pp
+		fo = ripp.algo(b, self)
+		self.pp = fo.getPP()
+		consoleHelper.printRippMessage("Aim PP: {}".format(fo.aimValue))
+		consoleHelper.printRippMessage("Speed PP: {}".format(fo.speedValue))
+		consoleHelper.printRippMessage("Acc PP: {}".format(fo.accValue))
+		consoleHelper.printRippMessage("Total PP: {}".format(self.pp))

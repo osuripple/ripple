@@ -1600,7 +1600,7 @@ class P
             }
 
             // Get top/recent plays for this mode
-            $topPlays = $GLOBALS['db']->fetchAll('SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY score DESC LIMIT 10', [$username, $m]);
+            $topPlays = $GLOBALS['db']->fetchAll('SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY pp DESC LIMIT 10', [$username, $m]);
             $recentPlays = $GLOBALS['db']->fetchAll('SELECT * FROM scores WHERE username = ? AND completed = 3 AND play_mode = ? ORDER BY time DESC LIMIT 10', [$username, $m]);
 
             // Get all allowed users on Ripple
@@ -1802,17 +1802,17 @@ class P
             // Print top plays table (only if we have them)
             if ($topPlays) {
                 echo '<table class="table">
-				<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">Score</th></tr>';
+				<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">PP</th></tr>';
                 for ($i = 0; $i < count($topPlays); $i++) {
                     // Get beatmap name from md5 (beatmaps_names) for this play
-                    $bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $topPlays[$i]['beatmap_md5']);
+                    $bn = $GLOBALS['db']->fetch('SELECT song_name FROM beatmaps WHERE beatmap_md5 = ?', $topPlays[$i]['beatmap_md5']);
 
                     if ($bn) {
                         // Beatmap name found, print beatmap name and score
                         echo '<tr>';
                         echo '<td class="warning"><p class="text-left">'.current($bn).' <b>'.getScoreMods($topPlays[$i]['mods']).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($topPlays[$i]['time'])).'</small>'.'</b></p></td>';
                         echo '<td class="warning"><p class="text-right">'.accuracy($topPlays[$i]['accuracy']).'%</p></td>';
-                        echo '<td class="warning"><p class="text-right"><b>'.number_format($topPlays[$i]['score']).'</b>	<a href="/web/osu-getreplay-full.php?c='.$topPlays[$i]['id'].'"><i class="fa fa-star"></i></a></p></td>';
+                        echo '<td class="warning"><p class="text-right"><b>'.$topPlays[$i]['pp'].' pp</b>	<a href="/web/osu-getreplay-full.php?c='.$topPlays[$i]['id'].'"><i class="fa fa-star"></i></a></p></td>';
                         echo '</tr>';
                     }
                 }
@@ -1828,7 +1828,7 @@ class P
 				<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays</th><th class="text-right">Accuracy</th><th class="text-right">Score</th></tr>';
                 for ($i = 0; $i < count($recentPlays); $i++) {
                     // Get beatmap name from md5 (beatmaps_names) for this play
-                    $bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $recentPlays[$i]['beatmap_md5']);
+                    $bn = $GLOBALS['db']->fetch('SELECT song_name FROM beatmaps WHERE beatmap_md5 = ?', $recentPlays[$i]['beatmap_md5']);
 
                     if ($bn) {
                         // Beatmap name found, print beatmap name and score
