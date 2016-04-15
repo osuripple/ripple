@@ -1,4 +1,5 @@
 <?php
+
 echo "Updating passwords...\n";
 $GLOBALS['db']->execute('ALTER TABLE users ADD password_version TINYINT(4) NOT NULL DEFAULT 1');
 $GLOBALS['db']->execute('ALTER TABLE users MODIFY password_md5 VARCHAR(127) NOT NULL;');
