@@ -15,6 +15,7 @@ function menu_items() {
 	if (!$result) {
 		$pages->rewind();
 	}
+
 	return $result;
 }
 /*
@@ -24,6 +25,7 @@ function menu_id($menu_item = null) {
 	if (is_array($menu_item)) {
 		return $menu_item['id'];
 	}
+
 	return $menu_item ? $menu_item->id : Registry::prop('menu_item', 'id');
 }
 function menu_url($menu_item = null) {
@@ -52,12 +54,14 @@ function menu_name($menu_item = null) {
 	if (is_array($menu_item)) {
 		return $menu_item['name'];
 	}
+
 	return $menu_item ? $menu_item->name : Registry::prop('menu_item', 'name');
 }
 function menu_title($menu_item = null) {
 	if (is_array($menu_item)) {
 		return $menu_item['title'];
 	}
+
 	return $menu_item ? $menu_item->title : Registry::prop('menu_item', 'title');
 }
 function menu_active($menu_item = null) {
@@ -75,6 +79,7 @@ function menu_parent($menu_item = null) {
 	if (is_array($menu_item)) {
 		return $menu_item['parent'];
 	}
+
 	return $menu_item ? $menu_item->parent : Registry::prop('menu_item', 'parent');
 }
 function menu_has_children($parent = null) {
@@ -93,6 +98,7 @@ function get_menus_children($parent = null) {
 			$children[] = $item;
 		}
 	}
+
 	return $children;
 }
 function is_child_active($parent = null) {
@@ -101,6 +107,7 @@ function is_child_active($parent = null) {
 			return 1;
 		}
 	}
+
 	return 0;
 }
 /*
@@ -133,10 +140,10 @@ function menu_render($params = []) {
 			if ($item->active()) {
 				$attr['class'] = $class;
 			}
-			$html.= '<li>';
-			$html.= Html::link($item->relative_uri(), $item->name, $attr);
-			$html.= menu_render(['parent' => $item->id, 'index' => $menu->key() ]);
-			$html.= '</li>' . PHP_EOL;
+			$html .= '<li>';
+			$html .= Html::link($item->relative_uri(), $item->name, $attr);
+			$html .= menu_render(['parent' => $item->id, 'index' => $menu->key()]);
+			$html .= '</li>'.PHP_EOL;
 		}
 	}
 	// Reset our index before returning
@@ -147,7 +154,8 @@ function menu_render($params = []) {
 		$index--;
 	}
 	if ($html) {
-		$html = PHP_EOL . '<ul>' . PHP_EOL . $html . '</ul>' . PHP_EOL;
+		$html = PHP_EOL.'<ul>'.PHP_EOL.$html.'</ul>'.PHP_EOL;
 	}
+
 	return $html;
 }

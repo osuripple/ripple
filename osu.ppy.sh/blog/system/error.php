@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,6 +12,7 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
+
 class error {
 	/**
 	 * Exception handler.
@@ -27,12 +30,12 @@ class error {
 				ob_end_clean();
 			}
 			if (Request::cli()) {
-				Cli::write(PHP_EOL . 'Uncaught Exception', 'light_red');
-				Cli::write($e->getMessage() . PHP_EOL);
+				Cli::write(PHP_EOL.'Uncaught Exception', 'light_red');
+				Cli::write($e->getMessage().PHP_EOL);
 				Cli::write('Origin', 'light_red');
-				Cli::write(substr($e->getFile(), strlen(PATH)) . ' on line ' . $e->getLine() . PHP_EOL);
+				Cli::write(substr($e->getFile(), strlen(PATH)).' on line '.$e->getLine().PHP_EOL);
 				Cli::write('Trace', 'light_red');
-				Cli::write($e->getTraceAsString() . PHP_EOL);
+				Cli::write($e->getTraceAsString().PHP_EOL);
 			} else {
 				echo '<html>
 					<head>
@@ -44,11 +47,11 @@ class error {
 					</head>
 					<body>
 						<h1>Uncaught Exception</h1>
-						<p><code>' . $e->getMessage() . '</code></p>
+						<p><code>'.$e->getMessage().'</code></p>
 						<h3>Origin</h3>
-						<p><code>' . substr($e->getFile(), strlen(PATH)) . ' on line ' . $e->getLine() . '</code></p>
+						<p><code>'.substr($e->getFile(), strlen(PATH)).' on line '.$e->getLine().'</code></p>
 						<h3>Trace</h3>
-						<pre>' . $e->getTraceAsString() . '</pre>
+						<pre>'.$e->getTraceAsString().'</pre>
 					</body>
 					</html>';
 			}
@@ -58,6 +61,7 @@ class error {
 		}
 		exit(1);
 	}
+
 	/**
 	 * Error handler.
 	 *
@@ -75,6 +79,7 @@ class error {
 			static ::exception(new ErrorException($message, $code, 0, $file, $line));
 		}
 	}
+
 	/**
 	 * Shutdown handler.
 	 *
@@ -87,6 +92,7 @@ class error {
 			static ::exception(new ErrorException($message, $type, 0, $file, $line));
 		}
 	}
+
 	/**
 	 * Exception logger.
 	 *

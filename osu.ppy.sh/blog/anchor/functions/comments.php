@@ -11,6 +11,7 @@ function has_comments() {
 		$comments = new Items($comments);
 		Registry::set('comments', $comments);
 	}
+
 	return $comments->length();
 }
 function total_comments() {
@@ -18,6 +19,7 @@ function total_comments() {
 		return 0;
 	}
 	$comments = Registry::get('comments');
+
 	return $comments->length();
 }
 // loop comments
@@ -32,6 +34,7 @@ function comments() {
 		// move to next
 		$comments->next();
 	}
+
 	return $result;
 }
 // single comments
@@ -68,14 +71,14 @@ function comment_form_url() {
 	return Uri::to(Uri::current());
 }
 function comment_form_input_name($extra = '') {
-	return '<input name="name" id="name" type="text" ' . $extra . ' value="' . Input::previous('name') . '">';
+	return '<input name="name" id="name" type="text" '.$extra.' value="'.Input::previous('name').'">';
 }
 function comment_form_input_email($extra = '') {
-	return '<input name="email" id="email" type="email" ' . $extra . ' value="' . Input::previous('email') . '">';
+	return '<input name="email" id="email" type="email" '.$extra.' value="'.Input::previous('email').'">';
 }
 function comment_form_input_text($extra = '') {
-	return '<textarea name="text" id="text" ' . $extra . '>' . Input::previous('text') . '</textarea>';
+	return '<textarea name="text" id="text" '.$extra.'>'.Input::previous('text').'</textarea>';
 }
 function comment_form_button($text = 'Post Comment', $extra = '') {
-	return '<button type="submit" ' . $extra . '>' . $text . '</button>';
+	return '<button type="submit" '.$extra.'>'.$text.'</button>';
 }

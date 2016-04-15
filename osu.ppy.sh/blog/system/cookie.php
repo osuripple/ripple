@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -16,6 +18,7 @@ class cookie {
 	 * @var array
 	 */
 	public static $bag = [];
+
 	/**
 	 * Adds a cookie to the bag to be written.
 	 *
@@ -32,6 +35,7 @@ class cookie {
 		}
 		static ::$bag[$name] = compact('name', 'value', 'expiration', 'path', 'domain', 'secure', 'HttpOnly');
 	}
+
 	/**
 	 * Reads a cookie name from the globals cookies or the class cookie bag.
 	 *
@@ -44,8 +48,10 @@ class cookie {
 		if (array_key_exists($name, static ::$bag)) {
 			return static ::$bag[$name]['value'];
 		}
+
 		return array_key_exists($name, $_COOKIE) ? $_COOKIE[$name] : $fallback;
 	}
+
 	/**
 	 * Remove a cookie from the bag.
 	 *

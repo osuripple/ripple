@@ -7,7 +7,7 @@
  * u - username
  * h - password hash
 */
-require_once dirname(__FILE__) . '/../inc/functions.php';
+require_once dirname(__FILE__).'/../inc/functions.php';
 $d = $GLOBALS['db']->fetch('SELECT country FROM users_stats WHERE username = ?', [$_GET['u']]);
 if ($d !== false && $d['country'] !== 'XX') {
 	echo strtolower($d['country']);

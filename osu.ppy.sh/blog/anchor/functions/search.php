@@ -16,6 +16,7 @@ function search_results() {
 		// move to next
 		$posts->next();
 	}
+
 	return $result;
 }
 function search_term() {
@@ -34,10 +35,11 @@ function search_next($text = 'Next', $default = '') {
 	$next = $page + 1;
 	$term = Registry::get('search_term');
 	Session::put(slug($term), $term);
-	$url = base_url($search_page->slug . '/' . $term . '/' . $next);
+	$url = base_url($search_page->slug.'/'.$term.'/'.$next);
 	if (($page - 1) < $pages) {
-		return '<a href="' . $url . '">' . $text . '</a>';
+		return '<a href="'.$url.'">'.$text.'</a>';
 	}
+
 	return $default;
 }
 function search_prev($text = 'Previous', $default = '') {
@@ -50,17 +52,18 @@ function search_prev($text = 'Previous', $default = '') {
 	$prev = $page - 1;
 	$term = Registry::get('search_term');
 	Session::put(slug($term), $term);
-	$url = base_url($search_page->slug . '/' . $term . '/' . $prev);
+	$url = base_url($search_page->slug.'/'.$term.'/'.$prev);
 	if ($offset > 0) {
-		return '<a href="' . $url . '">' . $text . '</a>';
+		return '<a href="'.$url.'">'.$text.'</a>';
 	}
+
 	return $default;
 }
 function search_url() {
 	return base_url('search');
 }
 function search_form_input($extra = '') {
-	return '<input name="term" type="text" ' . $extra . ' value="' . search_term() . '">';
+	return '<input name="term" type="text" '.$extra.' value="'.search_term().'">';
 }
 function search_item_type() {
 	$item_class = strtolower(get_class(Registry::get('search_item')));
@@ -90,6 +93,6 @@ function search_item_url() {
 	if ($item_class == 'page') {
 		return Registry::get('search_item')->uri();
 	} elseif ($item_class == 'post') {
-		return base_url(Registry::get('posts_page')->slug) . '/' . search_item_slug();
+		return base_url(Registry::get('posts_page')->slug).'/'.search_item_slug();
 	}
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace System\Request;
+
 /**
  * Nano.
  *
@@ -16,6 +18,7 @@ class server {
 	 * @var array
 	 */
 	private $data;
+
 	/**
 	 * Server object constructor.
 	 *
@@ -24,6 +27,7 @@ class server {
 	public function __construct($array) {
 		$this->data = $array;
 	}
+
 	/**
 	 * Get a server array item.
 	 *
@@ -33,8 +37,10 @@ class server {
 		if (array_key_exists($key, $this->data)) {
 			return $this->data[$key];
 		}
+
 		return $fallback;
 	}
+
 	/**
 	 * Set a server array item.
 	 *
@@ -44,6 +50,7 @@ class server {
 	public function set($key, $value) {
 		$this->data[$key] = $value;
 	}
+
 	/**
 	 * Check if a server array item exists.
 	 *
@@ -52,6 +59,7 @@ class server {
 	public function has($key) {
 		return array_key_exists($key, $this->data);
 	}
+
 	/**
 	 * Remove a server array item.
 	 *

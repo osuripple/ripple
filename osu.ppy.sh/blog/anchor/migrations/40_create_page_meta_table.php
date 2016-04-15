@@ -1,4 +1,5 @@
 <?php
+
 class Migration_create_page_meta_table extends Migration {
 	public function up() {
 		$table = Base::table('page_meta');
@@ -15,6 +16,7 @@ class Migration_create_page_meta_table extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }

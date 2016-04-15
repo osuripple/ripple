@@ -17,7 +17,7 @@ try {
 		throw new Exception();
 	}
 	// Get replay content
-	$replayData = file_get_contents('../replays/replay_' . $_GET['c'] . '.osr');
+	$replayData = file_get_contents('../replays/replay_'.$_GET['c'].'.osr');
 	// Check replay
 	if ($replayData) {
 		// Replay exists, check if we want to watch someone else's replay
@@ -42,7 +42,7 @@ try {
 					$modeForDB = 'mania';
 				break;
 			}
-			$GLOBALS['db']->execute('UPDATE users_stats SET replays_watched_' . $modeForDB . '=replays_watched_' . $modeForDB . '+1 WHERE username = ?', [$whois]);
+			$GLOBALS['db']->execute('UPDATE users_stats SET replays_watched_'.$modeForDB.'=replays_watched_'.$modeForDB.'+1 WHERE username = ?', [$whois]);
 		}
 		// Output replay content
 		echo $replayData;
@@ -53,5 +53,5 @@ try {
 }
 catch(Exception $e) {
 	// Error
-	
+
 }

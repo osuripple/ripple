@@ -1,4 +1,5 @@
 <?php
+
 // All the mods' values in any mods combination integer.
 // Usage: $modInt & ModsEnum::ModToSeeIfIsInTheModsCombination
 // If you don't really know what are these, lookup "bitwise operators php" on google.

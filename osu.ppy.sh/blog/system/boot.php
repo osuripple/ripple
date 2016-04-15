@@ -12,7 +12,7 @@
  * Check php version.
  */
 if (version_compare(PHP_VERSION, '5.3') < 0) {
-	echo 'We need PHP 5.3 or higher, you are running ' . PHP_VERSION;
+	echo 'We need PHP 5.3 or higher, you are running '.PHP_VERSION;
 	exit;
 }
 /*
@@ -43,11 +43,11 @@ if (get_magic_quotes_gpc()) {
 /**
  * Include base classes and functions.
  */
-require PATH . 'system/helpers' . EXT;
-require PATH . 'system/error' . EXT;
-require PATH . 'system/arr' . EXT;
-require PATH . 'system/config' . EXT;
-require PATH . 'system/autoloader' . EXT;
+require PATH.'system/helpers'.EXT;
+require PATH.'system/error'.EXT;
+require PATH.'system/arr'.EXT;
+require PATH.'system/config'.EXT;
+require PATH.'system/autoloader'.EXT;
 /*
  * Register the autoloader
 */
@@ -56,7 +56,7 @@ spl_autoload_register(['System\\Autoloader', 'load']);
 System\Autoloader::directory(PATH);
 // map application aliases to autoloader so we dont
 // have to fully specify the class namespaces each time.
-System\Autoloader::$aliases = (array)System\Config::aliases();
+System\Autoloader::$aliases = (array) System\Config::aliases();
 /*
  * Error handling
 */
