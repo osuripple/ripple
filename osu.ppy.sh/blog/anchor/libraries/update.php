@@ -1,4 +1,5 @@
 <?php
+
 class update {
 	public static function version() {
 		// first time
@@ -10,6 +11,7 @@ class update {
 			static ::renew();
 		}
 	}
+
 	public static function setup() {
 		$version = static ::touch();
 		$today = date('Y-m-d H:i:s');
@@ -22,6 +24,7 @@ class update {
 		}
 		Config::set('meta', $meta);
 	}
+
 	public static function renew() {
 		$version = static ::touch();
 		$today = date('Y-m-d H:i:s');
@@ -34,6 +37,7 @@ class update {
 		}
 		Config::set('meta', $meta);
 	}
+
 	public static function touch() {
 		$url = 'http://anchorcms.com/version';
 		$result = false;
@@ -44,11 +48,12 @@ class update {
 				$result = file_get_contents($url, false, $context);
 			} elseif (function_exists('curl_init')) {
 				$session = curl_init();
-				curl_setopt_array($session, [CURLOPT_URL => $url, CURLOPT_HEADER => false, CURLOPT_RETURNTRANSFER => true, ]);
+				curl_setopt_array($session, [CURLOPT_URL => $url, CURLOPT_HEADER => false, CURLOPT_RETURNTRANSFER => true]);
 				$result = curl_exec($session);
 				curl_close($session);
 			}
 		}
+
 		return $result;
 	}
 }

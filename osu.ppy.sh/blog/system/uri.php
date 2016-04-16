@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -12,6 +14,7 @@ namespace System;
 use ErrorException;
 use OverflowException;
 use System\Request\Server;
+
 class uri {
 	/**
 	 * The current uri.
@@ -19,6 +22,7 @@ class uri {
 	 * @var string
 	 */
 	public static $current;
+
 	/**
 	 * Get a path relative to the application.
 	 *
@@ -32,10 +36,12 @@ class uri {
 		}
 		$base = Config::app('url', '');
 		if ($index = Config::app('index', '')) {
-			$index.= '/';
+			$index .= '/';
 		}
-		return rtrim($base, '/') . '/' . $index . ltrim($uri, '/');
+
+		return rtrim($base, '/').'/'.$index.ltrim($uri, '/');
 	}
+
 	/**
 	 * Get full uri relative to the application.
 	 *
@@ -54,8 +60,10 @@ class uri {
 		} else {
 			$scheme = ($server->has('HTTPS') and $server->get('HTTPS')) !== '' ? 'http://' : 'https://';
 		}
-		return $scheme . $server->get('HTTP_HOST') . static ::to($uri);
+
+		return $scheme.$server->get('HTTP_HOST').static ::to($uri);
 	}
+
 	/**
 	 * Get full secure uri relative to the application.
 	 *
@@ -66,6 +74,7 @@ class uri {
 	public static function secure($uri) {
 		return static ::full($uri, true);
 	}
+
 	/**
 	 * Get the current uri string.
 	 *
@@ -75,8 +84,10 @@ class uri {
 		if (is_null(static ::$current)) {
 			static ::$current = static ::detect();
 		}
+
 		return static ::$current;
 	}
+
 	/**
 	 * Try and detect the current uri.
 	 *
@@ -102,6 +113,7 @@ class uri {
 		}
 		throw new OverflowException('Uri was not detected. Make sure the REQUEST_URI is set.');
 	}
+
 	/**
 	 * Format the uri string remove any malicious
 	 * characters and relative paths.
@@ -119,8 +131,9 @@ class uri {
 		// remove the relative uri
 		$uri = static ::remove_relative_uri($uri);
 		// return argument if not empty or return a single slash
-		return trim($uri, '/') ? : '/';
+		return trim($uri, '/') ?: '/';
 	}
+
 	/**
 	 * Remove a value from the start of a string
 	 * in this case the passed uri string.
@@ -138,8 +151,10 @@ class uri {
 				$uri = substr($uri, strlen($value));
 			}
 		}
+
 		return $uri;
 	}
+
 	/**
 	 * Remove the SCRIPT_NAME from the uri path.
 	 *
@@ -150,6 +165,7 @@ class uri {
 	public static function remove_script_name($uri, $server) {
 		return static ::remove($server->get('SCRIPT_NAME'), $uri);
 	}
+
 	/**
 	 * Remove the relative path from the uri set in the application config.
 	 *
@@ -164,8 +180,9 @@ class uri {
 		}
 		// remove index
 		if ($index = Config::app('index')) {
-			$uri = static ::remove('/' . $index, $uri);
+			$uri = static ::remove('/'.$index, $uri);
 		}
+
 		return $uri;
 	}
 }

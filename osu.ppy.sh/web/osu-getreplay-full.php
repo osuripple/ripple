@@ -18,14 +18,14 @@ try {
 	} else {
 		$beatmapName = $_GET['c'];
 	}
-	$fileName = $replayData['username'] . ' - ' . $beatmapName;
+	$fileName = $replayData['username'].' - '.$beatmapName;
 	// Check if file is already in cache
-	if (file_exists('../replays_full/' . $fileName . '.osr')) {
-		redirect('../replays_full/' . $fileName . '.osr');
+	if (file_exists('../replays_full/'.$fileName.'.osr')) {
+		redirect('../replays_full/'.$fileName.'.osr');
 		die();
 	}
 	// Get replay raw data
-	$rawData = file_get_contents('../replays/replay_' . $_GET['c'] . '.osr');
+	$rawData = file_get_contents('../replays/replay_'.$_GET['c'].'.osr');
 	// Check if replay exists
 	if (!$rawData) {
 		throw new Exception("Replay doesn't exist");
@@ -62,31 +62,31 @@ try {
 	$magicString = md5(sprintf('%dp%do%do%dt%da%dr%de%sy%do%du%s%d%s', $replayData['100_count'] + $replayData['300_count'], $replayData['50_count'], $replayData['gekis_count'], $replayData['katus_count'], $replayData['misses_count'], $replayData['beatmap_md5'], $replayData['max_combo'], $fullCombo, $replayData['username'], $replayData['score'], $rank, $replayData['mods'], 'True'));
 	// Build full replay
 	$output = '';
-	$output.= pack('C', $replayData['play_mode']);
-	$output.= pack('I', 20150414);
-	$output.= binStr($replayData['beatmap_md5']);
-	$output.= binStr($replayData['username']);
-	$output.= binStr($magicString);
-	$output.= pack('S', $replayData['300_count']);
-	$output.= pack('S', $replayData['100_count']);
-	$output.= pack('S', $replayData['50_count']);
-	$output.= pack('S', $replayData['gekis_count']);
-	$output.= pack('S', $replayData['katus_count']);
-	$output.= pack('S', $replayData['misses_count']);
-	$output.= pack('I', $replayData['score']);
-	$output.= pack('S', $replayData['max_combo']);
-	$output.= pack('C', $replayData['full_combo']);
-	$output.= pack('I', $replayData['mods']);
-	$output.= pack('C', 0); // Life bar graph, empty
-	$output.= "\x00\x00\x00\x00\x00\x00\x00\x00"; // Time, not implemented (yet)
-	$output.= pack('I', strlen($rawData));
-	$output.= $rawData;
-	$output.= pack('I', 0);
-	$output.= pack('I', 0);
+	$output .= pack('C', $replayData['play_mode']);
+	$output .= pack('I', 20150414);
+	$output .= binStr($replayData['beatmap_md5']);
+	$output .= binStr($replayData['username']);
+	$output .= binStr($magicString);
+	$output .= pack('S', $replayData['300_count']);
+	$output .= pack('S', $replayData['100_count']);
+	$output .= pack('S', $replayData['50_count']);
+	$output .= pack('S', $replayData['gekis_count']);
+	$output .= pack('S', $replayData['katus_count']);
+	$output .= pack('S', $replayData['misses_count']);
+	$output .= pack('I', $replayData['score']);
+	$output .= pack('S', $replayData['max_combo']);
+	$output .= pack('C', $replayData['full_combo']);
+	$output .= pack('I', $replayData['mods']);
+	$output .= pack('C', 0); // Life bar graph, empty
+	$output .= "\x00\x00\x00\x00\x00\x00\x00\x00"; // Time, not implemented (yet)
+	$output .= pack('I', strlen($rawData));
+	$output .= $rawData;
+	$output .= pack('I', 0);
+	$output .= pack('I', 0);
 	// Save file
-	file_put_contents('../replays_full/' . $fileName . '.osr', $output);
+	file_put_contents('../replays_full/'.$fileName.'.osr', $output);
 	// Redirect to file
-	redirect('../replays_full/' . $fileName . '.osr');
+	redirect('../replays_full/'.$fileName.'.osr');
 	die();
 }
 catch(Exception $e) {

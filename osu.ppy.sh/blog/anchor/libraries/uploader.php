@@ -1,4 +1,5 @@
 <?php
+
 class uploader {
 	/**
 	 * The path where uploaded files will be moved to.
@@ -12,6 +13,7 @@ class uploader {
 	 * @var array
 	 */
 	protected $extensions;
+
 	/**
 	 * Create a new instance of the uploader.
 	 *
@@ -22,6 +24,7 @@ class uploader {
 		$this->set_destination($destination);
 		$this->set_extensions($extensions);
 	}
+
 	/**
 	 * Sets the upload destination path.
 	 */
@@ -29,8 +32,9 @@ class uploader {
 		if (!is_writable($path)) {
 			throw new ErrorException('The destination path is not writable');
 		}
-		$this->destination = rtrim(realpath($path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		$this->destination = rtrim(realpath($path), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 	}
+
 	/**
 	 * Sets the upload accepted extensions.
 	 */
@@ -39,6 +43,7 @@ class uploader {
 			return strtolower($str);
 		}, $extensions);
 	}
+
 	/**
 	 * Translates error codes to error messages.
 	 *
@@ -73,8 +78,10 @@ class uploader {
 				$message = 'Unknown upload error';
 			break;
 		}
+
 		return $message;
 	}
+
 	/**
 	 * Strips none alphanumeric and dash characters.
 	 *
@@ -87,10 +94,11 @@ class uploader {
 		// remove crazy characters
 		$filename = preg_replace('#[^A-z0-9-]+#i', $dash, $filename);
 		// remove repeated dashes
-		$filename = preg_replace('#' . $dash . '+#', $dash, $filename);
+		$filename = preg_replace('#'.$dash.'+#', $dash, $filename);
 		// trim the edges
 		return trim($filename, $dash);
 	}
+
 	/**
 	 * Creates a friendly file name.
 	 *
@@ -101,9 +109,11 @@ class uploader {
 	protected function get_filename($filename) {
 		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		$ext = strtolower($ext);
-		$filename = basename($filename, '.' . $ext);
-		return $this->format_filename($filename) . '.' . $ext;
+		$filename = basename($filename, '.'.$ext);
+
+		return $this->format_filename($filename).'.'.$ext;
 	}
+
 	/**
 	 * Validates the passed $_FILES value and extension.
 	 *
@@ -126,6 +136,7 @@ class uploader {
 			}
 		}
 	}
+
 	/**
 	 * Upload a file.
 	 *
@@ -142,10 +153,11 @@ class uploader {
 			$filename = $this->get_filename($file['name']);
 		}
 		// set the final destination
-		$filepath = $this->destination . $filename;
+		$filepath = $this->destination.$filename;
 		if (!move_uploaded_file($file['tmp_name'], $filepath)) {
 			throw new ErrorException('Could not move uploaded file to destination filepath');
 		}
+
 		return $filepath;
 	}
 }

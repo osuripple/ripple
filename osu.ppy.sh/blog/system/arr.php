@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -24,10 +26,12 @@ class arr {
 			if (!is_array($array) or !array_key_exists($key, $array)) {
 				return $fallback;
 			}
-			$array = & $array[$key];
+			$array = &$array[$key];
 		}
+
 		return $array;
 	}
+
 	/**
 	 * Sets a value in a array.
 	 *
@@ -44,10 +48,11 @@ class arr {
 			if (!array_key_exists($key, $array)) {
 				$array[$key] = [];
 			}
-			$array = & $array[$key];
+			$array = &$array[$key];
 		}
-		$array[array_shift($keys) ] = $value;
+		$array[array_shift($keys)] = $value;
 	}
+
 	/**
 	 * Remove a value from a array.
 	 *
@@ -60,7 +65,7 @@ class arr {
 		while (count($keys) > 1) {
 			$key = array_shift($keys);
 			if (array_key_exists($key, $array)) {
-				$array = & $array[$key];
+				$array = &$array[$key];
 			}
 		}
 		// if the last key exists unset it
@@ -68,6 +73,7 @@ class arr {
 			unset($array[$key]);
 		}
 	}
+
 	/**
 	 * Create a new instance of the Arr class.
 	 *
@@ -76,6 +82,7 @@ class arr {
 	public static function create($stack = []) {
 		return new static ($stack);
 	}
+
 	/**
 	 * Arr constructor.
 	 *
@@ -84,6 +91,7 @@ class arr {
 	public function __construct($stack = []) {
 		$this->stack = $stack;
 	}
+
 	/**
 	 * Shuffle the array elements in the stack.
 	 *
@@ -91,8 +99,10 @@ class arr {
 	 */
 	public function shuffle() {
 		shuffle($this->stack);
+
 		return $this;
 	}
+
 	/**
 	 * Returns the first element in the stack.
 	 *
@@ -101,6 +111,7 @@ class arr {
 	public function first() {
 		return current($this->stack);
 	}
+
 	/**
 	 * Returns the last element in the stack.
 	 *

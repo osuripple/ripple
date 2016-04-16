@@ -39,11 +39,11 @@ try {
 		case 0:
 			throw new Exception('pass');
 		break; // We are banned, error: pass (we don't user error: ban to avoid sending fake data to bancho)
-			
+
 		case 2:
 			$GLOBALS['db']->execute('UPDATE users SET allowed = 1 WHERE username = ?', $username);
 		break; // We are not banned but our account still needs to be activated, activate it.
-			
+
 	}
 	// If we have completed a song, $_POST["x"] is not set (completed value in db is 2).
 	// If we have failed/retried, $_POST["x"] is 0/1 (completed value in db is 0/1).
@@ -61,7 +61,7 @@ try {
 			// Send #announce message
 			$song = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $scoreDataArray[0]);
 			if ($song) {
-				addMessageToDB(999, '#announce', $scoreDataArray[1] . 'achieved rank #1 on ' . current($song) . '!');
+				addMessageToDB(999, '#announce', $scoreDataArray[1].'achieved rank #1 on '.current($song).'!');
 			}
 		}
 		// Done
@@ -75,5 +75,5 @@ try {
 }
 catch(Exception $e) {
 	// Error
-	echo 'error: ' . $e->getMessage();
+	echo 'error: '.$e->getMessage();
 }

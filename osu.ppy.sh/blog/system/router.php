@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,6 +12,7 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
+
 class router {
 	/**
 	 * The current URI.
@@ -29,7 +32,7 @@ class router {
 	 *
 	 * @var array
 	 */
-	public static $patterns = [':any' => '[^/]+', ':num' => '[0-9]+', ':all' => '.*', ];
+	public static $patterns = [':any' => '[^/]+', ':num' => '[0-9]+', ':all' => '.*'];
 	/**
 	 * The defined routes set by the app.
 	 *
@@ -42,6 +45,7 @@ class router {
 	 * @var array
 	 */
 	public static $actions = [];
+
 	/**
 	 * Create a new instance of the Router class for chaining.
 	 *
@@ -52,10 +56,13 @@ class router {
 			// get cli arguments
 			$args = Arr::get($_SERVER, 'argv', []);
 			$uri = implode('/', array_slice($args, 1));
-			return new static ('cli', trim($uri, '/') ? : '/');
+
+			return new static ('cli', trim($uri, '/') ?: '/');
 		}
+
 		return new static (Request::method(), Uri::current());
 	}
+
 	/**
 	 * Create a new instance of the Router class and import
 	 * app routes from a folder or a single routes.php file.
@@ -67,6 +74,7 @@ class router {
 		$this->uri = $uri;
 		$this->method = strtoupper($method);
 	}
+
 	/**
 	 * Gets array of request method routes.
 	 *
@@ -80,8 +88,10 @@ class router {
 		if (array_key_exists('ANY', static ::$routes)) {
 			$routes = array_merge($routes, static ::$routes['ANY']);
 		}
+
 		return $routes;
 	}
+
 	/**
 	 * Try and match the request method and uri with defined routes.
 	 *
@@ -104,7 +114,7 @@ class router {
 			// slice array of matches. $matches[0] will contain the text that
 			// matched the full pattern, $matches[1] will have the text that
 			// matched the first captured parenthesized subpattern, and so on.
-			if (preg_match('#^' . $pattern . '$#', $this->uri, $matched)) {
+			if (preg_match('#^'.$pattern.'$#', $this->uri, $matched)) {
 				return new Route($action, array_slice($matched, 1));
 			}
 		}
@@ -113,6 +123,7 @@ class router {
 		}
 		throw new ErrorException('No routes matched');
 	}
+
 	/**
 	 * Match the request with a route and run it.
 	 *

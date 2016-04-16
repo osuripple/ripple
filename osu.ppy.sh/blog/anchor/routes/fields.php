@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	/*
 				    List Fields
@@ -7,6 +8,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['messages'] = Notify::read();
 		$vars['token'] = Csrf::token();
 		$vars['extend'] = Extend::paginate($page, Config::get('admin.posts_per_page'));
+
 		return View::create('extend/fields/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
@@ -18,6 +20,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['types'] = Extend::$types;
 		$vars['fields'] = Extend::$field_types;
 		$vars['pagetypes'] = Query::table(Base::table('pagetypes'))->sort('key')->get();
+
 		return View::create('extend/fields/add', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	Route::post('admin/extend/fields/add', function () {
@@ -28,7 +31,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$input['key'] = slug($input['key'], '_');
 		// an array of items that we shouldn't encode - they're no XSS threat
 		$dont_encode = ['attributes'];
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			if (in_array($key, $dont_encode)) {
 				continue;
 			}
@@ -43,17 +46,19 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/extend/fields/add');
 		}
 		if ($input['field'] == 'image') {
 			$attributes = Json::encode($input['attributes']);
 		} elseif ($input['field'] == 'file') {
-			$attributes = Json::encode(['attributes' => ['type' => $input['attributes']['type'], ], ]);
+			$attributes = Json::encode(['attributes' => ['type' => $input['attributes']['type']]]);
 		} else {
 			$attributes = '';
 		}
-		Extend::create(['type' => $input['type'], 'pagetype' => $input['pagetype'], 'field' => $input['field'], 'key' => $input['key'], 'label' => $input['label'], 'attributes' => $attributes, ]);
+		Extend::create(['type' => $input['type'], 'pagetype' => $input['pagetype'], 'field' => $input['field'], 'key' => $input['key'], 'label' => $input['label'], 'attributes' => $attributes]);
 		Notify::success(__('extend.field_created'));
+
 		return Response::redirect('admin/extend/fields');
 	});
 	/*
@@ -70,6 +75,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		}
 		$vars['field'] = $extend;
 		$vars['pagetypes'] = Query::table(Base::table('pagetypes'))->sort('key')->get();
+
 		return View::create('extend/fields/edit', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	Route::post('admin/extend/fields/edit/(:num)', function ($id) {
@@ -78,7 +84,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 			$input['key'] = $input['label'];
 		}
 		$input['key'] = slug($input['key'], '_');
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			$value = eq($value);
 		}
 		$validator = new Validator($input);
@@ -90,27 +96,30 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
-			return Response::redirect('admin/extend/fields/edit/' . $id);
+
+			return Response::redirect('admin/extend/fields/edit/'.$id);
 		}
 		if ($input['field'] == 'image') {
 			$attributes = Json::encode($input['attributes']);
 		} elseif ($input['field'] == 'file') {
-			$attributes = Json::encode(['attributes' => ['type' => $input['attributes']['type'], ], ]);
+			$attributes = Json::encode(['attributes' => ['type' => $input['attributes']['type']]]);
 		} else {
 			$attributes = '';
 		}
-		Extend::update($id, ['type' => $input['type'], 'pagetype' => $input['pagetype'], 'field' => $input['field'], 'key' => $input['key'], 'label' => $input['label'], 'attributes' => $attributes, ]);
+		Extend::update($id, ['type' => $input['type'], 'pagetype' => $input['pagetype'], 'field' => $input['field'], 'key' => $input['key'], 'label' => $input['label'], 'attributes' => $attributes]);
 		Notify::success(__('extend.field_updated'));
-		return Response::redirect('admin/extend/fields/edit/' . $id);
+
+		return Response::redirect('admin/extend/fields/edit/'.$id);
 	});
 	/*
 				    Delete Field
 	*/
 	Route::get('admin/extend/fields/delete/(:num)', function ($id) {
 		$field = Extend::find($id);
-		Query::table(Base::table($field->type . '_meta'))->where('extend', '=', $field->id)->delete();
+		Query::table(Base::table($field->type.'_meta'))->where('extend', '=', $field->id)->delete();
 		$field->delete();
 		Notify::success(__('extend.field_deleted'));
+
 		return Response::redirect('admin/extend/fields');
 	});
 });
