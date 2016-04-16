@@ -23,7 +23,7 @@ class handler(tornado.web.RequestHandler):
 
 
 			# Login check
-			userID = userHelper.getUserID(username)
+			userID = userHelper.getID(username)
 			if userID == 0:
 				raise exceptions.loginFailedException(MODULE_NAME, userID)
 			if userHelper.checkLogin(userID, password) == False:

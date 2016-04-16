@@ -19,7 +19,7 @@ class handler(tornado.web.RequestHandler):
 
 			# Get user ID
 			username = self.get_argument("u")
-			userID = userHelper.getUserID(username)
+			userID = userHelper.getID(username)
 			if userID == None:
 				raise exceptions.loginFailedException(MODULE_NAME, username)
 
@@ -29,7 +29,7 @@ class handler(tornado.web.RequestHandler):
 				raise exceptions.loginFailedException(MODULE_NAME, username)
 
 			# Ban check
-			if userHelper.getUserAllowed(userID) == 0:
+			if userHelper.getAllowed(userID) == 0:
 				raise exceptions.userBannedException(MODULE_NAME, username)
 
 			# Update latest activity

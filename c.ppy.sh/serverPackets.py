@@ -85,16 +85,16 @@ def userLogout(userID):
 def userPanel(userID):
 	# Get user data
 	userToken = glob.tokens.getTokenFromUserID(userID)
-	username = userHelper.getUserUsername(userID)
+	username = userHelper.getUsername(userID)
 	timezone = 24	# TODO: Timezone
 	country = userToken.getCountry()
-	gameRank = userHelper.getUserGameRank(userID, userToken.gameMode)
+	gameRank = userHelper.getGameRank(userID, userToken.gameMode)
 	latitude = userToken.getLatitude()
 	longitude = userToken.getLongitude()
 
 	# Get username color according to rank
 	# Only admins and normal users are currently supported
-	rank = userHelper.getUserRank(userID)
+	rank = userHelper.getRankPrivileges(userID)
 	if (username == "FokaBot"):
 		userRank = userRanks.MOD
 	elif (rank == 4):
@@ -126,11 +126,11 @@ def userStats(userID):
 
 	# Get stats from DB
 	# TODO: Caching system
-	rankedScore = 	userHelper.getUserRankedScore(userID, userToken.gameMode)
-	accuracy = 		userHelper.getUserAccuracy(userID, userToken.gameMode)/100
-	playcount = 	userHelper.getUserPlaycount(userID, userToken.gameMode)
-	totalScore = 	userHelper.getUserTotalScore(userID, userToken.gameMode)
-	gameRank = 		userHelper.getUserGameRank(userID, userToken.gameMode)
+	rankedScore = 	userHelper.getRankedScore(userID, userToken.gameMode)
+	accuracy = 		userHelper.getAccuracy(userID, userToken.gameMode)/100
+	playcount = 	userHelper.getPlaycount(userID, userToken.gameMode)
+	totalScore = 	userHelper.getTotalScore(userID, userToken.gameMode)
+	gameRank = 		userHelper.getGameRank(userID, userToken.gameMode)
 	pp = 			int(userHelper.getPP(userID, userToken.gameMode))
 
 	return packetHelper.buildPacket(packetIDs.server_userStats,
@@ -153,7 +153,7 @@ def userStats(userID):
 
 """ Chat packets """
 def sendMessage(fro, to, message):
-	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string], [userHelper.getUserID(fro), dataTypes.sInt32]])
+	return packetHelper.buildPacket(packetIDs.server_sendMessage, [[fro, dataTypes.string], [message, dataTypes.string], [to, dataTypes.string], [userHelper.getID(fro), dataTypes.sInt32]])
 
 def channelJoinSuccess(userID, chan):
 	return packetHelper.buildPacket(packetIDs.server_channelJoinSuccess, [[chan, dataTypes.string]])

@@ -68,8 +68,8 @@ class token:
 
 		# Set stuff
 		self.userID = __userID
-		self.username = userHelper.getUserUsername(self.userID)
-		self.rank = userHelper.getUserRank(self.userID)
+		self.username = userHelper.getUsername(self.userID)
+		self.rank = userHelper.getRankPrivileges(self.userID)
 		self.loginTime = int(time.time())
 		self.pingTime = self.loginTime
 

@@ -50,12 +50,12 @@ class handler(tornado.web.RequestHandler):
 			username = scoreData[1].strip()
 
 			# Login and ban check
-			userID = userHelper.getUserID(username)
+			userID = userHelper.getID(username)
 			if userID == 0:
 				raise exceptions.loginFailedException(MODULE_NAME, userID)
 			if userHelper.checkLogin(userID, password) == False:
 				raise exceptions.loginFailedException(MODULE_NAME, username)
-			if userHelper.getUserAllowed(userID) == 0:
+			if userHelper.getAllowed(userID) == 0:
 				raise exceptions.userBannedException(MODULE_NAME, username)
 
 			# Create score object and set its data

@@ -34,7 +34,7 @@ def handle(flaskRequest):
 		err = False
 
 		# Try to get the ID from username
-		userID = userHelper.getUserID(str(loginData[0]))
+		userID = userHelper.getID(str(loginData[0]))
 
 		if (userID == False):
 			# Invalid username
@@ -44,7 +44,7 @@ def handle(flaskRequest):
 			raise exceptions.loginFailedException()
 
 		# Make sure we are not banned
-		userAllowed = userHelper.getUserAllowed(userID)
+		userAllowed = userHelper.getAllowed(userID)
 		if (userAllowed == 0):
 			# Banned
 			raise exceptions.loginBannedException()
@@ -56,10 +56,10 @@ def handle(flaskRequest):
 		responseTokenString = responseToken.token
 
 		# Get silence end
-		userSilenceEnd = max(0, userHelper.getUserSilenceEnd(userID)-int(time.time()))
+		userSilenceEnd = max(0, userHelper.getSilenceEnd(userID)-int(time.time()))
 
 		# Get supporter/GMT
-		userRank = userHelper.getUserRank(userID)
+		userRank = userHelper.getRankPrivileges(userID)
 		userGMT = False
 		userSupporter = True
 		if (userRank >= 3):

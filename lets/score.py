@@ -104,7 +104,7 @@ class score:
 			self.cGeki = data["gekis_count"]
 			self.fullCombo = True if data["full_combo"] == 1 else False
 			self.mods = data["mods"]
-			self.playerUserID = userHelper.getUserID(self.playerName)
+			self.playerUserID = userHelper.getID(self.playerName)
 			self.rank = rank if rank != None else ""
 			self.date = data["time"]
 			self.calculateAccuracy()

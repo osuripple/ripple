@@ -43,7 +43,7 @@ def handle(userToken, packetData):
 			targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
 		# Console output
-		consoleHelper.printColored("> {} are spectating {}".format(username, userHelper.getUserUsername(packetData["userID"])), bcolors.PINK)
+		consoleHelper.printColored("> {} are spectating {}".format(username, userHelper.getUsername(packetData["userID"])), bcolors.PINK)
 		consoleHelper.printColored("> {}'s spectators: {}".format(str(packetData["userID"]), str(targetToken.spectators)), bcolors.BLUE)
 	except exceptions.tokenNotFoundException:
 		# Stop spectating if token not found

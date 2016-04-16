@@ -2,7 +2,7 @@ import passwordHelper
 import gameModes
 import glob
 
-def getUserID(username):
+def getID(username):
 	"""
 	Get username's user ID
 
@@ -50,7 +50,7 @@ def checkLogin(userID, password):
 		glob.db.execute("UPDATE users SET password_md5=?, salt='', password_version='2' WHERE id = ?", [newpass, userID])
 
 
-def userExists(userID):
+def exists(userID):
 	"""
 	Check if userID exists
 
@@ -64,7 +64,7 @@ def userExists(userID):
 	else:
 		return True
 
-def getUserAllowed(userID):
+def getAllowed(userID):
 	"""
 	Get allowed status for userID
 
@@ -76,7 +76,7 @@ def getUserAllowed(userID):
 	return glob.db.fetch("SELECT allowed FROM users WHERE id = ?", [userID])["allowed"]
 
 
-def getUserRank(userID):
+def getRankPrivileges(userID):
 	"""
 	This returns rank **(PRIVILEGES)**, not game rank (like #1337)
 	If you want to get that rank, user getUserGameRank instead
@@ -85,7 +85,7 @@ def getUserRank(userID):
 	return glob.db.fetch("SELECT rank FROM users WHERE id = ?", [userID])["rank"]
 
 
-def getUserSilenceEnd(userID):
+def getSilenceEnd(userID):
 	"""
 	Get userID's **ABSOLUTE** silence end UNIX time
 	Remember to subtract time.time() to get the actual silence time
@@ -97,7 +97,7 @@ def getUserSilenceEnd(userID):
 	return glob.db.fetch("SELECT silence_end FROM users WHERE id = ?", [userID])["silence_end"]
 
 
-def silenceUser(userID, silenceEndTime, silenceReason):
+def silence(userID, silenceEndTime, silenceReason):
 	"""
 	Set userID's **ABSOLUTE** silence end UNIX time
 	Remember to add time.time() to the silence length
@@ -109,7 +109,7 @@ def silenceUser(userID, silenceEndTime, silenceReason):
 
 	glob.db.execute("UPDATE users SET silence_end = ?, silence_reason = ? WHERE id = ?", [silenceEndTime, silenceReason, userID])
 
-def getUserRankedScore(userID, gameMode):
+def getRankedScore(userID, gameMode):
 	"""
 	Get userID's ranked score relative to gameMode
 
@@ -122,7 +122,7 @@ def getUserRankedScore(userID, gameMode):
 	return glob.db.fetch("SELECT ranked_score_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["ranked_score_"+modeForDB]
 
 
-def getUserTotalScore(userID, gameMode):
+def getTotalScore(userID, gameMode):
 	"""
 	Get userID's total score relative to gameMode
 
@@ -135,7 +135,7 @@ def getUserTotalScore(userID, gameMode):
 	return glob.db.fetch("SELECT total_score_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["total_score_"+modeForDB]
 
 
-def getUserAccuracy(userID, gameMode):
+def getAccuracy(userID, gameMode):
 	"""
 	Get userID's average accuracy relative to gameMode
 
@@ -148,7 +148,7 @@ def getUserAccuracy(userID, gameMode):
 	return glob.db.fetch("SELECT avg_accuracy_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["avg_accuracy_"+modeForDB]
 
 
-def getUserGameRank(userID, gameMode):
+def getGameRank(userID, gameMode):
 	"""
 	Get userID's **in-game rank** (eg: #1337) relative to gameMode
 
@@ -165,7 +165,7 @@ def getUserGameRank(userID, gameMode):
 		return result["position"]
 
 
-def getUserPlaycount(userID, gameMode):
+def getPlaycount(userID, gameMode):
 	"""
 	Get userID's playcount relative to gameMode
 
@@ -178,8 +178,7 @@ def getUserPlaycount(userID, gameMode):
 	return glob.db.fetch("SELECT playcount_"+modeForDB+" FROM users_stats WHERE id = ?", [userID])["playcount_"+modeForDB]
 
 
-# TODO: Remove user user user user meme from function names
-def getUserUsername(userID):
+def getUsername(userID):
 	"""
 	Get userID's username
 

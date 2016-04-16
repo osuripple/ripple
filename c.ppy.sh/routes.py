@@ -21,7 +21,7 @@ def APIonlineUsers():
 		if (u.isdigit()):
 			u = int(u)
 		else:
-			u = userHelper.getUserID(u)
+			u = userHelper.getID(u)
 			if (u == None):
 				raise exceptions.userNotFoundException
 
