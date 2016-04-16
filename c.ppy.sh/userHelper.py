@@ -38,8 +38,8 @@ def checkLogin(userID, password):
 	# Make sure the query returned something
 	if (passwordData == None):
 		return False
-	
-	
+
+
 	# Return valid/invalid based on the password version.
 	if passwordData["password_version"] == 2:
 		return passwordHelper.checkNewPassword(password, passwordData["password_md5"])
@@ -241,7 +241,7 @@ def removeFriend(userID, friendID):
 	"""
 
 	# Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
-	# if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯	
+	# if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯
 	glob.db.execute("DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?", [userID, friendID])
 
 
@@ -256,3 +256,14 @@ def getCountry(userID):
 	"""
 
 	return glob.db.fetch("SELECT country FROM users_stats WHERE id = ?", [userID])["country"]
+
+def getPP(userID, gameMode):
+	"""
+	Get userID's PP relative to gameMode
+
+	userID -- user
+	return -- gameMode number
+	"""
+
+	modeForDB = gameModes.getGameModeForDB(gameMode)
+	return glob.db.fetch("SELECT pp_{} FROM users_stats WHERE id = ?".format(modeForDB), [userID])["pp_{}".format(modeForDB)]

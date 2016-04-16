@@ -131,7 +131,7 @@ def userStats(userID):
 	playcount = 	userHelper.getUserPlaycount(userID, userToken.gameMode)
 	totalScore = 	userHelper.getUserTotalScore(userID, userToken.gameMode)
 	gameRank = 		userHelper.getUserGameRank(userID, userToken.gameMode)
-	pp = 0
+	pp = 			int(userHelper.getPP(userID, userToken.gameMode))
 
 	return packetHelper.buildPacket(packetIDs.server_userStats,
 	[
