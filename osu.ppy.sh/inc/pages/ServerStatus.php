@@ -1,4 +1,5 @@
 <?php
+
 class ServerStatus {
 	const PageID = 27;
 	const URL = 'status';
@@ -7,6 +8,7 @@ class ServerStatus {
 	public $error_messages = [];
 	public $mh_GET = [];
 	public $mh_POST = [];
+
 	public function P() {
 		global $ServerStatusConfig;
 		if (!$ServerStatusConfig['service_status']['enable'] && !$ServerStatusConfig['netdata']['enable']) {
@@ -31,11 +33,11 @@ class ServerStatus {
 								</tr>
 							</thead>
 							<tbody>
-								<tr><td><p class="text-center"><i class="fa fa-globe"></i>	Website</p></td><td><p class="text-center">' . serverStatusBadge(1) . '</p></td></tr>
-								<tr><td><p class="text-center"><i class="fa fa-flash"></i>	Bancho</p></td><td><p class="text-center">' . serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['bancho_url'] . '/api/server-status')) . '</p></td></tr>
-								<tr><td><p class="text-center"><i class="fa fa-picture-o"></i>	Avatars</p></td><td><p class="text-center">' . serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['avatars_url'] . '/status')) . '</p></td></tr>
-								<tr><td><p class="text-center"><i class="fa fa-code"></i>	Ripple API</p></td><td><p class="text-center">' . serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['api_url'] . '/status')) . '</p></td></tr>
-								<tr><td><p class="text-center"><i class="fa fa-music"></i>	Beatmaps</p></td><td><p class="text-center">' . serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['beatmap_url'] . '/status.json')) . '</p></td></tr>
+								<tr><td><p class="text-center"><i class="fa fa-globe"></i>	Website</p></td><td><p class="text-center">'.serverStatusBadge(1).'</p></td></tr>
+								<tr><td><p class="text-center"><i class="fa fa-flash"></i>	Bancho</p></td><td><p class="text-center">'.serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['bancho_url'].'/api/server-status')).'</p></td></tr>
+								<tr><td><p class="text-center"><i class="fa fa-picture-o"></i>	Avatars</p></td><td><p class="text-center">'.serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['avatars_url'].'/status')).'</p></td></tr>
+								<tr><td><p class="text-center"><i class="fa fa-code"></i>	Ripple API</p></td><td><p class="text-center">'.serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['api_url'].'/status')).'</p></td></tr>
+								<tr><td><p class="text-center"><i class="fa fa-music"></i>	Beatmaps</p></td><td><p class="text-center">'.serverStatusBadge(checkServiceStatus($ServerStatusConfig['service_status']['beatmap_url'].'/status.json')).'</p></td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -76,15 +78,15 @@ class ServerStatus {
 				if ($ServerStatusConfig['netdata']['disk_enable']) {
 					echo '
 						<h3><i class="fa fa-hdd-o"></i> Disk</h3>
-						<div data-netdata="disk.' . $ServerStatusConfig['netdata']['disk_name'] . '" data-title="Disk I/O Bandwidth" data-width="100%" data-height="200px"></div>
+						<div data-netdata="disk.'.$ServerStatusConfig['netdata']['disk_name'].'" data-title="Disk I/O Bandwidth" data-width="100%" data-height="200px"></div>
 						<div style="height:70px"></div>
 						';
 				}
 				if ($ServerStatusConfig['netdata']['mysql_enable']) {
 					echo '
 						<h3><i class="fa fa-database"></i> MySQL</h3>
-						<div data-netdata="mysql_' . $ServerStatusConfig['netdata']['mysql_server'] . '.net" data-title="MySQL Bandwidth" data-width="100%" data-height="200px"></div>
-						<div data-netdata="mysql_' . $ServerStatusConfig['netdata']['mysql_server'] . '.queries" data-title="MySQL queries" data-width="100%" data-height="200px"></div>
+						<div data-netdata="mysql_'.$ServerStatusConfig['netdata']['mysql_server'].'.net" data-title="MySQL Bandwidth" data-width="100%" data-height="200px"></div>
+						<div data-netdata="mysql_'.$ServerStatusConfig['netdata']['mysql_server'].'.queries" data-title="MySQL queries" data-width="100%" data-height="200px"></div>
 						<div style="height:70px"></div>
 						';
 				}

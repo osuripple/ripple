@@ -1,15 +1,20 @@
 <?php
+
 class language {
 	private static $lines = [];
+
 	private static function path($file) {
 		$language = Config::app('language', 'en_GB');
-		return APP . 'language/' . $language . '/' . $file . '.php';
+
+		return APP.'language/'.$language.'/'.$file.'.php';
 	}
+
 	private static function load($file) {
 		if (is_readable($lang = static ::path($file))) {
 			static ::$lines[$file] = require $lang;
 		}
 	}
+
 	public static function line($key, $default = '', $args = []) {
 		$parts = explode('.', $key);
 		if (count($parts) > 1) {
@@ -33,6 +38,7 @@ class language {
 		if (count($args)) {
 			return call_user_func_array('sprintf', array_merge([$text], $args));
 		}
+
 		return $text;
 	}
 }

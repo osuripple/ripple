@@ -34,8 +34,8 @@
 						<li <?php if (strpos(Uri::current(), $url) !== false) {
 			echo 'class="active"';
 		} ?>>
-							<a href="<?php echo Uri::to('admin/' . $url); ?>">
-								<?php echo ucfirst(__($url . '.' . $url)); ?>
+							<a href="<?php echo Uri::to('admin/'.$url); ?>">
+								<?php echo ucfirst(__($url.'.'.$url)); ?>
 							</a>
 						</li>
 						<?php

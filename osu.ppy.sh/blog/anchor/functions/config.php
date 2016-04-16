@@ -12,5 +12,5 @@ function set_theme_options($options, $value = null) {
 	Config::set('theme', array_merge($current, $options));
 }
 function theme_option($option, $default = '') {
-	return Config::get('theme.' . $option, $default);
+	return Config::get('theme.'.$option, $default);
 }

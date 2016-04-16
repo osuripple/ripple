@@ -16,6 +16,7 @@ try {
 		if ($action == $page::URL) {
 			checkMustHave($page);
 			$page->D();
+
 			return;
 		}
 	}
@@ -32,7 +33,7 @@ try {
 			redirect('index.php');
 		break;
 		case 'u':
-			redirect('../ripple/index.php?u=' . $_GET['data'] . '&m=0');
+			redirect('../ripple/index.php?u='.$_GET['data'].'&m=0');
 		break;
 		case 'recoverPassword':
 			D::RecoverPassword();
@@ -59,7 +60,7 @@ try {
 			throw new Exception('Invalid action value');
 		break;
 			// Admin functions, need sessionCheckAdmin() because can be performed only by admins
-			
+
 		case 'generateBetaKeys':
 			sessionCheckAdmin();
 			D::GenerateBetaKey();
@@ -152,5 +153,5 @@ try {
 }
 catch(Exception $e) {
 	// Redirect to Exception page
-	redirect('index.php?p=99&e=' . $e->getMessage());
+	redirect('index.php?p=99&e='.$e->getMessage());
 }

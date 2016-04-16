@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -10,6 +12,7 @@ namespace System;
  * @copyright	http://unlicense.org/
 */
 use ErrorException;
+
 class database {
 	/**
 	 * The current database driver.
@@ -17,6 +20,7 @@ class database {
 	 * @var array
 	 */
 	public static $connections = [];
+
 	/**
 	 * Create a new database conncetor from app config.
 	 *
@@ -33,6 +37,7 @@ class database {
 		}
 		throw new ErrorException('Unknown database driver');
 	}
+
 	/**
 	 * Get a database connection by name r return the default.
 	 *
@@ -50,8 +55,9 @@ class database {
 			return static ::$connections[$name];
 		}
 		// connect and return
-		return static ::$connections[$name] = static ::factory(Config::db('connections.' . $name));
+		return static ::$connections[$name] = static ::factory(Config::db('connections.'.$name));
 	}
+
 	/**
 	 * Get a database connection profile.
 	 *
@@ -62,6 +68,7 @@ class database {
 	public static function profile($name = null) {
 		return static ::connection($name)->profile();
 	}
+
 	/**
 	 * Magic method for calling database driver methods on the default connection.
 	 *

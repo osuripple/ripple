@@ -17,6 +17,7 @@ function posts() {
 	else {
 		$posts->rewind();
 	}
+
 	return $result;
 }
 function posts_next($text = 'Next &rarr;', $default = '', $attrs = []) {
@@ -24,12 +25,13 @@ function posts_next($text = 'Next &rarr;', $default = '', $attrs = []) {
 	$offset = Registry::get('page_offset');
 	$per_page = Config::meta('posts_per_page');
 	$page = Registry::get('page');
-	$url = base_url($page->slug . '/');
+	$url = base_url($page->slug.'/');
 	// filter category
 	if ($category = Registry::get('post_category')) {
-		$url = base_url('category/' . $category->slug . '/');
+		$url = base_url('category/'.$category->slug.'/');
 	}
 	$pagination = new Paginator([], $total, $offset, $per_page, $url);
+
 	return $pagination->next_link($text, $default, $attrs);
 }
 function posts_prev($text = '&larr; Previous', $default = '', $attrs = []) {
@@ -37,12 +39,13 @@ function posts_prev($text = '&larr; Previous', $default = '', $attrs = []) {
 	$offset = Registry::get('page_offset');
 	$per_page = Config::meta('posts_per_page');
 	$page = Registry::get('page');
-	$url = base_url($page->slug . '/');
+	$url = base_url($page->slug.'/');
 	// filter category
 	if ($category = Registry::get('post_category')) {
-		$url = base_url('category/' . $category->slug . '/');
+		$url = base_url('category/'.$category->slug.'/');
 	}
 	$pagination = new Paginator([], $total, $offset, $per_page, $url);
+
 	return $pagination->prev_link($text, $default, $attrs);
 }
 function total_posts() {

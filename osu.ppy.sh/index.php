@@ -12,11 +12,11 @@ if (isset($_GET['p'])) {
 		if ($page::PageID == $_GET['p']) {
 			$found = true;
 			$model = $page;
-			$title = '<title>' . $page::Title . '</title>';
-			if (defined(get_class($page) . '::PageID')) {
+			$title = '<title>'.$page::Title.'</title>';
+			if (defined(get_class($page).'::PageID')) {
 				$p = $page::PageID;
 			}
-			if (defined(get_class($page) . '::LoggedIn')) {
+			if (defined(get_class($page).'::LoggedIn')) {
 				if ($page::LoggedIn) {
 					clir();
 				} else {
@@ -48,7 +48,7 @@ if (isset($_GET['p'])) {
 		if ($page::URL == $pages_split[1]) {
 			$found = true;
 			$model = $page;
-			$title = '<title>' . $page::Title . '</title>';
+			$title = '<title>'.$page::Title.'</title>';
 			break;
 		}
 	}
@@ -79,8 +79,8 @@ if ($p == 27) {
 	if ($ServerStatusConfig['netdata']['enable']) {
 		echo '
 						<!-- Netdata script -->
-						<script type="text/javascript">var netdataServer = "' . $ServerStatusConfig['netdata']['server_url'] . '";</script>
-						<script type="text/javascript" src="' . $ServerStatusConfig['netdata']['server_url'] . '/dashboard.js"></script>
+						<script type="text/javascript">var netdataServer = "'.$ServerStatusConfig['netdata']['server_url'].'";</script>
+						<script type="text/javascript" src="'.$ServerStatusConfig['netdata']['server_url'].'/dashboard.js"></script>
 				';
 	}
 }
@@ -131,12 +131,12 @@ $status = '';
 if ($model !== 'old') {
 	if (isset($_GET['s'])) {
 		if (isset($model->success_messages[$_GET['s']])) {
-			$status.= P::SuccessMessage($model->success_messages[$_GET['s']], true);
+			$status .= P::SuccessMessage($model->success_messages[$_GET['s']], true);
 		}
 	}
 	if (isset($_GET['e'])) {
 		if (isset($model->error_messages[$_GET['e']])) {
-			$status.= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
+			$status .= P::ExceptionMessage($model->error_messages[$_GET['e']], true);
 		}
 	}
 }
@@ -209,7 +209,7 @@ if ($p < 100) {
     <?php
 switch ($p) {
 		// Admin cp - beta keys
-		
+
 	case 105:
 		echo '
             <script type="text/javascript">
@@ -237,7 +237,7 @@ switch ($p) {
             </script>';
 	break;
 		// Admin cp - edit user
-		
+
 	case 103:
 		echo '
                 <script type="text/javascript">

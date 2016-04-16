@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /**
  * Nano.
  *
@@ -16,6 +18,7 @@ class input {
 	 * @var array
 	 */
 	public static $array;
+
 	/**
 	 * Try and collect the request input determinded
 	 * by the request method.
@@ -35,6 +38,7 @@ class input {
 				parse_str(file_get_contents('php://input'), static ::$array);
 		}
 	}
+
 	/**
 	 * Get a element or array of elements from the input array.
 	 *
@@ -51,8 +55,10 @@ class input {
 		if (is_string($data)) {
 			return e($data);
 		}
+
 		return $data;
 	}
+
 	/**
 	 * Get a array of elements from the input array.
 	 *
@@ -66,14 +72,17 @@ class input {
 		foreach ($array as $key) {
 			$values[$key] = static ::get($key, $fallback);
 		}
+
 		return $values;
 	}
+
 	/**
 	 * Save the input array for the next request.
 	 */
 	public static function flash() {
 		Session::flash(static ::$array);
 	}
+
 	/**
 	 * Get a element from the previous request input array.
 	 *

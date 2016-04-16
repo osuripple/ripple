@@ -14,7 +14,7 @@ try {
 		throw new Exception();
 	}
 	// Get API response and save it in an array
-	$bcURL = 'http://bloodcat.com/osu/?mod=json&c=s&q=' . $_GET['b'];
+	$bcURL = 'http://bloodcat.com/osu/?mod=json&c=s&q='.$_GET['b'];
 	$bcData = json_decode(file_get_contents($bcURL), true);
 	// Make sure the beatmap was found
 	if (count($bcData) == 0) {

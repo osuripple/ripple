@@ -1,8 +1,9 @@
 <?php
+
 class themes {
 	public static function all() {
 		$themes = [];
-		$fi = new FilesystemIterator(PATH . 'themes', FilesystemIterator::SKIP_DOTS);
+		$fi = new FilesystemIterator(PATH.'themes', FilesystemIterator::SKIP_DOTS);
 		foreach ($fi as $file) {
 			if ($file->isDir()) {
 				$theme = $file->getFilename();
@@ -12,10 +13,12 @@ class themes {
 			}
 		}
 		ksort($themes);
+
 		return $themes;
 	}
+
 	public static function parse($theme) {
-		$file = PATH . 'themes/' . $theme . '/about.txt';
+		$file = PATH.'themes/'.$theme.'/about.txt';
 		if (!is_readable($file)) {
 			return false;
 		}
@@ -41,18 +44,21 @@ class themes {
 			$value = implode('', $parts);
 			$about[$key] = trim($value);
 		}
+
 		return $about;
 	}
+
 	public static function templates($theme) {
 		$templates = [];
-		$fi = new FilesystemIterator(PATH . 'themes/' . $theme, FilesystemIterator::SKIP_DOTS);
+		$fi = new FilesystemIterator(PATH.'themes/'.$theme, FilesystemIterator::SKIP_DOTS);
 		foreach ($fi as $file) {
 			$ext = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
-			$base = $file->getBasename('.' . $ext);
+			$base = $file->getBasename('.'.$ext);
 			if ($file->isFile() and $ext == 'php') {
 				$templates[$base] = $base;
 			}
 		}
+
 		return $templates;
 	}
 }
