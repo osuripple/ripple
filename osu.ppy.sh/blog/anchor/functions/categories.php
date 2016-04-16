@@ -8,6 +8,7 @@ function total_categories() {
 		$categories = new Items($categories);
 		Registry::set('categories', $categories);
 	}
+
 	return $categories->length();
 }
 // loop categories
@@ -26,6 +27,7 @@ function categories() {
 	if (!$result) {
 		$items->rewind();
 	}
+
 	return $result;
 }
 // single categories
@@ -42,7 +44,7 @@ function category_description() {
 	return Registry::prop('category', 'description');
 }
 function category_url() {
-	return base_url('category/' . category_slug());
+	return base_url('category/'.category_slug());
 }
 function category_count() {
 	return Query::table(Base::table('posts'))->where('category', '=', category_id())->where('status', '=', 'published')->count();
@@ -52,5 +54,6 @@ function category_custom_field($key, $default = '') {
 	if ($extend = Extend::field('category', $key, $id)) {
 		return Extend::value($extend, $default);
 	}
+
 	return $default;
 }

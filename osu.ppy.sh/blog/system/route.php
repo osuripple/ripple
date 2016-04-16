@@ -1,5 +1,7 @@
 <?php
+
 namespace System;
+
 /*
  * Nano
  *
@@ -12,6 +14,7 @@ namespace System;
 use Closure;
 use Response;
 use View;
+
 class route {
 	/**
 	 * Array of collection actions.
@@ -31,6 +34,7 @@ class route {
 	 * @var array
 	 */
 	public $args = [];
+
 	/**
 	 * Define a route using the method name as
 	 * the request method to listen for.
@@ -41,6 +45,7 @@ class route {
 	public static function __callStatic($method, $arguments) {
 		static ::register($method, array_shift($arguments), array_shift($arguments));
 	}
+
 	/**
 	 * Register a route on the router.
 	 *
@@ -55,10 +60,11 @@ class route {
 		}
 		// add collection actions
 		$arguments = array_merge($arguments, static ::$collection);
-		foreach ((array)$patterns as $pattern) {
+		foreach ((array) $patterns as $pattern) {
 			Router::$routes[$method][$pattern] = $arguments;
 		}
 	}
+
 	/**
 	 * Register a action on the router.
 	 *
@@ -68,6 +74,7 @@ class route {
 	public static function action($name, $callback) {
 		Router::$actions[$name] = $callback;
 	}
+
 	/**
 	 * Start a collection of routes with common actions.
 	 *
@@ -82,6 +89,7 @@ class route {
 		// end of collection
 		static ::$collection = [];
 	}
+
 	/**
 	 * Create a new instance of the Route class.
 	 *
@@ -92,6 +100,7 @@ class route {
 		$this->callbacks = $callbacks;
 		$this->args = $args;
 	}
+
 	/**
 	 * Calls before actions.
 	 *
@@ -108,6 +117,7 @@ class route {
 			}
 		}
 	}
+
 	/**
 	 * Calls after actions.
 	 *
@@ -121,6 +131,7 @@ class route {
 			call_user_func(Router::$actions[$action], $response);
 		}
 	}
+
 	/**
 	 * Calls the route actions and returns a response object.
 	 *
@@ -143,6 +154,7 @@ class route {
 		if ($response instanceof \System\Response) {
 			return $response;
 		}
-		return Response::create((string)$response);
+
+		return Response::create((string) $response);
 	}
 }

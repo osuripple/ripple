@@ -1,4 +1,5 @@
 <?php
+
 return ['users' => 'Users', 'create_user' => 'Create a new user', 'add_user' => 'Add a new user', 'editing_user' => 'Editing %s&rsquo;s Profile', 'remembered' => 'I know my password', 'forgotten_password' => 'Forgotten your password?',
 // roles
 'administrator' => 'Admin', 'administrator_explain' => '', 'editor' => 'Editor', 'editor_explain' => '', 'user' => 'User', 'user_explain' => '',
@@ -7,4 +8,4 @@ return ['users' => 'Users', 'create_user' => 'Create a new user', 'add_user' => 
 // messages
 'updated' => 'User profile updated.', 'created' => 'User profile created.', 'deleted' => 'User profile deleted.', 'delete_error' => 'You cannot delete your own profile', 'login_error' => 'Username or password is wrong.', 'logout_notice' => 'You are now logged out.', 'recovery_sent' => 'We have sent you an email to confirm your password change.', 'recovery_expired' => 'Password recovery token has expired, please try again.', 'password_reset' => 'Your new password has been set. Go and login now!',
 // password recovery email
-'recovery_subject' => 'Password Reset', 'recovery_message' => 'You have requested to reset your password.' . 'To continue follow the link below.' . PHP_EOL . '%s', ];
+'recovery_subject' => 'Password Reset', 'recovery_message' => 'You have requested to reset your password.'.'To continue follow the link below.'.PHP_EOL.'%s', ];

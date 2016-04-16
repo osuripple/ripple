@@ -5,26 +5,26 @@
 */
 // Include config file and db class
 $df = dirname(__FILE__);
-require_once $df . '/config.php';
-require_once $df . '/db.php';
-require_once $df . '/password_compat.php';
-require_once $df . '/Do.php';
-require_once $df . '/Print.php';
-require_once $df . '/RememberCookieHandler.php';
-require_once $df . '/PlayStyleEnum.php';
-require_once $df . '/resize.php';
+require_once $df.'/config.php';
+require_once $df.'/db.php';
+require_once $df.'/password_compat.php';
+require_once $df.'/Do.php';
+require_once $df.'/Print.php';
+require_once $df.'/RememberCookieHandler.php';
+require_once $df.'/PlayStyleEnum.php';
+require_once $df.'/resize.php';
 // Composer
-require_once $df . '/../vendor/autoload.php';
+require_once $df.'/../vendor/autoload.php';
 // Helpers
-require_once $df . '/helpers/PasswordHelper.php';
-require_once $df . '/helpers/UsernameHelper.php';
-require_once $df . '/helpers/URL.php';
+require_once $df.'/helpers/PasswordHelper.php';
+require_once $df.'/helpers/UsernameHelper.php';
+require_once $df.'/helpers/URL.php';
 // controller system v2
-require_once $df . '/pages/Login.php';
-require_once $df . '/pages/Leaderboard.php';
-require_once $df . '/pages/PasswordFinishRecovery.php';
-require_once $df . '/pages/ServerStatus.php';
-$pages = [new Login(), new Leaderboard(), new PasswordFinishRecovery(), new ServerStatus(), ];
+require_once $df.'/pages/Login.php';
+require_once $df.'/pages/Leaderboard.php';
+require_once $df.'/pages/PasswordFinishRecovery.php';
+require_once $df.'/pages/ServerStatus.php';
+$pages = [new Login(), new Leaderboard(), new PasswordFinishRecovery(), new ServerStatus()];
 // Set timezone to UTC
 date_default_timezone_set('Europe/Rome');
 // Connect to MySQL Database
@@ -39,7 +39,7 @@ $GLOBALS['db'] = new DBPDO();
  * @param (string) ($url) Destination URL.
 */
 function redirect($url) {
-	header('Location: ' . $url);
+	header('Location: '.$url);
 	exit();
 }
 /*
@@ -64,10 +64,11 @@ function outputVariable($fn, $v) {
 function randomString($l) {
 	$c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	$res = '';
-	srand((float)microtime() * 1000000);
-	for ($i = 0;$i < $l;$i++) {
-		$res.= $c[rand() % strlen($c) ];
+	srand((float) microtime() * 1000000);
+	for ($i = 0; $i < $l; $i++) {
+		$res .= $c[rand() % strlen($c)];
 	}
+
 	return $res;
 }
 /*
@@ -83,21 +84,22 @@ function generateKey() {
 	while ($t != 0) {
 		$i = 4;
 		while ($i != 0) {
-			$key.= $dict[rand(1, strlen($dict)) - 1];
-			$i-= 1;
+			$key .= $dict[rand(1, strlen($dict)) - 1];
+			$i -= 1;
 		}
 		if ($t != 1) {
-			$key.= '-';
+			$key .= '-';
 		}
-		$t-= 1;
+		$t -= 1;
 	}
+
 	return $key;
 }
 function getIP() {
 	return getenv('REMOTE_ADDR'); // Add getenv('HTTP_FORWARDED_FOR')?: before getenv if you are using a dumb proxy. Meaning that if you try to get the user's IP with REMOTE_ADDR, it returns 127.0.0.1 or keeps saying the same IP, always.
 	// NEVER add getenv('HTTP_FORWARDED_FOR') if you're not behind a proxy.
 	// It can easily be spoofed.
-	
+
 }
 /****************************************
  **		HTML/PAGES   FUNCTIONS 		   **
@@ -243,37 +245,37 @@ function printPage($p) {
 	$exceptions = ['pls goshuujin-sama do not hackerino &gt;////&lt;', 'Only administrators are allowed to see that documentation file.', "<div style='font-size: 40pt;'>ATTEMPTED USER ACCOUNT VIOLATION DETECTED</div>
 			<p>We detected an attempt to violate an user account. If you did not this on purpose, you can ignore this message and login into your account normally. However if you changed your cookies on purpose and you were trying to access another user's account, don't do that.</p>
 			<p>By the way, the attacked user is aware that you tried to get access to their account, and we removed all permanent logins hashes. We wish you good luck in even finding what's the new 's' cookie for that user.</p>
-			<p>Don't even try.</p>", 9001 => "don't even try", ];
+			<p>Don't even try.</p>", 9001 => "don't even try"];
 	if (!isset($_GET['u']) || empty($_GET['u'])) {
 		// Standard page
 		switch ($p) {
 				// Error page
-				
+
 			case 99:
 				if (isset($_GET['e']) && isset($exceptions[$_GET['e']])) {
 					$e = $_GET['e'];
 				} elseif (isset($_GET['e']) && strlen($_GET['e']) > 12 && substr($_GET['e'], 0, 12) == 'do_missing__') {
 					$s = substr($_GET['e'], 12);
 					if (preg_match('/^[a-z0-9-]*$/i', $s) === 1) {
-						P::ExceptionMessage('Missing parameter while trying to do action: ' . $s);
-						$e = - 1;
+						P::ExceptionMessage('Missing parameter while trying to do action: '.$s);
+						$e = -1;
 					} else {
 						$e = '9001';
 					}
 				} else {
 					$e = '9001';
 				}
-				if ($e != - 1) {
+				if ($e != -1) {
 					P::ExceptionMessage($exceptions[$e]);
 				}
 			break;
 				// Home
-				
+
 			case 1:
 				P::HomePage();
 			break;
 				// Register page (guest)
-				
+
 			case 3:
 				if (!checkLoggedIn()) {
 					P::RegisterPage();
@@ -284,43 +286,43 @@ function printPage($p) {
 				// User CP page (unused)
 				// case 4: sessionCheck(); P::UserCPPage(); break;
 				// Coming soon
-				
+
 			case 9:
 			case 10:
 			case 11:
 				echo '<br><h1><i class="fa fa-cog fa-spin"></i>	Coming soon(ish)</h1>';
 			break;
 				// Edit avatar (protected)
-				
+
 			case 5:
 				sessionCheck();
 				P::ChangeAvatarPage();
 			break;
 				// Edit userpage (protected)
-				
+
 			case 8:
 				sessionCheck();
 				P::UserpageEditorPage();
 			break;
 				// Edit user settings (protected)
-				
+
 			case 6:
 				sessionCheck();
 				P::userSettingsPage();
 			break;
 				// Change password (protected)
-				
+
 			case 7:
 				sessionCheck();
 				P::ChangePasswordPage();
 			break;
 				// List documentation files
-				
+
 			case 14:
 				listDocumentationFiles();
 			break;
 				// Show documentation file (check if f is set to avoid errors and stuff)
-				
+
 			case 15:
 				if (isset($_GET['f']) && !empty($_GET['f'])) {
 					redirectToNewDocs($_GET['f']);
@@ -329,7 +331,7 @@ function printPage($p) {
 				}
 			break;
 				// Show documentation, v2 with database
-				
+
 			case 16:
 				if (isset($_GET['id']) && intval($_GET['id'])) {
 					getDocPageAndParse(intval($_GET['id']));
@@ -338,146 +340,146 @@ function printPage($p) {
 				}
 			break;
 				// Show changelog
-				
+
 			case 17:
 				P::ChangelogPage();
 			break;
 				// Password recovery
-				
+
 			case 18:
 				P::PasswordRecovery();
 			break;
 				// Beta keys page
-				
+
 			case 20:
 				P::BetaKeys();
 			break;
 				// About page
-				
+
 			case 21:
 				P::AboutPage();
 			break;
 				// Bug report/feature request page
-				
+
 			case 22:
 				sessionCheck();
 				P::ReportPage();
 			break;
 				// Rules page
-				
+
 			case 23:
 				P::RulesPage();
 			break;
 				// My reports page
-				
+
 			case 24:
 				sessionCheck();
 				P::MyReportsPage();
 			break;
 				// My report view page
-				
+
 			case 25:
 				sessionCheck();
 				P::MyReportViewPage();
 			break;
 				// Friendlist page
-				
+
 			case 26:
 				sessionCheck();
 				P::FriendlistPage();
 			break;
 				// Admin panel (> 100 pages are admin ones)
-				
+
 			case 100:
 				sessionCheckAdmin();
 				P::AdminDashboard();
 			break;
 				// Admin panel - System settings
-				
+
 			case 101:
 				sessionCheckAdmin();
 				P::AdminSystemSettings();
 			break;
 				// Admin panel - Users
-				
+
 			case 102:
 				sessionCheckAdmin();
 				P::AdminUsers();
 			break;
 				// Admin panel - Edit user
-				
+
 			case 103:
 				sessionCheckAdmin();
 				P::AdminEditUser();
 			break;
 				// Admin panel - Change identity
-				
+
 			case 104:
 				sessionCheckAdmin();
 				P::AdminChangeIdentity();
 			break;
 				// Admin panel - Beta keys
-				
+
 			case 105:
 				sessionCheckAdmin();
 				P::AdminBetaKeys();
 			break;
 				// Admin panel - Documentation
-				
+
 			case 106:
 				sessionCheckAdmin();
 				P::AdminDocumentation();
 			break;
 				// Admin panel - Edit Documentation file
-				
+
 			case 107:
 				sessionCheckAdmin();
 				P::AdminEditDocumentation();
 			break;
 				// Admin panel - Badges
-				
+
 			case 108:
 				sessionCheckAdmin();
 				P::AdminBadges();
 			break;
 				// Admin panel - Edit badge
-				
+
 			case 109:
 				sessionCheckAdmin();
 				P::AdminEditBadge();
 			break;
 				// Admin panel - Edit uesr badges
-				
+
 			case 110:
 				sessionCheckAdmin();
 				P::AdminEditUserBadges();
 			break;
 				// Admin panel - System settings
-				
+
 			case 111:
 				sessionCheckAdmin();
 				P::AdminBanchoSettings();
 			break;
 				// Admin panel - Chatlog
-				
+
 			case 112:
 				sessionCheckAdmin();
 				P::AdminChatlog();
 			break;
 				// Admin panel - Reports
-				
+
 			case 113:
 				sessionCheckAdmin();
 				P::AdminReports();
 			break;
 				// Admin panel - Read report
-				
+
 			case 114:
 				sessionCheckAdmin();
 				P::AdminViewReport();
 			break;
 				// 404 page
-				
+
 			default:
 				echo '<br><h1>404</h1><p>Page not found. Meh.</p>';
 			break;
@@ -500,7 +502,7 @@ function printPage($p) {
 		}
 		// Get playmode (default 0)
 		if (!isset($_GET['m']) || !is_numeric($_GET['m'])) {
-			$m = - 1;
+			$m = -1;
 		} else {
 			$m = $_GET['m'];
 		}
@@ -545,7 +547,7 @@ function printNavbar() {
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i>	Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
-						' . (file_exists(dirname(__FILE__) . '/../blog/anchor/config/db.php') ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
+						'.(file_exists(dirname(__FILE__).'/../blog/anchor/config/db.php') ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '').'
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
@@ -564,11 +566,11 @@ function printNavbar() {
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i> Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
-						' . (file_exists(dirname(__FILE__) . '/../blog/anchor/config/db.php') ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '') . '
+						'.(file_exists(dirname(__FILE__).'/../blog/anchor/config/db.php') ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '').'
 						<li class="dropdown-submenu"><a href="index.php?p=27"><i class="fa fa-cogs"></i>	Server status</a></li>
 						<li class="divider"></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> ' . ($trollerino ? 'Request' : 'Report') . ' a bug</a></li>
-						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	' . ($trollerino ? 'Report' : 'Request') . ' a feature</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=0"><i class="fa fa-bug"></i> '.($trollerino ? 'Request' : 'Report').' a bug</a></li>
+						<li class="dropdown-submenu"><a href="index.php?p=22&type=1"><i class="fa fa-plus-circle"></i>	'.($trollerino ? 'Report' : 'Request').' a feature</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="https://mu.nyodev.xyz/upd.php?id=18"><i class="fa fa-server"></i>	Ripple Server switcher</a></li>
 						<li class="divider"></li>
@@ -587,9 +589,9 @@ function printNavbar() {
 	if (checkLoggedIn()) {
 		global $URL;
 		echo '<li class="dropdown">
-					<a data-toggle="dropdown"><img src="' . URL::Avatar() . '/' . getUserID($_SESSION['username']) . '" height="22" width="22" />	<b>' . $_SESSION['username'] . '</b><span class="caret"></span></a>
+					<a data-toggle="dropdown"><img src="'.URL::Avatar().'/'.getUserID($_SESSION['username']).'" height="22" width="22" />	<b>'.$_SESSION['username'].'</b><span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li class="dropdown-submenu"><a href="index.php?u=' . getUserID($_SESSION['username']) . '"><i class="fa fa-user"></i> My profile</a></li>
+						<li class="dropdown-submenu"><a href="index.php?u='.getUserID($_SESSION['username']).'"><i class="fa fa-user"></i> My profile</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=26"><i class="fa fa-star"></i>	Friendlist</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-submenu"><a href="index.php?p=5"><i class="fa fa-picture-o"></i> Change avatar</a></li>
@@ -669,13 +671,13 @@ function printAdminSidebar() {
 */
 function printAdminPanel($c, $i, $bt, $st) {
 	echo '<div class="col-lg-3 col-md-6">
-			<div class="panel panel-' . $c . '">
+			<div class="panel panel-'.$c.'">
 			<div class="panel-heading">
 			<div class="row">
-			<div class="col-xs-3"><i class="' . $i . '"></i></div>
+			<div class="col-xs-3"><i class="'.$i.'"></i></div>
 			<div class="col-xs-9 text-right">
-				<div class="huge">' . $bt . '</div>
-				<div>' . $st . '</div>
+				<div class="huge">'.$bt.'</div>
+				<div>'.$st.'</div>
 			</div></div></div></div></div>';
 }
 /*
@@ -688,7 +690,7 @@ function getUserCountry() {
 	$ip = getIP();
 	if (!$ip) {
 		return 'XX'; // Return XX if $ip isn't valid.
-		
+
 	}
 	// otherwise, retrieve the contents from ip.zxq.co's API
 	$data = get_contents_http("http://ip.zxq.co/$ip/country");
@@ -696,7 +698,8 @@ function getUserCountry() {
 	return $data != '' ? $data : 'XX';
 }
 function countryCodeToReadable($cc) {
-	require_once dirname(__FILE__) . '/countryCodesReadable.php';
+	require_once dirname(__FILE__).'/countryCodesReadable.php';
+
 	return isset($c[$cc]) ? $c[$cc] : 'unknown country';
 }
 /*
@@ -707,7 +710,7 @@ function countryCodeToReadable($cc) {
 */
 function getAllowedUsers($by = 'username') {
 	// get all the allowed users in Ripple
-	$allowedUsersRaw = $GLOBALS['db']->fetchAll('SELECT ' . $by . ', allowed FROM users');
+	$allowedUsersRaw = $GLOBALS['db']->fetchAll('SELECT '.$by.', allowed FROM users');
 	// Future array containing all the allowed users.
 	$allowedUsers = [];
 	// Fill up the $allowedUsers array.
@@ -716,6 +719,7 @@ function getAllowedUsers($by = 'username') {
 	}
 	// Free up some space in the ram by deleting the data in $allowedUsersRaw.
 	unset($allowedUsersRaw);
+
 	return $allowedUsers;
 }
 /****************************************
@@ -751,7 +755,7 @@ function sessionCheck() {
 				// If it's -1, alert will automatically be triggered and user sent to error page.
 				// If it's -2, same as above.
 				// If it's 1, this function will keep on executing normally.
-				
+
 			} else {
 				throw new Exception(3);
 			}
@@ -772,13 +776,13 @@ function sessionCheck() {
 			throw new Exception(2);
 		}
 		// Everything is ok, go on
-		
+
 	}
 	catch(Exception $e) {
 		// Destroy session if it still exists
 		D::Logout();
 		// Return to login page
-		redirect('index.php?p=2&e=' . $e->getMessage());
+		redirect('index.php?p=2&e='.$e->getMessage());
 	}
 }
 /*
@@ -790,7 +794,8 @@ function sessionCheck() {
 function sessionCheckAdmin($e = 0) {
 	sessionCheck();
 	if (!checkAdmin($_SESSION['username'])) {
-		redirect('index.php?p=99&e=' . $e);
+		redirect('index.php?p=99&e='.$e);
+
 		return false;
 	} else {
 		return true;
@@ -841,36 +846,36 @@ function timeDifference($t1, $t2, $ago = true) {
 	$d = abs($t1 - $t2 + 1);
 	switch ($d) {
 			// Right now
-			
+
 		default:
 			return 'Right now';
 		break;
 			// 1 year or more
-			
+
 		case $d >= 31556926:
 			$n = floor($d / 31556926);
 			$i = 'year';
 		break;
 			// 1 month or more
-			
+
 		case $d >= 2629743 && $d < 31556926:
 			$n = floor($d / 2629743);
 			$i = 'month';
 		break;
 			// 1 day or more
-			
+
 		case $d >= 86400 && $d < 2629743:
 			$n = floor($d / 86400);
 			$i = 'day';
 		break;
 			// 1 hour or more
-			
+
 		case $d >= 3600 && $d < 86400:
 			$n = floor($d / 3600);
 			$i = 'hour';
 		break;
 			// 1 minute or more
-			
+
 		case $d >= 60 && $d < 3600:
 			$n = floor($d / 60);
 			$i = 'minute';
@@ -887,9 +892,10 @@ function timeDifference($t1, $t2, $ago = true) {
 	} else {
 		$a = '';
 	}
-	return $n . ' ' . $i . $s . ' ' . $a;
+
+	return $n.' '.$i.$s.' '.$a;
 }
-$checkLoggedInCache = - 100;
+$checkLoggedInCache = -100;
 /*
  * checkLoggedIn
  * Similar to sessionCheck(), but let the user choose what to do if logged in or not
@@ -900,7 +906,7 @@ function checkLoggedIn() {
 	global $checkLoggedInCache;
 	// Start session
 	startSessionIfNotStarted();
-	if ($checkLoggedInCache !== - 100) {
+	if ($checkLoggedInCache !== -100) {
 		return $checkLoggedInCache;
 	}
 	// Check if we are logged in
@@ -910,30 +916,35 @@ function checkLoggedIn() {
 		if ($c->Check()) {
 			if ($c->Validate() === 0) {
 				$checkLoggedInCache = false;
+
 				return false;
 			}
 			// We don't need to handle any other case.
 			// If it's -1, alert will automatically be triggered and user sent to error page.
 			// If it's -2, same as above.
 			// If it's 1, this function will keep on executing normally.
-			
+
 		} else {
 			$checkLoggedInCache = false;
+
 			return false;
 		}
 	}
 	// Check if our password is still valid
 	if ($GLOBALS['db']->fetch('SELECT password FROM users WHERE username = ?', $_SESSION['username']) == $_SESSION['password']) {
 		$checkLoggedInCache = false;
+
 		return false;
 	}
 	// Check if we aren't banned
 	if ($GLOBALS['db']->fetch('SELECT allowed FROM users WHERE username = ?', $_SESSION['username']) == 0) {
 		$checkLoggedInCache = false;
+
 		return false;
 	}
 	// Everything is ok, go on
 	$checkLoggedInCache = true;
+
 	return true;
 }
 /*
@@ -1000,12 +1011,12 @@ function listDocumentationFiles() {
 	$data = $GLOBALS['db']->fetchAll("SELECT id, doc_name FROM docs WHERE public = '1'");
 	if (count($data) != 0) {
 		foreach ($data as $value) {
-			$e.= "<li><a href='index.php?p=16&id=" . $value['id'] . "'>" . $value['doc_name'] . "</a></li>\n";
+			$e .= "<li><a href='index.php?p=16&id=".$value['id']."'>".$value['doc_name']."</a></li>\n";
 		}
 	} else {
-		$e.= 'It looks like there are no documentation files! Perhaps try again later?';
+		$e .= 'It looks like there are no documentation files! Perhaps try again later?';
 	}
-	$e.= '</ul>';
+	$e .= '</ul>';
 	echo $e;
 	echo '</div>';
 }
@@ -1020,7 +1031,7 @@ function redirectToNewDocs($docname) {
 	if ($new == false) {
 		redirect('index.php?p=16&id=9001');
 	} else {
-		redirect('index.php?p=16&id=' . $new['id']);
+		redirect('index.php?p=16&id='.$new['id']);
 	}
 }
 /*
@@ -1047,7 +1058,7 @@ function getDocPageAndParse($docid) {
 		}
 		require_once 'parsedown.php';
 		$p = new Parsedown();
-		echo "<div class='text-left'>" . $p->text($doc['doc_contents']) . '</div>';
+		echo "<div class='text-left'>".$p->text($doc['doc_contents']).'</div>';
 	}
 	catch(Exception $e) {
 		echo '<br>That documentation file could not be found!';
@@ -1076,6 +1087,7 @@ function getUserID($u) {
 		// ID not set, maybe invalid player. Return 0.
 		$cachedID[$u] = 0;
 	}
+
 	return $cachedID[$u];
 }
 /*
@@ -1112,7 +1124,7 @@ function getPlaymodeText($playModeInt, $readable = false) {
 			return $readable ? 'osu!mania' : 'mania';
 		break;
 			// Protection against memes from the users
-			
+
 		default:
 			return $readable ? 'osu!standard' : 'std';
 		break;
@@ -1161,6 +1173,7 @@ function saveScore($scoreDataArray, $completed = 2, $saveScore = true, $increase
 		if ($increasePlaycount) {
 			increasePlaycountAndScore($playModeText, $score, $username);
 		}
+
 		return 0;
 	}
 	// We have finished a song
@@ -1193,7 +1206,7 @@ function saveScore($scoreDataArray, $completed = 2, $saveScore = true, $increase
 		// Do total score + score difference (on our play mode) if we have a new best
 		if ($completed == 3) {
 			// Update ranked score
-			$GLOBALS['db']->execute('UPDATE users_stats SET ranked_score_' . $playModeText . '=ranked_score_' . $playModeText . '+? WHERE username = ?', [$scoreDifference, $username]);
+			$GLOBALS['db']->execute('UPDATE users_stats SET ranked_score_'.$playModeText.'=ranked_score_'.$playModeText.'+? WHERE username = ?', [$scoreDifference, $username]);
 			// Update leaderboard
 			// Ayy lmao, we don't know the score
 			$rankedscore = $GLOBALS['db']->fetch("SELECT ranked_score_$playModeText FROM users_stats WHERE username = ?", [$username]);
@@ -1209,6 +1222,7 @@ function saveScore($scoreDataArray, $completed = 2, $saveScore = true, $increase
 		$GLOBALS['db']->execute('INSERT INTO scores (id, beatmap_md5, username, score, max_combo, full_combo, mods, 300_count, 100_count, 50_count, katus_count, gekis_count, misses_count, time, play_mode, completed, accuracy) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);', [$beatmapHash, $username, $score, $maxCombo, $fullCombo, $mods, $count300, $count100, $count50, $countKatu, $countGeki, $countMisses, $playDateTime, $playMode, $completed, $acc]);
 		$r = $GLOBALS['db']->lastInsertId();
 		updateAccuracy($username, $playMode);
+
 		return $r;
 	}
 	// Return 0 if we haven't submitted any score
@@ -1242,7 +1256,7 @@ function saveReplay($replayID) {
 		// Check size
 		if ($_FILES['score']['size'] > 0) {
 			// Upload compressed replay (replay is decompressed on osu! client)
-			move_uploaded_file($_FILES['score']['tmp_name'], '../replays/replay_' . $replayID . '.osr');
+			move_uploaded_file($_FILES['score']['tmp_name'], '../replays/replay_'.$replayID.'.osr');
 			// Ok
 			return true;
 		}
@@ -1253,11 +1267,11 @@ function saveReplay($replayID) {
 }
 function increasePlaycountAndScore($playMode, $score, $username) {
 	// Increase playcount and score.
-	$GLOBALS['db']->execute('UPDATE users_stats SET playcount_' . $playMode . '=playcount_' . $playMode . '+1, total_score_' . $playMode . '=total_score_' . $playMode . '+? WHERE username = ?', [$score, $username]);
+	$GLOBALS['db']->execute('UPDATE users_stats SET playcount_'.$playMode.'=playcount_'.$playMode.'+1, total_score_'.$playMode.'=total_score_'.$playMode.'+? WHERE username = ?', [$score, $username]);
 	// As we are increasing the total score, we are also updating the level.
-	$totalScore = $GLOBALS['db']->fetch('SELECT total_score_' . $playMode . ' FROM users_stats WHERE username = ?', $username);
-	$level = getLevel($totalScore['total_score_' . $playMode]);
-	$GLOBALS['db']->execute('UPDATE users_stats SET level_' . $playMode . ' = ? WHERE username = ?', [$level, $username]);
+	$totalScore = $GLOBALS['db']->fetch('SELECT total_score_'.$playMode.' FROM users_stats WHERE username = ?', $username);
+	$level = getLevel($totalScore['total_score_'.$playMode]);
+	$GLOBALS['db']->execute('UPDATE users_stats SET level_'.$playMode.' = ? WHERE username = ?', [$level, $username]);
 }
 /*
  * getScoreMods
@@ -1267,100 +1281,100 @@ function increasePlaycountAndScore($playMode, $score, $username) {
  * @returns (string) Eg: "+ HD, HR"
 */
 function getScoreMods($m) {
-	require_once dirname(__FILE__) . '/ModsEnum.php';
+	require_once dirname(__FILE__).'/ModsEnum.php';
 	$r = '';
 	if ($m & ModsEnum::NoFail) {
-		$r.= 'NF, ';
+		$r .= 'NF, ';
 	}
 	if ($m & ModsEnum::Easy) {
-		$r.= 'EZ, ';
+		$r .= 'EZ, ';
 	}
 	if ($m & ModsEnum::NoVideo) {
-		$r.= 'NV, ';
+		$r .= 'NV, ';
 	}
 	if ($m & ModsEnum::Hidden) {
-		$r.= 'HD, ';
+		$r .= 'HD, ';
 	}
 	if ($m & ModsEnum::HardRock) {
-		$r.= 'HR, ';
+		$r .= 'HR, ';
 	}
 	if ($m & ModsEnum::SuddenDeath) {
-		$r.= 'SD, ';
+		$r .= 'SD, ';
 	}
 	if ($m & ModsEnum::DoubleTime) {
-		$r.= 'DT, ';
+		$r .= 'DT, ';
 	}
 	if ($m & ModsEnum::Relax) {
-		$r.= 'RX, ';
+		$r .= 'RX, ';
 	}
 	if ($m & ModsEnum::HalfTime) {
-		$r.= 'HT, ';
+		$r .= 'HT, ';
 	}
 	if ($m & ModsEnum::Nightcore) {
-		$r.= 'NC, ';
+		$r .= 'NC, ';
 		// Remove DT and display only NC
 		$r = str_replace('DT, ', '', $r);
 	}
 	if ($m & ModsEnum::Flashlight) {
-		$r.= 'FL, ';
+		$r .= 'FL, ';
 	}
 	if ($m & ModsEnum::Autoplay) {
-		$r.= 'AP, ';
+		$r .= 'AP, ';
 	}
 	if ($m & ModsEnum::SpunOut) {
-		$r.= 'SO, ';
+		$r .= 'SO, ';
 	}
 	if ($m & ModsEnum::Relax2) {
-		$r.= 'AP, ';
+		$r .= 'AP, ';
 	}
 	if ($m & ModsEnum::Perfect) {
-		$r.= 'PF, ';
+		$r .= 'PF, ';
 	}
 	if ($m & ModsEnum::Key4) {
-		$r.= '4K, ';
+		$r .= '4K, ';
 	}
 	if ($m & ModsEnum::Key5) {
-		$r.= '5K, ';
+		$r .= '5K, ';
 	}
 	if ($m & ModsEnum::Key6) {
-		$r.= '6K, ';
+		$r .= '6K, ';
 	}
 	if ($m & ModsEnum::Key7) {
-		$r.= '7K, ';
+		$r .= '7K, ';
 	}
 	if ($m & ModsEnum::Key8) {
-		$r.= '8K, ';
+		$r .= '8K, ';
 	}
 	if ($m & ModsEnum::keyMod) {
-		$r.= '';
+		$r .= '';
 	}
 	if ($m & ModsEnum::FadeIn) {
-		$r.= 'FD, ';
+		$r .= 'FD, ';
 	}
 	if ($m & ModsEnum::Random) {
-		$r.= 'RD, ';
+		$r .= 'RD, ';
 	}
 	if ($m & ModsEnum::LastMod) {
-		$r.= 'CN, ';
+		$r .= 'CN, ';
 	}
 	if ($m & ModsEnum::Key9) {
-		$r.= '9K, ';
+		$r .= '9K, ';
 	}
 	if ($m & ModsEnum::Key10) {
-		$r.= '10K, ';
+		$r .= '10K, ';
 	}
 	if ($m & ModsEnum::Key1) {
-		$r.= '1K, ';
+		$r .= '1K, ';
 	}
 	if ($m & ModsEnum::Key3) {
-		$r.= '3K, ';
+		$r .= '3K, ';
 	}
 	if ($m & ModsEnum::Key2) {
-		$r.= '2K, ';
+		$r .= '2K, ';
 	}
 	// Add "+" and remove last ", "
 	if (strlen($r) > 0) {
-		return '+ ' . substr($r, 0, -2);
+		return '+ '.substr($r, 0, -2);
 	} else {
 		return '';
 	}
@@ -1373,7 +1387,7 @@ function getScoreMods($m) {
  * @returns (bool) true in case the mods are rankable, false otherwise.
 */
 function isRankable($mod) {
-	require_once dirname(__FILE__) . '/ModsEnum.php';
+	require_once dirname(__FILE__).'/ModsEnum.php';
 	if ($mod & ModsEnum::Relax || $mod & ModsEnum::Relax2 || $mod & ModsEnum::Autoplay) {
 		return false;
 	} else {
@@ -1417,17 +1431,17 @@ function updateAccuracy($username, $playMode) {
 	$divideTotal = 0;
 	foreach ($a as $k => $p) {
 		$add = intval(pow(0.95, $k) * 100);
-		$totalacc+= $p['accuracy'] * $add;
-		$divideTotal+= $add;
+		$totalacc += $p['accuracy'] * $add;
+		$divideTotal += $add;
 		//echo "$add - $totalacc - $divideTotal\n";
-		
+
 	}
 	if ($divideTotal !== 0) {
 		$v = ($totalacc / $divideTotal);
 	} else {
 		$v = 0;
 	}
-	$GLOBALS['db']->execute('UPDATE users_stats SET avg_accuracy_' . $playModeText . ' = ? WHERE username = ?', [$v, $username]);
+	$GLOBALS['db']->execute('UPDATE users_stats SET avg_accuracy_'.$playModeText.' = ? WHERE username = ?', [$v, $username]);
 }
 /*
  * calculateAccuracy
@@ -1467,8 +1481,9 @@ function calculateAccuracy($n300, $n100, $n50, $ngeki, $nkatu, $nmiss, $mode) {
 			$accuracy = $totalPoints / ($maxHits * 300);
 		break;
 	}
+
 	return $accuracy * 100; // we're doing * 100 because $accuracy is like 0.9823[...]
-	
+
 }
 /****************************************
  **		   GETSCORES FUNCTIONS  	   **
@@ -1531,9 +1546,9 @@ function compareBeatmapMd5($dbfn, $clmd5, $everythingIsRanked) {
 */
 function printBeatmapHeader($s, $bmd5 = null) {
 	// Print first line of score stuff
-	echo $s . '|false';
+	echo $s.'|false';
 	// If beatmap is submitted, add other stuff
-	if ($s != - 1) {
+	if ($s != -1) {
 		// Get beatmap ID (used only for beatmap forum link thing)
 		$bid = $GLOBALS['db']->fetch('SELECT beatmap_id FROM beatmaps WHERE beatmap_md5 = ?', $bmd5);
 		// Check if query doesn't return any error
@@ -1550,7 +1565,7 @@ function printBeatmapHeader($s, $bmd5 = null) {
 			$tots = 0;
 		}
 		// Output everything else
-		echo '|' . $bid . '|' . $bid . '|' . $tots . "\r\n";
+		echo '|'.$bid.'|'.$bid.'|'.$tots."\r\n";
 	}
 }
 /*
@@ -1571,7 +1586,7 @@ function printBeatmapSongInfo($bmd5) {
 		$songTitle = ['Sandstorm'];
 	}
 	// Echo song data
-	echo '[bold:0,size:10]' . current($songArtist) . '|' . current($songTitle) . chr(10);
+	echo '[bold:0,size:10]'.current($songArtist).'|'.current($songTitle).chr(10);
 }
 /*
  * printBeatmapSongInfo
@@ -1633,7 +1648,7 @@ function printBeatmapTopScores($bmd5, $mode, $type = 1, $user = '') {
 	}
 	$su = []; // Users already in the leaderboard (because we show only the best score)
 	$r = 1; // Last rank (we start from #1)
-	for ($i = 0;$i < count($pid);$i++) {
+	for ($i = 0; $i < count($pid); $i++) {
 		// Loop through all scores and print them based on play id
 		// Check if we haven't another score by this user in the leaderboard
 		if (!in_array($pid[$i]['username'], $su)) {
@@ -1658,7 +1673,7 @@ function printBeatmapTopScores($bmd5, $mode, $type = 1, $user = '') {
  * @param (int) ($mode) Play mode. Used when $r is not set. Optional.
  * @param (int) ($r) Rank of that play. Not provided if printing player score, the function will calculate it. Optional.
 */
-function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = - 1) {
+function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = -1) {
 	// Get score data
 	$scoreData = $GLOBALS['db']->fetch('SELECT * FROM scores WHERE id = ?', $pid);
 	$replayID = $scoreData['id'];
@@ -1675,7 +1690,7 @@ function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = - 1) {
 	$mods = $scoreData['mods'];
 	$actualDate = osuDateToUNIXTimestamp($scoreData['time']);
 	// Check if this score has a replay
-	if (file_exists('../replays/replay_' . $replayID . '.osr')) {
+	if (file_exists('../replays/replay_'.$replayID.'.osr')) {
 		$hasReplay = 1;
 	} else {
 		$hasReplay = 0;
@@ -1683,7 +1698,7 @@ function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = - 1) {
 	// Get user id for showing the avatar.
 	$userID = getUserID($playerName);
 	// Get rank
-	if ($r > - 1) {
+	if ($r > -1) {
 		// Top 50 score, rank is provided in arguments
 		$rank = $r;
 	} else {
@@ -1694,7 +1709,7 @@ function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = - 1) {
 		$allScores = $GLOBALS['db']->fetchAll('SELECT DISTINCT username FROM scores WHERE beatmap_md5 = ? AND play_mode = ? AND completed = 3 ORDER BY score DESC', [$bmd5, $mode]);
 		$su = []; // Users already in the leaderboard (we count only the best score per user)
 		$r = 1; // Last rank (we start from #1)
-		for ($i = 0;$i < count($allScores);$i++) {
+		for ($i = 0; $i < count($allScores); $i++) {
 			// Loop through all scores and get their rank
 			// Check if current score is ours
 			if ($allScores[$i]['username'] == $playerName) {
@@ -1717,27 +1732,28 @@ function printBeatmapScore($pid, $bmd5 = '', $mode = 0, $r = - 1) {
 			array_push($su, $allScores[$i]['username']);
 		}
 	}
-	echo $replayID . '|' . $playerName . '|' . $score . '|' . $maxCombo . '|' . $count50 . '|' . $count100 . '|' . $count300 . '|' . $countMisses . '|' . $countKatu . '|' . $countGeki . '|' . $fullCombo . '|' . $mods . '|' . $userID . '|' . $rank . '|' . $actualDate . '|' . $hasReplay . chr(10);
+	echo $replayID.'|'.$playerName.'|'.$score.'|'.$maxCombo.'|'.$count50.'|'.$count100.'|'.$count300.'|'.$countMisses.'|'.$countKatu.'|'.$countGeki.'|'.$fullCombo.'|'.$mods.'|'.$userID.'|'.$rank.'|'.$actualDate.'|'.$hasReplay.chr(10);
 }
 function printBeatmapMaintenance() {
-	echo '0|Ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0' . chr(10);
-	echo '0|maintenance mode|7|0|0|0|0|0|0|0|0|0|0|0|0|0' . chr(10);
-	echo '0|check|6|0|0|0|0|0|0|0|0|0|0|0|0|0' . chr(10);
-	echo "0|your server's website|5|0|0|0|0|0|0|0|0|0|0|0|0|0" . chr(10);
-	echo '0|for more info.|4|0|0|0|0|0|0|0|0|0|0|0|0|0' . chr(10);
-	echo "0|SCORES WON'T BE SAVED!|3|0|0|0|0|0|0|0|0|0|0|0|0|0" . chr(10);
-	echo "0|SCORES WON'T BE SAVED!!|2|0|0|0|0|0|0|0|0|0|0|0|0|0" . chr(10);
-	echo "0|SCORES WON'T BE SAVED!!!|1|0|0|0|0|0|0|0|0|0|0|0|0|0" . chr(10);
+	echo '0|Ripple is in|8|0|0|0|0|0|0|0|0|0|0|0|0|0'.chr(10);
+	echo '0|maintenance mode|7|0|0|0|0|0|0|0|0|0|0|0|0|0'.chr(10);
+	echo '0|check|6|0|0|0|0|0|0|0|0|0|0|0|0|0'.chr(10);
+	echo "0|your server's website|5|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10);
+	echo '0|for more info.|4|0|0|0|0|0|0|0|0|0|0|0|0|0'.chr(10);
+	echo "0|SCORES WON'T BE SAVED!|3|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10);
+	echo "0|SCORES WON'T BE SAVED!!|2|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10);
+	echo "0|SCORES WON'T BE SAVED!!!|1|0|0|0|0|0|0|0|0|0|0|0|0|0".chr(10);
 }
 function osuDateToUNIXTimestamp($date) {
 	// nyo loves memes
 	if ($date != 0) {
 		$d = DateTime::createFromFormat('ymdHis', $date);
 		$d->add(new DateInterval('PT1H'));
+
 		return $d->getTimestamp();
 	} else {
 		return time() - 60 * 60 * 24; // Remove one day from the time because reasons
-		
+
 	}
 }
 /*
@@ -1751,10 +1767,11 @@ function sumScores($s) {
 	// Sum all scores provided in $s array
 	$res = 0;
 	if ($s) {
-		for ($foo = 0;$foo < count($s);$foo++) {
-			$res+= $s[$foo]['score'];
+		for ($foo = 0; $foo < count($s); $foo++) {
+			$res += $s[$foo]['score'];
 		}
 	}
+
 	return $res;
 }
 /*
@@ -1767,12 +1784,13 @@ function sumHits($s) {
 	//
 	$res = 0;
 	if ($s) {
-		for ($bar = 0;$bar < count($s);$bar++) {
-			$res+= $s[$bar]['300_count'];
-			$res+= $s[$bar]['100_count'];
-			$res+= $s[$bar]['50_count'];
+		for ($bar = 0; $bar < count($s); $bar++) {
+			$res += $s[$bar]['300_count'];
+			$res += $s[$bar]['100_count'];
+			$res += $s[$bar]['50_count'];
 		}
 	}
+
 	return $res;
 }
 /*
@@ -1790,7 +1808,7 @@ function getRequiredScoreForLevel($l) {
 		} elseif ($l <= 0 || $l = 1) {
 			return 1;
 		} // Should be 0, but we get division by 0 below so set to 1
-		
+
 	} elseif ($l >= 101) {
 		return 26931190829 + 100000000000 * ($l - 100);
 	}
@@ -1829,14 +1847,15 @@ function getChangelog() {
 	sessionCheck();
 	echo '<p align="center"><h1><i class="fa fa-code"></i>	Changelog</h1>';
 	echo 'Welcome to the changelog page.<br>Here changes are posted real-time as they are pushed to the website.<br>Hover a change to know when it was done.<br><br>';
-	if (!file_exists(dirname(__FILE__) . '/../../ci-system/changelog.txt')) {
+	if (!file_exists(dirname(__FILE__).'/../../ci-system/changelog.txt')) {
 		echo '<b>Unfortunately, no changelog for this Ripple instance is available. Slap the sysadmin off telling him to configure it.</b>';
 	} else {
 		$_GET['page'] = (isset($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1);
 		$data = getChangelogPage($_GET['page']);
 		if ($data == false || count($data) == 0) {
 			echo "<b>You've reached the end of the universe.</b>";
-			echo "<br><br><a href='index.php?p=17&page=" . ($_GET['page'] - 1) . "'>&lt; Previous page</a>";
+			echo "<br><br><a href='index.php?p=17&page=".($_GET['page'] - 1)."'>&lt; Previous page</a>";
+
 			return;
 		}
 		echo "<table class='table table-striped table-hover'><thead><th style='width:10%'></th><th style='width:5%'></th><th style='width:75%'></th></thead><tbody>";
@@ -1845,10 +1864,10 @@ function getChangelog() {
 		}
 		echo '</tbody></table><br><br>';
 		if ($_GET['page'] != 1) {
-			echo "<a href='index.php?p=17&page=" . ($_GET['page'] - 1) . "'>&lt; Previous page</a>";
+			echo "<a href='index.php?p=17&page=".($_GET['page'] - 1)."'>&lt; Previous page</a>";
 			echo ' | ';
 		}
-		echo "<a href='index.php?p=17&page=" . ($_GET['page'] + 1) . "'>Next page &gt;</a>";
+		echo "<a href='index.php?p=17&page=".($_GET['page'] + 1)."'>Next page &gt;</a>";
 	}
 }
 /*
@@ -1860,7 +1879,7 @@ function getChangelog() {
 function getChangelogPage($p = 1) {
 	global $ChangelogConfig;
 	// Retrieve data from changelog.json
-	$data = explode("\n", file_get_contents(dirname(__FILE__) . '/../../ci-system/changelog.txt'));
+	$data = explode("\n", file_get_contents(dirname(__FILE__).'/../../ci-system/changelog.txt'));
 	$ret = [];
 	// Check there are enough commits for the current page.
 	$initoffset = ($p - 1) * 50;
@@ -1908,7 +1927,7 @@ function getChangelogPage($p = 1) {
 			// Hidden label if user is an admin and commit is hidden
 			if ($useradmin && !$valid) {
 				$row = 'warning';
-				$labels.= "<span class='label label-default'>Hidden</span>	";
+				$labels .= "<span class='label label-default'>Hidden</span>	";
 			} else {
 				$row = 'default';
 			}
@@ -1920,7 +1939,7 @@ function getChangelogPage($p = 1) {
 				$text = $label[1];
 				$color = $label[2];
 				if (strpos(strtolower($message), strtolower($keyword)) !== false) {
-					$labels.= "<span class='label label-" . $color . "'>" . $text . '</span>	';
+					$labels .= "<span class='label label-".$color."'>".$text.'</span>	';
 				}
 				// Remove label keyword from commit
 				$message = str_ireplace($keyword, ' ', $message);
@@ -1937,8 +1956,9 @@ function getChangelogPage($p = 1) {
 			$commit[2] = $ChangelogConfig['change_name'][2];
 		}
 		// Build return array
-		$ret[] = ['username' => htmlspecialchars($commit[2]), 'content' => htmlspecialchars($message), 'time' => gmdate("Y-m-d\TH:i:s\Z", intval($commit[1])), 'labels' => $labels, 'row' => $row, ];
+		$ret[] = ['username' => htmlspecialchars($commit[2]), 'content' => htmlspecialchars($message), 'time' => gmdate("Y-m-d\TH:i:s\Z", intval($commit[1])), 'labels' => $labels, 'row' => $row];
 	}
+
 	return $ret;
 }
 /**************************
@@ -1951,6 +1971,7 @@ function get_contents_http($url) {
 		if (in_array('http', $w)) {
 			return file_get_contents($url);
 		}
+
 		return;
 	}
 	$ch = curl_init();
@@ -1972,6 +1993,7 @@ function get_contents_http($url) {
 				    }*/
 	// Close the cURL resource, and free system resources
 	curl_close($ch);
+
 	return $output;
 }
 function post_content_http($url, $content) {
@@ -1992,6 +2014,7 @@ function post_content_http($url, $content) {
 	$output = curl_exec($ch);
 	// Close the cURL resource, and free system resources
 	curl_close($ch);
+
 	return $output;
 }
 /*
@@ -2003,14 +2026,14 @@ function post_content_http($url, $content) {
  * @param (array) ($bd) Badge data array (SELECT * FROM badges)
 */
 function printBadgeSelect($sn, $sid, $bd) {
-	echo '<select name="' . $sn . '" class="selectpicker" data-width="100%">';
+	echo '<select name="'.$sn.'" class="selectpicker" data-width="100%">';
 	foreach ($bd as $b) {
 		if ($sid == $b['id']) {
 			$sel = 'selected';
 		} else {
 			$sel = '';
 		}
-		echo '<option value="' . $b['id'] . '" ' . $sel . '>' . $b['name'] . '</option>';
+		echo '<option value="'.$b['id'].'" '.$sel.'>'.$b['name'].'</option>';
 	}
 	echo '</select>';
 }
@@ -2029,6 +2052,7 @@ function BwToString($num, $bwenum, $sep = '<br>') {
 			$ret[] = $key;
 		}
 	}
+
 	return implode($sep, $ret);
 }
 /*
@@ -2043,15 +2067,16 @@ function BwToString($num, $bwenum, $sep = '<br>') {
 function bloodcatDirectString($arr, $np = false) {
 	$s = '';
 	if ($np) {
-		$s = $arr['id'] . '.osz|' . $arr['artist'] . '|' . $arr['title'] . '|' . $arr['creator'] . '|' . $arr['status'] . '|10.00000|' . $arr['synced'] . '|' . $arr['id'] . '|' . $arr['id'] . '|0|0|0|';
+		$s = $arr['id'].'.osz|'.$arr['artist'].'|'.$arr['title'].'|'.$arr['creator'].'|'.$arr['status'].'|10.00000|'.$arr['synced'].'|'.$arr['id'].'|'.$arr['id'].'|0|0|0|';
 	} else {
-		$s = $arr['id'] . '|' . $arr['artist'] . '|' . $arr['title'] . '|' . $arr['creator'] . '|' . $arr['status'] . '|10.00000|' . $arr['synced'] . '|' . $arr['id'] . '|' . $arr['beatmaps'][0]['id'] . '|0|0|0||';
+		$s = $arr['id'].'|'.$arr['artist'].'|'.$arr['title'].'|'.$arr['creator'].'|'.$arr['status'].'|10.00000|'.$arr['synced'].'|'.$arr['id'].'|'.$arr['beatmaps'][0]['id'].'|0|0|0||';
 		foreach ($arr['beatmaps'] as $diff) {
-			$s.= $diff['name'] . '@' . $diff['mode'] . ',';
+			$s .= $diff['name'].'@'.$diff['mode'].',';
 		}
 		$s = rtrim($s, ',');
-		$s.= '|';
+		$s .= '|';
 	}
+
 	return $s;
 }
 /*
@@ -2107,6 +2132,7 @@ function getFriendship($u0, $u1, $id = false) {
 		if ($u1 == 999 || $GLOBALS['db']->fetch('SELECT id FROM users_relationships WHERE user2 = ? AND user1 = ?', [$u0, $u1]) !== false) {
 			return 2;
 		}
+
 		return 1;
 	}
 	// Otherwise, it's just no friendship.
@@ -2142,6 +2168,7 @@ function addFriend($dude, $newFriend, $id = false) {
 		}
 		// Add newFriend to friends
 		$GLOBALS['db']->execute('INSERT INTO users_relationships (user1, user2) VALUES (?, ?)', [$dude, $newFriend]);
+
 		return true;
 	}
 	catch(Exception $e) {
@@ -2171,6 +2198,7 @@ function removeFriend($dude, $oldFriend, $id = false) {
 		// Delete user relationship. We don't need to check if the relationship was there, because who gives a shit,
 		// if they were not friends and they don't want to be anymore, be it. ¯\_(ツ)_/¯
 		$GLOBALS['db']->execute('DELETE FROM users_relationships WHERE user1 = ? AND user2 = ?', [$dude, $oldFriend]);
+
 		return true;
 	}
 	catch(Exception $e) {
@@ -2191,8 +2219,9 @@ function clir($must = false, $redirTo = 'index.php?p=2&e=3') {
 */
 function binStr($str) {
 	$r = '';
-	$r.= "\x0B" . pack('c', strlen($str)); // won't do uleb128
-	$r.= $str;
+	$r .= "\x0B".pack('c', strlen($str)); // won't do uleb128
+	$r .= $str;
+
 	return $r;
 }
 /*
@@ -2205,7 +2234,7 @@ function checkMustHave($page) {
 		if (isset($page->mh_POST) && count($page->mh_POST) > 0) {
 			foreach ($page->mh_POST as $el) {
 				if (empty($_POST[$el])) {
-					redirect('index.php?p=99&e=do_missing__' . $el);
+					redirect('index.php?p=99&e=do_missing__'.$el);
 				}
 			}
 		}
@@ -2213,7 +2242,7 @@ function checkMustHave($page) {
 		if (isset($page->mh_GET) && count($page->mh_GET) > 0) {
 			foreach ($page->mh_GET as $el) {
 				if (empty($_GET[$el])) {
-					redirect('index.php?p=99&e=do_missing__' . $el);
+					redirect('index.php?p=99&e=do_missing__'.$el);
 				}
 			}
 		}
@@ -2240,6 +2269,7 @@ function checkServiceStatus($url) {
 		if (!array_key_exists('status', $result)) {
 			throw new Exception();
 		}
+
 		return $result['status'];
 	}
 	catch(Exception $e) {

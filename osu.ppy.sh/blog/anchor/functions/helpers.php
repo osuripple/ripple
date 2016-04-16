@@ -10,18 +10,19 @@ function base_url($url = '') {
 }
 function theme_url($file = '') {
 	$theme_folder = Config::meta('theme');
-	$base = 'themes' . '/' . $theme_folder . '/';
-	return asset($base . ltrim($file, '/'));
+	$base = 'themes'.'/'.$theme_folder.'/';
+
+	return asset($base.ltrim($file, '/'));
 }
 function theme_include($file) {
 	$theme_folder = Config::meta('theme');
-	$base = PATH . 'themes' . DS . $theme_folder . DS;
-	if (is_readable($path = $base . ltrim($file, DS) . EXT)) {
+	$base = PATH.'themes'.DS.$theme_folder.DS;
+	if (is_readable($path = $base.ltrim($file, DS).EXT)) {
 		return require $path;
 	}
 }
 function asset_url($extra = '') {
-	return asset('anchor/views/assets/' . ltrim($extra, '/'));
+	return asset('anchor/views/assets/'.ltrim($extra, '/'));
 }
 function current_url() {
 	return htmlentities(raw_current_url());
@@ -57,6 +58,7 @@ function body_class() {
 	if (is_page()) {
 		$classes[] = 'page';
 	}
+
 	return implode(' ', array_unique($classes));
 }
 // page type helpers

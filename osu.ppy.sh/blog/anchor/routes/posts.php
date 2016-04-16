@@ -1,4 +1,5 @@
 <?php
+
 Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 	/*
 				    List all posts and paginate through them
@@ -13,12 +14,13 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['posts'] = $pagination;
 		$vars['categories'] = Category::sort('title')->get();
 		$vars['status'] = 'all';
+
 		return View::create('posts/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
 				    List posts by category and paginate through them
 	*/
-	Route::get(['admin/posts/category/(:any)', 'admin/posts/category/(:any)/(:num)', ], function ($slug, $page = 1) {
+	Route::get(['admin/posts/category/(:any)', 'admin/posts/category/(:any)/(:num)'], function ($slug, $page = 1) {
 		if (!$category = Category::slug($slug)) {
 			return Response::error(404);
 		}
@@ -26,19 +28,20 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$perpage = Config::get('admin.posts_per_page');
 		$total = $query->count();
 		$posts = $query->sort('created', 'desc')->take($perpage)->skip(($page - 1) * $perpage)->get();
-		$url = Uri::to('admin/posts/category/' . $category->slug);
+		$url = Uri::to('admin/posts/category/'.$category->slug);
 		$pagination = new Paginator($posts, $total, $page, $perpage, $url);
 		$vars['messages'] = Notify::read();
 		$vars['posts'] = $pagination;
 		$vars['category'] = $category;
 		$vars['categories'] = Category::sort('title')->get();
 		$vars['status'] = 'all';
+
 		return View::create('posts/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
 				    List posts by status and paginate through them
 	*/
-	Route::get(['admin/posts/status/(:any)', 'admin/posts/status/(:any)/(:num)', ], function ($status, $post = 1) {
+	Route::get(['admin/posts/status/(:any)', 'admin/posts/status/(:any)/(:num)'], function ($status, $post = 1) {
 		$query = Post::where('status', '=', $status);
 		$perpage = Config::get('admin.posts_per_page');
 		$total = $query->count();
@@ -49,6 +52,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['posts'] = $pagination;
 		$vars['status'] = $status;
 		$vars['categories'] = Category::sort('title')->get();
+
 		return View::create('posts/index', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer');
 	});
 	/*
@@ -61,12 +65,13 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['page'] = Registry::get('posts_page');
 		// extended fields
 		$vars['fields'] = Extend::fields('post', $id);
-		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived'), ];
+		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived')];
 		$vars['categories'] = Category::dropdown();
+
 		return View::create('posts/edit', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer')->partial('editor', 'partials/editor');
 	});
 	Route::post('admin/posts/edit/(:num)', function ($id) {
-		$input = Input::get(['title', 'slug', 'description', 'created', 'markdown', 'css', 'js', 'category', 'status', 'comments', ]);
+		$input = Input::get(['title', 'slug', 'description', 'created', 'markdown', 'css', 'js', 'category', 'status', 'comments']);
 		// if there is no slug try and create one from the title
 		if (empty($input['slug'])) {
 			$input['slug'] = $input['title'];
@@ -75,7 +80,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$input['slug'] = slug($input['slug']);
 		// an array of items that we shouldn't encode - they're no XSS threat
 		$dont_encode = ['description', 'markdown', 'css', 'js'];
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			if (in_array($key, $dont_encode)) {
 				continue;
 			}
@@ -91,7 +96,8 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
-			return Response::redirect('admin/posts/edit/' . $id);
+
+			return Response::redirect('admin/posts/edit/'.$id);
 		}
 		$current_post = Post::find($id);
 		if ($current_post->status == 'draft') {
@@ -109,7 +115,8 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		Post::update($id, $input);
 		Extend::process('post', $id);
 		Notify::success(__('posts.updated'));
-		return Response::redirect('admin/posts/edit/' . $id);
+
+		return Response::redirect('admin/posts/edit/'.$id);
 	});
 	/*
 				    Add new post
@@ -120,12 +127,13 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$vars['page'] = Registry::get('posts_page');
 		// extended fields
 		$vars['fields'] = Extend::fields('post');
-		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived'), ];
+		$vars['statuses'] = ['published' => __('global.published'), 'draft' => __('global.draft'), 'archived' => __('global.archived')];
 		$vars['categories'] = Category::dropdown();
+
 		return View::create('posts/add', $vars)->partial('header', 'partials/header')->partial('footer', 'partials/footer')->partial('editor', 'partials/editor');
 	});
 	Route::post('admin/posts/add', function () {
-		$input = Input::get(['title', 'slug', 'description', 'created', 'markdown', 'css', 'js', 'category', 'status', 'comments', ]);
+		$input = Input::get(['title', 'slug', 'description', 'created', 'markdown', 'css', 'js', 'category', 'status', 'comments']);
 		// if there is no slug try and create one from the title
 		if (empty($input['slug'])) {
 			$input['slug'] = $input['title'];
@@ -134,7 +142,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$input['slug'] = slug($input['slug']);
 		// an array of items that we shouldn't encode - they're no XSS threat
 		$dont_encode = ['description', 'markdown', 'css', 'js'];
-		foreach ($input as $key => & $value) {
+		foreach ($input as $key => &$value) {
 			if (in_array($key, $dont_encode)) {
 				continue;
 			}
@@ -149,6 +157,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		if ($errors = $validator->errors()) {
 			Input::flash();
 			Notify::error($errors);
+
 			return Response::redirect('admin/posts/add');
 		}
 		if (empty($input['created'])) {
@@ -167,7 +176,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		Extend::process('post', $post->id);
 		Notify::success(__('posts.created'));
 		if (Input::get('autosave') === 'true') {
-			return Response::redirect('admin/posts/edit/' . $page->id);
+			return Response::redirect('admin/posts/edit/'.$page->id);
 		} else {
 			return Response::redirect('admin/posts');
 		}
@@ -179,7 +188,8 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		$markdown = Input::get('markdown');
 		// apply markdown processing
 		$md = new Markdown();
-		$output = Json::encode(['markdown' => $md->transform($markdown) ]);
+		$output = Json::encode(['markdown' => $md->transform($markdown)]);
+
 		return Response::create($output, 200, ['content-type' => 'application/json']);
 	});
 	/*
@@ -190,6 +200,7 @@ Route::collection(['before' => 'auth,csrf,install_exists'], function () {
 		Comment::where('post', '=', $id)->delete();
 		Query::table(Base::table('post_meta'))->where('post', '=', $id)->delete();
 		Notify::success(__('posts.deleted'));
+
 		return Response::redirect('admin/posts');
 	});
 });

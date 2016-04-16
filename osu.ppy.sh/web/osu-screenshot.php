@@ -24,16 +24,16 @@ try {
 	$valid = false;
 	while (!$valid) {
 		$screenshotID = randomString(8);
-		if (!file_exists('../ss/' . $screenshotID . '.jpg')) {
+		if (!file_exists('../ss/'.$screenshotID.'.jpg')) {
 			$valid = true;
 		}
 	}
 	// Upload screenshot
-	move_uploaded_file($_FILES['ss']['tmp_name'], '../ss/' . $screenshotID . '.jpg');
+	move_uploaded_file($_FILES['ss']['tmp_name'], '../ss/'.$screenshotID.'.jpg');
 	// Echo URL
-	echo 'https://' . URL::Server() . '/ss/' . $screenshotID . '.jpg';
+	echo 'https://'.URL::Server().'/ss/'.$screenshotID.'.jpg';
 }
 catch(Exception $e) {
 	// Error, redirect to exception page
-	echo 'index.php?s=' . $e->getMessage();
+	echo 'index.php?s='.$e->getMessage();
 }

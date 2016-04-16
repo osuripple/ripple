@@ -1,4 +1,5 @@
 <?php
+
 class Migration_create_extend_table extends Migration {
 	public function up() {
 		$table = Base::table('extend');
@@ -15,6 +16,7 @@ class Migration_create_extend_table extends Migration {
 			DB::ask($sql);
 		}
 	}
+
 	public function down() {
 	}
 }
