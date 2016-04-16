@@ -10,13 +10,13 @@ def handle(userToken, packetData):
 
 	# Make sure the match exists
 	matchID = userToken.matchID
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return
 	match = glob.matches.matches[matchID]
 
 	# Make sure we aren't locking our slot
 	ourSlot = match.getUserSlotID(userID)
-	if (packetData["slotID"] == ourSlot):
+	if packetData["slotID"] == ourSlot:
 		return
 
 	# Lock/Unlock slot

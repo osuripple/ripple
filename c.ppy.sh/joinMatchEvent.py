@@ -23,7 +23,7 @@ def joinMatch(userToken, matchID, password):
 		username = userToken.username
 
 		# Make sure the match exists
-		if (matchID not in glob.matches.matches):
+		if matchID not in glob.matches.matches:
 			raise exceptions.matchNotFoundException
 
 		# Match exists, get object
@@ -31,15 +31,15 @@ def joinMatch(userToken, matchID, password):
 
 		# Check password
 		# TODO: Admins can enter every match
-		if (match.matchPassword != ""):
-			if (match.matchPassword != password):
+		if match.matchPassword != "":
+			if match.matchPassword != password:
 				raise exceptions.matchWrongPasswordException
 
 		# Password is correct, join match
 		result = match.userJoin(userID)
 
 		# Check if we've joined the match successfully
-		if (result == False):
+		if result == False:
 			raise exceptions.matchJoinErrorException
 
 		# Match joined, set matchID for usertoken

@@ -13,7 +13,7 @@ def handle(userToken, _):
 		# Remove our userID from host's spectators
 		target = userToken.spectating
 		targetToken = glob.tokens.getTokenFromUserID(target)
-		if (targetToken == None):
+		if targetToken == None:
 			raise exceptions.tokenNotFoundException
 		targetToken.removeSpectator(userID)
 

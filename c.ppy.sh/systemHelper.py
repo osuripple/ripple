@@ -33,7 +33,7 @@ def scheduleShutdown(sendRestartTime, restart, message = ""):
 	consoleHelper.printColored("[!] Sending server restart packets in {} seconds...".format(sendRestartTime), bcolors.PINK)
 
 	# Send notification if set
-	if (message != ""):
+	if message != "":
 		glob.tokens.enqueueAll(serverPackets.notification(message))
 
 	# Schedule server restart packet
@@ -41,7 +41,7 @@ def scheduleShutdown(sendRestartTime, restart, message = ""):
 	glob.restarting = True
 
 	# Restart/shutdown
-	if (restart):
+	if restart:
 		action = restartServer
 	else:
 		action = shutdownServer
@@ -83,7 +83,7 @@ def getSystemInfo():
 	data["usedMemory"] = "{0:.2f}".format(psutil.virtual_memory()[3]/1074000000)
 
 	# Unix only stats
-	if (data["unix"] == True):
+	if data["unix"] == True:
 		data["loadAverage"] = os.getloadavg()
 	else:
 		data["loadAverage"] = (0,0,0)

@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	consoleHelper.printNoNl("> Reading config file... ")
 	glob.conf = config.config("config.ini")
 
-	if (glob.conf.default == True):
+	if glob.conf.default == True:
 		# We have generated a default config.ini, quit server
 		consoleHelper.printWarning()
 		consoleHelper.printColored("[!] config.ini not found. A default one has been generated.", bcolors.YELLOW)
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 		sys.exit()
 
 	# If we haven't generated a default config.ini, check if it's valid
-	if (glob.conf.checkConfig() == False):
+	if glob.conf.checkConfig() == False:
 		consoleHelper.printError()
 		consoleHelper.printColored("[!] Invalid config.ini. Please configure it properly", bcolors.RED)
 		consoleHelper.printColored("[!] Delete your config.ini to generate a default one", bcolors.RED)

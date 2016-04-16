@@ -42,7 +42,7 @@ class channel:
 		__userID -- user ID that joined the channel
 		"""
 
-		if (__userID not in self.connectedUsers):
+		if __userID not in self.connectedUsers:
 			self.connectedUsers.append(__userID)
 
 
@@ -54,7 +54,7 @@ class channel:
 		"""
 
 		connectedUsers = self.connectedUsers
-		if (__userID in connectedUsers):
+		if __userID in connectedUsers:
 			connectedUsers.remove(__userID)
 
 

@@ -262,7 +262,7 @@ def getCountryID(code):
 	return -- country code int
 	"""
 
-	if (code in countryCodes):
+	if code in countryCodes:
 		return countryCodes[code]
 	else:
 		return 0
@@ -276,7 +276,7 @@ def getCountryLetters(code):
 	"""
 
 	for key, value in countryCodes.items():
-		if (value == code):
+		if value == code:
 			return key
 
 	return "XX"

@@ -62,7 +62,7 @@ def alert(fro, chan, message):
 def moderated(fro, chan, message):
 	try:
 		# Make sure we are in a channel and not PM
-		if (chan.startswith("#") == False):
+		if chan.startswith("#") == False:
 			raise exceptions.moderatedPMException
 
 		# Get on/off
@@ -81,12 +81,12 @@ def kickAll(fro, chan, message):
 	# Kick everyone but mods/admins
 	toKick = []
 	for key, value in glob.tokens.tokens.items():
-		if (value.rank < 3):
+		if value.rank < 3:
 			toKick.append(key)
 
 	# Loop though users to kick (we can't change dictionary size while iterating)
 	for i in toKick:
-		if (i in glob.tokens.tokens):
+		if i in glob.tokens.tokens:
 			glob.tokens.tokens[i].kick()
 
 	return "Whoops! Rip everyone."
@@ -97,7 +97,7 @@ def kick(fro, chan, message):
 
 	# Get target token and make sure is connected
 	targetToken = glob.tokens.getTokenFromUsername(target)
-	if (targetToken == None):
+	if targetToken == None:
 		return "{} is not online".format(target)
 
 	# Kick user
@@ -108,7 +108,7 @@ def kick(fro, chan, message):
 
 def fokabotReconnect(fro, chan, message):
 	# Check if fokabot is already connected
-	if (glob.tokens.getTokenFromUserID(999) != None):
+	if glob.tokens.getTokenFromUserID(999) != None:
 		return"Fokabot is already connected to Bancho"
 
 	# Fokabot is not connected, connect it
@@ -127,23 +127,23 @@ def silence(fro, chan, message):
 	targetUserID = userHelper.getID(target)
 
 	# Make sure the user exists
-	if (targetUserID == False):
+	if targetUserID == False:
 		return "{}: user not found".format(target)
 
 	# Calculate silence seconds
-	if (unit == 's'):
+	if unit == 's':
 		silenceTime = int(amount)
-	elif (unit == 'm'):
+	elif unit == 'm':
 		silenceTime = int(amount)*60
-	elif (unit == 'h'):
+	elif unit == 'h':
 		silenceTime = int(amount)*3600
-	elif (unit == 'd'):
+	elif unit == 'd':
 		silenceTime = int(amount)*86400
 	else:
 		return "Invalid time unit (s/m/h/d)."
 
 	# Max silence time is 7 days
-	if (silenceTime > 604800):
+	if silenceTime > 604800:
 		return "Invalid silence time. Max silence time is 7 days."
 
 	# Calculate silence end time
@@ -154,7 +154,7 @@ def silence(fro, chan, message):
 
 	# Send silence packet to target if he's connected
 	targetToken = glob.tokens.getTokenFromUsername(target)
-	if (targetToken != None):
+	if targetToken != None:
 		targetToken.enqueue(serverPackets.silenceEndTime(silenceTime))
 
 	return "{} has been silenced for the following reason: {}".format(target, reason)
@@ -167,7 +167,7 @@ def removeSilence(fro, chan, message):
 
 	# Make sure the user exists
 	targetUserID = userHelper.getID(target)
-	if (targetUserID == False):
+	if targetUserID == False:
 		return "{}: user not found".format(target)
 
 	# Reset user silence time and reason in db
@@ -175,7 +175,7 @@ def removeSilence(fro, chan, message):
 
 	# Send new silence end packet to user if he's online
 	targetToken = glob.tokens.getTokenFromUsername(target)
-	if (targetToken != None):
+	if targetToken != None:
 		targetToken.enqueue(serverPackets.silenceEndTime(0))
 
 	return "{}'s silence reset".format(target)
@@ -212,21 +212,21 @@ def systemMaintenance(fro, chan, message):
 	maintenance = True
 
 	# Get on/off
-	if (len(message) >= 2):
-		if (message[1] == "off"):
+	if len(message) >= 2:
+		if message[1] == "off":
 			maintenance = False
 
 	# Set new maintenance value in bancho_settings table
 	glob.banchoConf.setMaintenance(maintenance)
 
-	if (maintenance == True):
+	if maintenance == True:
 		# We have turned on maintenance mode
 		# Users that will be disconnected
 		who = []
 
 		# Disconnect everyone but mod/admins
 		for _, value in glob.tokens.tokens.items():
-			if (value.rank < 3):
+			if value.rank < 3:
 				who.append(value.userID)
 
 		glob.tokens.enqueueAll(serverPackets.notification("Our bancho server is in maintenance mode. Please try to login again later."))
@@ -255,7 +255,7 @@ def systemStatus(fro, chan, message):
 	msg += "=== SYSTEM STATS ===\n"
 	msg += "CPU: {}%\n".format(str(data["cpuUsage"]))
 	msg += "RAM: {}GB/{}GB\n".format(str(data["usedMemory"]), str(data["totalMemory"]))
-	if (data["unix"] == True):
+	if data["unix"] == True:
 		msg += "Load average: {}/{}/{}\n".format(str(data["loadAverage"][0]), str(data["loadAverage"][1]), str(data["loadAverage"][2]))
 
 	return msg

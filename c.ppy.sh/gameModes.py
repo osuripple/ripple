@@ -13,11 +13,11 @@ def getGameModeForDB(gameMode):
 	return -- game mode readable string for db
 	"""
 
-	if (gameMode == std):
+	if gameMode == std:
 		return "std"
-	elif (gameMode == taiko):
+	elif gameMode == taiko:
 		return "taiko"
-	elif (gameMode == ctb):
+	elif gameMode == ctb:
 		return "ctb"
 	else:
 		return "mania"

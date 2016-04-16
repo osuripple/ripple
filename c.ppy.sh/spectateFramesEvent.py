@@ -12,17 +12,17 @@ def handle(userToken, packetData):
 	consoleHelper.printColored("> {}'s spectators: {}".format(str(userID), str(userToken.spectators)), bcolors.BLUE)
 	for i in userToken.spectators:
 		# Send to every user but host
-		if (i != userID):
+		if i != userID:
 			try:
 				# Get spectator token object
 				spectatorToken = glob.tokens.getTokenFromUserID(i)
 
 				# Make sure the token exists
-				if (spectatorToken == None):
+				if spectatorToken == None:
 					raise exceptions.stopSpectating
 
 				# Make sure this user is spectating us
-				if (spectatorToken.spectating != userID):
+				if spectatorToken.spectating != userID:
 					raise exceptions.stopSpectating
 
 				# Everything seems fine, send spectator frames to this spectator

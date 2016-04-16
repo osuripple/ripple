@@ -15,7 +15,7 @@ class banchoConfig:
 		[__loadFromDB -- if True, load values from db. If False, don't load values. Default: True]
 		"""
 
-		if (__loadFromDB):
+		if __loadFromDB:
 			try:
 				self.loadSettings()
 			except:

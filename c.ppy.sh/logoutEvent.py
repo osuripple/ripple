@@ -14,12 +14,12 @@ def handle(userToken, _):
 	# the old logout packet will still be in the queue and will be sent to
 	# the server, so we accept logout packets sent at least 5 seconds after login
 	# if the user logs out before 5 seconds, he will be disconnected later with timeout check
-	if (int(time.time()-userToken.loginTime) >= 5):
+	if int(time.time()-userToken.loginTime) >= 5:
 		# Stop spectating if needed
-		if (userToken.spectating != 0):
+		if userToken.spectating != 0:
 			# The user was spectating someone
 			spectatorHostToken = glob.tokens.getTokenFromUserID(userToken.spectating)
-			if (spectatorHostToken != None):
+			if spectatorHostToken != None:
 				# The host is still online, send removeSpectator to him
 				spectatorHostToken.enqueue(serverPackets.removeSpectator(userID))
 

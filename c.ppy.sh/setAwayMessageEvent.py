@@ -12,7 +12,7 @@ def handle(userToken, packetData):
 	userToken.setAwayMessage(packetData["awayMessage"])
 
 	# Send private message from fokabot
-	if (packetData["awayMessage"] == ""):
+	if packetData["awayMessage"] == "":
 		fokaMessage = "Your away message has been reset"
 	else:
 		fokaMessage = "Your away message is now: {}".format(packetData["awayMessage"])

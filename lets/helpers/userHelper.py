@@ -17,7 +17,7 @@ def getUserID(username):
 	userID = glob.db.fetch("SELECT id FROM users WHERE username = ?", [username])
 
 	# Make sure the query returned something
-	if (userID == None):
+	if userID == None:
 		return 0
 
 	# Return user ID
@@ -58,7 +58,7 @@ def checkLogin(userID, password):
 	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE id = ?", [userID])
 
 	# Make sure the query returned something
-	if (passwordData == None):
+	if passwordData == None:
 		return False
 
 	# Return valid/invalid based on the password version.
@@ -115,7 +115,7 @@ def updateLevel(userID, gameMode):
 	"""
 	Update level in DB for userID relative to gameMode
 	"""
-	if (not userExists(userID)):
+	if not userExists(userID):
 		return
 
 	mode = scoreHelper.readableGameMode(gameMode)

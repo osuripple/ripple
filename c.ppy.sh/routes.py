@@ -18,16 +18,16 @@ def APIonlineUsers():
 		u = flask.request.args.get('u')
 
 		# Username/userID
-		if (u.isdigit()):
+		if u.isdigit():
 			u = int(u)
 		else:
 			u = userHelper.getID(u)
-			if (u == None):
+			if u == None:
 				raise exceptions.userNotFoundException
 
 		# Make sure this user is online
 		userToken = glob.tokens.getTokenFromUserID(u)
-		if (userToken == None):
+		if userToken == None:
 			raise exceptions.tokenNotFoundException
 
 		# Build response dictionary

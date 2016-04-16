@@ -44,7 +44,7 @@ class leaderboard:
 		# Top 50 scores
 		topScores = glob.db.fetchAll("SELECT id FROM scores WHERE beatmap_md5 = ? AND play_mode = ? AND completed = 3 ORDER BY score DESC  LIMIT 50", [self.beatmap.fileMD5, self.gameMode])
 		c = 1
-		if (topScores != None):
+		if topScores != None:
 			for i in topScores:
 				# Create score object and set its data
 				s = score.score(i["id"], c)

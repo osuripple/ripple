@@ -15,7 +15,7 @@ def getID(username):
 	userID = glob.db.fetch("SELECT id FROM users WHERE username = ?", [username])
 
 	# Make sure the query returned something
-	if (userID == None):
+	if userID == None:
 		return False
 
 	# Return user ID
@@ -36,7 +36,7 @@ def checkLogin(userID, password):
 	passwordData = glob.db.fetch("SELECT password_md5, salt, password_version FROM users WHERE id = ?", [userID])
 
 	# Make sure the query returned something
-	if (passwordData == None):
+	if passwordData == None:
 		return False
 
 
@@ -59,7 +59,7 @@ def exists(userID):
 	"""
 
 	result = glob.db.fetch("SELECT id FROM users WHERE id = ?", [userID])
-	if (result == None):
+	if result == None:
 		return False
 	else:
 		return True
@@ -159,7 +159,7 @@ def getGameRank(userID, gameMode):
 
 	modeForDB = gameModes.getGameModeForDB(gameMode)
 	result = glob.db.fetch("SELECT position FROM leaderboard_"+modeForDB+" WHERE user = ?", [userID])
-	if (result == None):
+	if result == None:
 		return 0
 	else:
 		return result["position"]
@@ -200,7 +200,7 @@ def getFriendList(userID):
 	# Get friends from db
 	friends = glob.db.fetchAll("SELECT user2 FROM users_relationships WHERE user1 = ?", [userID])
 
-	if (friends == None or len(friends) == 0):
+	if friends == None or len(friends) == 0:
 		# We have no friends, return 0 list
 		return [0]
 	else:
@@ -220,7 +220,7 @@ def addFriend(userID, friendID):
 	"""
 
 	# Make sure we aren't adding us to our friends
-	if (userID == friendID):
+	if userID == friendID:
 		return
 
 	# check user isn't already a friend of ours

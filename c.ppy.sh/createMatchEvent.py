@@ -19,7 +19,7 @@ def handle(userToken, packetData):
 		matchID = glob.matches.createMatch(packetData["matchName"], packetData["matchPassword"], packetData["beatmapID"], packetData["beatmapName"], packetData["beatmapMD5"], packetData["gameMode"], userID)
 
 		# Make sure the match has been created
-		if (matchID not in glob.matches.matches):
+		if matchID not in glob.matches.matches:
 			raise exceptions.matchCreateError
 
 		# Get match object
@@ -35,7 +35,7 @@ def handle(userToken, packetData):
 		for i in glob.matches.usersInLobby:
 			# Make sure this user is still connected
 			token = glob.tokens.getTokenFromUserID(i)
-			if (token != None):
+			if token != None:
 				token.enqueue(serverPackets.createMatch(matchID))
 
 		# Console output

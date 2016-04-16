@@ -8,11 +8,11 @@ def handle(userToken, packetData, has):
 	matchID = userToken.matchID
 
 	# Make sure we are in a match
-	if (matchID == -1):
+	if matchID == -1:
 		return
 
 	# Make sure the match exists
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return
 
 	# The match exists, get object

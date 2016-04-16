@@ -16,7 +16,7 @@ def handle(userToken, packetData):
 		packetData = clientPackets.startSpectating(packetData)
 
 		# Stop spectating old user if needed
-		if (userToken.spectating != 0):
+		if userToken.spectating != 0:
 			oldTargetToken = glob.tokens.getTokenFromUserID(userToken.spectating)
 			oldTargetToken.enqueue(serverPackets.removeSpectator(userID))
 			userToken.stopSpectating()
@@ -26,7 +26,7 @@ def handle(userToken, packetData):
 
 		# Get host token
 		targetToken = glob.tokens.getTokenFromUserID(packetData["userID"])
-		if (targetToken == None):
+		if targetToken == None:
 			raise exceptions.tokenNotFoundException
 
 		# Add us to host's spectators
@@ -38,7 +38,7 @@ def handle(userToken, packetData):
 		# Join #spectator channel
 		userToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 
-		if (len(targetToken.spectators) == 1):
+		if len(targetToken.spectators) == 1:
 			# First spectator, send #spectator join to host too
 			targetToken.enqueue(serverPackets.channelJoinSuccess(userID, "#spectator"))
 

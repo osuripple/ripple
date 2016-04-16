@@ -7,7 +7,7 @@ def handle(userToken, packetData):
 
 	# Make sure the match exists
 	matchID = userToken.matchID
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return
 
 	# Get our match

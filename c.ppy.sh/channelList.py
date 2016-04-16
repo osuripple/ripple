@@ -21,7 +21,7 @@ class channelList:
 
 		# Add each channel if needed
 		for i in channels:
-			if (i["name"] not in self.channels):
+			if i["name"] not in self.channels:
 				publicRead = True if i["public_read"] == 1 else False
 				publicWrite = True if i["public_write"] == 1 else False
 				self.addChannel(i["name"], i["description"], publicRead, publicWrite)

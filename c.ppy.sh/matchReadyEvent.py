@@ -6,11 +6,11 @@ def handle(userToken, _):
 
 	# Make sure the match exists
 	matchID = userToken.matchID
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return
 	match = glob.matches.matches[matchID]
 
 	# Get our slotID and change ready status
 	slotID = match.getUserSlotID(userID)
-	if (slotID != None):
+	if slotID != None:
 		match.toggleSlotReady(slotID)

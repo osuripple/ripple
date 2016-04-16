@@ -22,7 +22,7 @@ class config:
 		"""
 
 		self.fileName = __file
-		if (os.path.isfile(self.fileName)):
+		if os.path.isfile(self.fileName):
 			# config.ini found, load it
 			self.config.read(self.fileName)
 			self.default = False
@@ -57,7 +57,7 @@ class config:
 			self.config.get("server","timeouttime")
 			self.config.get("server","timeoutlooptime")
 
-			if (self.config["server"]["server"] == "flask"):
+			if self.config["server"]["server"] == "flask":
 				# Flask only config
 				self.config.get("flask","threaded")
 				self.config.get("flask","debug")

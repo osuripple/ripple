@@ -51,22 +51,22 @@ class score:
 		"""
 		Calculate and set accuracy for that score
 		"""
-		if (self.gameMode == 0):
+		if self.gameMode == 0:
 			# std
 			totalPoints = self.c50*50+self.c100*100+self.c300*300
 			totalHits = self.c300+self.c100+self.c50+self.cMiss
 			self.accuracy = totalPoints/(totalHits*300)
-		elif (self.gameMode == 1):
+		elif self.gameMode == 1:
 			# taiko
 			totalPoints = (self.c100*50)+(self.c300*100)
 			totalHits = self.cMiss+self.c100+self.c300
 			self.accuracy = totalPoints/(totalHits*100)
-		elif (self.gameMode == 2):
+		elif self.gameMode == 2:
 			# ctb
 			fruits = self.c300+self.c100+self.c50
 			totalFruits = fruits+self.cMiss+self.cKatu
 			self.accuracy = fruits/totalFruits
-		elif (self.gameMode == 3):
+		elif self.gameMode == 3:
 			# mania
 			totalPoints = self.c50*50+self.c100*100+self.cKatu*200+self.c300*300+self.cGeki*300
 			totalHits = self.cMiss+self.c50+self.c100+self.c300+self.cGeki+self.cKatu
@@ -91,7 +91,7 @@ class score:
 		rank -- rank in leaderboard. Optional.
 		"""
 		data = glob.db.fetch("SELECT * FROM scores WHERE id = ?", [scoreID])
-		if (data != None):
+		if data != None:
 			self.scoreID = scoreID
 			self.playerName = data["username"]
 			self.score = data["score"]

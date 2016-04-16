@@ -95,7 +95,7 @@ def matchSettings(stream):
 	start += 2
 	for i in range(0,16):
 		s = data[0]["slot{}Status".format(str(i))]
-		if (s != slotStatuses.free and s != slotStatuses.locked):
+		if s != slotStatuses.free and s != slotStatuses.locked:
 			start += 4
 
 	# Other settings
@@ -111,7 +111,7 @@ def matchSettings(stream):
 	data.append(packetHelper.readPacketData(stream[start:], struct, False))
 
 	# Mods if freemod (not used)
-	#if (data[1]["freeMods"] == 1):
+	#if data[1]["freeMods"] == 1:
 
 	result = {}
 	for i in data:

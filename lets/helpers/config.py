@@ -22,7 +22,7 @@ class config:
 		"""
 
 		self.fileName = __file
-		if (os.path.isfile(self.fileName)):
+		if os.path.isfile(self.fileName):
 			# config.ini found, load it
 			self.config.read(self.fileName)
 			self.default = False

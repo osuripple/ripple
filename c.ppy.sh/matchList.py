@@ -41,7 +41,7 @@ class matchList:
 		"""
 
 		# Make sure the user is not already in mp lobby
-		if (__userID not in self.usersInLobby):
+		if __userID not in self.usersInLobby:
 			# We don't need to join #lobby, client will automatically send a packet for it
 			self.usersInLobby.append(__userID)
 
@@ -54,7 +54,7 @@ class matchList:
 		"""
 
 		# Make sure the user is in mp lobby
-		if (__userID in self.usersInLobby):
+		if __userID in self.usersInLobby:
 			# Part lobby and #lobby channel
 			self.usersInLobby.remove(__userID)
 
@@ -67,7 +67,7 @@ class matchList:
 		"""
 
 		# Make sure the match exists
-		if (__matchID not in self.matches):
+		if __matchID not in self.matches:
 			return
 
 		# Remove match object
@@ -76,5 +76,5 @@ class matchList:
 		# Send match dispose packet to everyone in lobby
 		for i in self.usersInLobby:
 			token = glob.tokens.getTokenFromUserID(i)
-			if (token != None):
+			if token != None:
 				token.enqueue(serverPackets.disposeMatch(__matchID))

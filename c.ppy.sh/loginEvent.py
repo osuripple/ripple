@@ -17,7 +17,7 @@ def handle(flaskRequest):
 
 	# Get IP from flask request
 	requestIP = flaskRequest.headers.get('X-Real-IP')
-	if (requestIP == None):
+	if requestIP == None:
 		requestIP = flaskRequest.remote_addr
 
 	# Console output
@@ -36,16 +36,16 @@ def handle(flaskRequest):
 		# Try to get the ID from username
 		userID = userHelper.getID(str(loginData[0]))
 
-		if (userID == False):
+		if userID == False:
 			# Invalid username
 			raise exceptions.loginFailedException()
-		if (userHelper.checkLogin(userID, loginData[1]) == False):
+		if userHelper.checkLogin(userID, loginData[1]) == False:
 			# Invalid password
 			raise exceptions.loginFailedException()
 
 		# Make sure we are not banned
 		userAllowed = userHelper.getAllowed(userID)
-		if (userAllowed == 0):
+		if userAllowed == 0:
 			# Banned
 			raise exceptions.loginBannedException()
 
@@ -62,16 +62,16 @@ def handle(flaskRequest):
 		userRank = userHelper.getRankPrivileges(userID)
 		userGMT = False
 		userSupporter = True
-		if (userRank >= 3):
+		if userRank >= 3:
 			userGMT = True
 
 		# Server restarting check
-		if (glob.restarting == True):
+		if glob.restarting == True:
 			raise exceptions.banchoRestartingException()
 
 		# Maintenance check
-		if (glob.banchoConf.config["banchoMaintenance"] == True):
-			if (userGMT == False):
+		if glob.banchoConf.config["banchoMaintenance"] == True:
+			if userGMT == False:
 				# We are not mod/admin, delete token, send notification and logout
 				glob.tokens.deleteToken(responseTokenString)
 				raise exceptions.banchoMaintenanceException()
@@ -94,23 +94,23 @@ def handle(flaskRequest):
 		# TODO: Configurable default channels
 		channelJoinEvent.joinChannel(responseToken, "#osu")
 		channelJoinEvent.joinChannel(responseToken, "#announce")
-		if (userRank >= 3):
+		if userRank >= 3:
 			# Join admin chanenl if we are mod/admin
 			# TODO: Separate channels for mods and admins
 			channelJoinEvent.joinChannel(responseToken, "#admin")
 
 		# Output channels info
 		for key, value in glob.channels.channels.items():
-			if (value.publicRead == True):
+			if value.publicRead == True:
 				responseToken.enqueue(serverPackets.channelInfo(key))
 
 		responseToken.enqueue(serverPackets.friendList(userID))
 
 		# Send main menu icon and login notification if needed
-		if (glob.banchoConf.config["menuIcon"] != ""):
+		if glob.banchoConf.config["menuIcon"] != "":
 			responseToken.enqueue(serverPackets.mainMenuIcon(glob.banchoConf.config["menuIcon"]))
 
-		if (glob.banchoConf.config["loginNotification"] != ""):
+		if glob.banchoConf.config["loginNotification"] != "":
 			responseToken.enqueue(serverPackets.notification(glob.banchoConf.config["loginNotification"]))
 
 		# Get everyone else userpanel
@@ -123,7 +123,7 @@ def handle(flaskRequest):
 		responseToken.enqueue(serverPackets.onlineUsers())
 
 		# Get location and country from ip.zxq.co or database
-		if (generalFunctions.stringToBool(glob.conf.config["server"]["localizeusers"])):
+		if generalFunctions.stringToBool(glob.conf.config["server"]["localizeusers"]):
 			# Get location and country from IP
 			location = locationHelper.getLocation(requestIP)
 			country = countryHelper.getCountryID(locationHelper.getCountry(requestIP))
@@ -166,7 +166,7 @@ def handle(flaskRequest):
 		responseData += serverPackets.loginError()
 	finally:
 		# Print login failed message to console if needed
-		if (err == True):
+		if err == True:
 			consoleHelper.printColored("> {}'s login failed".format(loginData[0]), bcolors.YELLOW)
 
 		return (responseTokenString, responseData)

@@ -86,7 +86,7 @@ class token:
 		self.matchID = -1
 
 		# Generate/set token
-		if (__token != None):
+		if __token != None:
 			self.token = __token
 		else:
 			self.token = str(uuid.uuid4())
@@ -112,7 +112,7 @@ class token:
 
 		__channel -- channel name"""
 
-		if (__channel not in self.joinedChannels):
+		if __channel not in self.joinedChannels:
 			self.joinedChannels.append(__channel)
 
 
@@ -121,7 +121,7 @@ class token:
 
 		__channel -- channel name"""
 
-		if (__channel in self.joinedChannels):
+		if __channel in self.joinedChannels:
 			self.joinedChannels.remove(__channel)
 
 
@@ -166,7 +166,7 @@ class token:
 		userID -- new spectator userID"""
 
 		# Add userID to spectators if not already in
-		if (__userID not in self.spectators):
+		if __userID not in self.spectators:
 			self.spectators.append(__userID)
 
 
@@ -176,7 +176,7 @@ class token:
 		userID -- old spectator userID"""
 
 		# Remove spectator
-		if (__userID in self.spectators):
+		if __userID in self.spectators:
 			self.spectators.remove(__userID)
 
 

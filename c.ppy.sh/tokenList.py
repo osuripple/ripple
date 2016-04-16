@@ -31,7 +31,7 @@ class tokenList:
 		__token -- token string
 		"""
 
-		if (__token in self.tokens):
+		if __token in self.tokens:
 			self.tokens.pop(__token)
 
 
@@ -45,7 +45,7 @@ class tokenList:
 		"""
 
 		# Make sure the token exists
-		if (__token not in self.tokens):
+		if __token not in self.tokens:
 			return False
 
 		# Get userID associated to that token
@@ -62,7 +62,7 @@ class tokenList:
 
 		# Make sure the token exists
 		for _, value in self.tokens.items():
-			if (value.userID == __userID):
+			if value.userID == __userID:
 				return value
 
 		# Return none if not found
@@ -82,7 +82,7 @@ class tokenList:
 
 		# Make sure the token exists
 		for _, value in self.tokens.items():
-			if (value.username.lower() == who):
+			if value.username.lower() == who:
 				return value
 
 		# Return none if not found
@@ -98,7 +98,7 @@ class tokenList:
 
 		# Delete older tokens
 		for key, value in self.tokens.items():
-			if (value.userID == __userID):
+			if value.userID == __userID:
 				# Delete this token from the dictionary
 				self.tokens.pop(key)
 
@@ -117,12 +117,12 @@ class tokenList:
 
 		for _, value in self.tokens.items():
 			shouldEnqueue = False
-			if (value.userID in __who and not __but):
+			if value.userID in __who and not __but:
 				shouldEnqueue = True
-			elif (value.userID not in __who and __but):
+			elif value.userID not in __who and __but:
 				shouldEnqueue = True
 
-			if (shouldEnqueue):
+			if shouldEnqueue:
 				value.enqueue(__packet)
 
 
@@ -151,7 +151,7 @@ class tokenList:
 		timeoutLimit = time.time()-__timeoutTime
 		for key, value in self.tokens.items():
 			# Check timeout (fokabot is ignored)
-			if (value.pingTime < timeoutLimit and value.userID != 999):
+			if value.pingTime < timeoutLimit and value.userID != 999:
 				# That user has timed out, add to disconnected tokens
 				# We can't delete it while iterating or items() throws an error
 				timedOutTokens.append(key)

@@ -21,23 +21,23 @@ def handle(userToken, packetData):
 		# Private message packet
 		packetData = clientPackets.sendPrivateMessage(packetData)
 
-		if (packetData["to"] == "FokaBot"):
+		if packetData["to"] == "FokaBot":
 			# FokaBot command check
 			fokaMessage = fokabot.fokabotResponse(username, packetData["to"], packetData["message"])
-			if (fokaMessage != False):
+			if fokaMessage != False:
 				userToken.enqueue(serverPackets.sendMessage("FokaBot", username, fokaMessage))
 				consoleHelper.printColored("> FokaBot>{}: {}".format(packetData["to"], str(fokaMessage.encode("UTF-8"))), bcolors.PINK)
 		else:
 			# Send packet message to target if it exists
 			token = glob.tokens.getTokenFromUsername(packetData["to"])
-			if (token == None):
+			if token == None:
 				raise exceptions.tokenNotFoundException()
 
 			# Send message to target
 			token.enqueue(serverPackets.sendMessage(username, packetData["to"], packetData["message"]))
 
 			# Send away message to sender if needed
-			if (token.awayMessage != ""):
+			if token.awayMessage != "":
 				userToken.enqueue(serverPackets.sendMessage(packetData["to"], username, "This user is away: {}".format(token.awayMessage)))
 
 		# Console output

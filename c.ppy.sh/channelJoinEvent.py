@@ -29,14 +29,14 @@ def joinChannel(userToken, channelName):
 
 		# Check spectator channel
 		# If it's spectator channel, skip checks and list stuff
-		if (channelName != "#spectator" and channelName != "#multiplayer"):
+		if channelName != "#spectator" and channelName != "#multiplayer":
 			# Normal channel, do check stuff
 			# Make sure the channel exists
-			if (channelName not in glob.channels.channels):
+			if channelName not in glob.channels.channels:
 				raise exceptions.channelUnknownException
 
 			# Check channel permissions
-			if (glob.channels.channels[channelName].publicRead == False and userRank <= 2):
+			if glob.channels.channels[channelName].publicRead == False and userRank <= 2:
 				raise exceptions.channelNoPermissionsException
 
 			# Add our userID to users in that channel

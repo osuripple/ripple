@@ -10,7 +10,7 @@ def printServerStartHeader(asciiArt):
 	asciiArt -- if True, will print ascii art too
 	"""
 
-	if (asciiArt == True):
+	if asciiArt == True:
 		printColored(" (                 (     ", bcolors.YELLOW)
 		printColored(" )\\ )        *   ) )\\ )  ", bcolors.YELLOW)
 		printColored("(()/(  (   ` )  /((()/(  ", bcolors.YELLOW)

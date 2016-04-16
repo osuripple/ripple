@@ -374,12 +374,12 @@ class zeropad:
 	def unpad(self, ppt):
 		assert len(ppt) % self.block_size == 0
 		offset = len(ppt)
-		if (offset == 0):
+		if offset == 0:
 			return ''
 		end = offset - self.block_size + 1
 		while (offset > end):
 			offset -= 1
-			if (ppt[offset] != "\0"):
+			if ppt[offset] != "\0":
 				return ppt[:offset + 1]
 		assert False
 

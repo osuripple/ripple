@@ -42,9 +42,9 @@ def mainMenuIcon(icon):
 
 def userSupporterGMT(supporter, GMT):
 	result = 1
-	if (supporter == True):
+	if supporter == True:
 		result += 4
-	if (GMT == True):
+	if GMT == True:
 		result += 2
 	return packetHelper.buildPacket(packetIDs.server_supporterGMT, [[result, dataTypes.uInt32]])
 
@@ -95,13 +95,13 @@ def userPanel(userID):
 	# Get username color according to rank
 	# Only admins and normal users are currently supported
 	rank = userHelper.getRankPrivileges(userID)
-	if (username == "FokaBot"):
+	if username == "FokaBot":
 		userRank = userRanks.MOD
-	elif (rank == 4):
+	elif rank == 4:
 		userRank = userRanks.ADMIN
-	elif (rank == 3):
+	elif rank == 3:
 		userRank = userRank.MOD
-	elif (rank == 2):
+	elif rank == 2:
 		userRank = userRanks.SUPPORTER
 	else:
 		userRank = userRanks.NORMAL
@@ -186,7 +186,7 @@ def noSongSpectator(userID):
 """ Multiplayer Packets """
 def createMatch(matchID):
 	# Make sure the match exists
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return None
 
 	# Get match binary data and build packet
@@ -196,7 +196,7 @@ def createMatch(matchID):
 
 def updateMatch(matchID):
 	# Make sure the match exists
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return None
 
 	# Get match binary data and build packet
@@ -206,7 +206,7 @@ def updateMatch(matchID):
 
 def matchStart(matchID):
 	# Make sure the match exists
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return None
 
 	# Get match binary data and build packet
@@ -219,7 +219,7 @@ def disposeMatch(matchID):
 
 def matchJoinSuccess(matchID):
 	# Make sure the match exists
-	if (matchID not in glob.matches.matches):
+	if matchID not in glob.matches.matches:
 		return None
 
 	# Get match binary data and build packet

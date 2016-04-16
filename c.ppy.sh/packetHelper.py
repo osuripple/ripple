@@ -12,13 +12,13 @@ def uleb128Encode(num):
 	arr = bytearray()
 	length = 0
 
-	if (num == 0):
+	if num == 0:
 		return bytearray(b"\x00")
 
 	while num > 0:
 		arr.append(num & 127)
 		num = num >> 7
-		if (num != 0):
+		if num != 0:
 			arr[length] = arr[length] | 128
 		length+=1
 
@@ -41,7 +41,7 @@ def uleb128Decode(num):
 		b = num[arr[1]]
 		arr[1]+=1
 		arr[0] = arr[0] | (int(b & 127) << shift)
-		if (b & 128 == 0):
+		if b & 128 == 0:
 			break
 		shift += 7
 
@@ -59,21 +59,21 @@ def unpackData(__data, __dataType):
 	"""
 
 	# Get right pack Type
-	if (__dataType == dataTypes.uInt16):
+	if __dataType == dataTypes.uInt16:
 		unpackType = "<H"
-	elif (__dataType == dataTypes.sInt16):
+	elif __dataType == dataTypes.sInt16:
 		unpackType = "<h"
-	elif (__dataType == dataTypes.uInt32):
+	elif __dataType == dataTypes.uInt32:
 		unpackType = "<L"
-	elif (__dataType == dataTypes.sInt32):
+	elif __dataType == dataTypes.sInt32:
 		unpackType = "<l"
-	elif (__dataType == dataTypes.uInt64):
+	elif __dataType == dataTypes.uInt64:
 		unpackType = "<Q"
-	elif (__dataType == dataTypes.sInt64):
+	elif __dataType == dataTypes.sInt64:
 		unpackType = "<q"
-	elif (__dataType == dataTypes.string):
+	elif __dataType == dataTypes.string:
 		unpackType = "<s"
-	elif (__dataType == dataTypes.ffloat):
+	elif __dataType == dataTypes.ffloat:
 		unpackType = "<f"
 	else:
 		unpackType = "<B"
@@ -96,14 +96,14 @@ def packData(__data, __dataType):
 	pack = True		# if True, use pack. False only with strings
 
 	# Get right pack Type
-	if (__dataType == dataTypes.bbytes):
+	if __dataType == dataTypes.bbytes:
 		# Bytes, do not use pack, do manually
 		pack = False
 		data = __data
-	elif (__dataType == dataTypes.string):
+	elif __dataType == dataTypes.string:
 		# String, do not use pack, do manually
 		pack = False
-		if (len(__data) == 0):
+		if len(__data) == 0:
 			# Empty string
 			data += b"\x00"
 		else:
@@ -111,27 +111,27 @@ def packData(__data, __dataType):
 			data += b"\x0B"
 			data += uleb128Encode(len(__data))
 			data += str.encode(__data, "latin_1")
-	elif (__dataType == dataTypes.uInt16):
+	elif __dataType == dataTypes.uInt16:
 		packType = "<H"
-	elif (__dataType == dataTypes.sInt16):
+	elif __dataType == dataTypes.sInt16:
 		packType = "<h"
-	elif (__dataType == dataTypes.uInt32):
+	elif __dataType == dataTypes.uInt32:
 		packType = "<L"
-	elif (__dataType == dataTypes.sInt32):
+	elif __dataType == dataTypes.sInt32:
 		packType = "<l"
-	elif (__dataType == dataTypes.uInt64):
+	elif __dataType == dataTypes.uInt64:
 		packType = "<Q"
-	elif (__dataType == dataTypes.sInt64):
+	elif __dataType == dataTypes.sInt64:
 		packType = "<q"
-	elif (__dataType == dataTypes.string):
+	elif __dataType == dataTypes.string:
 		packType = "<s"
-	elif (__dataType == dataTypes.ffloat):
+	elif __dataType == dataTypes.ffloat:
 		packType = "<f"
 	else:
 		packType = "<B"
 
 	# Pack if needed
-	if (pack == True):
+	if pack == True:
 		data += struct.pack(packType, __data)
 
 	return data
@@ -205,7 +205,7 @@ def readPacketData(__stream, __structure = [], __hasFirstBytes = True):
 	data = {}
 
 	# Skip packet ID and packet length if needed
-	if (__hasFirstBytes == True):
+	if __hasFirstBytes == True:
 		end = 7
 		start = 7
 	else:
@@ -216,12 +216,12 @@ def readPacketData(__stream, __structure = [], __hasFirstBytes = True):
 	for i in __structure:
 		start = end
 		unpack = True
-		if (i[1] == dataTypes.string):
+		if i[1] == dataTypes.string:
 			# String, don't unpack
 			unpack = False
 
 			# Check empty string
-			if (__stream[start] == 0):
+			if __stream[start] == 0:
 				# Empty string
 				data[i[0]] = ""
 				end = start+1
@@ -233,17 +233,17 @@ def readPacketData(__stream, __structure = [], __hasFirstBytes = True):
 
 				# Read bytes
 				data[i[0]] = ''.join(chr(j) for j in __stream[start+1+length[1]:end])
-		elif (i[1] == dataTypes.byte):
+		elif i[1] == dataTypes.byte:
 			end = start+1
-		elif (i[1] == dataTypes.uInt16 or i[1] == dataTypes.sInt16):
+		elif i[1] == dataTypes.uInt16 or i[1] == dataTypes.sInt16:
 			end = start+2
-		elif (i[1] == dataTypes.uInt32 or i[1] == dataTypes.sInt32):
+		elif i[1] == dataTypes.uInt32 or i[1] == dataTypes.sInt32:
 			end = start+4
-		elif (i[1] == dataTypes.uInt64 or i[1] == dataTypes.sInt64):
+		elif i[1] == dataTypes.uInt64 or i[1] == dataTypes.sInt64:
 			end = start+8
 
 		# Unpack if needed
-		if (unpack == True):
+		if unpack == True:
 			data[i[0]] = unpackData(__stream[start:end], i[1])
 
 	return data

@@ -81,11 +81,11 @@ def ciTrigger():
 
 	# Get request ip
 	requestIP = flask.request.headers.get('X-Real-IP')
-	if (requestIP == None):
+	if requestIP == None:
 		requestIP = flask.request.remote_addr
 
 	# Check key
-	if (key is None or key != glob.conf.config["ci"]["key"]):
+	if key is None or key != glob.conf.config["ci"]["key"]:
 		consoleHelper.printColored("[!] Invalid ci trigger from {}".format(requestIP), bcolors.RED)
 		return flask.jsonify({"response" : "-1"})
 
@@ -110,10 +110,10 @@ def serverStatus():
 # Main bancho server
 @app.route("/", methods=['GET', 'POST'])
 def banchoServer():
-	if (flask.request.method == 'POST'):
+	if flask.request.method == 'POST':
 
 		# Track time if needed
-		if (serverOutputRequestTime == True):
+		if serverOutputRequestTime == True:
 			# Start time
 			st = datetime.datetime.now()
 
@@ -125,7 +125,7 @@ def banchoServer():
 		responseTokenString = "ayy"
 		responseData = bytes()
 
-		if (requestTokenString == None):
+		if requestTokenString == None:
 			# No token, first request. Handle login.
 			responseTokenString, responseData = loginEvent.handle(flask.request)
 		else:
@@ -135,7 +135,7 @@ def banchoServer():
 				pos = 0
 
 				# Make sure the token exists
-				if (requestTokenString not in glob.tokens.tokens):
+				if requestTokenString not in glob.tokens.tokens:
 					raise exceptions.tokenNotFoundException()
 
 				# Token exists, get its object
@@ -152,7 +152,7 @@ def banchoServer():
 					packetData = requestData[pos:(pos+dataLength+7)]
 
 					# Console output if needed
-					if (serverOutputPackets == True and packetID != 4):
+					if serverOutputPackets == True and packetID != 4:
 						consoleHelper.printColored("Incoming packet ({})({}):".format(requestTokenString, userToken.username), bcolors.GREEN)
 						consoleHelper.printColored("Packet code: {}\nPacket length: {}\nSingle packet data: {}\n".format(str(packetID), str(dataLength), str(packetData)), bcolors.YELLOW)
 
@@ -227,7 +227,7 @@ def banchoServer():
 				consoleHelper.printColored("[!] Received packet from unknown token ({}).".format(requestTokenString), bcolors.RED)
 				consoleHelper.printColored("> {} have been disconnected (invalid token)".format(requestTokenString), bcolors.YELLOW)
 
-		if (serverOutputRequestTime == True):
+		if serverOutputRequestTime == True:
 			# End time
 			et = datetime.datetime.now()
 
@@ -243,7 +243,7 @@ def banchoServer():
 		return responseHelper.HTMLResponse()
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
 	# Server start
 	consoleHelper.printServerStartHeader(True)
 
@@ -251,7 +251,7 @@ if (__name__ == "__main__"):
 	consoleHelper.printNoNl("> Loading config file... ")
 	glob.conf = config.config("config.ini")
 
-	if (glob.conf.default == True):
+	if glob.conf.default == True:
 		# We have generated a default config.ini, quit server
 		consoleHelper.printWarning()
 		consoleHelper.printColored("[!] config.ini not found. A default one has been generated.", bcolors.YELLOW)
@@ -259,7 +259,7 @@ if (__name__ == "__main__"):
 		sys.exit()
 
 	# If we haven't generated a default config.ini, check if it's valid
-	if (glob.conf.checkConfig() == False):
+	if glob.conf.checkConfig() == False:
 		consoleHelper.printError()
 		consoleHelper.printColored("[!] Invalid config.ini. Please configure it properly", bcolors.RED)
 		consoleHelper.printColored("[!] Delete your config.ini to generate a default one", bcolors.RED)
@@ -322,13 +322,13 @@ if (__name__ == "__main__"):
 	serverOutputRequestTime = generalFunctions.stringToBool(glob.conf.config["server"]["outputrequesttime"])
 
 	# Run server sanic way
-	if (serverName == "tornado"):
+	if serverName == "tornado":
 		# Tornado server
 		consoleHelper.printColored("> Tornado listening for clients on 127.0.0.1:{}...".format(serverPort), bcolors.GREEN)
 		webServer = HTTPServer(WSGIContainer(app))
 		webServer.listen(serverPort)
 		IOLoop.instance().start()
-	elif (serverName == "flask"):
+	elif serverName == "flask":
 		# Flask server
 		# Get flask settings
 		flaskThreaded = generalFunctions.stringToBool(glob.conf.config["flask"]["threaded"])
@@ -340,7 +340,7 @@ if (__name__ == "__main__"):
 		flaskLogger.disabled = flaskLoggerStatus
 
 		# Console output
-		if (flaskDebug == False):
+		if flaskDebug == False:
 			consoleHelper.printColored("> Flask listening for clients on {}.{}...".format(serverHost, serverPort), bcolors.GREEN)
 		else:
 			consoleHelper.printColored("> Flask "+bcolors.YELLOW+"(debug mode)"+bcolors.ENDC+" listening for clients on {}:{}...".format(serverHost, serverPort), bcolors.GREEN)

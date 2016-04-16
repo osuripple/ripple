@@ -35,7 +35,7 @@ class beatmap:
 		"""
 		# Make sure the beatmap is not already in db
 		bid = glob.db.fetch("SELECT id FROM beatmaps WHERE beatmap_md5 = ?", [self.fileMD5])
-		if (bid != None):
+		if bid != None:
 			# This beatmap is already in db, remove old record
 			consoleHelper.printGetScoresMessage("Deleting old beatmap data")
 			glob.db.execute("DELETE FROM beatmaps WHERE id = ?", [bid["id"]])
@@ -67,11 +67,11 @@ class beatmap:
 		data = glob.db.fetch("SELECT * FROM beatmaps WHERE beatmap_md5 = ?", [md5])
 
 		# Make sure the query returned something
-		if (data == None):
+		if data == None:
 			return False
 
 		# Make sure the beatmap data in db is not too old
-		if (time.time() > data["latest_update"]+86400):
+		if time.time() > data["latest_update"]+86400:
 			return False
 
 		# Data in DB, set beatmap data
@@ -97,10 +97,10 @@ class beatmap:
 		return -- True if set, False if not set
 		"""
 		data = osuapiHelper.osuApiRequest("get_beatmaps", "h={}".format(md5))
-		if (data == None):
+		if data == None:
 			# Error while retreiving data from MD5, check with beatmap set ID
 			data = osuapiHelper.osuApiRequest("get_beatmaps", "s={}".format(beatmapSetID))
-			if (data == None):
+			if data == None:
 				# Still no data, beatmap is not submitted
 				return False
 			else:
@@ -132,13 +132,13 @@ class beatmap:
 		# Get beatmap from db
 		dbResult = self.setDataFromDB(md5)
 
-		if (dbResult == False):
+		if dbResult == False:
 			# If this beatmap is not in db, get it from osu!api
 			apiResult = self.setDataFromOsuApi(md5, beatmapSetID)
-			if (apiResult == False):
+			if apiResult == False:
 				# If it's not even in osu!api, this beatmap is not submitted
 				self.rankedStatus = rankedStatuses.NOT_SUBMITTED
-			elif (self.rankedStatus != rankedStatuses.NOT_SUBMITTED and self.rankedStatus != rankedStatuses.NEED_UPDATE):
+			elif self.rankedStatus != rankedStatuses.NOT_SUBMITTED and self.rankedStatus != rankedStatuses.NEED_UPDATE:
 				# We get beatmap data from osu!api, save it in db
 				self.addBeatmapToDB()
 
@@ -166,13 +166,13 @@ def convertRankedStatus(approvedStatus):
 	"""
 
 	approvedStatus = int(approvedStatus)
-	if (approvedStatus <= 0):
+	if approvedStatus <= 0:
 		return rankedStatuses.PENDING
-	elif (approvedStatus == 1):
+	elif approvedStatus == 1:
 		return rankedStatuses.RANKED
-	elif (approvedStatus == 2):
+	elif approvedStatus == 2:
 		return rankedStatuses.APPROVED
-	elif (approvedStatus == 3):
+	elif approvedStatus == 3:
 		return rankedStatuses.QUALIFIED
 	else:
 		return rankedStatuses.UNKNOWN

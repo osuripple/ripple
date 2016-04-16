@@ -55,7 +55,7 @@ class db:
 		with self.connection.cursor() as cursor:
 			try:
 				# Bind params if needed
-				if (__params != None):
+				if __params != None:
 					__query = self.bindParams(__query, __params)
 
 				# Execute the query
@@ -80,14 +80,14 @@ class db:
 		with self.connection.cursor() as cursor:
 			try:
 				# Bind params if needed
-				if (__params != None):
+				if __params != None:
 					__query = self.bindParams(__query, __params)
 
 				# Execute the query with binded params
 				cursor.execute(__query)
 
 				# Get first result and return it
-				if (__all == False):
+				if __all == False:
 					return cursor.fetchone()
 				else:
 					return cursor.fetchall()
@@ -123,7 +123,7 @@ class db:
 		try:
 			# Try to ping and reconnect if not connected
 			self.connection.ping()
-			if (self.disconnected == True):
+			if self.disconnected == True:
 				# If we were disconnected, set disconnected to false and print message
 				self.disconnected = False
 				consoleHelper.printColored("> Reconnected to MySQL server!", bcolors.GREEN)

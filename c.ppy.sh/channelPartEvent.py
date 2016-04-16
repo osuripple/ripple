@@ -19,17 +19,17 @@ def partChannel(userToken, channelName, kick = False):
 	userID = userToken.userID
 
 	# Remove us from joined users and joined channels
-	if (channelName in glob.channels.channels):
+	if channelName in glob.channels.channels:
 		# Check that user is in channel
-		if (channelName in userToken.joinedChannels):
+		if channelName in userToken.joinedChannels:
 			userToken.partChannel(channelName)
 
 		# Check if user is in channel
-		if (userID in glob.channels.channels[channelName].connectedUsers):
+		if userID in glob.channels.channels[channelName].connectedUsers:
 			glob.channels.channels[channelName].userPart(userID)
 
 		# Force close tab if needed
-		if (kick == True):
+		if kick == True:
 			userToken.enqueue(serverPackets.channelKicked(channelName))
 
 		# Console output
