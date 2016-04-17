@@ -1,5 +1,6 @@
 import score
 import glob
+from helpers import userHelper
 
 class leaderboard:
 	def __init__(self, username, gameMode, beatmap, setScores = True):
@@ -42,16 +43,27 @@ class leaderboard:
 			self.scores.append(-1)
 
 		# Top 50 scores
-		topScores = glob.db.fetchAll("SELECT id FROM scores WHERE beatmap_md5 = ? AND play_mode = ? AND completed = 3 ORDER BY score DESC  LIMIT 50", [self.beatmap.fileMD5, self.gameMode])
+		topScores = glob.db.fetchAll("SELECT id FROM scores WHERE beatmap_md5 = ? AND play_mode = ? AND completed = 3 ORDER BY score DESC", [self.beatmap.fileMD5, self.gameMode])
 		c = 1
 		if topScores != None:
 			for i in topScores:
+				# Get only first 50 scores
+				if c > 50:
+					break
+
 				# Create score object and set its data
 				s = score.score(i["id"], c)
 
 				# Check if this top 50 score is our personal best
 				if s.playerName == self.username:
 					self.personalBestRank = c
+
+				# Make sure this player is not banned.
+				# if the player is banned, skip this score
+				uid = userHelper.getID(s.playerName)
+				allowed = userHelper.getAllowed(uid)
+				if allowed == None or allowed == 0:
+					continue
 
 				# Add this score to scores list and increment rank
 				self.scores.append(s)

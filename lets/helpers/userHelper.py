@@ -5,7 +5,7 @@ from constants import bcolors
 from helpers import passwordHelper
 import time
 
-def getUserID(username):
+def getID(username):
 	"""
 	Get username's user ID
 
@@ -36,7 +36,7 @@ def getUsername(userID):
 	return result["username"]
 
 
-def userExists(userID):
+def exists(userID):
 	"""
 	Check if given userID exists
 
@@ -230,7 +230,7 @@ def updatePP(userID, pp, gameMode):
 	mode = scoreHelper.readableGameMode(gameMode)
 	glob.db.execute("UPDATE users_stats SET pp_{m}=pp_{m}+? WHERE id = ?".format(m = mode), [pp, userID])
 
-def getUserAllowed(userID):
+def getAllowed(userID):
 	"""
 	Get allowed status for userID
 
@@ -239,7 +239,11 @@ def getUserAllowed(userID):
 	return -- allowed int
 	"""
 
-	return glob.db.fetch("SELECT allowed FROM users WHERE id = ?", [userID])["allowed"]
+	result = glob.db.fetch("SELECT allowed FROM users WHERE id = ?", [userID])
+	if result != None:
+		return result["allowed"]
+	else:
+		return None
 
 def updateLatestActivity(userID):
 	"""
